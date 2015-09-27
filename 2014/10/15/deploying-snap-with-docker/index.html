@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".tt6wrqjgg0" data-react-checksum="1632098012"><nav data-reactid=".tt6wrqjgg0.1"><div data-reactid=".tt6wrqjgg0.1.0"><div data-reactid=".tt6wrqjgg0.1.0.0"><ul data-reactid=".tt6wrqjgg0.1.0.0.0"><li data-reactid=".tt6wrqjgg0.1.0.0.0.0"><a class="" href="/" data-reactid=".tt6wrqjgg0.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".tt6wrqjgg0.1.0.0.0.1"><a class="" href="/talks" data-reactid=".tt6wrqjgg0.1.0.0.0.1.0">talks</a></li><li data-reactid=".tt6wrqjgg0.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".tt6wrqjgg0.1.0.0.0.2.0">twitter</a></li><li data-reactid=".tt6wrqjgg0.1.0.0.0.3"><a class="" href="/projects" data-reactid=".tt6wrqjgg0.1.0.0.0.3.0">projects</a></li><li data-reactid=".tt6wrqjgg0.1.0.0.0.4"><a class="" href="/books" data-reactid=".tt6wrqjgg0.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".tt6wrqjgg0.2"><div data-reactid=".tt6wrqjgg0.2.0"><div class="markdown" data-reactid=".tt6wrqjgg0.2.0.0"><h1 data-reactid=".tt6wrqjgg0.2.0.0.0">Deploying Snap with Docker</h1><div data-reactid=".tt6wrqjgg0.2.0.0.1"><p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611482/snap_sks60m.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611482/snap_sks60m.png" alt="snap-framework"></a></p>
+<p><a href="http://www.christopherbiscardi.com/2014/10/05/working-with-snap-1-0/">Previous Post – Working With Snap 1.0</a></p>
+<p>In our previous post we built out a scaffold project with Snap 1.0. In this post we’ll go over building a simple Dockerfile to deploy the project.</p>
+<p>Make sure you’ve <a href="https://docs.docker.com/installation/#installation">installed docker</a></p>
+<h2>Building the Haskell Base</h2>
+<p>There is an effort to make a <a href="https://github.com/darinmorrison/docker-haskell/tree/docker-library">docker official haskell image</a> so we’ll use that. Once it’s merged into <code>docker-library</code>, we can simply skip building the <code>docker-haskell</code> from scratch.</p>
+<p>Clone docker-haskell and switch to the docker-library branch. (It doesn’t matter where on the computer we do this)</p>
+<pre><code>git clone git@github<span class="hljs-class">.com</span>:darinmorrison/docker-haskell<span class="hljs-class">.git</span>
+cd docker-haskell
+git checkout docker-library
+</code></pre>
+<p>Once in the appropriate directory, we can build the image with <a href="https://docs.docker.com/reference/commandline/cli/#build"><code>docker build</code></a>. <code>-t</code> is short for <code>--tag</code>, which lets us tag an image. We’ll use <code>haskell</code> for the base name and tag it as <code>7.8</code>. Finally, the <code>.</code> tells docker where to find the dockerfile we’re building.</p>
+<pre><code>cd <span class="hljs-number">7.8</span>
+docker build -t haskell:<span class="hljs-number">7.8</span> .
+</code></pre>
+<p>We can test that it worked by using <a href="https://docs.docker.com/reference/commandline/cli/#run"><code>docker run</code></a> to spawn <code>ghci</code> as an interactive pseudo-tty.</p>
+<pre><code>docker run -<span class="hljs-tag">i</span> -t haskell:<span class="hljs-number">7.8</span> ghci
+</code></pre>
+<p>Use <code>:q</code> to quit <code>ghci</code> as usual.</p>
+<h1>Building our Project</h1>
+<p>We’ll base our project on the docker image we just built.</p>
+<p>NOTE: We can push this base image <a href="https://docs.docker.com/userguide/dockerrepos/#pushing-a-repository-to-docker-hub">to the docker hub</a> but interestingly enough, we don’t have to (if we’re using “normal” repos; Automated Builds are a different story). We can push the final image without pushing the base image.</p>
+<h3>Dockerfile</h3>
+<p>Our <code>Dockerfile</code> goes in the root of the <code>auth-server/</code> folder. If you’ve built a haskell project before and are familiar with cabal sandboxes, this will be similar:</p>
+<pre><code><span class="hljs-comment"># https://github.com/darinmorrison/docker-haskell/tree/docker-library</span>
+FROM haskell:7.8
+
+RUN cabal update
+
+<span class="hljs-comment"># Add Cabal File and deps/ folder</span>
+ADD ./auth-server.cabal /opt/auth-server/auth-server.cabal
+ADD ./deps /opt/auth-server/deps
+
+<span class="hljs-comment"># Create Sandbox and Add Source Deps</span>
+RUN cd /opt/auth-server &amp;&amp;
+        cabal sandbox init &amp;&amp;
+        cabal sandbox<span class="hljs-instruction"> add-source </span>deps/io-streams-haproxy &amp;&amp;
+        cabal sandbox<span class="hljs-instruction"> add-source </span>deps/snap &amp;&amp;
+        cabal sandbox<span class="hljs-instruction"> add-source </span>deps/snap-core &amp;&amp;
+        cabal sandbox<span class="hljs-instruction"> add-source </span>deps/snap-server &amp;&amp;
+        cabal sandbox<span class="hljs-instruction"> add-source </span>deps/snap-loader-static &amp;&amp;
+        cabal sandbox<span class="hljs-instruction"> add-source </span>deps/heist
+
+RUN cd /opt/auth-server &amp;&amp; cabal install --only-dependencies
+
+<span class="hljs-comment"># Explicitly add relevant folders</span>
+ADD ./src /opt/auth-server/src
+ADD ./snaplets /opt/auth-server/snaplets
+ADD ./static /opt/auth-server/static
+
+<span class="hljs-comment"># Init logging directories</span>
+RUN mkdir /opt/auth-server/log
+
+<span class="hljs-comment"># Build the Project</span>
+RUN cd /opt/auth-server &amp;&amp; cabal build
+
+<span class="hljs-comment"># The directory CMD works from</span>
+WORKDIR /opt/auth-server
+CMD <span class="hljs-keyword">[</span><span class="hljs-string">"./dist/build/auth-server/auth-server"</span>]
+</code></pre>
+<p>With the above dockerfile in the root of <code>auth-server/</code> we can build with:</p>
+<pre><code>cd auth-<span class="hljs-keyword">server</span>
+docker build -t auth-<span class="hljs-keyword">server</span> .
+</code></pre>
+<p>NOTE: <code>-t auth-server</code> could be any name, such as <code>-t myawesomething</code> but if you plan to push it to the docker hub do <code>username/image-name:tag-name</code></p>
+<p>After building, run it with:</p>
+<pre><code>docker run -<span class="hljs-tag">i</span> -t -<span class="hljs-tag">p</span> <span class="hljs-number">8000</span>:<span class="hljs-number">8000</span> auth-server
+</code></pre>
+<p>and we should have a running instance of our application on port <code>8000</code> (or at <code>boot2docker ip</code> on port <code>8000</code>).</p>
+<h3>To The Hub!</h3>
+<p>We can push the image we just built to a registry (such as the docker hub) by building it with our username (so it gets filed under our user on the hub):</p>
+<pre><code><span class="hljs-label">docker</span> <span class="hljs-keyword">build </span>-t <span class="hljs-keyword">biscarch/auth-server
+</span><span class="hljs-label">docker</span> <span class="hljs-keyword">push </span><span class="hljs-keyword">biscarch/auth-server
+</span></code></pre>
+<p>and on some other computer (such as AWS, a Digital Ocean instance or another dev computer) pull and run the image:</p>
+<pre><code><span class="hljs-label">docker</span> pull <span class="hljs-keyword">biscarch/auth-server
+</span><span class="hljs-label">docker</span> run -d -p <span class="hljs-number">8000</span>:<span class="hljs-number">8000</span> <span class="hljs-keyword">biscarch/auth-server
+</span></code></pre>
+<p>after running, we can check that it’s up with <code>docker ps</code>:</p>
+<p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611480/Screenshot-2014-10-14-20.26.19_ms5prn.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611480/Screenshot-2014-10-14-20.26.19_ms5prn.png" alt="Screenshot 2014-10-14 20.26.19"></a></p>
+<h1>FIN</h1>
+<p>The completed docker image is on the hub as <a href="https://registry.hub.docker.com/u/biscarch/auth-server/">biscarch/auth-server:0.0.0.2</a>, so you can run a <code>pull</code>, then a <code>run</code> anywhere you like:</p>
+<pre><code>docker pull biscarch/auth-server:<span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.2</span>
+docker run -i -t -p <span class="hljs-number">8000</span>:<span class="hljs-number">8000</span> biscarch/auth-server:<span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.2</span>
+</code></pre>
+</div><em data-reactid=".tt6wrqjgg0.2.0.0.2"><span data-reactid=".tt6wrqjgg0.2.0.0.2.0">Posted </span><span data-reactid=".tt6wrqjgg0.2.0.0.2.1">October 15, 2014</span></em><hr data-reactid=".tt6wrqjgg0.2.0.0.3"><noscript data-reactid=".tt6wrqjgg0.2.0.0.4"></noscript><p data-reactid=".tt6wrqjgg0.2.0.0.5"><img src="/headshot.png" data-reactid=".tt6wrqjgg0.2.0.0.5.0"><span data-reactid=".tt6wrqjgg0.2.0.0.5.1">Written by </span><strong data-reactid=".tt6wrqjgg0.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".tt6wrqjgg0.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".tt6wrqjgg0.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".tt6wrqjgg0.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

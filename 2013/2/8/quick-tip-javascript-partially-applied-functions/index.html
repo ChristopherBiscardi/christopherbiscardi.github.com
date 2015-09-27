@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".1pvik2mv37k" data-react-checksum="1728765373"><nav data-reactid=".1pvik2mv37k.1"><div data-reactid=".1pvik2mv37k.1.0"><div data-reactid=".1pvik2mv37k.1.0.0"><ul data-reactid=".1pvik2mv37k.1.0.0.0"><li data-reactid=".1pvik2mv37k.1.0.0.0.0"><a class="" href="/" data-reactid=".1pvik2mv37k.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".1pvik2mv37k.1.0.0.0.1"><a class="" href="/talks" data-reactid=".1pvik2mv37k.1.0.0.0.1.0">talks</a></li><li data-reactid=".1pvik2mv37k.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".1pvik2mv37k.1.0.0.0.2.0">twitter</a></li><li data-reactid=".1pvik2mv37k.1.0.0.0.3"><a class="" href="/projects" data-reactid=".1pvik2mv37k.1.0.0.0.3.0">projects</a></li><li data-reactid=".1pvik2mv37k.1.0.0.0.4"><a class="" href="/books" data-reactid=".1pvik2mv37k.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".1pvik2mv37k.2"><div data-reactid=".1pvik2mv37k.2.0"><div class="markdown" data-reactid=".1pvik2mv37k.2.0.0"><h1 data-reactid=".1pvik2mv37k.2.0.0.0">Quick Tip: JavaScript Partially Applied Functions</h1><div data-reactid=".1pvik2mv37k.2.0.0.1"><p>Say we have the following function:</p>
+<pre><code>&lt;code <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">"javascript"</span>&gt;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">increaseBy</span>(<span class="hljs-params">x</span>)</span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">y</span>)</span>{
+    <span class="hljs-keyword">return</span> x + y;
+  }
+}
+</code></pre>
+<p>We can use this function to create new, higher order functions that increase a number by a certain value.</p>
+<p>for example:</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"javascript"</span>&gt;
+<span class="hljs-keyword">var</span> incByThree = increaseBy(<span class="hljs-number">3</span>);
+</code></pre>
+<p>gives us a function we can then use later in our code as such:</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"javascript"</span>&gt;
+incByThree(<span class="hljs-number">4</span>);
+<span class="hljs-comment">//returns 7</span>
+
+incByThree(<span class="hljs-number">5</span>);
+<span class="hljs-comment">//returns 8</span>
+</code></pre>
+<p>We can also create multiple higher-order functions and have each of them use a different x value;</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"javascript"</span>&gt;
+var incByThree = increaseBy(<span class="hljs-number">3</span>);
+var incByFour = increaseBy(<span class="hljs-number">4</span>);
+
+incByThree(<span class="hljs-number">6</span>);
+<span class="hljs-comment">//returns 9</span>
+incbyFour(<span class="hljs-number">6</span>);
+<span class="hljs-comment">//returns 10</span>
+</code></pre>
+</div><em data-reactid=".1pvik2mv37k.2.0.0.2"><span data-reactid=".1pvik2mv37k.2.0.0.2.0">Posted </span><span data-reactid=".1pvik2mv37k.2.0.0.2.1">February 8, 2013</span></em><hr data-reactid=".1pvik2mv37k.2.0.0.3"><noscript data-reactid=".1pvik2mv37k.2.0.0.4"></noscript><p data-reactid=".1pvik2mv37k.2.0.0.5"><img src="/headshot.png" data-reactid=".1pvik2mv37k.2.0.0.5.0"><span data-reactid=".1pvik2mv37k.2.0.0.5.1">Written by </span><strong data-reactid=".1pvik2mv37k.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".1pvik2mv37k.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".1pvik2mv37k.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".1pvik2mv37k.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

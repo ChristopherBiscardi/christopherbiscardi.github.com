@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".1hvhewa4c1s" data-react-checksum="-714857591"><nav data-reactid=".1hvhewa4c1s.1"><div data-reactid=".1hvhewa4c1s.1.0"><div data-reactid=".1hvhewa4c1s.1.0.0"><ul data-reactid=".1hvhewa4c1s.1.0.0.0"><li data-reactid=".1hvhewa4c1s.1.0.0.0.0"><a class="" href="/" data-reactid=".1hvhewa4c1s.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".1hvhewa4c1s.1.0.0.0.1"><a class="" href="/talks" data-reactid=".1hvhewa4c1s.1.0.0.0.1.0">talks</a></li><li data-reactid=".1hvhewa4c1s.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".1hvhewa4c1s.1.0.0.0.2.0">twitter</a></li><li data-reactid=".1hvhewa4c1s.1.0.0.0.3"><a class="" href="/projects" data-reactid=".1hvhewa4c1s.1.0.0.0.3.0">projects</a></li><li data-reactid=".1hvhewa4c1s.1.0.0.0.4"><a class="" href="/books" data-reactid=".1hvhewa4c1s.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".1hvhewa4c1s.2"><div data-reactid=".1hvhewa4c1s.2.0"><div class="markdown" data-reactid=".1hvhewa4c1s.2.0.0"><h1 data-reactid=".1hvhewa4c1s.2.0.0.0">Deploying a Minecraft Server with Docker Machine</h1><div data-reactid=".1hvhewa4c1s.2.0.0.1"><p>The <a href="http://www.christopherbiscardi.com/2014/12/21/docker-machine/">previous post</a> explains how to get up and running with Docker machine. This one will be a quick tutorial on setting up a Minecraft server using Machine.</p>
+<ol>
+<li>Create a new Digital Ocean Machine. We need a <code>1gb</code> server due to Java’s requirements, so we’ll specify the 1gb DO variant: ```</li>
+</ol>
+<blockquote>
+<p>machine-docker create -d digitalocean --digitalocean-access-token=$DO_TOKEN --digitalocean-size=1gb biscarch-minecraft
+INFO[0000] Creating SSH key…
+INFO[0000] Creating Digital Ocean droplet…
+INFO[0003] Waiting for SSH…
+INFO[0155] “biscarch-minecraft” has been created and is now the active machine. To point Docker at this machine, run: export DOCKER_HOST=$(machine url) DOCKER_AUTH=identity</p>
+</blockquote>
+<pre><code><span class="hljs-number">2</span>. Run the <span class="hljs-keyword">command</span> suggested <span class="hljs-keyword">to</span> activate the Digital Ocean machine. Remember that we re-named our binaries, <span class="hljs-keyword">so</span> our <span class="hljs-keyword">command</span> will look slightly differen<span class="hljs-variable">t:</span> ```
+export DOCKER_HOST=$(machine-docker url) DOCKER_AUTH=identity
+</code></pre>
+<ol start="3">
+<li>After creating the machine, we can run a Minecraft server. Notice that we’ve accepted the EULA using an environment variable. ```</li>
+</ol>
+<blockquote>
+<p>machine-docker-1.3.1-dev-identity-auth run -itp 25565:25565 -e EULA=true itzg/minecraft-server
+The authenticity of host “$ip:2376” can’t be established.
+Remote key ID XXXX
+Are you sure you want to continue connecting (yes/no)? yes
+Unable to find image ‘itzg/minecraft-server:latest’ locally
+Pulling repository itzg/minecraft-server
+cf3280236048: Download complete
+511136ea3c5a: Download complete
+97fd97495e49: Download complete
+2dcbbf65536c: Download complete
+6a459d727ebb: Download complete
+8f321fc43180: Download complete
+03db2b23cf03: Download complete
+9cbaf023786c: Download complete
+c40e36cb3ec9: Download complete
+894f65ff66bd: Download complete
+e82301eb9615: Download complete
+1dbf91539513: Download complete
+e545342bf796: Download complete
+59bc57df4d1e: Download complete
+553afa5133d9: Download complete
+75c3ad818b79: Download complete
+0b0acc66bc64: Download complete
+978ce1e3b993: Download complete
+54fead2b8d41: Download complete
+2bb3b9314ae2: Download complete
+af46a2317b29: Download complete
+0b1b3214a72a: Download complete
+c68e5b97cc3f: Download complete
+f08ca66bb473: Download complete
+36a596d541f4: Download complete
+5c1156fb886b: Download complete
+59349c103e38: Download complete
+1d5073dd8949: Download complete
+250469004d09: Download complete
+78a77d27bdfa: Download complete
+Status: Downloaded newer image for itzg/minecraft-server:latest
+–2014-12-27 06:06:21--  <a href="https://s3.amazonaws.com/Minecraft.Download/versions/versions.json">https://s3.amazonaws.com/Minecraft.Download/versions/versions.json</a>
+Resolving <a href="http://s3.amazonaws.com">s3.amazonaws.com</a> (<a href="http://s3.amazonaws.com">s3.amazonaws.com</a>)… 54.231.244.4
+Connecting to <a href="http://s3.amazonaws.com">s3.amazonaws.com</a> (<a href="http://s3.amazonaws.com">s3.amazonaws.com</a>)|54.231.244.4|:443… connected.
+HTTP request sent, awaiting response… 200 OK
+Length: 20681 (20K) [application/octet-stream]
+Saving to: ‘STDOUT’</p>
+</blockquote>
+<p>100%[====================================================================================&gt;] 20,681      --.-K/s   in 0.1s</p>
+<p>2014-12-27 06:06:22 (149 KB/s) - written to stdout [20681/20681]</p>
+<p>Downloading minecraft_server.1.8.1.jar …
+[06:06:33] [Server thread/INFO]: Starting minecraft server version 1.8.1
+[06:06:33] [Server thread/INFO]: Loading properties
+[06:06:33] [Server thread/INFO]: Default game type: SURVIVAL
+[06:06:33] [Server thread/INFO]: Generating keypair
+[06:06:33] [Server thread/INFO]: Starting Minecraft server on *:25565
+[06:06:33] [Server thread/INFO]: Using epoll channel type
+[06:06:34] [Server thread/WARN]: Failed to load user banlist:
+java.io.FileNotFoundException: banned-players.json (No such file or directory)
+at java.io.FileInputStream.open(Native Method) ~[?:1.7.0_65]
+at java.io.FileInputStream.<init>(FileInputStream.java:146) ~[?:1.7.0_65]
+at com.google.common.io.Files.newReader(Files.java:86) ~[minecraft_server.1.8.1.jar:?]
+at su.g(SourceFile:124) ~[minecraft_server.1.8.1.jar:?]
+at po.z(SourceFile:99) [minecraft_server.1.8.1.jar:?]
+at po.<init>(SourceFile:25) [minecraft_server.1.8.1.jar:?]
+at pp.i(SourceFile:172) [minecraft_server.1.8.1.jar:?]
+at net.minecraft.server.MinecraftServer.run(SourceFile:418) [minecraft_server.1.8.1.jar:?]
+at java.lang.Thread.run(Thread.java:745) [?:1.7.0_65]
+[06:06:34] [Server thread/WARN]: Failed to load ip banlist:
+java.io.FileNotFoundException: banned-ips.json (No such file or directory)
+at java.io.FileInputStream.open(Native Method) ~[?:1.7.0_65]
+at java.io.FileInputStream.<init>(FileInputStream.java:146) ~[?:1.7.0_65]
+at com.google.common.io.Files.newReader(Files.java:86) ~[minecraft_server.1.8.1.jar:?]
+at su.g(SourceFile:124) ~[minecraft_server.1.8.1.jar:?]
+at po.y(SourceFile:91) [minecraft_server.1.8.1.jar:?]
+at po.<init>(SourceFile:27) [minecraft_server.1.8.1.jar:?]
+at pp.i(SourceFile:172) [minecraft_server.1.8.1.jar:?]
+at net.minecraft.server.MinecraftServer.run(SourceFile:418) [minecraft_server.1.8.1.jar:?]
+at java.lang.Thread.run(Thread.java:745) [?:1.7.0_65]
+[06:06:34] [Server thread/WARN]: Failed to load operators list:
+java.io.FileNotFoundException: ops.json (No such file or directory)
+at java.io.FileInputStream.open(Native Method) ~[?:1.7.0_65]
+at java.io.FileInputStream.<init>(FileInputStream.java:146) ~[?:1.7.0_65]
+at com.google.common.io.Files.newReader(Files.java:86) ~[minecraft_server.1.8.1.jar:?]
+at su.g(SourceFile:124) ~[minecraft_server.1.8.1.jar:?]
+at po.A(SourceFile:107) [minecraft_server.1.8.1.jar:?]
+at po.<init>(SourceFile:29) [minecraft_server.1.8.1.jar:?]
+at pp.i(SourceFile:172) [minecraft_server.1.8.1.jar:?]
+at net.minecraft.server.MinecraftServer.run(SourceFile:418) [minecraft_server.1.8.1.jar:?]
+at java.lang.Thread.run(Thread.java:745) [?:1.7.0_65]
+[06:06:34] [Server thread/WARN]: Failed to load white-list:
+java.io.FileNotFoundException: whitelist.json (No such file or directory)
+at java.io.FileInputStream.open(Native Method) ~[?:1.7.0_65]
+at java.io.FileInputStream.<init>(FileInputStream.java:146) ~[?:1.7.0_65]
+at com.google.common.io.Files.newReader(Files.java:86) ~[minecraft_server.1.8.1.jar:?]
+at su.g(SourceFile:124) ~[minecraft_server.1.8.1.jar:?]
+at po.C(SourceFile:123) [minecraft_server.1.8.1.jar:?]
+at po.<init>(SourceFile:30) [minecraft_server.1.8.1.jar:?]
+at pp.i(SourceFile:172) [minecraft_server.1.8.1.jar:?]
+at net.minecraft.server.MinecraftServer.run(SourceFile:418) [minecraft_server.1.8.1.jar:?]
+at java.lang.Thread.run(Thread.java:745) [?:1.7.0_65]
+[06:06:34] [Server thread/INFO]: Preparing level “world”
+[06:06:34] [Server thread/INFO]: Preparing start region for level 0
+[06:06:35] [Server thread/INFO]: Preparing spawn area: 4%
+[06:06:36] [Server thread/INFO]: Preparing spawn area: 7%
+[06:06:37] [Server thread/INFO]: Preparing spawn area: 9%
+[06:06:38] [Server thread/INFO]: Preparing spawn area: 11%
+[06:06:39] [Server thread/INFO]: Preparing spawn area: 15%
+[06:06:40] [Server thread/INFO]: Preparing spawn area: 17%
+[06:06:41] [Server thread/INFO]: Preparing spawn area: 20%
+[06:06:42] [Server thread/INFO]: Preparing spawn area: 29%
+[06:06:43] [Server thread/INFO]: Preparing spawn area: 40%
+[06:06:44] [Server thread/INFO]: Preparing spawn area: 55%
+[06:06:46] [Server thread/INFO]: Preparing spawn area: 70%
+[06:06:47] [Server thread/INFO]: Preparing spawn area: 82%
+[06:06:48] [Server thread/INFO]: Preparing spawn area: 95%
+[06:06:48] [Server thread/INFO]: Done (14.248s)! For help, type “help” or “?”</p>
+<pre><code><span class="hljs-bullet">4. </span>If we ignore the files that we didn’t create for things like the banned players list, that’s all we have to do to run the server! Launch Minecraft and select Multiplayer:  
+[<span class="hljs-link_label">![Minecraft Multiplayer</span>](<span class="hljs-link_url">http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611476/Screenshot-2014-12-27-00.41.05_xnigfr.png</span>)](<span class="hljs-link_url">http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611476/Screenshot-2014-12-27-00.41.05_xnigfr.png</span>)
+<span class="hljs-bullet">5. </span>Select “Add Server”  
+[<span class="hljs-link_label">![Minecraft Add Server</span>](<span class="hljs-link_url">http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611474/Screenshot-2014-12-27-00.43.07_mje3vg.png</span>)](<span class="hljs-link_url">http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611474/Screenshot-2014-12-27-00.43.07_mje3vg.png</span>)
+<span class="hljs-bullet">6. </span>Name it whatever you want. To get the server address, run <span class="hljs-code">`machine-docker url`</span>. <span class="hljs-code">```</span>
+<span class="hljs-blockquote">&gt; machine-docker url</span>
+tcp://nnn.nnn.nn.nn:2376
+</code></pre>
+<p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611474/Screenshot-2014-12-27-00.46.13_dna5kf.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611474/Screenshot-2014-12-27-00.46.13_dna5kf.png" alt="Mining and Crafting!"></a></p>
+<ol start="7">
+<li>After clicking <code>done</code>, we should see our server:<br>
+<a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611473/Screenshot-2014-12-27-00.48.40_oxnmuv.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611473/Screenshot-2014-12-27-00.48.40_oxnmuv.png" alt="Available Server!"></a></li>
+<li>After clicking play the server, we get a nice new world!<br>
+<a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611472/Screenshot-2014-12-27-00.50.45_xcr7h9.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611472/Screenshot-2014-12-27-00.50.45_xcr7h9.png" alt="A New World!"></a></li>
+</ol>
+<h2>What’s next?</h2>
+<h3>Keeping the data around</h3>
+<p>Spawning servers is cool, but how do we keep the data around after the container is killed?</p>
+<ol>
+<li>Let’s take a look inside a running Minecraft container. ```</li>
+</ol>
+<blockquote>
+<p>machine-docker-1.3.1-dev-identity-auth ps
+CONTAINER ID        IMAGE                          COMMAND              CREATED              STATUS              PORTS                      NAMES
+94cf3f854fd8        itzg/minecraft-server:latest   “/start-minecraft”   About a minute ago   Up About a minute   0.0.0.0:25565-&gt;25565/tcp   sad_pare
+machine-docker-1.3.1-dev-identity-auth exec -it 94c bash
+minecraft@94cf3f854fd8:/data$ ls
+banned-ips.json  banned-players.json  eula.txt  logs  minecraft_server.1.8.1.jar  ops.json  server.properties  usercache.json  whitelist.json  world</p>
+</blockquote>
+<pre><code><span class="hljs-bullet">2. </span><span class="hljs-code">`kill`</span> the old server (we ran it using <span class="hljs-code">`-it`</span> so <span class="hljs-code">`Control-C`</span> should kill it. If you chose to run it with <span class="hljs-code">`-d`</span>, just use <span class="hljs-code">`machine-docker-1.3.1-dev-identity-auth ps`</span> and <span class="hljs-code">`machine-docker-1.3.1-dev-identity-auth kill $container_id`</span>
+<span class="hljs-bullet">3. </span>After killing the server, we will get kicked from the game:  
+[<span class="hljs-link_label">![Screenshot 2014-12-27 00.55.45</span>](<span class="hljs-link_url">http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611471/Screenshot-2014-12-27-00.55.45_hsjzmu.png</span>)](<span class="hljs-link_url">http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611471/Screenshot-2014-12-27-00.55.45_hsjzmu.png</span>)
+<span class="hljs-bullet">4. </span>We can see that there were quite a few files in the /data directory. We’re going to mount a volume there using <span class="hljs-code">`/opt/craft`</span> on the host. Notice that we’ve also set the Message of the Day (MOTD). <span class="hljs-code">```</span>
+machine-docker-1.3.1-dev-identity-auth run -dp 25565:25565 -e EULA=true -e 'MOTD=Crafty Crafting!' -v /opt/craft:/data itzg/minecraft-server
+</code></pre>
+<ol start="5">
+<li>Let’s ssh in to the Digital Ocean host and see if we have any files: ```</li>
+</ol>
+<blockquote>
+<p>machine-docker ssh
+root@docker:~# ls /opt/craft/
+banned-ips.json  banned-players.json  eula.txt  logs  minecraft_server.1.8.1.jar  ops.json  server.properties  usercache.json  whitelist.json  world</p>
+</blockquote>
+<pre><code><span class="hljs-number">6.</span> Voila! We have <span class="hljs-operator">a</span> bunch <span class="hljs-operator">of</span> <span class="hljs-built_in">files</span>. Now we reconnect <span class="hljs-built_in">to</span> <span class="hljs-operator">the</span> server (<span class="hljs-keyword">using</span> <span class="hljs-operator">the</span> Minecraft app) <span class="hljs-operator">and</span> spend some <span class="hljs-built_in">time</span> doing something (say, chopping down <span class="hljs-operator">a</span> tree). After that, <span class="hljs-built_in">kill</span> <span class="hljs-operator">the</span> server <span class="hljs-keyword">as</span> <span class="hljs-keyword">before</span>. The <span class="hljs-built_in">files</span> will stay <span class="hljs-command"><span class="hljs-keyword">on</span> <span class="hljs-title">the</span> <span class="hljs-title">Digital</span> <span class="hljs-title">Ocean</span> <span class="hljs-title">machine</span>, <span class="hljs-title">so</span> <span class="hljs-title">we</span> <span class="hljs-title">can</span> <span class="hljs-title">just</span> <span class="hljs-title">restart</span> <span class="hljs-title">the</span> <span class="hljs-title">server</span> <span class="hljs-title">using</span> <span class="hljs-title">the</span> <span class="hljs-title">same</span> <span class="hljs-title">volume</span> <span class="hljs-title">mount</span>: ```</span>
+machine-docker-<span class="hljs-number">1.3</span><span class="hljs-number">.1</span>-dev-identity-auth run -dp <span class="hljs-number">25565</span>:<span class="hljs-number">25565</span> -e EULA=<span class="hljs-constant">true</span> -e <span class="hljs-string">'MOTD=Crafty Crafting!'</span> -v /opt/craft:/data itzg/minecraft-server
+</code></pre>
+<ol start="7">
+<li>And look at that, we’ve still cutting down our tree! The server was saved!<br>
+<a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611468/Screenshot-2014-12-27-01.21.57_ldyqeq.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611468/Screenshot-2014-12-27-01.21.57_ldyqeq.png" alt="Chopping Wood"></a></li>
+</ol>
+<h3>A new Seed:</h3>
+<p>Let’s check out a new seed using the configuration files.</p>
+<ol>
+<li>Now we’ll re-run our server with a level seed. It should be added to <code>/opt/craft/server.properties</code> and we can do that through ssh and vi: ```</li>
+</ol>
+<blockquote>
+<p>machine-docker ssh biscarch/minecraft
+root@docker:~# vi /opt/craft/server.properties</p>
+</blockquote>
+<pre><code><span class="hljs-number">2.</span> server.properties looks something like this (we’ve just changed <span class="hljs-operator">the</span> `level-seed`) ```
+root@docker:~<span class="hljs-comment"># cat /opt/craft/server.properties</span>
+<span class="hljs-comment">#Minecraft server properties</span>
+<span class="hljs-comment">#Sat Dec 27 10:00:14 UTC 2014</span>
+spawn-protection=<span class="hljs-number">16</span>
+<span class="hljs-built_in">max</span>-<span class="hljs-built_in">tick</span>-<span class="hljs-built_in">time</span>=<span class="hljs-number">60000</span>
+generator-settings=
+force-gamemode=<span class="hljs-constant">false</span>
+allow-nether=<span class="hljs-constant">true</span>
+gamemode=<span class="hljs-number">0</span>
+enable-query=<span class="hljs-constant">false</span>
+player-idle-timeout=<span class="hljs-number">0</span>
+difficulty=<span class="hljs-number">1</span>
+spawn-monsters=<span class="hljs-constant">true</span>
+op-permission-level=<span class="hljs-number">4</span>
+resource-pack-hash=
+announce-player-achievements=<span class="hljs-constant">true</span>
+pvp=<span class="hljs-constant">true</span>
+snooper-enabled=<span class="hljs-constant">true</span>
+level-type=DEFAULT
+hardcore=<span class="hljs-constant">false</span>
+enable-<span class="hljs-command"><span class="hljs-keyword">command</span>-block=<span class="hljs-title">false</span></span>
+<span class="hljs-built_in">max</span>-players=<span class="hljs-number">20</span>
+network-compression-threshold=<span class="hljs-number">256</span>
+<span class="hljs-built_in">max</span>-world-size=<span class="hljs-number">29999984</span>
+server-port=<span class="hljs-number">25565</span>
+texture-pack=
+server-ip=
+spawn-npcs=<span class="hljs-constant">true</span>
+allow-flight=<span class="hljs-constant">false</span>
+level-name=world
+view-distance=<span class="hljs-number">10</span>
+resource-pack=
+spawn-animals=<span class="hljs-constant">true</span>
+white-list=<span class="hljs-constant">false</span>
+generate-structures=<span class="hljs-constant">true</span>
+online-mode=<span class="hljs-constant">true</span>
+<span class="hljs-built_in">max</span>-build-height=<span class="hljs-number">256</span>
+level-seed=<span class="hljs-number">1785852800490497919</span>
+use-native-transport=<span class="hljs-constant">true</span>
+enable-rcon=<span class="hljs-constant">false</span>
+motd=Crafty Crafting!
+</code></pre>
+<ol start="3">
+<li>Now we should be able to blow away <code>/opt/craft/world</code> (if it exists in the container) and our world will get rebuilt: ```
+rm -rf /opt/craft/world</li>
+</ol>
+<pre><code><span class="hljs-number">4.</span> <span class="hljs-built_in">run</span> the server <span class="hljs-keyword">with</span> the volume attached: ```
+machine-docker-<span class="hljs-number">1.3</span><span class="hljs-number">.1</span>-dev-identity-auth <span class="hljs-built_in">run</span> -dp <span class="hljs-number">25565</span>:<span class="hljs-number">25565</span> -e EULA=<span class="hljs-literal">true</span> -e <span class="hljs-string">'MOTD=Crafty Crafting!'</span> -v /<span class="hljs-built_in">opt</span>/craft:/data itzg/minecraft-server
+</code></pre>
+<ol start="5">
+<li>After starting the server with the new seed, just play the server as before (it should still be listed).<br>
+<a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611470/Screenshot-2014-12-27-01.01.20_moh5jl.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611470/Screenshot-2014-12-27-01.01.20_moh5jl.png" alt="Screenshot 2014-12-27 01.01.20"></a><br>
+Turn around and you should see:<br>
+<a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611466/Screenshot-2014-12-27-02.00.51_disq4c.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611466/Screenshot-2014-12-27-02.00.51_disq4c.png" alt="Screenshot 2014-12-27 02.00.51"></a></li>
+</ol>
+<h1>Fin</h1>
+<p>We can use docker machine to ssh into the server and edit <code>/opt/craft/server.properties</code>, which holds <a href="http://minecraft.gamepedia.com/Server.properties">a bunch of data</a> we may want to edit. Then just restart the container <img src="http://www.christopherbiscardi.com/wp-includes/images/smilies/simple-smile.png" alt=":)"></p>
+<p>Happy Crafting!</p>
+</div><em data-reactid=".1hvhewa4c1s.2.0.0.2"><span data-reactid=".1hvhewa4c1s.2.0.0.2.0">Posted </span><span data-reactid=".1hvhewa4c1s.2.0.0.2.1">December 27, 2014</span></em><hr data-reactid=".1hvhewa4c1s.2.0.0.3"><noscript data-reactid=".1hvhewa4c1s.2.0.0.4"></noscript><p data-reactid=".1hvhewa4c1s.2.0.0.5"><img src="/headshot.png" data-reactid=".1hvhewa4c1s.2.0.0.5.0"><span data-reactid=".1hvhewa4c1s.2.0.0.5.1">Written by </span><strong data-reactid=".1hvhewa4c1s.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".1hvhewa4c1s.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".1hvhewa4c1s.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".1hvhewa4c1s.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

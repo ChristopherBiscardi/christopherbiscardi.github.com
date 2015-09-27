@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".ctzgam1eyo" data-react-checksum="-1139523763"><nav data-reactid=".ctzgam1eyo.1"><div data-reactid=".ctzgam1eyo.1.0"><div data-reactid=".ctzgam1eyo.1.0.0"><ul data-reactid=".ctzgam1eyo.1.0.0.0"><li data-reactid=".ctzgam1eyo.1.0.0.0.0"><a class="" href="/" data-reactid=".ctzgam1eyo.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".ctzgam1eyo.1.0.0.0.1"><a class="" href="/talks" data-reactid=".ctzgam1eyo.1.0.0.0.1.0">talks</a></li><li data-reactid=".ctzgam1eyo.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".ctzgam1eyo.1.0.0.0.2.0">twitter</a></li><li data-reactid=".ctzgam1eyo.1.0.0.0.3"><a class="" href="/projects" data-reactid=".ctzgam1eyo.1.0.0.0.3.0">projects</a></li><li data-reactid=".ctzgam1eyo.1.0.0.0.4"><a class="" href="/books" data-reactid=".ctzgam1eyo.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".ctzgam1eyo.2"><div data-reactid=".ctzgam1eyo.2.0"><div class="markdown" data-reactid=".ctzgam1eyo.2.0.0"><h1 data-reactid=".ctzgam1eyo.2.0.0.0">Clojure Compojure Jetty Integration</h1><div data-reactid=".ctzgam1eyo.2.0.0.1"><p>If you want to deploy a Clojure/Compojure application you’re going to need a couple hints.</p>
+<p>First, in project.clj you’re going to need to add an item to :dependencies and :main.</p>
+<p>I have some extra dependencies such as hiccup that aren’t strictly necessary. The ring/ring-jetty-adapter is most important.</p>
+<p>under :main write the name of the module that has your (defroutes), we’re going to add a -main function to the same file.</p>
+<pre><code>&lt;<span class="hljs-atom">code</span> <span class="hljs-atom">class</span>=<span class="hljs-string">"clojure"</span>&gt;
+:<span class="hljs-atom">dependencies</span> [[<span class="hljs-atom">org</span>.<span class="hljs-atom">clojure</span>/<span class="hljs-atom">clojure</span> <span class="hljs-string">"1.4.0"</span>]
+              [<span class="hljs-atom">compojure</span> <span class="hljs-string">"1.1.5"</span>]
+              [<span class="hljs-atom">ring</span>/<span class="hljs-atom">ring</span>-<span class="hljs-atom">jetty</span>-<span class="hljs-atom">adapter</span> <span class="hljs-string">"1.2.0-beta1"</span>]
+              [<span class="hljs-atom">hiccup</span> <span class="hljs-string">"1.0.2"</span>]]
+:<span class="hljs-atom">main</span> <span class="hljs-atom">projectname</span>.<span class="hljs-atom">handler</span>
+</code></pre>
+<p>Now in projectname.handler add :gen-class and ring.adapter.jetty to (use).</p>
+<p>Lower in the same file, include a new function called -main.<br>
+This is the function java will call to start the server.</p>
+<p>In this case my defroutes was named app-routes so that’s what goes after run-jetty.</p>
+<pre><code>&lt;code class=<span class="hljs-string">"clojure"</span>&gt;
+<span class="hljs-list">(<span class="hljs-keyword">ns</span> projectname.handler
+ <span class="hljs-list">(<span class="hljs-keyword">:gen-class</span>)</span>
+ <span class="hljs-list">(<span class="hljs-keyword">:use</span> [compojure.core]
+       [ring.adapter.jetty]
+       [hiccup.core])</span>)</span>
+
+<span class="hljs-list">(<span class="hljs-keyword">defroutes</span> app-routes
+           <span class="hljs-list">(<span class="hljs-keyword">GET</span> <span class="hljs-string">"/"</span> [] g/show-home)</span>
+           <span class="hljs-list">(<span class="hljs-keyword">route/resources</span> <span class="hljs-string">"/"</span>)</span>
+           <span class="hljs-list">(<span class="hljs-keyword">route/not-found</span> <span class="hljs-string">"Not Found"</span>)</span>)</span>
+
+<span class="hljs-list">(<span class="hljs-keyword">defn</span> -main [&amp; args]
+ <span class="hljs-list">(<span class="hljs-keyword">run-jetty</span> <span class="hljs-list">(<span class="hljs-keyword">handler/site</span> app-routes)</span> {<span class="hljs-keyword">:port</span> <span class="hljs-number">5000</span>})</span>)</span>
+</code></pre>
+<p>That’s it. You should be able to</p>
+<pre><code>&lt;<span class="hljs-tag">code</span> class=<span class="hljs-string">"bash"</span>&gt;
+lein compile
+lein uberjar
+java -jar target/whatever-STANDALONE<span class="hljs-class">.jar</span>
+</code></pre>
+</div><em data-reactid=".ctzgam1eyo.2.0.0.2"><span data-reactid=".ctzgam1eyo.2.0.0.2.0">Posted </span><span data-reactid=".ctzgam1eyo.2.0.0.2.1">February 17, 2013</span></em><hr data-reactid=".ctzgam1eyo.2.0.0.3"><noscript data-reactid=".ctzgam1eyo.2.0.0.4"></noscript><p data-reactid=".ctzgam1eyo.2.0.0.5"><img src="/headshot.png" data-reactid=".ctzgam1eyo.2.0.0.5.0"><span data-reactid=".ctzgam1eyo.2.0.0.5.1">Written by </span><strong data-reactid=".ctzgam1eyo.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".ctzgam1eyo.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".ctzgam1eyo.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".ctzgam1eyo.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

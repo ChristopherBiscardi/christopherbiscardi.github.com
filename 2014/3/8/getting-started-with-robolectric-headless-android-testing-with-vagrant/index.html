@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".22jskeuqkg" data-react-checksum="-1769511020"><nav data-reactid=".22jskeuqkg.1"><div data-reactid=".22jskeuqkg.1.0"><div data-reactid=".22jskeuqkg.1.0.0"><ul data-reactid=".22jskeuqkg.1.0.0.0"><li data-reactid=".22jskeuqkg.1.0.0.0.0"><a class="" href="/" data-reactid=".22jskeuqkg.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".22jskeuqkg.1.0.0.0.1"><a class="" href="/talks" data-reactid=".22jskeuqkg.1.0.0.0.1.0">talks</a></li><li data-reactid=".22jskeuqkg.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".22jskeuqkg.1.0.0.0.2.0">twitter</a></li><li data-reactid=".22jskeuqkg.1.0.0.0.3"><a class="" href="/projects" data-reactid=".22jskeuqkg.1.0.0.0.3.0">projects</a></li><li data-reactid=".22jskeuqkg.1.0.0.0.4"><a class="" href="/books" data-reactid=".22jskeuqkg.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".22jskeuqkg.2"><div data-reactid=".22jskeuqkg.2.0"><div class="markdown" data-reactid=".22jskeuqkg.2.0.0"><h1 data-reactid=".22jskeuqkg.2.0.0.0">Getting Started with Robolectric: Headless Android Testing with Vagrant</h1><div data-reactid=".22jskeuqkg.2.0.0.1"><p>In this post we will go over how to set up the sample project for Robolectric, run, test and deploy to a device in a headless vagrant environment.</p>
+<h2>Sample App</h2>
+<p>Clone the sample app from the <a href="https://github.com/robolectric/RobolectricSample">github repo</a></p>
+<p><code>git clone git@github.com:robolectric/RobolectricSample.git</code></p>
+<h2>Vagrantfile</h2>
+<p>Here is our Vagrantfile. We’ll need to add the <code>precise64</code> base box to our system. also availible as a <a href="https://gist.github.com/ChristopherBiscardi/9383725">Gist</a></p>
+<p><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;vagrant box add precise64 http://files.vagrantup.com/precise64.box</code></p>
+<pre><code>&lt;code class=<span class="hljs-string">"ruby"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;<span class="hljs-comment"># -*- mode: ruby -*-</span>
+<span class="hljs-comment"># vi: set ft=ruby :</span>
+
+<span class="hljs-comment"># Vagrantfile API/syntax version. Don't touch unless you know what you're doing!</span>
+<span class="hljs-constant">VAGRANTFILE_API_VERSION </span>= <span class="hljs-string">"2"</span>
+
+<span class="hljs-constant">Vagrant.</span>configure(<span class="hljs-constant">VAGRANTFILE_API_VERSION)</span> <span class="hljs-keyword">do</span> |config|
+  config.vm.box = <span class="hljs-string">"precise64"</span>
+  config.vm.provision <span class="hljs-string">"shell"</span>, <span class="hljs-symbol">path:</span> <span class="hljs-string">"vagrant-android-build.sh"</span>
+  config.vm.provider <span class="hljs-symbol">:virtualbox</span> <span class="hljs-keyword">do</span> |vb|
+    vb.customize [<span class="hljs-string">'modifyvm'</span>, <span class="hljs-symbol">:id</span>, <span class="hljs-string">'--usb'</span>, <span class="hljs-string">'on'</span>]
+    vb.customize [<span class="hljs-string">'usbfilter'</span>, <span class="hljs-string">'add'</span>, <span class="hljs-string">'0'</span>, <span class="hljs-string">'--target'</span>, <span class="hljs-symbol">:id</span>, <span class="hljs-string">'--name'</span>, <span class="hljs-string">'1197123b'</span>, <span class="hljs-string">'--vendorid'</span>, <span class="hljs-string">'0x04e8'</span>]
+    vb.customize [<span class="hljs-string">'usbfilter'</span>, <span class="hljs-string">'add'</span>, <span class="hljs-string">'0'</span>, <span class="hljs-string">'--target'</span>, <span class="hljs-symbol">:id</span>, <span class="hljs-string">'--name'</span>, <span class="hljs-string">'android'</span>, <span class="hljs-string">'--vendorid'</span>, <span class="hljs-string">'0x18d1'</span>]
+  <span class="hljs-keyword">end</span>  
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>and the Vagrant build script. The build script downloads and installs ADT and Maven.</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"bash"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;apt-get <span class="hljs-keyword">update</span> -<span class="hljs-literal">y</span>
+apt-get install openjdk-7-jdk unzip -<span class="hljs-literal">y</span>
+# <span class="hljs-keyword">For</span> maven-<span class="hljs-keyword">plugin</span>
+apt-get install lib32z1-dev bison flex lib32ncurses5-dev libx11-dev gperf <span class="hljs-keyword">g</span>++-multilib -<span class="hljs-literal">y</span>
+# Setup Android SDK
+sudo -<span class="hljs-keyword">u</span> vagrant wget http:<span class="hljs-comment">//dl.google.com/android/adt/adt-bundle-linux-x86_64-20131030.zip</span>
+sudo -<span class="hljs-keyword">u</span> vagrant unzip adt-bundle-linux-x86_64-20131030.<span class="hljs-keyword">zip</span>
+# Add Android SDK to PATH
+sudo -<span class="hljs-keyword">u</span> vagrant echo export PATH=/home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/tools:\<span class="hljs-label">$PATH</span> &gt;&gt; /home/vagrant/.bashrc
+sudo -<span class="hljs-keyword">u</span> vagrant echo export PATH=/home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/platform-tools:\<span class="hljs-label">$PATH</span> &gt;&gt; /home/vagrant/.bashrc
+
+# Maven
+sudo -<span class="hljs-keyword">u</span> vagrant wget http:<span class="hljs-comment">//download.nextag.com/apache/maven/maven-3/3.2.1/binaries/apache-maven-3.2.1-bin.tar.gz</span>
+sudo -<span class="hljs-keyword">u</span> vagrant tar -xvzf apache-maven-3.2.1-bin.tar.gz
+# Add Maven to PATH
+sudo -<span class="hljs-keyword">u</span> vagrant echo export PATH=/home/vagrant/apache-maven-3.2.1/bin:\<span class="hljs-label">$PATH</span> &gt;&gt; /home/vagrant/.bashrc
+
+# Install API 16 (<span class="hljs-keyword">sample</span> project needs it)
+# echo <span class="hljs-string">"y"</span> is a hack to accept the license
+sudo -<span class="hljs-keyword">u</span> vagrant echo <span class="hljs-string">"y"</span> | /home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/tools/android <span class="hljs-keyword">update</span> sdk -t 6 --<span class="hljs-keyword">no</span>-ui -<span class="hljs-literal">y</span>
+# ANDROID_HOME is <span class="hljs-keyword">for</span> Maven
+sudo -<span class="hljs-keyword">u</span> vagrant echo export ANDROID_HOME=/home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/ &gt;&gt; /home/vagrant/.bashrc
+</code></pre>
+<h2>Path and ANDROID_HOME</h2>
+<p>We need a few thing on our path, all of which are included in our Vagrant build script (Android tools, Android platform-tools, Maven and ANDROID_HOME)</p>
+<pre><code><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">code</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"bash"</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">"overflow-x:auto"</span>&gt;</span></span>export PATH=/home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/tools:\$PATH
+export PATH=/home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/platform-tools:\$PATH
+export PATH=/home/vagrant/apache-maven-3.2.1/bin:\$PATH
+export ANDROID<span class="hljs-emphasis">_HOME=/home/vagrant/adt-bundle-linux-x86_</span>64-20131030/sdk/<span class="hljs-code">```</span>
+
+
+<span class="hljs-header">## Vagrant Up</span>
+
+Simply copy the <span class="hljs-code">`Vagrantfile`</span> and <span class="hljs-code">`vagrant-android-build.sh`</span> into the sample project’s root folder. Then <span class="hljs-code">`cd`</span> into that folder and run <span class="hljs-code">`vagrant up`</span> to boot the machine. If you don’t have Vagrant and VirtualBox, [<span class="hljs-link_label">here</span>](<span class="hljs-link_url">http://www.vagrantup.com/</span>) and [<span class="hljs-link_label">here</span>](<span class="hljs-link_url">https://www.virtualbox.org/</span>) are the respective links.
+
+Note that it may be necessary to run the command to update the Android SDK manually due to the licenses.
+
+</code></pre>
+<p><code class="bash" style="overflow-x:auto">vagrant ssh
+android update sdk -t 6 --no-ui -y```</p>
+<h2>Running the Tests</h2>
+<p>We can run the tests inside the vm using maven:</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"bash"</span>&gt;vagrant ssh
+<span class="hljs-keyword">cd</span> /vagrant
+mvn clean <span class="hljs-keyword">test</span>```
+
+<span class="hljs-keyword">Which</span> will give <span class="hljs-keyword">us</span> output that looks like this:
+
+</code></pre>
+<p><code class="bash" style="overflow-x:auto">Results :</p>
+<p>Tests run: 87, Failures: 0, Errors: 0, Skipped: 0</p>
+<p>[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 28.917 s
+[INFO] Finished at: 2014-03-06T06:19:39+00:00
+[INFO] Final Memory: 23M/57M
+[INFO] ------------------------------------------------------------------------</p>
+<pre><code>
+Run `exit` <span class="hljs-built_in">to</span> <span class="hljs-built_in">get</span> out <span class="hljs-operator">of</span> <span class="hljs-operator">the</span> vm.
+
+
+<span class="hljs-comment">## Connecting Test Devices to the VM</span>
+
+With `VBoxManage` <span class="hljs-operator">and</span> devices connected, we can allow (all?) <span class="hljs-operator">of</span> them <span class="hljs-keyword">using</span> <span class="hljs-operator">the</span> following `usbfilter` <span class="hljs-operator">in</span> our `Vagrantfile`
+
+</code></pre>
+<p><code class="ruby" style="overflow-x:auto">config.vm.provider :virtualbox do |vb|
+vb.customize [‘modifyvm’, :id, ‘–usb’, ‘on’]
+vb.customize [‘usbfilter’, ‘add’, ‘0’, ‘–target’, :id, ‘–name’, ‘android’, ‘–vendorid’, ‘0x18d1’]
+end</p>
+<pre><code>
+Alternatively, we can <span class="hljs-type">list</span> all connected usbhosts <span class="hljs-keyword">and</span> select a specific device <span class="hljs-keyword">as</span> such:
+
+`&lt;code <span class="hljs-type">class</span>=<span class="hljs-string">"bash"</span>&gt;VBoxManage <span class="hljs-type">list</span> usbhost`
+
+Which gives us a <span class="hljs-type">list</span> <span class="hljs-keyword">of</span> these:
+
+</code></pre>
+<p><code class="bash">UUID:               6316e123-b702-4155-9703-c2015d014237
+VendorId:           0x18d1 (18D1)
+ProductId:          0xd002 (D002)
+Revision:           2.40 (0240)
+Port:               6
+USB version/speed:  0/2
+Manufacturer:       asus
+Product:            Nexus 7
+SerialNumber:       07d99c71
+Address:            p=0xd002;v=0x18d1;s=0x000000006321cfbd;l=0x20260000
+Current State:      Busy```</p>
+<p>Find your Android device and use these parameters to change our Vagrantfile:</p>
+<p>SerialNumber -&gt; –name<br>
+VendorId -&gt; –vendorid</p>
+<pre><code>&lt;code class=<span class="hljs-string">"ruby"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;config.vm.provider <span class="hljs-symbol">:virtualbox</span> <span class="hljs-keyword">do</span> |vb|
+    vb.customize [<span class="hljs-string">'modifyvm'</span>, <span class="hljs-symbol">:id</span>, <span class="hljs-string">'--usb'</span>, <span class="hljs-string">'on'</span>]
+    vb.customize [<span class="hljs-string">'usbfilter'</span>, <span class="hljs-string">'add'</span>, <span class="hljs-string">'0'</span>, <span class="hljs-string">'--target'</span>, <span class="hljs-symbol">:id</span>, <span class="hljs-string">'--name'</span>, <span class="hljs-string">'1197123b'</span>, <span class="hljs-string">'--vendorid'</span>, <span class="hljs-string">'0x04e8'</span>]
+  <span class="hljs-keyword">end</span>
+</code></pre>
+<p>Remember to <code>vagrant reload</code> after changing network settings in the <code>Vagrantfile</code>. Some devices may also need to be unplugged and plugged back in for the VM to see them.</p>
+<h2>Deploying</h2>
+<p>Simply run adb inside the vm to see the connected devices:</p>
+<pre><code>&lt;code class=<span class="hljs-string">"bash"</span>&gt;vagrant ssh
+sudo adb devices```
+
+If you see <span class="hljs-operator">an</span> unauthorized message like <span class="hljs-operator">the</span> <span class="hljs-constant">one</span> below, <span class="hljs-keyword">it</span> is likely that you didn’t <span class="hljs-built_in">start</span> <span class="hljs-operator">the</span> adb server <span class="hljs-keyword">as</span> root (which will prevent <span class="hljs-operator">the</span> RSA authorization <span class="hljs-built_in">from</span> popping up).
+
+</code></pre>
+<p>&lt;code bash=&quot;&quot; class=&quot;bash&gt;</p>
+<ul>
+<li>daemon not running. starting it now on port 5037 *</li>
+<li>daemon started successfully *
+List of devices attached
+???    no permissions</pre><p>Otherwise we should see a list of devices as below after authorizing the devices when the RSA dialog pops up on each device.</p><pre>&lt;code class=&quot;&gt;List of devices attached
+07d99c71    device
+2d605528    device```</li>
+</ul>
+<p>We can now install the app on our devices from inside the vm using maven.</p>
+<pre><code>&lt;<span class="hljs-preprocessor">code</span> class=<span class="hljs-string">"bash"</span>&gt;cd /vagrant
+<span class="hljs-keyword">mvn </span>clean install &amp;&amp; <span class="hljs-keyword">mvn </span><span class="hljs-keyword">android:deploy```
+</span>
+
+## Fin
+
+<span class="hljs-label">That</span>’s <span class="hljs-keyword">it. </span>The app should <span class="hljs-keyword">be </span>installed on your connected devices. <span class="hljs-keyword">It </span>won’t start automatically, <span class="hljs-keyword">but </span>you can navigate to the newly installed `Robolectric Sample` app <span class="hljs-keyword">and </span>start <span class="hljs-keyword">it </span>up.
+
+
+</code></pre>
+</div><em data-reactid=".22jskeuqkg.2.0.0.2"><span data-reactid=".22jskeuqkg.2.0.0.2.0">Posted </span><span data-reactid=".22jskeuqkg.2.0.0.2.1">March 8, 2014</span></em><hr data-reactid=".22jskeuqkg.2.0.0.3"><noscript data-reactid=".22jskeuqkg.2.0.0.4"></noscript><p data-reactid=".22jskeuqkg.2.0.0.5"><img src="/headshot.png" data-reactid=".22jskeuqkg.2.0.0.5.0"><span data-reactid=".22jskeuqkg.2.0.0.5.1">Written by </span><strong data-reactid=".22jskeuqkg.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".22jskeuqkg.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".22jskeuqkg.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".22jskeuqkg.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".17gbgoqhla8" data-react-checksum="131021416"><nav data-reactid=".17gbgoqhla8.1"><div data-reactid=".17gbgoqhla8.1.0"><div data-reactid=".17gbgoqhla8.1.0.0"><ul data-reactid=".17gbgoqhla8.1.0.0.0"><li data-reactid=".17gbgoqhla8.1.0.0.0.0"><a class="" href="/" data-reactid=".17gbgoqhla8.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".17gbgoqhla8.1.0.0.0.1"><a class="" href="/talks" data-reactid=".17gbgoqhla8.1.0.0.0.1.0">talks</a></li><li data-reactid=".17gbgoqhla8.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".17gbgoqhla8.1.0.0.0.2.0">twitter</a></li><li data-reactid=".17gbgoqhla8.1.0.0.0.3"><a class="" href="/projects" data-reactid=".17gbgoqhla8.1.0.0.0.3.0">projects</a></li><li data-reactid=".17gbgoqhla8.1.0.0.0.4"><a class="" href="/books" data-reactid=".17gbgoqhla8.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".17gbgoqhla8.2"><div data-reactid=".17gbgoqhla8.2.0"><div class="markdown" data-reactid=".17gbgoqhla8.2.0.0"><h1 data-reactid=".17gbgoqhla8.2.0.0.0">GHC -ddump-minimal-imports and CPP error: missing binary operator before token &quot;(&quot;</h1><div data-reactid=".17gbgoqhla8.2.0.0.1"><p>Today I was trying to extract the minimal imports for a module using <code>ghc -ddump-minimal-imports</code> but I was getting this error on some files:</p>
+<pre><code>&lt;code class=<span class="hljs-string">"bash"</span>&gt;error: missing binary operator <span class="hljs-keyword">before</span> <span class="hljs-keyword">token</span> <span class="hljs-string">"("</span>
+<span class="hljs-comment">#if MIN_VERSION_base(4,4,0)</span>
+^```
+
+Which is related <span class="hljs-built_in">to</span> <span class="hljs-operator">the</span> fact that `cabal` expands `MIN_VERSION_base` macros when running `cabal build`, so we don’t have them when running `ghc` <span class="hljs-operator">or</span> `ghci`. Luckily <span class="hljs-keyword">it</span>’s <span class="hljs-operator">an</span> easy fix.
+
+Cabal generates <span class="hljs-operator">a</span> macros <span class="hljs-built_in">file</span> <span class="hljs-built_in">relative</span> <span class="hljs-built_in">to</span> <span class="hljs-operator">the</span> root <span class="hljs-operator">of</span> <span class="hljs-operator">the</span> project <span class="hljs-keyword">at</span> `dist/build/autogen/cabal_macros.h`. We can <span class="hljs-built_in">include</span> this <span class="hljs-built_in">file</span> <span class="hljs-built_in">to</span> gain access <span class="hljs-built_in">to</span> <span class="hljs-operator">the</span> macros:
+
+`&lt;code class=<span class="hljs-string">"bash"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;ghc -ddump-minimal-imports -optP-<span class="hljs-built_in">include</span> -optPdist/build/autogen/cabal_macros.h src/Types.hs`
+
+Which will now spit out our imports <span class="hljs-keyword">into</span> <span class="hljs-operator">a</span> <span class="hljs-built_in">file</span> called `Types.imports` <span class="hljs-operator">and</span> may look something like this:
+
+</code></pre>
+<p><code class="haskell">import Blaze.ByteString.Builder
+( Builder, fromLazyByteString, fromByteString )
+import Blaze.ByteString.Builder.Char.Utf8
+( fromText, fromLazyText )
+import Control.Applicative
+( Applicative((), pure), Alternative((), empty), () )
+import Control.Exception.Lifted
+( ErrorCall(…),
+Exception,
+Handler(…),
+SomeException(…),
+catch,
+catches,
+mask,
+onException,
+throwIO )```</p>
+</div><em data-reactid=".17gbgoqhla8.2.0.0.2"><span data-reactid=".17gbgoqhla8.2.0.0.2.0">Posted </span><span data-reactid=".17gbgoqhla8.2.0.0.2.1">March 5, 2014</span></em><hr data-reactid=".17gbgoqhla8.2.0.0.3"><noscript data-reactid=".17gbgoqhla8.2.0.0.4"></noscript><p data-reactid=".17gbgoqhla8.2.0.0.5"><img src="/headshot.png" data-reactid=".17gbgoqhla8.2.0.0.5.0"><span data-reactid=".17gbgoqhla8.2.0.0.5.1">Written by </span><strong data-reactid=".17gbgoqhla8.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".17gbgoqhla8.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".17gbgoqhla8.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".17gbgoqhla8.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

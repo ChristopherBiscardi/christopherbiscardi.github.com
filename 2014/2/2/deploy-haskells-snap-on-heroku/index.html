@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".14qmttrl91c" data-react-checksum="-2089748539"><nav data-reactid=".14qmttrl91c.1"><div data-reactid=".14qmttrl91c.1.0"><div data-reactid=".14qmttrl91c.1.0.0"><ul data-reactid=".14qmttrl91c.1.0.0.0"><li data-reactid=".14qmttrl91c.1.0.0.0.0"><a class="" href="/" data-reactid=".14qmttrl91c.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".14qmttrl91c.1.0.0.0.1"><a class="" href="/talks" data-reactid=".14qmttrl91c.1.0.0.0.1.0">talks</a></li><li data-reactid=".14qmttrl91c.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".14qmttrl91c.1.0.0.0.2.0">twitter</a></li><li data-reactid=".14qmttrl91c.1.0.0.0.3"><a class="" href="/projects" data-reactid=".14qmttrl91c.1.0.0.0.3.0">projects</a></li><li data-reactid=".14qmttrl91c.1.0.0.0.4"><a class="" href="/books" data-reactid=".14qmttrl91c.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".14qmttrl91c.2"><div data-reactid=".14qmttrl91c.2.0"><div class="markdown" data-reactid=".14qmttrl91c.2.0.0"><h1 data-reactid=".14qmttrl91c.2.0.0.0">Deploy Haskell&#x27;s Snap on Heroku</h1><div data-reactid=".14qmttrl91c.2.0.0.1"><p>In this post we will deploy our Snap app to Heroku.</p>
+<p><a href="http://www.christopherbiscardi.com/2014/01/07/getting-started-with-snap-and-user-authentication-part-1/">part 1</a><br>
+<a href="http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/">part 2</a><br>
+<a href="http://www.christopherbiscardi.com/2014/01/11/getting-started-with-snap-and-user-authentication-part-3/">part 3</a></p>
+<p>First, we need to put a <code>Procfile</code> in the root of our project; Save this as <code>Procfile</code></p>
+<p><code>web: cabal run -- -p $PORT</code></p>
+<p>If you’ve been following along and haven’t yet put the code into version control, now is the time to do that by running <code>git init</code>, <code>git add</code> and <code>git commit -m &quot;message&quot;</code>.</p>
+<p>This command will create a new Heroku app with a Haskell buildpack. You can find more information on the buildpack <a href="">here</a></p>
+<p><code>heroku create --stack=cedar --buildpack https://github.com/begriffs/heroku-buildpack-ghc.git</code></p>
+<p><span style="font-style:italic">–note: You can now deploy the app to Heroku, but you will get an error about connecting to PostgreSQL</span></p>
+<p>At this point we have two basic choices: We can run PostgreSQL as a Heroku extension or we can host PostgreSQL somewhere else. Hosting elsewhere is easier because the other options are</p>
+<ol>
+<li>Write a Pull Request for <a href="https://github.com/bos/configurator">Configurator</a> to enable dynamic creation of <code>Config</code>s (Then we parse the Heroku PostgreSQL ENV variable and pass the new <code>Config</code> instead of our file in the PostgreSQL snaplet directory)</li>
+<li>Write a Pull Request for <a href="https://github.com/mightybyte/snaplet-postgresql-simple">snaplet-postgresql-simple</a> that enables bypassing the <code>Config</code> in favor of parsing the ENV variable. This would likely involve writing a new <a href="https://github.com/mightybyte/snaplet-postgresql-simple/blob/master/src/Snap/Snaplet/PostgresqlSimple.hs#L278-301">pgsInit” and initHelper’</a> and is, in fact, something I started doing for this blog post before I got distracted.</li>
+<li>Write some code that runs before the snaplets are initialized that reads the ENV variable, parses it into a <code>Configurator</code> parsable config file, writes it out to <code>/snaplets/postgres-simple/devel.cfg</code>. The snaplet would then read in the config file as normal when initialized.</li>
+</ol>
+<p><code>devel.cfg</code> looks like this:</p>
+<pre><code>&lt;code style=<span class="hljs-string">"overflow-x:scroll"</span>&gt;host = <span class="hljs-string">"localhost"</span>
+<span class="hljs-keyword">port</span> = <span class="hljs-number">5432</span>
+user = <span class="hljs-string">"postgres"</span>
+pass = <span class="hljs-string">""</span>
+db = <span class="hljs-string">"testdb"</span>
+
+# Nmuber <span class="hljs-keyword">of</span> distinct connection pools <span class="hljs-keyword">to</span> maintain.  The smallest acceptable
+# value <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>.
+numStripes = <span class="hljs-number">1</span>
+
+# Number <span class="hljs-keyword">of</span> seconds an unused resource <span class="hljs-keyword">is</span> kept <span class="hljs-keyword">open</span>.  The smallest acceptable
+# value <span class="hljs-keyword">is</span> <span class="hljs-number">0.5</span> seconds.
+idleTime = <span class="hljs-number">5</span>
+
+# Maximum number <span class="hljs-keyword">of</span> resources <span class="hljs-keyword">to</span> keep <span class="hljs-keyword">open</span> per stripe.  The smallest
+# acceptable value <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>.
+maxResourcesPerStripe = <span class="hljs-number">20</span>```
+
+The final option <span class="hljs-keyword">is</span> <span class="hljs-keyword">to</span> just host PostgreSQL somewhere other than Heroku <span class="hljs-keyword">and</span> modify the config <span class="hljs-keyword">file</span> <span class="hljs-keyword">to</span> point there.
+
+[![CBLogo_2014_transparent](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png)
+
+
+</code></pre>
+</div><em data-reactid=".14qmttrl91c.2.0.0.2"><span data-reactid=".14qmttrl91c.2.0.0.2.0">Posted </span><span data-reactid=".14qmttrl91c.2.0.0.2.1">February 2, 2014</span></em><hr data-reactid=".14qmttrl91c.2.0.0.3"><noscript data-reactid=".14qmttrl91c.2.0.0.4"></noscript><p data-reactid=".14qmttrl91c.2.0.0.5"><img src="/headshot.png" data-reactid=".14qmttrl91c.2.0.0.5.0"><span data-reactid=".14qmttrl91c.2.0.0.5.1">Written by </span><strong data-reactid=".14qmttrl91c.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".14qmttrl91c.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".14qmttrl91c.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".14qmttrl91c.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".u5rutqlp1c" data-react-checksum="712830958"><nav data-reactid=".u5rutqlp1c.1"><div data-reactid=".u5rutqlp1c.1.0"><div data-reactid=".u5rutqlp1c.1.0.0"><ul data-reactid=".u5rutqlp1c.1.0.0.0"><li data-reactid=".u5rutqlp1c.1.0.0.0.0"><a class="" href="/" data-reactid=".u5rutqlp1c.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".u5rutqlp1c.1.0.0.0.1"><a class="" href="/talks" data-reactid=".u5rutqlp1c.1.0.0.0.1.0">talks</a></li><li data-reactid=".u5rutqlp1c.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".u5rutqlp1c.1.0.0.0.2.0">twitter</a></li><li data-reactid=".u5rutqlp1c.1.0.0.0.3"><a class="" href="/projects" data-reactid=".u5rutqlp1c.1.0.0.0.3.0">projects</a></li><li data-reactid=".u5rutqlp1c.1.0.0.0.4"><a class="" href="/books" data-reactid=".u5rutqlp1c.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".u5rutqlp1c.2"><div data-reactid=".u5rutqlp1c.2.0"><div class="markdown" data-reactid=".u5rutqlp1c.2.0.0"><h1 data-reactid=".u5rutqlp1c.2.0.0.0">Using Databases inside of Snaplet Auth Restricted Routes</h1><div data-reactid=".u5rutqlp1c.2.0.0.1"><p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png" alt="CBLogo_2014_transparent"></a><br>
+The github repo for this code is at <a href="https://github.com/ChristopherBiscardi/Snap-Databased-within-Auth-Snaplet-Example">here</a>.</p>
+<p>tldr; use this instance:</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"haskell"</span>&gt;<span class="hljs-function">instance <span class="hljs-title">HasPostgres</span> (<span class="hljs-params">Handler App (AuthManager App</span>)) <span class="hljs-keyword">where</span>
+    getPostgresState </span>= withTop pg <span class="hljs-keyword">get</span>
+</code></pre>
+<p>The app we’re using was built by running <code>snap init</code> and adding the following code:</p>
+<h5>src/Application.hs</h5>
+<p>In <code>src/Application.hs</code> we’ve added the following imports:</p>
+<p><code>import Snap.Snaplet.PostgresqlSimple</code></p>
+<p>and the following definition to our <code>App</code> datatype:</p>
+<p><code>,_pg :: Snaplet Postgres</code></p>
+<h5>src/Site.hs</h5>
+<p>In <code>src/Site.hs</code> we’ve added the following language extensions:</p>
+<p><code>{-# LANGUAGE FlexibleInstances #-}</code></p>
+<p>Imports:</p>
+<pre><code>&lt;<span class="hljs-tag">code</span> class=<span class="hljs-string">"haskell"</span>&gt;-- <span class="hljs-keyword">for</span> <span class="hljs-string">"get"</span>
+import Control<span class="hljs-class">.Monad</span><span class="hljs-class">.State</span><span class="hljs-class">.Class</span>
+-- <span class="hljs-keyword">for</span> <span class="hljs-string">"liftIO"</span>
+import           Control<span class="hljs-class">.Monad</span><span class="hljs-class">.IO</span><span class="hljs-class">.Class</span>
+--<span class="hljs-keyword">for</span> <span class="hljs-string">"writeJSON"</span>
+import           Snap<span class="hljs-class">.Extras</span><span class="hljs-class">.JSON</span>
+-- <span class="hljs-keyword">for</span> Non Snaplet-Auth related database queries
+import           Snap<span class="hljs-class">.Snaplet</span><span class="hljs-class">.PostgresqlSimple</span>
+-- <span class="hljs-keyword">for</span> Snaplet-Auth backed
+import           Snap<span class="hljs-class">.Snaplet</span><span class="hljs-class">.Auth</span><span class="hljs-class">.Backends</span><span class="hljs-class">.PostgresqlSimple</span>```
+
+Instances:
+
+</code></pre>
+<p><code class="haskell">instance HasPostgres (Handler b App) where
+getPostgresState = with pg get</p>
+<p>instance HasPostgres (Handler App (AuthManager App)) where
+getPostgresState = withTop pg get</p>
+<pre><code>
+<span class="hljs-keyword">and</span> Snaplet Init code:
+
+`&lt;code class=<span class="hljs-string">"haskell"</span>&gt;p `
+
+
+## What<span class="hljs-attribute">'s</span> Going <span class="hljs-keyword">On</span>
+
+We<span class="hljs-attribute">'ve</span> also defined a convenience <span class="hljs-keyword">function</span> `needsAuth` <span class="hljs-keyword">to</span> <span class="hljs-keyword">restrict</span> our `<span class="hljs-string">"/postgres"</span>` route <span class="hljs-keyword">to</span> only logged <span class="hljs-keyword">in</span> users.
+
+</code></pre>
+<p><code class="haskell">needsAuth :: Handler App (AuthManager App) () -&gt; Handler App App ()
+needsAuth x = with auth $ requireUser auth (redirect “/”) x</p>
+<pre><code>
+`getFromPostgres` does <span class="hljs-operator">the</span> dirty work <span class="hljs-keyword">for</span> us <span class="hljs-keyword">by</span> querying <span class="hljs-operator">a</span> table that was created <span class="hljs-keyword">as</span> part <span class="hljs-operator">of</span> <span class="hljs-operator">the</span> Snaplet-Auth backend. It will <span class="hljs-constant">return</span> <span class="hljs-operator">a</span> list <span class="hljs-operator">of</span> all users.
+
+</code></pre>
+<p><code class="haskell">getFromPostgres :: Handler App (AuthManager App) ()
+getFromPostgres = do
+–get the results
+results ```</p>
+<p><code>&quot;/postgres&quot;</code> is the url to hit to check to see if it’s working.</p>
+<p><code>, (&quot;/postgres&quot;, needsAuth getFromPostgres)</code></p>
+<h2>The Instance</h2>
+<p>What’s really doing the heavy lifting of using the postgres snaplet inside of the auth snaplet’s route is this instance:</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"haskell"</span>&gt;<span class="hljs-function">instance <span class="hljs-title">HasPostgres</span> (<span class="hljs-params">Handler App (AuthManager App</span>)) <span class="hljs-keyword">where</span>
+    getPostgresState </span>= withTop pg <span class="hljs-keyword">get</span>
+</code></pre>
+<p>The important difference from the instance above it is <code>withTop</code> which can be found <a href="http://hackage.haskell.org/package/snap-0.6.0.2/docs/Snap-Snaplet.html">here</a>.</p>
+<p>From the docs:</p>
+<blockquote>
+<p>– | Like ‘with’ but doesn’t impose the requirement that the action<br>
+– being run be a descendant of the current snaplet.</p>
+</blockquote>
+<p>Essentially, the auth snaplet doesn’t know anything about the postgres snaplet as we’ve instantiated it (it doesn’t keep around a reference from the Backend module), so we have to ask the parent context (using <code>withTop</code>).</p>
+</div><em data-reactid=".u5rutqlp1c.2.0.0.2"><span data-reactid=".u5rutqlp1c.2.0.0.2.0">Posted </span><span data-reactid=".u5rutqlp1c.2.0.0.2.1">January 9, 2014</span></em><hr data-reactid=".u5rutqlp1c.2.0.0.3"><noscript data-reactid=".u5rutqlp1c.2.0.0.4"></noscript><p data-reactid=".u5rutqlp1c.2.0.0.5"><img src="/headshot.png" data-reactid=".u5rutqlp1c.2.0.0.5.0"><span data-reactid=".u5rutqlp1c.2.0.0.5.1">Written by </span><strong data-reactid=".u5rutqlp1c.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".u5rutqlp1c.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".u5rutqlp1c.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".u5rutqlp1c.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".qgcdtk5nuo" data-react-checksum="-450608096"><nav data-reactid=".qgcdtk5nuo.1"><div data-reactid=".qgcdtk5nuo.1.0"><div data-reactid=".qgcdtk5nuo.1.0.0"><ul data-reactid=".qgcdtk5nuo.1.0.0.0"><li data-reactid=".qgcdtk5nuo.1.0.0.0.0"><a class="" href="/" data-reactid=".qgcdtk5nuo.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".qgcdtk5nuo.1.0.0.0.1"><a class="" href="/talks" data-reactid=".qgcdtk5nuo.1.0.0.0.1.0">talks</a></li><li data-reactid=".qgcdtk5nuo.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".qgcdtk5nuo.1.0.0.0.2.0">twitter</a></li><li data-reactid=".qgcdtk5nuo.1.0.0.0.3"><a class="" href="/projects" data-reactid=".qgcdtk5nuo.1.0.0.0.3.0">projects</a></li><li data-reactid=".qgcdtk5nuo.1.0.0.0.4"><a class="" href="/books" data-reactid=".qgcdtk5nuo.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".qgcdtk5nuo.2"><div data-reactid=".qgcdtk5nuo.2.0"><div class="markdown" data-reactid=".qgcdtk5nuo.2.0.0"><h1 data-reactid=".qgcdtk5nuo.2.0.0.0">Consistant Hash Routing in Riak Core</h1><div data-reactid=".qgcdtk5nuo.2.0.0.1"><h2>Prerequisites</h2>
+<dl><dt>[Rebar](https://github.com/basho/rebar)</dt><dd>To build the project</dd></dl>
+##  Relevant Files
+<dl><dt>Project on Github</dt><dd>[https://github.com/ChristopherBiscardi/Riak-Core-Consistent-Hash-Routing-Example](https://github.com/ChristopherBiscardi/Riak-Core-Consistent-Hash-Routing-Example)</dd><dt>[chapp.erl](https://github.com/ChristopherBiscardi/Riak-Core-Consistent-Hash-Routing-Example/blob/master/a    pps/chapp/src/chapp.erl)</dt><dd>Holds the different routing code</dd><dt>[chapp_vnode.erl](https://github.com/ChristopherBiscardi/Riak-Core-Consistent-Hash-Routing-Example/blob/master/apps/chapp/src    /chapp_vnode.erl)</dt><dd>The ping function on the vnodes. This function is the same on every vnode, the difference is which vnode is processing the request.</dd></dl>
+## The Code
+<pre><code>&lt;code class=<span class="hljs-string">"erlang"</span>&gt;
+%% <span class="hljs-constant">@doc</span> Pings a <span class="hljs-built_in">random</span> vnode 
+<span class="hljs-built_in">ping</span>() -&gt;
+    DocIdx = riak_core_util:chash_key({&gt;, term_to_binary(<span class="hljs-built_in">now</span>())}),
+    PrefList = riak_core_apl:get_primary_apl(DocIdx, <span class="hljs-number">1</span>, chapp),
+    [{IndexNode, _Type}] = PrefList,
+    riak_core_vnode_master:sync_spawn_command(IndexNode, <span class="hljs-built_in">ping</span>, chapp_vnode_master).
+</code></pre>
+<p>The first function, shown above, pings a random (random enough for our purposes) vnode and returns the partition identifier.<br>
+The code we’re interested in is in the first line of the function – specifically the chash_key() function.</p>
+<p>The <a href="https://github.com/basho/riak_core/blob/master/src/riak_core_util.erl#L187-192">chash_key</a> function takes a two-tuple and returns a binary identifier we can use to get a PrefList. Much of the terminology in the Riak Core source refers to Riak KV. In this case, the variables are named Bucket and Key in the chash_key function.</p>
+<p>Each function in [chapp.erl](<a href="https://github.com/ChristopherBiscardi/Riak-Core-Consistent-Hash-Routing-Example/blob/master/a">https://github.com/ChristopherBiscardi/Riak-Core-Consistent-Hash-Routing-Example/blob/master/a</a>    pps/chapp/src/chapp.erl) has different tuples which affect which vnode gets called.</p>
+<pre><code><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">code</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"erlang"</span>&gt;</span>
+</span><span class="perl">% ping()</span><span class="xml">
+{&gt;, term_to_binary(now())}
+</span><span class="perl">
+% pingsame()</span><span class="xml">
+{&gt;, &gt;}
+</span><span class="perl">
+% pinginput(X)</span><span class="xml">
+{&gt;, term_to_binary(X)}
+</span></code></pre>
+<p>so if we build the project.</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"bash"</span>&gt;
+cd path<span class="hljs-regexp">/to/</span><span class="hljs-keyword">project</span>
+make rel
+</code></pre>
+<p>and run the console</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"bash"</span>&gt;
+.<span class="hljs-regexp">/rel/</span>chapp<span class="hljs-regexp">/bin/</span>chapp console
+</code></pre>
+<p>we can then execute the various ping() functions as such:</p>
+<pre><code>&lt;<span class="hljs-tag">code</span> class=<span class="hljs-string">"erlang"</span>&gt;
+chapp:<span class="hljs-function"><span class="hljs-title">ping</span><span class="hljs-params">()</span></span>.
+</code></pre>
+<p>which gives us a tuple that contains <code>pong</code> and the partition id that processed the request.</p>
+<p>We can see the results from running the ping() function a couple times below. Notice that each time we run ping(), a different partition handles the call.</p>
+<pre><code>&lt;code class="erlang"&gt;
+{pong,<span class="hljs-number">100478237566</span><span class="hljs-number">49957562650</span><span class="hljs-number">3332249244457</span><span class="hljs-number">60134536232</span>96}
+{pong,<span class="hljs-number">105045430183</span><span class="hljs-number">158647245889</span><span class="hljs-number">84735148284</span><span class="hljs-number">2037770151526</span>4}
+{pong,<span class="hljs-number">102761833874</span><span class="hljs-number">829111436196</span><span class="hljs-number">58980036364</span><span class="hljs-number">98195577569</span>280}
+{pong,<span class="hljs-number">1118962191081</span><span class="hljs-number">47254674969</span><span class="hljs-number">62000484041</span><span class="hljs-number">869240733532</span>16}
+</code></pre>
+<p>Looking at the next function <code>pingsame</code> which we call as such:</p>
+<pre><code>&lt;<span class="hljs-tag">code</span> class=<span class="hljs-string">"erlang"</span>&gt;
+chapp:<span class="hljs-function"><span class="hljs-title">pingsame</span><span class="hljs-params">()</span></span>.
+</code></pre>
+<p>we can see that by calling this function multiple times, we get the same partition handling the call, because the hash of the tuple is always the same.</p>
+<pre><code>&lt;code class="erlang"&gt;
+{pong,<span class="hljs-number">93627448641</span><span class="hljs-number">5109681974235</span><span class="hljs-number">59595886880</span><span class="hljs-number">946708178534</span>4}
+{pong,<span class="hljs-number">93627448641</span><span class="hljs-number">5109681974235</span><span class="hljs-number">59595886880</span><span class="hljs-number">946708178534</span>4}
+{pong,<span class="hljs-number">93627448641</span><span class="hljs-number">5109681974235</span><span class="hljs-number">59595886880</span><span class="hljs-number">946708178534</span>4}
+{pong,<span class="hljs-number">93627448641</span><span class="hljs-number">5109681974235</span><span class="hljs-number">59595886880</span><span class="hljs-number">946708178534</span>4}
+</code></pre>
+<p>The pinginput function allows us to take a more interactive look at where our requests go. pinginput uses the input we give it as the second element in the chash_key function tuple.</p>
+<pre><code>&lt;<span class="hljs-tag">code</span> class=<span class="hljs-string">"erlang"</span>&gt;
+chapp:<span class="hljs-function"><span class="hljs-title">pinginput</span><span class="hljs-params">(someinput)</span></span>.
+</code></pre>
+<p>we can see that by calling this function multiple times with the same input, the same vnode processes the request.</p>
+<pre><code>&lt;code class="erlang"&gt;
+chapp:pinginput(someinput).
+{pong,<span class="hljs-number">959110449498</span><span class="hljs-number">405040071168</span><span class="hljs-number">171470060731</span><span class="hljs-number">649205731328</span>}
+chapp:pinginput(someinput).
+{pong,<span class="hljs-number">959110449498</span><span class="hljs-number">405040071168</span><span class="hljs-number">171470060731</span><span class="hljs-number">649205731328</span>}
+chapp:pinginput(someinput).
+{pong,<span class="hljs-number">959110449498</span><span class="hljs-number">405040071168</span><span class="hljs-number">171470060731</span><span class="hljs-number">649205731328</span>}
+</code></pre>
+<p>We can also see that by calling pinginput with a different input results in a different vnode handling the request.</p>
+<pre><code>&lt;code class="erlang"&gt;
+chapp:pinginput(otherinput).
+{pong,<span class="hljs-number">342539446249</span><span class="hljs-number">43037145398</span><span class="hljs-number">86326678788</span><span class="hljs-number">32731859189</span>760}
+chapp:pinginput(otherinput).
+{pong,<span class="hljs-number">342539446249</span><span class="hljs-number">43037145398</span><span class="hljs-number">86326678788</span><span class="hljs-number">32731859189</span>760}
+chapp:pinginput(otherinput).
+{pong,<span class="hljs-number">342539446249</span><span class="hljs-number">43037145398</span><span class="hljs-number">86326678788</span><span class="hljs-number">32731859189</span>760}
+</code></pre>
+</div><em data-reactid=".qgcdtk5nuo.2.0.0.2"><span data-reactid=".qgcdtk5nuo.2.0.0.2.0">Posted </span><span data-reactid=".qgcdtk5nuo.2.0.0.2.1">January 16, 2013</span></em><hr data-reactid=".qgcdtk5nuo.2.0.0.3"><noscript data-reactid=".qgcdtk5nuo.2.0.0.4"></noscript><p data-reactid=".qgcdtk5nuo.2.0.0.5"><img src="/headshot.png" data-reactid=".qgcdtk5nuo.2.0.0.5.0"><span data-reactid=".qgcdtk5nuo.2.0.0.5.1">Written by </span><strong data-reactid=".qgcdtk5nuo.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".qgcdtk5nuo.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".qgcdtk5nuo.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".qgcdtk5nuo.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>

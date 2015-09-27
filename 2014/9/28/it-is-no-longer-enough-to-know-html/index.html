@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="user-scalable=no width=device-width, initial-scale=1.0 maximum-scale=1.0"><title></title><link rel="shortcut icon"><link href="https://fonts.googleapis.com/css?family=Crimson+Text|Montserrat:700" rel="stylesheet" type="text/css"></head><body class="landing-page"><div id="react-mount"><div data-reactid=".3rv2zvpkow" data-react-checksum="-910761042"><nav data-reactid=".3rv2zvpkow.1"><div data-reactid=".3rv2zvpkow.1.0"><div data-reactid=".3rv2zvpkow.1.0.0"><ul data-reactid=".3rv2zvpkow.1.0.0.0"><li data-reactid=".3rv2zvpkow.1.0.0.0.0"><a class="" href="/" data-reactid=".3rv2zvpkow.1.0.0.0.0.0">chrisbiscardi</a></li><li data-reactid=".3rv2zvpkow.1.0.0.0.1"><a class="" href="/talks" data-reactid=".3rv2zvpkow.1.0.0.0.1.0">talks</a></li><li data-reactid=".3rv2zvpkow.1.0.0.0.2"><a href="https://twitter.com/chrisbiscardi" data-reactid=".3rv2zvpkow.1.0.0.0.2.0">twitter</a></li><li data-reactid=".3rv2zvpkow.1.0.0.0.3"><a class="" href="/projects" data-reactid=".3rv2zvpkow.1.0.0.0.3.0">projects</a></li><li data-reactid=".3rv2zvpkow.1.0.0.0.4"><a class="" href="/books" data-reactid=".3rv2zvpkow.1.0.0.0.4.0">books</a></li></ul></div></div></nav><div data-reactid=".3rv2zvpkow.2"><div data-reactid=".3rv2zvpkow.2.0"><div class="markdown" data-reactid=".3rv2zvpkow.2.0.0"><h1 data-reactid=".3rv2zvpkow.2.0.0.0">It Is No Longer Enough to &quot;know&quot; HTML</h1><div data-reactid=".3rv2zvpkow.2.0.0.1"><blockquote>
+<p>“Life moves pretty fast. If you don’t stop and look around for a while, you could miss it.” – Ferris Bueller’s Day Off</p>
+</blockquote>
+<h3>The State of Front End Development</h3>
+<p>Front End tools are moving fast these days. Let’s take a minute to (briefly) look at where we’re going.</p>
+<h3>Module Systems</h3>
+<h3>The Old Way</h3>
+<p>From a user-facing view, the old way is to wrap code in closures.</p>
+<pre><code>(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+   <span class="hljs-keyword">this</span>.myGlobal = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{};
+}());
+</code></pre>
+<h4>AMD</h4>
+<p><a href="http://requirejs.org/docs/whyamd.html">Why AMD?</a> is covered in other areas but suffice it to say it looks like the below and is being superseded by the ubiquity and conciseness of CommonJS.</p>
+<pre><code>define([<span class="hljs-string">'jquery'</span>] , <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">($)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{};
+});
+</code></pre>
+<h4>CommonJS</h4>
+<p>CommonJS is used in node.js which likely contributed to its rise. It is also fairly simple to read and understand. There isn’t as much boilerplate as AMD (where the define/arguments are position-sensitive and can get fairly long).</p>
+<pre><code><span class="hljs-comment">// hello.js</span>
+exports.hello = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-string">'Hello World'</span>
+};
+</code></pre>
+<pre><code><span class="hljs-comment">// main.js</span>
+<span class="hljs-keyword">var</span> example = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./hello.js'</span>);
+example.hello();
+</code></pre>
+<h4>ES6</h4>
+<p>ES6 modules are usable via transpilers, in some cases <a href="https://www.npmjs.org/package/es6-modules-commonjs">compiling to CommonJS</a></p>
+<pre><code><span class="hljs-built_in">module</span> React from <span class="hljs-string">"react"</span>;
+<span class="hljs-keyword">import</span> {format} <span class="hljs-keyword">from</span> <span class="hljs-string">"util"</span>;
+<span class="hljs-keyword">export</span> {React, format <span class="hljs-keyword">as</span> fmt};
+</code></pre>
+<h4>PureScript</h4>
+<p>PureScript <a href="http://docs.purescript.org/en/latest/modules.html">modules</a> can compile to CommonJS modules.</p>
+<pre><code><span class="hljs-module"><span class="hljs-keyword">module</span> A <span class="hljs-keyword">where</span></span>
+
+<span class="hljs-title">id</span> x = x
+</code></pre>
+<h3>Implementations of Module Systems</h3>
+<h4>RequireJS</h4>
+<p><a href="http://requirejs.org/">RequireJS</a> is an implementation of AMD. It comes with an optimizer (r.js) but many people have since moved on to CommonJS tools such as Browserify.</p>
+<h4>Browserify</h4>
+<p><a href="http://browserify.org/">Browserify</a> is currently the prevailing CommonJS implementation. It is available as a CLI and a scriptable interface (say, inside node.js). This makes it easy to integrate into a build system such as gulp or to use on it’s own.</p>
+<p>Browserify allows you to apply transforms during the build process for things like <a href="https://www.npmjs.org/package/reactify">React</a>, <a href="https://github.com/eugeneware/debowerify">bower</a> and alt-js languages such as <a href="https://github.com/jnordberg/coffeeify">CoffeeScript</a>.</p>
+<h4>Webpack</h4>
+<p><a href="http://webpack.github.io/">Webpack</a> sees heavy usage in the React Community. Possibly due to Pete Hunt’s (and others’) <a href="https://github.com/petehunt/webpack-howto">advocacy</a>. Webpack comes with nice things like Feature Flags and Multiple Entrypoints.</p>
+<p>The most striking difference between Webpack and Browserify is the approach to building Components. Webpack takes a much more CSS-inclusive approach and can do dependency analysis if you’re using Multiple Entrypoints or similar. This approach to Components works very well with React’s concept of Components.</p>
+<h3>Package Managers</h3>
+<h4>NPM</h4>
+<p><a href="https://www.npmjs.org/">NPM</a> is the defacto standard for node.js, but has also declared support for front-end dependency management. It can be hard to determine what packages are meant for the browser, server or both.</p>
+<h4>Bower</h4>
+<p>Bower is a front-end dependency management tool that is backed by Git/GitHub. Bower is also where <a href="https://leanpub.com/purescript/read">PureScript</a>, an alt-js language, and some other tools make their packages available.</p>
+<h4>Other</h4>
+<p>There are also other, competing, managers at various levels such as <a href="http://volojs.org/">Volo</a> and <a href="https://github.com/ender-js/Ender">Ender</a></p>
+<p>…but talking about Volo brings us into scaffolding tools…</p>
+<h3>Scaffolding</h3>
+<h4>Yeoman</h4>
+<p><a href="http://yeoman.io/">Yeoman</a> was originally a “Client Side Stack” but has transitioned to being a quite nice tool for scaffolding new projects. I suggest <a href="https://github.com/yeoman/generator-gulp-webapp">this one</a> if you’re looking to learn more about Yeoman.</p>
+<h4>Brunch</h4>
+<p>I chose to include <a href="http://brunch.io/">Brunch</a> here even though it also competes with Gulp/Grunt in that Brunch does Compilation, Minification, Concatenation and Watching of files. IMO Brunch tries to do too much in the world of JavaScript today. Specialized tools seem to be the current order.</p>
+<h3>Build Systems</h3>
+<h4>Grunt</h4>
+<p><a href="http://gruntjs.com/">Grunt</a> is a Task Runner for JavaScript. It works fairly well and has a plugin for almost anything you’ll need; I’ve also seen some pretty hairy grunt configs.</p>
+<p><a href="http://gulpjs.com/">Gulp</a> is “The New Order” of build systems. It is based on streaming so we can say goodbye to intermediate build files on disk. It also has a fairly expansive ecosystem of plugins that can be used. One interesting note is <a href="https://www.npmjs.org/package/vinyl-source-stream">vinyl-source-streams</a>, which can be used to create streams out of tools like browserify.</p>
+<h3>Utility Belts</h3>
+<h4>Underscore</h4>
+<p><a href="http://underscorejs.org/">Underscore</a> was a default utility belt for awhile. It is a solid library that provides functional programming helpers and is:</p>
+<blockquote>
+<p>The tie to go along with jQuery’s tux and Backbone’s suspenders.</p>
+</blockquote>
+<h4>Lodash</h4>
+<p><a href="http://lodash.com/">Lodash</a> is “optimized underscore”. It is capable of being a drop-in replacement for underscore and provides <a href="http://lodash.com/#features">some features</a> not available in underscore.</p>
+<h4>Lazy.js</h4>
+<p><a href="http://danieltao.com/lazy.js/">Lazy.js</a> can get even better performance than Lodash through Lazy Evaluation. It seems to be a logical step in the progression toward the new state of Front End JavaScript.</p>
+<h3>Data Structures</h3>
+<p>One very interesting trend to pop up is the release of Lazy and Immutable Data Structures for JavaScript. Often the assumption here is that what makes FE development difficult is the tracking of mutation and maintaining of State.</p>
+<h4>Mori</h4>
+<p><a href="https://github.com/swannodette/mori">Mori</a> is Om/ClojureScript’s Lazy/Persistent/Immutable Data Structures intended for use in a JavaScript environment.</p>
+<h4>ImmutableJS</h4>
+<p><a href="https://github.com/facebook/immutable-js">ImmutableJS</a> is Facebook’s implementation of Immutable and Lazy Data Structures. It uses a JavaScript-First API and is designed with the context of React and Flux (being from Facebook).</p>
+<h3>Front End Frameworks</h3>
+<p>Finally, we come to “The Large List of Front End Frameworks”. There are a <em>ton</em> of them out there but I’m only going to cover a few of the most popular in an attempt to categorize different approaches.</p>
+<h4>Angular: The Opinionated Approach</h4>
+<p>Angular creates it’s own language in an effort to do a lot. Directives help developers create components and Services abstract data fetching. If you are a fan of Dependency Injection, Factories and Controllers, then you may do well to look at Angular.</p>
+<h4>Backbone: The Dude Abides</h4>
+<p>Backbone is fairly un-opinionated. <code>Models</code>/<code>Collection</code>, <code>Views</code> and <code>Routers</code> live here, which is fairly close to “MVC”. Backbone also includes an event system for listening to changes on Models/Collections or creating your own events.</p>
+<p>Backbone’s flexibility has allowed (or required depending on your view) <a href="http://marionettejs.com/">Marionette</a> to exist. It also means that you can replace any component as you wish. Want to use Handlebars? Mustache? no problem. Want to replace <code>Views</code> with React? no problem.</p>
+<h4>React</h4>
+<p>React is the new kid on the block and represents a substantial change in the way people think about building applications. With pure React, you would never manually adjust the DOM again. Instead allowing React’s implementation of a Virtual DOM to handle diffing and insertion of changes into the actual DOM.</p>
+<p>React also represents a step toward Functional Programming concepts (<a href="http://en.wikipedia.org/wiki/Pure_function">purity</a>, etc), which make React components easy to test and reason about. It also enables some more advanced concepts such as <a href="https://github.com/dustingetz/react-cursor">Cursors</a> or <a href="http://lens.github.io/tutorial.html">Lenses</a> which themselves enable a separation of data from View/DOM.</p>
+<h4>Om</h4>
+<p><a href="https://github.com/swannodette/om">Om</a> is a special case of React. It is implemented in <a href="https://github.com/clojure/clojurescript">ClojureScript</a>, uses some concepts such as <a href="http://www.vpri.org/pdf/tr2011001_final_worlds.pdf">Worlds</a> and Persistent Data Structures and has a fairly expansive ecosystem at this point.</p>
+<p>There is a <a href="https://github.com/swannodette/om#applications-built-with-om">list</a> of projects built with Om.</p>
+<h3>The Types are Coming</h3>
+<p>So where does this leave us?</p>
+<p>Even if we leave out React/Om we can see a clear preference towards Functions as a first-class tool through libraries such as Underscore and Lodash. <em>With</em> React, we get to see where functional programming gets us, The testability of pure functions and the composition of Components (which are themselves functions). With Om, we see where more advanced Functional Programming techniques gets us: Performance from Persistent Data Structures and clarity through separation of IO with Worlds.</p>
+<p>At this point it is interesting to note is that React was prototyped in SML and <a href="https://twitter.com/fbOpenSource/status/511643210482208768">Flow</a> is implemented in <a href="https://ocaml.org/">OCaml</a>. Flow promises to be “better” (note that not much is known about Flow publicly yet) than Microsoft’s <a href="http://www.typescriptlang.org/">TypeScript</a>. We’ll have to wait to see how it compares to <a href="https://leanpub.com/purescript/read">PureScript’s</a> Type System. (PureScript does have <a href="https://github.com/purescript-contrib/purescript-react">bindings to React</a> as well).</p>
+<h1>Fin</h1>
+<p>If I were a betting person, I would bet on the future being closer to a Purely Functional approach than I would on other approaches. What do you think?</p>
+<p>In any case, The days where one could cobble together some HTML and call themselves a Front End Engineer are long gone and the future is very interesting.</p>
+</div><em data-reactid=".3rv2zvpkow.2.0.0.2"><span data-reactid=".3rv2zvpkow.2.0.0.2.0">Posted </span><span data-reactid=".3rv2zvpkow.2.0.0.2.1">September 28, 2014</span></em><hr data-reactid=".3rv2zvpkow.2.0.0.3"><noscript data-reactid=".3rv2zvpkow.2.0.0.4"></noscript><p data-reactid=".3rv2zvpkow.2.0.0.5"><img src="/headshot.png" data-reactid=".3rv2zvpkow.2.0.0.5.0"><span data-reactid=".3rv2zvpkow.2.0.0.5.1">Written by </span><strong data-reactid=".3rv2zvpkow.2.0.0.5.2">Chris Biscardi</strong><span data-reactid=".3rv2zvpkow.2.0.0.5.3"> who lives and works in San Francisco building useful things. </span><a href="https://twitter.com/chrisbiscardi" data-reactid=".3rv2zvpkow.2.0.0.5.4">Follow on Twitter</a></p></div></div><div data-reactid=".3rv2zvpkow.2.1"></div></div></div></div><script src="/bundle.js"></script></body></html>
