@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    "leo-plugin-blogpost",
+    "leo-plugin-markdown",
+    "leo-plugin-postcss",
+    "leo-plugin-cssstats"
+  ],
+  "urls": [
+    "/"
+  ]
+}
