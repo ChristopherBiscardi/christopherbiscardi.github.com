@@ -1,0 +1,44 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.963f95c3e7e25a2f628cb6039fcdfbbf.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".1pp1yrz629s" data-react-checksum="1384718943"><nav data-reactid=".1pp1yrz629s.0"><ul class="Nav__items___1oDCD" data-reactid=".1pp1yrz629s.0.0"><li data-reactid=".1pp1yrz629s.0.0.0"><a class="" href="/posts" data-reactid=".1pp1yrz629s.0.0.0.0">Posts</a></li><li data-reactid=".1pp1yrz629s.0.0.1"><a class="" href="/talks" data-reactid=".1pp1yrz629s.0.0.1.0">Talks</a></li><li data-reactid=".1pp1yrz629s.0.0.2"><a class="" href="/books" data-reactid=".1pp1yrz629s.0.0.2.0">Books</a></li><li data-reactid=".1pp1yrz629s.0.0.3"><a class="" href="/projects" data-reactid=".1pp1yrz629s.0.0.3.0">Projects</a></li></ul></nav><div data-reactid=".1pp1yrz629s.1"><div data-reactid=".1pp1yrz629s.1.0"><p>In this post we will be replacing the JSON file (for user authentication) with a Postgres database.</p>
+<p><a href="https://github.com/ChristopherBiscardi/Getting-Started-with-Snap-and-User-Authentication/commit/72a77abac5d46554e659ddeef0a1abf7074a5c6f">Git Diff and Repo</a><br>
+<a href="http://www.christopherbiscardi.com/2014/01/07/getting-started-with-snap-and-user-authentication-part-1/">part 1</a><br>
+<a href="http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/">part 2</a></p>
+<p>In <code>abc.cabal</code> add <code>snaplet-postgresql-simple</code> to <code>Build-depends</code>:</p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"haskell"</span>&gt;Build-depends:
+    bytestring                &gt;= <span class="hljs-number">0.9</span><span class="hljs-number">.1</span>   &amp;&amp; = <span class="hljs-number">0.12</span>    &amp;&amp; = <span class="hljs-number">0.2</span><span class="hljs-number">.1</span>   &amp;&amp; = <span class="hljs-number">2</span>       &amp;&amp; = <span class="hljs-number">0.11</span>    &amp;&amp; = <span class="hljs-number">0.9</span>     &amp;&amp; = <span class="hljs-number">0.9</span>     &amp;&amp; = <span class="hljs-number">0.9</span>     &amp;&amp; = <span class="hljs-number">0.11</span>    &amp;&amp; = <span class="hljs-number">1.1</span>     &amp;&amp; = <span class="hljs-number">0.1</span>,
+    snaplet-postgresql-simple == <span class="hljs-number">0.4</span><span class="hljs-number">.1</span>```
+
+<span class="hljs-keyword">Then</span>, <span class="hljs-keyword">In</span> `src/Site.hs` we’re going <span class="hljs-keyword">to</span> add the following <span class="hljs-keyword">imports</span>:
+
+</code></pre>
+<p><code class="haskell">import Snap.Snaplet.PostgresqlSimple
+import Snap.Snaplet.Auth.Backends.PostgresqlSimple```</p>
+<p>add this line to initialize the database in our Application Initialization code below session and about auth:</p>
+<p><code>d</code></p>
+<p>and replace this line:</p>
+<p><code>initJsonFileAuthManager defAuthSettings sess &quot;users.json&quot;</code></p>
+<p>with this line, which does the dirty work of using Postgres instead of a JSON file.</p>
+<p><code>initPostgresAuth sess d</code></p>
+<p>We’ll also add the initialized database snaplet to our returned App:</p>
+<p><code>return $ App h s d a</code></p>
+<p>We’re almost done, but first we’ll need to add <code>_db</code> to our App definition in <code>src/Application.hs</code>:</p>
+<pre><code>&lt;code <span class="hljs-built_in">class</span>=<span class="hljs-string">"haskell"</span>&gt;data App = App
+    { _heist :: Snaplet (Heist App)
+    , _sess :: Snaplet SessionManager
+    , _db :: Snaplet Postgres
+    , _auth :: Snaplet (AuthManager App)
+    }```
+
+<span class="hljs-keyword">and</span> don't forget <span class="hljs-keyword">the</span> import <span class="hljs-keyword">for</span> postgres <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> same <span class="hljs-built_in">file</span>.
+
+`import Snap.Snaplet.PostgresqlSimple`
+
+We are now using Postgres <span class="hljs-keyword">as</span> a database <span class="hljs-keyword">for</span> our authentication! `cabal install` <span class="hljs-keyword">and</span> <span class="hljs-built_in">run</span> `abc` <span class="hljs-keyword">to</span> make sure <span class="hljs-keyword">it</span> works. You may need <span class="hljs-keyword">to</span> <span class="hljs-built_in">run</span> <span class="hljs-keyword">the</span> following <span class="hljs-keyword">in</span> `psql`:
+
+</code></pre>
+<p><code class="psql">CREATE ROLE postgres LOGIN;
+CREATE DATABASE testdb;```</p>
+<p>also of note is that the git repo has bumped the version of abc to <code>0.2</code></p>
+<p><a href="http://www.christopherbiscardi.com/2014/01/07/getting-started-with-snap-and-user-authentication-part-1/">Part 1 - Beginnings</a><br>
+<a href="http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/">Part 2 - Auth</a></p>
+<p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png" alt="CBLogo_2014_transparent"></a></p>
+</div></div></div></div><script src="/js/bundle-dc18507cc1e13ceedca9.js"></script></body></html>

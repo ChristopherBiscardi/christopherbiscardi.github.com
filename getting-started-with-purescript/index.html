@@ -1,0 +1,107 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.963f95c3e7e25a2f628cb6039fcdfbbf.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".1c2ojzatn28" data-react-checksum="-1686632701"><nav data-reactid=".1c2ojzatn28.0"><ul class="Nav__items___1oDCD" data-reactid=".1c2ojzatn28.0.0"><li data-reactid=".1c2ojzatn28.0.0.0"><a class="" href="/posts" data-reactid=".1c2ojzatn28.0.0.0.0">Posts</a></li><li data-reactid=".1c2ojzatn28.0.0.1"><a class="" href="/talks" data-reactid=".1c2ojzatn28.0.0.1.0">Talks</a></li><li data-reactid=".1c2ojzatn28.0.0.2"><a class="" href="/books" data-reactid=".1c2ojzatn28.0.0.2.0">Books</a></li><li data-reactid=".1c2ojzatn28.0.0.3"><a class="" href="/projects" data-reactid=".1c2ojzatn28.0.0.3.0">Projects</a></li></ul></nav><div data-reactid=".1c2ojzatn28.1"><div data-reactid=".1c2ojzatn28.1.0"><p>According to <a href="http://www.purescript.org/" title="purescript.org">PureScript.org</a></p>
+<blockquote>
+<p>PureScript is a small strongly, statically typed programming language with expressive types, written in and inspired by Haskell, and compiling to Javascript.</p>
+</blockquote>
+<p>It’s fairly easy to get started with the <a href="https://github.com/purescript-contrib/grunt-init-purescript" title="grunt init purescript template">grunt-init-purescript template</a></p>
+<h2>Dependencies</h2>
+<p>We will need <a href="http://gruntjs.com/">grunt</a>,<a href="https://github.com/gruntjs/grunt-init">grunt-init</a> and <a href="http://bower.io/">bower</a> to work with this PureScript template. <a href="http://nodejs.org/" title="nodejs">Node</a> is also a dependency because of this.</p>
+<p><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;npm install -g grunt grunt-init bower</code></p>
+<p>Then clone the template into a <code>.grunt-init</code> folder using git:</p>
+<pre><code>&lt;code class=<span class="hljs-string">"bash"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;mkdir ~/.grunt-init
+git clone <span class="hljs-keyword">https</span>://github.com/purescript-contrib/grunt-init-purescript.git ~/.grunt-init/purescript```
+
+We also need <span class="hljs-keyword">the</span> PureScript compiler, which we can grab <span class="hljs-keyword">with</span> cabal:
+
+`&lt;code class=<span class="hljs-string">"bash"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;cabal install purescript`
+
+
+<span class="hljs-comment">## Developing</span>
+
+We can now install dependencies <span class="hljs-built_in">from</span> npm <span class="hljs-keyword">and</span> bower. There’s <span class="hljs-keyword">a</span> decent amount <span class="hljs-built_in">to</span> be excited about <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> output including `purescript-quickcheck`, `either` <span class="hljs-keyword">and</span> `maybe` <span class="hljs-built_in">to</span> name <span class="hljs-keyword">a</span> few.
+
+</code></pre>
+<p><code class="bash" style="overflow-x:auto">npm install
+bower update```</p>
+<p>Then grunt when we want to build:</p>
+<p><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;grunt</code></p>
+<h2>Testing</h2>
+<p>The template project is more of a library project, where the tests are what we want to run if we cloned the repo. As such, our <code>Main</code> module is in <code>tests/Test.purs</code> and can be run using:</p>
+<p><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;node tmp/index.js</code></p>
+<p>after running <code>grunt</code> to build the project.</p>
+<p>To build an executable (a node.js scraper for example) we can make a few changes.</p>
+<h2>Modifications</h2>
+<p>First, we’ll make some changes to our test file.</p>
+<h4>Tests</h4>
+<p><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;mv tests/Tests.purs tests/Test/Main.purs</code></p>
+<p>and change the module name from <code>Main</code> to <code>Test.Main</code>. Also change the <code>Starter.Kit.Example</code> import to <code>Starter.Kit.Main</code>.</p>
+<h4>JS</h4>
+<p>Place two simple js files in <code>js/</code></p>
+<h6>js/index.js</h6>
+<p><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;require(&quot;Starter.Kit.Main&quot;).main();</code></p>
+<h6>js/test.js</h6>
+<p><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;require(&quot;Test.Main&quot;).main();</code></p>
+<h4>Starter Kit</h4>
+<p>Now we will make a small modification to the Starter Kit file.</p>
+<p><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;mv src/Starter/Kit/Example.purs src/Starter/Kit/Main.purs</code></p>
+<p>and rename the module to <code>Starter.Kit.Main</code>.</p>
+<h4>Gruntfile</h4>
+<p>Finally make some modifications to the Gruntfile and run <code>grunt</code></p>
+<pre><code>&lt;code <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">"bash"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">grunt</span>) </span>{
+<span class="hljs-meta">
+  "use strict"</span>;
+
+  grunt.initConfig({ 
+  
+    libFiles: [
+      <span class="hljs-string">"src/**/*.purs"</span>,
+      <span class="hljs-string">"bower_components/purescript-*/src/**/*.purs"</span>
+    ],
+    
+    clean: [<span class="hljs-string">"tmp"</span>, <span class="hljs-string">"output"</span>],
+  
+    pscMake: {
+      lib: {
+        src: [<span class="hljs-string">""</span>]
+      },
+      tests: {
+        src: [<span class="hljs-string">"tests/Test/Main.purs"</span>, <span class="hljs-string">""</span>]
+      }
+    },
+
+    dotPsci: [<span class="hljs-string">""</span>],
+ 
+    copy: [
+      {
+        expand: <span class="hljs-literal">true</span>,
+        cwd: <span class="hljs-string">"output"</span>,
+        src: [<span class="hljs-string">"**"</span>],
+        dest: <span class="hljs-string">"tmp/node_modules/"</span>
+      }, {
+        expand: <span class="hljs-literal">true</span>,
+        cwd: <span class="hljs-string">"js/"</span>,
+        src: <span class="hljs-string">'**'</span>,
+        dest: <span class="hljs-string">"tmp/"</span>,
+        flatten: <span class="hljs-literal">true</span>
+      }
+    ],
+
+    execute: {
+      tests: {
+        src: <span class="hljs-string">"tmp/test.js"</span>
+      }
+    }      
+  });
+
+  grunt.loadNpmTasks(<span class="hljs-string">"grunt-contrib-copy"</span>);
+  grunt.loadNpmTasks(<span class="hljs-string">"grunt-contrib-clean"</span>);
+  grunt.loadNpmTasks(<span class="hljs-string">"grunt-execute"</span>)
+  grunt.loadNpmTasks(<span class="hljs-string">"grunt-purescript"</span>);
+ 
+  grunt.registerTask(<span class="hljs-string">"test"</span>, [<span class="hljs-string">"pscMake:tests"</span>, <span class="hljs-string">"copy"</span>, <span class="hljs-string">"execute:tests"</span>]);
+  grunt.registerTask(<span class="hljs-string">"make"</span>, [<span class="hljs-string">"pscMake:lib"</span>, <span class="hljs-string">"dotPsci"</span>]);
+  grunt.registerTask(<span class="hljs-string">"default"</span>, [<span class="hljs-string">"clean"</span>, <span class="hljs-string">"make"</span>, <span class="hljs-string">"test"</span>]);
+};<span class="hljs-string">``</span><span class="hljs-string">`
+
+
+</span></code></pre>
+</div></div></div></div><script src="/js/bundle-dc18507cc1e13ceedca9.js"></script></body></html>

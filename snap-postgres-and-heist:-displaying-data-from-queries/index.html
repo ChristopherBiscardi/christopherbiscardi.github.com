@@ -1,0 +1,58 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.963f95c3e7e25a2f628cb6039fcdfbbf.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".28nzyrnd5hc" data-react-checksum="2045806645"><nav data-reactid=".28nzyrnd5hc.0"><ul class="Nav__items___1oDCD" data-reactid=".28nzyrnd5hc.0.0"><li data-reactid=".28nzyrnd5hc.0.0.0"><a class="" href="/posts" data-reactid=".28nzyrnd5hc.0.0.0.0">Posts</a></li><li data-reactid=".28nzyrnd5hc.0.0.1"><a class="" href="/talks" data-reactid=".28nzyrnd5hc.0.0.1.0">Talks</a></li><li data-reactid=".28nzyrnd5hc.0.0.2"><a class="" href="/books" data-reactid=".28nzyrnd5hc.0.0.2.0">Books</a></li><li data-reactid=".28nzyrnd5hc.0.0.3"><a class="" href="/projects" data-reactid=".28nzyrnd5hc.0.0.3.0">Projects</a></li></ul></nav><div data-reactid=".28nzyrnd5hc.1"><div data-reactid=".28nzyrnd5hc.1.0"><p>The github repo for this post is <a href="https://github.com/ChristopherBiscardi/snap-postgres-heist">here</a>.</p>
+<h2>Single AuthUser Splice</h2>
+<p>Assuming we have instances and initializations for the Postgres Auth backend and Postgresql-Simple Snaplet, we can do a few things. First, we need to write a Splice for the AuthUser data type. We will only use a couple fields to show how it works.</p>
+<pre><code>&lt;code class=<span class="hljs-string">"haskell"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;authUserSplice <span class="hljs-symbol">:</span><span class="hljs-symbol">:</span> Monad m =&gt;
+                  AuthUser -&gt;
+                  Splices (HeistT n m Template)
+authUserSplice authUser = <span class="hljs-keyword">do</span>
+  <span class="hljs-string">"userLogin"</span> <span class="hljs-comment">## I.textSplice (userLogin authUser)</span>
+  <span class="hljs-string">"userLoginCount"</span> <span class="hljs-comment">## I.textSplice (T.pack $ show $ userLoginCount authUser)</span>
+</code></pre>
+<p>Using <code>##</code>, we are binding the strings <code>&quot;userLogin&quot;</code> and <code>&quot;userLoginCount&quot;</code> to their respective values from the <code>authUser</code> object. <code>userLogin authUser</code> gives us a <code>Text</code> result, so <code>&quot;userLogin&quot;</code> is bound to a text splice. We also bind <code>&quot;userLoginCount&quot;</code> as a text splice by converting the <code>int</code> we get from using <code>userLoginCount</code> on <code>authUser</code>.</p>
+<p>Now that we have our Splice written, let’s write our template.</p>
+<pre><code>&lt;code class=<span class="hljs-string">"html"</span>&gt;&lt;apply template=<span class="hljs-string">"base"</span>&gt;
+&lt;h1&gt;&lt;userLogin/&gt;&lt;/h1&gt;
+&lt;p&gt;Number <span class="hljs-keyword">of</span> Times Logged In: &lt;userLoginCount/&gt;&lt;/p&gt;
+&lt;/apply&gt;```
+
+Nothing major here. We have used <span class="hljs-keyword">the</span> strings we bound <span class="hljs-keyword">before</span> <span class="hljs-keyword">as</span> tags <span class="hljs-built_in">to</span> display <span class="hljs-keyword">the</span> <span class="hljs-keyword">text</span> <span class="hljs-built_in">from</span> <span class="hljs-keyword">the</span> `authUser` object.
+
+Finally, we can <span class="hljs-built_in">write</span> <span class="hljs-keyword">a</span> Handler <span class="hljs-built_in">to</span> make <span class="hljs-keyword">the</span> database request <span class="hljs-keyword">and</span> render <span class="hljs-keyword">the</span> template <span class="hljs-keyword">using</span> our splice.
+
+</code></pre>
+<p><code class="haskell" style="overflow-x:auto">getFromPostgres :: Handler App (AuthManager App) ()
+getFromPostgres = do
+result ```</p>
+<p>Using a simple query to store the data from Postgres in <code>result</code>, we then render using our template (<code>auth_user_splice.tpl</code>) and apply the splice to the data in our result.</p>
+<h2>List of AuthUsers</h2>
+<p>To display a list of data, the process is very similar.</p>
+<p>We can reuse the <code>authUserSplice</code> we just wrote and map it across the list of data we plan on passing in using <code>mapSplices</code> and <code>runChildrenWith</code>.</p>
+<pre><code>&lt;<span class="hljs-selector-tag">code</span> class=<span class="hljs-string">"haskell"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;authUsersSplice  :: [AuthUser] -&gt; I<span class="hljs-selector-class">.Splice</span> AppHandler
+authUsersSplice = I<span class="hljs-selector-class">.mapSplices</span> (I<span class="hljs-selector-class">.runChildrenWith</span> . authUserSplice)```
+
+We will also write <span class="hljs-selector-tag">a</span> new template to <span class="hljs-attribute">display</span> the information. Included <span class="hljs-keyword">in</span> this is the `authUsers` tag, which we are going to bind <span class="hljs-keyword">in</span> our Handler.
+
+</code></pre>
+<p><code class="html"><apply template="base"></p>
+<dl>
+<authUsers>
+<dt><userLogin/></dt>
+<dd>Number of Times Logged In: <userLoginCount/></dd>
+</authUsers>
+</dl>
+</apply>```
+<p>We can then write our handler as such:</p>
+<pre><code>&lt;code class=<span class="hljs-string">"haskell"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;getManyFromPostgres :: <span class="hljs-type">Handler</span> <span class="hljs-type">App</span> (<span class="hljs-type">AuthManager</span> <span class="hljs-type">App</span>) ()
+getManyFromPostgres = <span class="hljs-keyword">do</span>
+        results ```
+
+<span class="hljs-type">We</span> are rendering our new <span class="hljs-keyword">template</span> `auth_users_splice.tpl` <span class="hljs-keyword">with</span> our mapped splices bound to `<span class="hljs-string">"authUsers"</span>`. <span class="hljs-type">The</span> code inside <span class="hljs-keyword">of</span> `&lt;authUsers&gt;` will be run <span class="hljs-keyword">for</span> each <span class="hljs-literal">result</span> <span class="hljs-keyword">in</span> our list.
+
+
+<span class="hljs-comment">## End</span>
+
+<span class="hljs-type">That</span>'s it. <span class="hljs-type">Feel</span> free to pull the code <span class="hljs-keyword">from</span> [github](https://github.com/<span class="hljs-type">ChristopherBiscardi</span>/snap-postgres-heist) <span class="hljs-keyword">and</span> leave <span class="hljs-built_in">any</span> questions you have below.
+
+
+</code></pre>
+</div></div></div></div><script src="/js/bundle-dc18507cc1e13ceedca9.js"></script></body></html>

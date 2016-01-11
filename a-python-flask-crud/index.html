@@ -1,0 +1,61 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.963f95c3e7e25a2f628cb6039fcdfbbf.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".ztm0qctwxs" data-react-checksum="-1175997349"><nav data-reactid=".ztm0qctwxs.0"><ul class="Nav__items___1oDCD" data-reactid=".ztm0qctwxs.0.0"><li data-reactid=".ztm0qctwxs.0.0.0"><a class="" href="/posts" data-reactid=".ztm0qctwxs.0.0.0.0">Posts</a></li><li data-reactid=".ztm0qctwxs.0.0.1"><a class="" href="/talks" data-reactid=".ztm0qctwxs.0.0.1.0">Talks</a></li><li data-reactid=".ztm0qctwxs.0.0.2"><a class="" href="/books" data-reactid=".ztm0qctwxs.0.0.2.0">Books</a></li><li data-reactid=".ztm0qctwxs.0.0.3"><a class="" href="/projects" data-reactid=".ztm0qctwxs.0.0.3.0">Projects</a></li></ul></nav><div data-reactid=".ztm0qctwxs.1"><div data-reactid=".ztm0qctwxs.1.0"><p>Recently I was asked to build a CRUD app.</p>
+<p>The task was open to using any tech I wanted on the backend, so my first thought was a distributed service in Erlang with a WebMachine interface. This would satisfy the REST requirements for the location service, which we could access via an application server for web.</p>
+<p>However, the preferred method for this task was described to be Python/Flask, So we’ll use that.</p>
+<p>Since sessions are not technically RESTful, they cannot be included in a user authentication scheme. Client side on mobile devices is a different story, with iOS using keychain for security and Android advocating OAuth-type approaches. As it happens, the task language doesn’t include the concept of users, just locations, so we’ll skip authentication to make it REST-Compliant (note: REST doesn’t have a spec.)</p>
+<p>Attributes of a favorite location object include:</p>
+<ul>
+<li>id</li>
+<li>lat</li>
+<li>lng</li>
+<li>address (e.g. 800 Market Street, San Francisco, CA 94114)</li>
+<li>name (e.g. Work)</li>
+</ul>
+<p>This could easily fit in a SQL database, but since we’re using Geolocation and I happen to know that MongoDB’s Geo facilities would allow us to query based on distance from our current position, we’ll use Mongo. Alternatively, we could have also used ElasticSearch/Solr/Lucene but Mongo will serve our purposes just fine.</p>
+<p>We will be deploying on Heroku to use the free ssl support and addons. In reality Heroku is a test platform due to being hosted on EC2 US East only. We will also be skipping the CDN (CloudFront/S3/etc) as the total users here will be under 5.</p>
+<p>I’ve never used Flask before, so this will take a little longer than normal. If I was going for turnaround time, I might have used node.js and express or RESTify because I’m stronger with JS/node.</p>
+<p>To connect to the Mongo Instance on Heroku || localhost:</p>
+<pre><code>&lt;code <span class="hljs-attr">class="python"&gt;</span>
+  <span class="hljs-built_in">import</span> pymongo
+
+  <span class="hljs-comment"># Get MongoDB URL if on Heroku, else use localhost</span>
+  <span class="hljs-attr">MONGO_URL</span> = os.environ.get('MONGOHQ_URL')
+   
+   <span class="hljs-keyword">if</span> MONGO_URL:
+       <span class="hljs-comment"># Get a connection</span>
+       <span class="hljs-attr">conn</span> = pymongo.Connection(MONGO_URL)
+   
+       <span class="hljs-comment"># Get the database</span>
+       <span class="hljs-attr">db</span> = conn[urlparse(MONGO_URL).path[<span class="hljs-number">1</span>:]]
+   <span class="hljs-keyword">else</span>:
+       <span class="hljs-comment"># Not on an app with the MongoHQ add-on, do some localhost action</span>
+       <span class="hljs-attr">conn</span> = pymongo.Connection('localhost', <span class="hljs-number">27017</span>)
+       <span class="hljs-attr">db</span> = conn['test']
+  <span class="hljs-comment"># locations Collection</span>
+  <span class="hljs-attr">locationsC</span> = db.locations
+</code></pre>
+<p>And set up some content negotiation formatters:</p>
+<pre><code>&lt;code class=<span class="hljs-string">"python"</span>&gt;
+<span class="hljs-comment"># Content Negotiation Formatters</span>
+
+
+class JSONFormatter(Formatter)<span class="hljs-symbol">:</span>
+    format = <span class="hljs-string">'json'</span>
+    mimetypes = [<span class="hljs-string">'application/json'</span>]
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">render</span></span>(<span class="hljs-keyword">self</span>, obj)<span class="hljs-symbol">:</span>
+        <span class="hljs-keyword">return</span> json.dumps(obj)
+
+
+class HTMLFormatter(Formatter)<span class="hljs-symbol">:</span>
+    format = <span class="hljs-string">'json'</span>
+    mimetypes = [<span class="hljs-string">'text/html'</span>]
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">configure</span></span>(<span class="hljs-keyword">self</span>, template)<span class="hljs-symbol">:</span>
+        <span class="hljs-keyword">self</span>.template = template
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">render</span></span>(<span class="hljs-keyword">self</span>, obj)<span class="hljs-symbol">:</span>
+        <span class="hljs-keyword">return</span> render_template(<span class="hljs-keyword">self</span>.template, **obj)
+</code></pre>
+<p>Having got some server basics out of the way I started on the structure of the home page. There isn’t a defined business purpose here, so I chose to make the design based around creating new locations.</p>
+<p><a href="http://www.christopherbiscardi.com/2012/12/06/a-python-flask-crud/screen-shot-2013-01-18-at-8-31-37-am/"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/h_174,w_300/v1428611529/Screen-shot-2013-01-18-at-8.31.37-AM_vtxjto.png" alt="Python Crud App Homepage"></a></p>
+</div></div></div></div><script src="/js/bundle-dc18507cc1e13ceedca9.js"></script></body></html>

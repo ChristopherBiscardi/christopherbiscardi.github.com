@@ -1,0 +1,107 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.963f95c3e7e25a2f628cb6039fcdfbbf.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".29fg94e03k0" data-react-checksum="-784388163"><nav data-reactid=".29fg94e03k0.0"><ul class="Nav__items___1oDCD" data-reactid=".29fg94e03k0.0.0"><li data-reactid=".29fg94e03k0.0.0.0"><a class="" href="/posts" data-reactid=".29fg94e03k0.0.0.0.0">Posts</a></li><li data-reactid=".29fg94e03k0.0.0.1"><a class="" href="/talks" data-reactid=".29fg94e03k0.0.0.1.0">Talks</a></li><li data-reactid=".29fg94e03k0.0.0.2"><a class="" href="/books" data-reactid=".29fg94e03k0.0.0.2.0">Books</a></li><li data-reactid=".29fg94e03k0.0.0.3"><a class="" href="/projects" data-reactid=".29fg94e03k0.0.0.3.0">Projects</a></li></ul></nav><div data-reactid=".29fg94e03k0.1"><div data-reactid=".29fg94e03k0.1.0"><p>I wrote a simple Haxl DataSource and I thought it would be good to share. If you don’t know what Haxl is you can find out more <a href="https://github.com/facebook/Haxl">here</a>.</p>
+<p>The gist with the relevant .cabal and DataSource is <a href="https://gist.github.com/ChristopherBiscardi/45c765eb292d96ab4549">here</a></p>
+<h2>Table</h2>
+<p>We will need a people table to store our people:</p>
+<pre><code>&lt;<span class="hljs-built_in">code</span> class=<span class="hljs-string">"sql"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;<span class="hljs-keyword">CREATE</span> TABLE people (
+    _id bigserial primary <span class="hljs-built_in">key</span>,
+    first_name text <span class="hljs-keyword">NOT</span> <span class="hljs-built_in">NULL</span>,
+    last_name text <span class="hljs-keyword">NOT</span> <span class="hljs-built_in">NULL</span>,
+    age int <span class="hljs-keyword">NOT</span> <span class="hljs-built_in">NULL</span>
+);```
+
+<span class="hljs-keyword">And</span> some data to query:
+
+</code></pre>
+<p><code class="sql" style="overflow-x:auto">INSERT INTO people (“first_name”, “last_name”, “age”) VALUES (‘Bob’,‘Seger’,69);
+INSERT INTO people (“first_name”, “last_name”, “age”) VALUES (‘Billy’,‘Idol’,58);```</p>
+<p>which gives us a table that looks like:</p>
+<pre><code><span class="hljs-variable">&lt;code class="asciidoc" style="overflow-x:auto"&gt;</span>peopledb=<span class="hljs-comment"># select * from people;</span>
+ _id |<span class="hljs-string"> first_name </span>|<span class="hljs-string"> last_name </span>|<span class="hljs-string"> age
+-----+------------+-----------+-----
+   1 </span>|<span class="hljs-string"> Bob        </span>|<span class="hljs-string"> Seger     </span>|<span class="hljs-string">  69
+   2 </span>|<span class="hljs-string"> Billy      </span>|<span class="hljs-string"> Idol      </span>|<span class="hljs-string">  58
+(2 rows)```
+
+We can then head into ghci and check out the Haxl DataSource.
+
+</span></code></pre>
+<p><code class="ghci" style="overflow-x:auto">ghci DataSource.hs
+let cinfo = defaultConnectInfo {connectUser = “pgsuper”, connectPassword = “password”, connectDatabase = “peopledb”}
+pgstate ```</p>
+<p>If we check out the value of <code>r</code> we see a <code>Just Person</code>.</p>
+<p><code>&lt;code class=&quot;ghci&quot; style=&quot;overflow-x:auto&quot;&gt;Just (Person {_id = PersonId 1, first_name = &quot;Bob&quot;, last_name = &quot;Seger&quot;, age = 69})</code></p>
+<h2>The Code</h2>
+<p>First, we need a datatype to be querying. Of note is that we’ve <code>newtype</code>'d <code>PersonId</code>, so we’ll use <code>GeneralizedNewtypeDeriving</code> to get the <code>FromField</code> instance from <code>Int</code></p>
+<pre><code>&lt;code <span class="hljs-keyword">class</span>=<span class="hljs-string">"haskell"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;<span class="hljs-class"><span class="hljs-keyword">newtype</span> <span class="hljs-type">PersonId</span> = <span class="hljs-type">PersonId</span> <span class="hljs-type">Int</span> <span class="hljs-keyword">deriving</span> (<span class="hljs-type">Show</span>, <span class="hljs-type">Eq</span>, <span class="hljs-type">FromField</span>)</span>
+
+<span class="hljs-class"><span class="hljs-keyword">data</span> <span class="hljs-type">Person</span> = <span class="hljs-type">Person</span> { <span class="hljs-title">_id</span>        :: <span class="hljs-type">PersonId</span>
+                     , <span class="hljs-title">first_name</span> :: <span class="hljs-type">Text</span>
+                     , <span class="hljs-title">last_name</span>  :: <span class="hljs-type">Text</span>
+                     , <span class="hljs-title">age</span>        :: <span class="hljs-type">Int</span> } <span class="hljs-keyword">deriving</span> (<span class="hljs-type">Show</span>, <span class="hljs-type">Typeable</span>)```</span>
+
+<span class="hljs-type">Next</span> we'll define our requests <span class="hljs-keyword">as</span> a <span class="hljs-type">GADT</span>. <span class="hljs-type">In</span> this <span class="hljs-keyword">case</span> we only have a single request <span class="hljs-class"><span class="hljs-keyword">type</span>: "<span class="hljs-type">GetPerson</span>", which takes a `<span class="hljs-type">PersonId</span>` and looks up that user.</span>
+
+</code></pre>
+<p><code class="haskell" style="overflow-x:auto">data PGReq a where
+GetPerson :: PersonId -&gt; PGReq (Maybe Person)
+deriving Typeable```</p>
+<p>Now we need some simple boilerplate. The Hashable instance defines the hash of our request types for the cache. In this case a <code>GetPerson</code> request is as a tuple of <code>(0,PersonId)</code>.</p>
+<pre><code>&lt;code class=<span class="hljs-string">"haskell"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;deriving<span class="hljs-built_in"> instance </span>Eq (PGReq a)
+deriving<span class="hljs-built_in"> instance </span>Show (PGReq a)
+<span class="hljs-built_in">
+instance </span>Show1 PGReq where show1 = show
+<span class="hljs-built_in">
+instance </span>Hashable (PGReq a) where
+  hashWithSalt s (GetPerson (PersonId pid)) = hashWithSalt s (0::Int, pid)```
+
+Following the boilerplate we'll create a `StateKey` instance. Since this is a simple implementation, we'll put the connection information in our state so we can create connections later. We'll also define a function to initialize said state.
+
+</code></pre>
+<p><code class="haskell" style="overflow-x:auto">instance StateKey PGReq where
+data State PGReq =
+PGState
+{ connInfo :: ConnectInfo }</p>
+<p>initHaxlState
+:: ConnectInfo
+-&gt; IO (State PGReq)
+initHaxlState cInfo = do
+return PGState
+{ connInfo = cInfo }```</p>
+<p>Haxl needs us to name our DataSource and tell it which function to use for fetching data.</p>
+<pre><code>&lt;code <span class="hljs-built_in">class</span>=<span class="hljs-string">"haskell"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;instance DataSourceName PGReq <span class="hljs-keyword">where</span>
+  dataSourceName _ = <span class="hljs-string">"Postgres"</span>
+
+instance DataSource u PGReq <span class="hljs-keyword">where</span>
+  fetch = pgFetch```
+
+Then we can define our asynchronous fetch functions which will process our `BlockedFetch`es. We <span class="hljs-keyword">put</span> a failure <span class="hljs-keyword">on</span> exceptions <span class="hljs-keyword">and</span> pass <span class="hljs-keyword">the</span> data <span class="hljs-keyword">through</span> <span class="hljs-keyword">on</span> a success.
+
+</code></pre>
+<p><code class="haskell" style="overflow-x:auto">pgFetch
+:: State PGReq
+-&gt; Flags
+-&gt; u
+-&gt; [BlockedFetch PGReq]
+-&gt; PerformFetch
+pgFetch PGState {…} _flags _user bfs =
+AsyncFetch $ \inner -&gt; do
+asyncs  BlockedFetch PGReq
+-&gt; IO (Async ())
+fetchAsync creds (BlockedFetch req rvar) =
+async $ do
+bracket (connect creds) (close) $ \conn -&gt; do
+e  putFailure rvar (ex :: SomeException)
+Right val -&gt; putSuccess rvar val```</p>
+<p>Finally, we can define our application logic. In this case our only request type is <code>GetPerson</code>, so we need to get a single <code>Person</code> by <code>PersonId</code>. We could also write more <code>fetchReq</code> patterns if we had more request types.</p>
+<p><code>getPerson</code> is the function we’ll actually call to get a person by id; As seen in the intro to this post.</p>
+<pre><code>&lt;<span class="hljs-selector-tag">code</span> class=<span class="hljs-string">"haskell"</span> style=<span class="hljs-string">"overflow-x:auto"</span>&gt;fetchReq
+  :: Connection
+  -&gt; PGReq <span class="hljs-selector-tag">a</span>
+  -&gt; IO <span class="hljs-selector-tag">a</span>
+fetchReq conn (GetPerson (PersonId pid)) = do
+  people  GenHaxl u (Maybe Person)
+getPerson pid = dataFetch (GetPerson pid)```
+
+
+</code></pre>
+</div></div></div></div><script src="/js/bundle-dc18507cc1e13ceedca9.js"></script></body></html>

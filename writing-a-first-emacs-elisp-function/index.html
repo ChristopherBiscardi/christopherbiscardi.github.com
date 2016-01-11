@@ -1,0 +1,53 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.963f95c3e7e25a2f628cb6039fcdfbbf.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".1kczeb9q800" data-react-checksum="-65468190"><nav data-reactid=".1kczeb9q800.0"><ul class="Nav__items___1oDCD" data-reactid=".1kczeb9q800.0.0"><li data-reactid=".1kczeb9q800.0.0.0"><a class="" href="/posts" data-reactid=".1kczeb9q800.0.0.0.0">Posts</a></li><li data-reactid=".1kczeb9q800.0.0.1"><a class="" href="/talks" data-reactid=".1kczeb9q800.0.0.1.0">Talks</a></li><li data-reactid=".1kczeb9q800.0.0.2"><a class="" href="/books" data-reactid=".1kczeb9q800.0.0.2.0">Books</a></li><li data-reactid=".1kczeb9q800.0.0.3"><a class="" href="/projects" data-reactid=".1kczeb9q800.0.0.3.0">Projects</a></li></ul></nav><div data-reactid=".1kczeb9q800.1"><div data-reactid=".1kczeb9q800.1.0"><p>So today I tried to write my first fully custom Emacs Lisp code. Here are some things I learned (along with the code for a <code>region-to-gist</code> function).</p>
+<p><a href="https://gist.github.com/anonymous/8812412">Here</a> is my final product, uploaded straight from Emacs.</p>
+<p>The final script looks like this at the bottom of my <code>.emacs</code> file:</p>
+<pre><code>&lt;code class=<span class="hljs-string">"lisp"</span> style=<span class="hljs-string">"overflow-x:scroll"</span>&gt;;;; Region <span class="hljs-keyword">to</span> Gist
+(defun region-<span class="hljs-keyword">to</span>-gist ()
+  <span class="hljs-string">"Sends region to Gist"</span>
+  (interactive)
+  (<span class="hljs-keyword">if</span> (region-active-p)
+      (gist-req (<span class="hljs-keyword">buffer</span>-substring-no-properties (region-beginning) (region-<span class="hljs-keyword">end</span>))))
+  nil)
+
+(defun gist-test (buf)
+  (message <span class="hljs-string">"%S"</span> `(:content ,buf)))
+
+(defun gist-req (buf)
+  (request
+       <span class="hljs-string">"https://api.github.com/gists"</span>
+       :<span class="hljs-keyword">type</span> <span class="hljs-string">"POST"</span>
+       :data (json-encode `(:description <span class="hljs-string">"Created with Christopher Biscardi's region-to-gist"</span>
+                            :public t
+                            :files (:example.el (:content ,buf))))
+       ;; :data <span class="hljs-string">"key=value&amp;key2=value2"</span>  ; this <span class="hljs-keyword">is</span> equivalent
+       :parser <span class="hljs-symbol">'json</span>-read
+       :success (<span class="hljs-keyword">function</span>*
+                 (lambda (&amp;key data &amp;allow-other-keys)
+                   (message <span class="hljs-string">"I sent: %S"</span> (assoc-<span class="hljs-keyword">default</span> <span class="hljs-symbol">'html_url</span> data)))))
+  nil)```
+
+It <span class="hljs-keyword">is</span> used by setting a mark `C-SPC`, selecting a region (arrow keys work <span class="hljs-keyword">to</span> expand the region) <span class="hljs-keyword">then</span> typing `M-x region-<span class="hljs-keyword">to</span>-gist`. The <span class="hljs-keyword">Function</span> <span class="hljs-keyword">then</span> runs <span class="hljs-keyword">and</span> outputs either an error message (hopefully <span class="hljs-keyword">not</span>) <span class="hljs-keyword">or</span> this <span class="hljs-keyword">to</span> the message <span class="hljs-keyword">buffer</span>:
+
+`&lt;code class=<span class="hljs-string">"bash"</span>&gt;I sent: <span class="hljs-string">"https://gist.github.com/8812412"</span>`
+
+The most important part here <span class="hljs-keyword">is</span> the `(interactive)` which allows you <span class="hljs-keyword">to</span> <span class="hljs-keyword">use</span> `M-x region-<span class="hljs-keyword">to</span>-gist` <span class="hljs-keyword">to</span> execute the <span class="hljs-keyword">function</span>. There are a couple different modes you can enable <span class="hljs-keyword">with</span> this.
+
+`region-active-p` basically returns true <span class="hljs-keyword">if</span> there’s a region selection (The `C-SPC` <span class="hljs-keyword">and</span> arrows stuff).
+
+`gist-test` <span class="hljs-keyword">is</span> a <span class="hljs-keyword">function</span> I used <span class="hljs-keyword">to</span> replace the `gist-req` call so I could test whether <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> the region was actually being sent <span class="hljs-keyword">and</span> resolve some formatting issues. This <span class="hljs-keyword">function</span> can be wholly deleted <span class="hljs-keyword">with</span> no ramifications.
+
+`<span class="hljs-keyword">buffer</span>-substring-no-properties` returns undecorated strings from your buffers. <span class="hljs-keyword">Use</span> this <span class="hljs-keyword">is</span> you’re trying <span class="hljs-keyword">to</span> handle a <span class="hljs-built_in">string</span> (such as <span class="hljs-keyword">in</span> JSON) <span class="hljs-keyword">and</span> <span class="hljs-keyword">use</span> `<span class="hljs-keyword">buffer</span>-substring` <span class="hljs-keyword">if</span> you’re trying <span class="hljs-keyword">to</span> put something <span class="hljs-keyword">in</span> the kill-ring, etc.
+
+I’m using [request.el](http://tkf.github.io/emacs-request/) <span class="hljs-keyword">to</span> make my request. It tries <span class="hljs-keyword">to</span> <span class="hljs-keyword">use</span> `curl` <span class="hljs-keyword">if</span> available.
+
+The biggest part <span class="hljs-keyword">of</span> the request code <span class="hljs-keyword">is</span> the `:success` <span class="hljs-keyword">function</span>. <span class="hljs-keyword">In</span> this <span class="hljs-keyword">case</span> we grab the key `html_url` from the [Gist API Response](http://developer.github.com/v3/gists/#create-a-gist)`data`.
+
+The backtick here:
+
+</code></pre>
+<p><code class="haskell">`(:description “Created with Christopher Biscardi’s region-to-gist”
+:public t
+:files (:example.el (:content ,buf)))```</p>
+<p>means we have to use the <code>,</code> for <code>,buf</code> to get the value of <code>buf</code>.</p>
+<p>Oh, and also, this function should probably be called <code>gist-region</code> as per other region functions. oops.</p>
+</div></div></div></div><script src="/js/bundle-dc18507cc1e13ceedca9.js"></script></body></html>
