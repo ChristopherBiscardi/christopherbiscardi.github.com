@@ -30,7 +30,7 @@
     "leo-plugin-blogpost": "/Users/chris/Dropbox/projects/superawesomelabs/leo/leo-plugin-blogpost",
     "leo-plugin-cssstats": "/Users/chris/Dropbox/projects/superawesomelabs/leo/leo-plugin-cssstats",
     "leo-plugin-markdown": "/Users/chris/Dropbox/projects/superawesomelabs/leo/leo-plugin-markdown",
-    "leo-plugin-postcss": "/Users/chris/Dropbox/projects/superawesomelabs/leo/leo-plugin-postcss",
+    "@sa-labs/leo-plugin-fate": "/Users/chris/Dropbox/projects/superawesomelabs/leo/leo-plugin-fate",
     "normalize-opentype.css": "^0.2.4"
   },
   "devDependencies": {

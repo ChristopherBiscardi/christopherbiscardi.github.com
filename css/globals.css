@@ -1,0 +1,12 @@
+/* Colors */
+@value text-color: #373a3c;
+@value bg-color: #efefef;
+@value highlight-bg-color: #1d80fe;
+@value lowlight-bg-color: #202B31;
+@value link-color: #fe57a1;
+
+/* sizes */
+@grid-constrain-width: 1440px;
+
+/* Typography */
+@value default-font-stack: "Proxima Nova";

@@ -1,0 +1,16 @@
+{
+  "fateCore": {
+    "fontSizeRoot": "16px",
+    "fontFamilyBase": "'Proxima Nova'",
+    "fontSizeBase": "1rem",
+    "lineHeight": 1.5,
+    "bodyColor": "#373a3c",
+    "bodyBg": "#fafafa",
+    "linkColor": "#fe57a1",
+    "linkHoverColor": "#fe57a1",
+    "linkHoverDecoration": "none",
+    "tableBg": "#efefef",
+    "tableCellPadding": "1rem",
+    "textMuted": "#efefef"
+  }
+}

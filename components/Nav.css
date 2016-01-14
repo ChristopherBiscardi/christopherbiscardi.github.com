@@ -1,4 +1,54 @@
-.items {
-  background: yellow;
+@value lowlight-bg-color, link-color, grid-constrain-width from "../css/globals.css";
+
+/* #202B31 */
+
+.wrapper {
+    background: lowlight-bg-color;
 }
+
+.nav {
+  lost-center: grid-constrain-width;
+  min-height: 2rem;
+}
+
+.items {
+  list-style: none;
+  lost-column: 10/12;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+}
+.items > li {
+  margin-left: 1rem;
+  font-size: .8rem;
+}
+@media only screen and (max-width: 480px) {
+  .items > li {
+    font-size: 1rem;
+  }
+}
+.items > li:hover {
+  border-top: 1px solid white;
+}
+.itemLink {
+  color: white;
+}
+
 /* #22292e */
+
+.logoWrapper {
+  lost-column: 2/12;
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+}
+
+.logo {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+.active {
+  border-bottom: 1px solid white;
+}

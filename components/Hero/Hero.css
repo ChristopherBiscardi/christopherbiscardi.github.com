@@ -1,0 +1,25 @@
+@value text-color from "../../css/globals.css";
+
+.wrapper {
+  min-height:500px;
+  height: 80vw;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  color: white;
+  text-shadow: 1px 1px text-color;
+  lost-flex-container: column;
+}
+
+.upper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* place content 1/3-ish from the top */
+  justify-content: flex-end;
+  /* like. slightly more than 1/3, yea? */
+  lost-row: 4/9;
+  animation-name: fadeInUp;
+}

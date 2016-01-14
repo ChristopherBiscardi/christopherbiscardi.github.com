@@ -1,11 +1,14 @@
 /**
  * Normalize styles are first, so they end up first in the stylesheet
  */
-import 'normalize.css';
+// import 'normalize.css';
+// import './css/reboot.css';
+import '@sa-labs/fate-core/core.css';
 import 'normalize-opentype.css/normalize-opentype.css';
 import React, { Component } from 'react';
 import Relay from 'react-relay';
 import Nav from './components/Nav';
+import Hero from './components/Hero';
 import styles from './routes.css';
 
 class App extends Component {
@@ -27,6 +30,7 @@ class HomeComponent extends Component {
   render() {
     return (
       <div>
+        <Hero />
         <h2><a href='/docker-machine'>Docker Machine</a></h2>
       </div>
     )

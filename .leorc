@@ -2,7 +2,7 @@
   "plugins": [
     "leo-plugin-blogpost",
     "leo-plugin-markdown",
-    "leo-plugin-postcss",
+    "@sa-labs/leo-plugin-fate",
     "leo-plugin-cssstats"
   ],
   "urls": [
