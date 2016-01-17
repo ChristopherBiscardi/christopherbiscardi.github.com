@@ -23,6 +23,7 @@
 .items > li {
   margin-left: 1rem;
   font-size: .8rem;
+  border-top: 1px solid transparent;
 }
 @media only screen and (max-width: 480px) {
   .items > li {
@@ -30,7 +31,7 @@
   }
 }
 .items > li:hover {
-  border-top: 1px solid white;
+  border-color: white;
 }
 .itemLink {
   color: white;
