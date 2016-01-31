@@ -1,8 +1,7 @@
 ---
 title: "Using the Docker-Haskell Official Image"
 date: "Sun, 23 Nov 2014 10:55:18 +0000"
-layout: post
-path: "/2014/11/23/using-the-docker-haskell-official-image/"
+url: "/2014/11/23/using-the-docker-haskell-official-image/"
 ---
 
 
@@ -39,5 +38,3 @@ docker run -itp 8000:8000 my-new-project
 ```
 
 We can now see a Snap application running on port 8000 of either `localhost` or our `boot2docker ip`.
-
-

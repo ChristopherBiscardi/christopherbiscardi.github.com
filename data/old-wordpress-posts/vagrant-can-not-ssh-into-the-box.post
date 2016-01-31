@@ -1,8 +1,7 @@
 ---
 title: "Vagrant Can Not SSH Into the Box"
 date: "Fri, 12 Jul 2013 18:48:58 +0000"
-layout: post
-path: "/2013/7/12/vagrant-can-not-ssh-into-the-box/"
+url: "/2013/7/12/vagrant-can-not-ssh-into-the-box/"
 ---
 
 
@@ -14,10 +13,8 @@ by looking at the VirtualBox GUI.```
 
 There are three things I did to fix it.
 
-1) Enable the :gui option and run `sudo /etc/init.d/networking restart` on the box  
- 2) Run `sudo dhclient` on the box  
+1) Enable the :gui option and run `sudo /etc/init.d/networking restart` on the box
+ 2) Run `sudo dhclient` on the box
  3) Change the IP Address in your Vagrantfile
 
 Then rebuild your box.
-
-

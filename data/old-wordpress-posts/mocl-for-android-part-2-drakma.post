@@ -1,8 +1,7 @@
 ---
 title: "MOCL for Android Part 2: Drakma"
 date: "Thu, 16 Jan 2014 11:59:30 +0000"
-layout: post
-path: "/2014/1/16/mocl-for-android-part-2-drakma/"
+url: "/2014/1/16/mocl-for-android-part-2-drakma/"
 ---
 
 
@@ -10,14 +9,14 @@ In this post we will enable Drakma HTTP support in the Android/MOCL example code
 
 First we must download dependencies.
 
-[Drakma](http://weitz.de/drakma/#install)  
-[USocket](http://common-lisp.net/projects/usocket/releases/)  
-[Flexi-Streams](http://weitz.de/flexi-streams/)  
-[Chunga](http://weitz.de/chunga/)  
-[CL-BASE64](http://www.cliki.net/cl-base64)  
+[Drakma](http://weitz.de/drakma/#install)
+[USocket](http://common-lisp.net/projects/usocket/releases/)
+[Flexi-Streams](http://weitz.de/flexi-streams/)
+[Chunga](http://weitz.de/chunga/)
+[CL-BASE64](http://www.cliki.net/cl-base64)
 [Puri](http://www.cliki.net/puri)
 
-My libs are located in mocl/systems. So I that’s where I place the folders of code, then link the .asd files.  
+My libs are located in mocl/systems. So I that’s where I place the folders of code, then link the .asd files.
  The instructions may change slightly with different versions of libs.
 
 ```
@@ -78,5 +77,3 @@ ndk-build```
 Then simply debug the project in ADK and watch the logcat output. The result should show up as an error, since we used `Log.e("","")`, with a tag of CL.
 
 [![CBLogo_2014_transparent](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png)
-
-

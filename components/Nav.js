@@ -7,10 +7,10 @@ export default class Nav extends Component {
     return (
       <div className={styles.wrapper}>
       <nav className={styles.nav}>
-        <div className={styles.logoWrapper}>
+        <Link to='/' className={styles.logoWrapper}>
           <img className={styles.logo}
-               src={require('./cb-logo-2014.png')} />
-       </div>
+               src={'/' + require('./cb-logo-2014.png')} />
+       </Link>
         <ul className={styles.items}>
           <li><Link to='/posts'
                     className={styles.itemLink}

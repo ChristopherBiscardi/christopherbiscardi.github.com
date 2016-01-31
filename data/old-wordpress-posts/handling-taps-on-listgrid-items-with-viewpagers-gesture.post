@@ -1,8 +1,8 @@
 ---
 title: "Handling Taps on List/Grid Items with ViewPagers (GestureDetector)"
 date: "Wed, 09 Apr 2014 11:05:27 +0000"
-layout: post
-path: "/2014/4/9/handling-taps-on-listgrid-items-with-viewpagers-gesture/"
+slug: "handling-taps-on-listgrid-items-with-viewpagers-gesture"
+url: "/2014/4/9/handling-taps-on-listgrid-items-with-viewpagers-gesture/"
 ---
 
 
@@ -12,7 +12,7 @@ With the following GridView:
 
 ```
 <code class="xml"><?xml version="1.0" encoding="utf-8"?>
-<FrameLayout 
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -66,5 +66,3 @@ public class MyGridItemFrame extends FrameLayout {
 	}
 }
 ```
-
-

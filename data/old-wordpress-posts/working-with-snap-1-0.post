@@ -1,8 +1,8 @@
 ---
 title: "Working with Snap 1.0"
 date: "Sun, 05 Oct 2014 10:48:56 +0000"
-layout: post
-path: "/2014/10/5/working-with-snap-1-0/"
+slug: "working-with-snap-1-0"
+url: "/2014/10/5/working-with-snap-1-0/"
 ---
 
 
@@ -105,5 +105,3 @@ cabal build
 ```
 
 We now have a working Snap 1.0 app to play with. In a future blog post, we’ll explore the creation of a Users service.
-
-

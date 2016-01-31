@@ -1,9 +1,8 @@
 ---
 title: "Docker Machine"
 date: "Sun, 21 Dec 2014 12:53:09 +0000"
-layout: post
 featuredImage: 'https://images.unsplash.com/photo-1437651025703-2858c944e3eb?q=80&fm=jpg&s=0dcc93030e0301f03e423419c0d6a8f9'
-path: "/2014/12/21/docker-machine/"
+url: "/2014/12/21/docker-machine/"
 ---
 
 
@@ -50,7 +49,7 @@ CONTAINER ID  IMAGE  COMMAND  CREATED  STATUS  PORTS  NAMES
 
 ## Docker to Digital Ocean
 
-1. Create a [Personal Access Token](https://cloud.digitalocean.com/settings/applications) 
+1. Create a [Personal Access Token](https://cloud.digitalocean.com/settings/applications)
 
 [![digital ocean application settings](http://res.cloudinary.com/diqzbm8lz/image/upload/h_181,w_660/v1428611477/Screenshot-2014-12-20-14.58.25_hvbvt6.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611477/Screenshot-2014-12-20-14.58.25_hvbvt6.png)
 2. Name and Generate the token
@@ -109,5 +108,3 @@ hello world
 That’s it. We have a Docker Engine and a container running on Digital
 Ocean. We can also run multiple containers as Daemons and all of the
 normal goodness of the Docker CLI.
-
-

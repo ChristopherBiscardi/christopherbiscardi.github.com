@@ -1,8 +1,7 @@
 ---
 title: "Android ListFragment Populated by RoboSpice"
 date: "Tue, 28 Jan 2014 15:06:25 +0000"
-layout: post
-path: "/2014/1/28/android-listfragment-populated-by-robospice/"
+url: "/2014/1/28/android-listfragment-populated-by-robospice/"
 ---
 
 
@@ -105,7 +104,7 @@ public class RedditChildAdapter extends ArrayAdapter<redditchild> {
         TextView author;
         TextView domain;
     }
-    
+
     public RedditChildAdapter(Context context, ArrayList<redditchild> redditChildren) {
         super(context, R.layout.item_reddit_listing, redditChildren);
     }
@@ -113,7 +112,7 @@ public class RedditChildAdapter extends ArrayAdapter<redditchild> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        RedditChild child = getItem(position);    
+        RedditChild child = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
            ViewHolder viewHolder; // view lookup cache stored in tag
            if (convertView == null) {
@@ -147,7 +146,7 @@ Add a RedditListFragment to the view using FragmentManager:
 <code class="java" style="overflow-x:scroll">protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    
+
     FragmentManager fm = getFragmentManager();
 
     if (fm.findFragmentById(android.R.id.content) == null) {
@@ -164,7 +163,7 @@ Then in our Request Listener add the data to the ListFragment Adapter:
     Toast.makeText( MainActivity.this, "success", Toast.LENGTH_SHORT ).show();
     Log.e("TEST",result.toString());
     Log.e("TEST",result.getData().getChildren().get(0).getData().getTitle());
-    
+
     ListView listView = (ListView) findViewById(android.R.id.list);
     RedditChildAdapter adapter = (RedditChildAdapter) listView.getAdapter();
     adapter.clear();

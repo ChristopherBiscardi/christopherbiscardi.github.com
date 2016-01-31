@@ -1,8 +1,7 @@
 ---
 title: "Environment Variables in Haskell"
 date: "Thu, 06 Feb 2014 14:39:47 +0000"
-layout: post
-path: "/2014/2/6/environment-variables-in-haskell/"
+url: "/2014/2/6/environment-variables-in-haskell/"
 ---
 
 
@@ -52,5 +51,3 @@ which will give us a default value when the ENV variable doesn't exist:
 "mydefaultvalue"
 λ myvariable="what" ./env
 "what"```
-
-

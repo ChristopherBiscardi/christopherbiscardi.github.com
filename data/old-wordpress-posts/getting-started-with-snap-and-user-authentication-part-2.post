@@ -1,14 +1,13 @@
 ---
 title: "Getting Started With Snap (and User Authentication): Part 2"
 date: "Fri, 10 Jan 2014 02:23:13 +0000"
-layout: post
-path: "/2014/1/9/getting-started-with-snap-and-user-authentication-part-2/"
+url: "/2014/1/9/getting-started-with-snap-and-user-authentication-part-2/"
 ---
 
 
 [![CBLogo_2014_transparent](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png)
 
-[Git Repo](https://github.com/ChristopherBiscardi/Getting-Started-with-Snap-and-User-Authentication)  
+[Git Repo](https://github.com/ChristopherBiscardi/Getting-Started-with-Snap-and-User-Authentication)
 [part 1](http://www.christopherbiscardi.com/2014/01/07/getting-started-with-snap-and-user-authentication-part-1/)
 
 The file structure now looks like this:
@@ -111,11 +110,11 @@ Since we’re working in the auth Snaplet our type signature for the handler has
      -> Handler b (AuthManager b) () -- return value is a handler
 ```
 
-So going back to `handleLoginSubmit` we use:  
-`"login"` as the username field  
-`"password"` as the password field  
-`Nothing` as the remember field  
-`_ -> handleLogin err` as our error function  
+So going back to `handleLoginSubmit` we use:
+`"login"` as the username field
+`"password"` as the password field
+`Nothing` as the remember field
+`_ -> handleLogin err` as our error function
  and `redirect "/"` as our success function.
 
 `err` is defined as `Just "Unknown user or password"` which matches up with the type from `handleLogin`.
@@ -127,5 +126,3 @@ Our `"/logout"` route is pretty simple. Just call the snaplet-auth supplied func
 `"/new_user"` does a similar thing, except it displays the empty form on `GET` request and handles a form submit on `POST`.
 
 Next we’ll replace the backend, currently a json file, with postgres.
-
-

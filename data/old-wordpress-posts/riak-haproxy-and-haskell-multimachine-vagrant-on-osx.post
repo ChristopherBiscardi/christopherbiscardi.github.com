@@ -1,8 +1,7 @@
 ---
 title: "Riak, HAProxy and Haskell: MultiMachine Vagrant on OSX"
 date: "Wed, 12 Feb 2014 17:25:08 +0000"
-layout: post
-path: "/2014/2/12/riak-haproxy-and-haskell-multimachine-vagrant-on-osx/"
+url: "/2014/2/12/riak-haproxy-and-haskell-multimachine-vagrant-on-osx/"
 ---
 
 
@@ -10,10 +9,10 @@ path: "/2014/2/12/riak-haproxy-and-haskell-multimachine-vagrant-on-osx/"
 
 In this post we will go over how to set up five Riak nodes, cluster them, setup HAProxy on a sixth machine and run a Haskell environment in a seventh machine. This will allow us to query from our Haskell vm to our HAProxy vm and distribute the queries among a Riak cluster.
 
-If you haven’t installed Vagrant, do that now:  
+If you haven’t installed Vagrant, do that now:
 [Vagrant](http://www.vagrantup.com/)
 
-I used VirtualBox as a backing for Vagrant.  
+I used VirtualBox as a backing for Vagrant.
 [VirtualBox](https://www.virtualbox.org/)
 
 
@@ -65,7 +64,7 @@ Which is curling the IP of our load balancer. This should return something like 
 
 ```
 <code class="html" style="overflow-x:auto">
-  
+
     <ul>
     <li><a href="/types">riak_kv_wm_bucket_type</a></li>
     <li><a href="/buckets">riak_kv_wm_buckets</a></li>
@@ -274,5 +273,3 @@ Note that, just like the HAProxy vm, the Riak nodes don’t have init scripts an
 In the future I might include Riak CS in this configuration. In addition, it would be nice to have some init scripts to make for a more stable cluster. As it stands now, we have a pseudo-production configuration and we can examine the results of doing insane things like randomly `vagrant destroy`ing Riak nodes.
 
 Now that I think about it, a chaos monkey would be a cool addition to this setup.
-
-

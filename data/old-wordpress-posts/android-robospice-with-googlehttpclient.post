@@ -1,8 +1,7 @@
 ---
 title: "Android RoboSpice with GoogleHttpClient"
 date: "Mon, 27 Jan 2014 15:54:19 +0000"
-layout: post
-path: "/2014/1/27/android-robospice-with-googlehttpclient/"
+url: "/2014/1/27/android-robospice-with-googlehttpclient/"
 ---
 
 
@@ -343,5 +342,3 @@ Now that’s all the code we need to write, but we still need to register our se
 Now we can run the app and see the result (success or failure) pop up as a Toast as well as viewing the actual data in LogCat.
 
 Check out the github repository [here](https://github.com/ChristopherBiscardi/robospice-googlehttpclient-example)
-
-

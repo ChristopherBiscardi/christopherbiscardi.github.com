@@ -1,8 +1,7 @@
 ---
 title: "Emacs in Docker"
 date: "Fri, 17 Oct 2014 21:43:57 +0000"
-layout: post
-path: "/2014/10/17/emacs-in-docker/"
+url: "/2014/10/17/emacs-in-docker/"
 ---
 
 
@@ -61,5 +60,3 @@ and you’ll be in an emacs. All edits in `/files` will persist to the host:
 ### Build Yours
 
 To build your own `docker-emacs`, check out my [Automated Build](https://registry.hub.docker.com/u/biscarch/emacs/) and the [GitHub Repo](https://github.com/ChristopherBiscardi/docker-emacs) for `biscarch/emacs`
-
-

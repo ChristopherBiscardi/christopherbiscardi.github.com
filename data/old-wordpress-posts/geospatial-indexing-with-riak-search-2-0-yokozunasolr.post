@@ -1,8 +1,8 @@
 ---
 title: "GeoSpatial Indexing with Riak Search 2.0 (Yokozuna/Solr)"
 date: "Fri, 07 Feb 2014 21:01:24 +0000"
-layout: post
-path: "/2014/2/7/geospatial-indexing-with-riak-search-2-0-yokozunasolr/"
+slug: "geospatial-indexing-with-riak-search-2-0-yokozunasolr"
+url: "/2014/2/7/geospatial-indexing-with-riak-search-2-0-yokozunasolr/"
 ---
 
 
@@ -10,7 +10,7 @@ In this post we will be using curl to construct a geospatial index using Riak Se
 
 I’ll be using [Riak Pre11](http://docs.basho.com/riak/2.0.0pre11/downloads/) for this.
 
-In `etc/riak.conf` change `search` to `on`:  
+In `etc/riak.conf` change `search` to `on`:
  (It was on line 411 for me)
 
 `search = on`
@@ -35,7 +35,7 @@ Let’s create a schema so that Solr indexes our data correctly (file available 
   <fields>
     <field name="name" type="string" indexed="true" stored="true"/>
     <field name="loc"  type="location_rpt"  indexed="true" stored="true"/>
-	
+
     <!-- Begin Yokozuna Fields -->
    <field name="_yz_id" type="_yz_str" indexed="true" stored="true" required="true" />
 
@@ -288,5 +288,3 @@ Now, we can convert to miles by multiplying the score (which is degrees) by `69.
 For Kilometers we use `111.1951`, which gives us about `24.7 km`.
 
 Since our query location was from Palo Alto, California, we can see that San Jose is indeed, approximately that 15 miles away. Our search was successful!
-
-

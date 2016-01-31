@@ -1,8 +1,7 @@
 ---
 title: "Quick Tip: JavaScript Partially Applied Functions"
 date: "Fri, 08 Feb 2013 18:23:06 +0000"
-layout: post
-path: "/2013/2/8/quick-tip-javascript-partially-applied-functions/"
+url: "/2013/2/8/quick-tip-javascript-partially-applied-functions/"
 ---
 
 
@@ -49,5 +48,3 @@ incByThree(6);
 incbyFour(6);
 //returns 10
 ```
-
-

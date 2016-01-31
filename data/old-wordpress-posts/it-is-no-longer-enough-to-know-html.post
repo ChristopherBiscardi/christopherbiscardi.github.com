@@ -1,8 +1,7 @@
 ---
 title: "It Is No Longer Enough to \"know\" HTML"
 date: "Sun, 28 Sep 2014 13:57:27 +0000"
-layout: post
-path: "/2014/9/28/it-is-no-longer-enough-to-know-html/"
+url: "/2014/9/28/it-is-no-longer-enough-to-know-html/"
 ---
 
 
@@ -191,5 +190,3 @@ At this point it is interesting to note is that React was prototyped in SML and 
 If I were a betting person, I would bet on the future being closer to a Purely Functional approach than I would on other approaches. What do you think?
 
 In any case, The days where one could cobble together some HTML and call themselves a Front End Engineer are long gone and the future is very interesting.
-
-

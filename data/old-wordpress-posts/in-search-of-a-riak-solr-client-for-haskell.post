@@ -1,8 +1,7 @@
 ---
 title: "In Search of a Riak Solr Client for Haskell"
 date: "Sat, 01 Feb 2014 09:51:09 +0000"
-layout: post
-path: "/2014/2/1/in-search-of-a-riak-solr-client-for-haskell/"
+url: "/2014/2/1/in-search-of-a-riak-solr-client-for-haskell/"
 ---
 
 
@@ -61,7 +60,7 @@ data Docs = Docs {
   _yz_rk :: String,
   _yz_rt :: String,
   _yz_rb :: String
-} deriving (Show) 
+} deriving (Show)
 
 data Results = Results {
   numFound :: Int,
@@ -123,7 +122,7 @@ instance FromJSON Docs where
                                o .: "_yz_rk"
                                o .: "_yz_rt"
                                o .: "_yz_rb"
-  parseJSON _ = mzero   
+  parseJSON _ = mzero
 
 data Results = Results {
   numFound :: Int,
@@ -158,5 +157,3 @@ and running `main` in ghci gives us:
 Success!
 
 This is just a small start. Hopefully I'll be able to build this out a bit more (two changes of note will be usage of `http-streams` and `Lens`) and write a snaplet that integrates well with [this Riak Snaplet](https://github.com/ChristopherBiscardi/snaplet-riak-2) in a more generic fashion.
-
-

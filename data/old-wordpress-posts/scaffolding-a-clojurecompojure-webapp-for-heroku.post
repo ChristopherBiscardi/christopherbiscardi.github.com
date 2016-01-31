@@ -1,15 +1,14 @@
 ---
 title: "Scaffolding a Clojure/Compojure Webapp for Heroku"
 date: "Wed, 15 Jan 2014 18:32:15 +0000"
-layout: post
-path: "/2014/1/15/scaffolding-a-clojurecompojure-webapp-for-heroku/"
+url: "/2014/1/15/scaffolding-a-clojurecompojure-webapp-for-heroku/"
 ---
 
 
 In this post we’ll go through the process to create a basic Clojure/Compojure/libnoir scaffolding project and deploying it to Heroku.
 
-First, make sure you’ve installed the prereqs:  
-[Leiningen](http://leiningen.org/) >= v2.0  
+First, make sure you’ve installed the prereqs:
+[Leiningen](http://leiningen.org/) >= v2.0
 [Heroku Toolbelt](https://toolbelt.heroku.com/)
 
 and here’s the [GitHub](https://github.com/ChristopherBiscardi/clojure-compojure-libnoir) if that’s your style.
@@ -82,5 +81,3 @@ We can open our app with `heroku open` or watch it run with `heroku logs --tail`
 In the next post we’ll dive into lib-noir a bit to investigate potential applications (such as JSON APIs).
 
 [![CBLogo_2014_transparent](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png)
-
-

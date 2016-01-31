@@ -1,12 +1,11 @@
 ---
 title: "Using Databases inside of Snaplet Auth Restricted Routes"
 date: "Thu, 09 Jan 2014 08:39:39 +0000"
-layout: post
-path: "/2014/1/9/using-databases-inside-of-snaplet-auth-restricted-routes/"
+url: "/2014/1/9/using-databases-inside-of-snaplet-auth-restricted-routes/"
 ---
 
 
-[![CBLogo_2014_transparent](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png)  
+[![CBLogo_2014_transparent](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png)
  The github repo for this code is at [here](https://github.com/ChristopherBiscardi/Snap-Databased-within-Auth-Snaplet-Example).
 
 tldr; use this instance:
@@ -98,9 +97,7 @@ The important difference from the instance above it is `withTop` which can be fo
 
 From the docs:
 
-> -- | Like 'with' but doesn't impose the requirement that the action  
+> -- | Like 'with' but doesn't impose the requirement that the action
 >  -- being run be a descendant of the current snaplet.
 
 Essentially, the auth snaplet doesn't know anything about the postgres snaplet as we've instantiated it (it doesn't keep around a reference from the Backend module), so we have to ask the parent context (using `withTop`).
-
-

@@ -1,8 +1,7 @@
 ---
 title: "Consistant Hash Routing in Riak Core"
 date: "Wed, 16 Jan 2013 21:55:29 +0000"
-layout: post
-path: "/2013/1/16/consistant-hash-routing-in-riak-core/"
+url: "/2013/1/16/consistant-hash-routing-in-riak-core/"
 ---
 
 
@@ -17,7 +16,7 @@ path: "/2013/1/16/consistant-hash-routing-in-riak-core/"
 
 ```
 <code class="erlang">
-%% @doc Pings a random vnode 
+%% @doc Pings a random vnode
 ping() ->
     DocIdx = riak_core_util:chash_key({>, term_to_binary(now())}),
     PrefList = riak_core_apl:get_primary_apl(DocIdx, 1, chapp),
@@ -25,7 +24,7 @@ ping() ->
     riak_core_vnode_master:sync_spawn_command(IndexNode, ping, chapp_vnode_master).
 ```
 
-The first function, shown above, pings a random (random enough for our purposes) vnode and returns the partition identifier.  
+The first function, shown above, pings a random (random enough for our purposes) vnode and returns the partition identifier.
  The code we’re interested in is in the first line of the function – specifically the chash_key() function.
 
 The [chash_key](https://github.com/basho/riak_core/blob/master/src/riak_core_util.erl#L187-192) function takes a two-tuple and returns a binary identifier we can use to get a PrefList. Much of the terminology in the Riak Core source refers to Riak KV. In this case, the variables are named Bucket and Key in the chash_key function.
@@ -125,5 +124,3 @@ chapp:pinginput(otherinput).
 chapp:pinginput(otherinput).
 {pong,342539446249430371453988632667878832731859189760}
 ```
-
-

@@ -1,8 +1,7 @@
 ---
 title: "Writing A First Emacs Elisp Function"
 date: "Tue, 04 Feb 2014 13:48:37 +0000"
-layout: post
-path: "/2014/2/4/writing-a-first-emacs-elisp-function/"
+url: "/2014/2/4/writing-a-first-emacs-elisp-function/"
 ---
 
 
@@ -64,5 +63,3 @@ The backtick here:
 means we have to use the `,` for `,buf` to get the value of `buf`.
 
 Oh, and also, this function should probably be called `gist-region` as per other region functions. oops.
-
-

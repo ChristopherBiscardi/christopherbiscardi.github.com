@@ -1,8 +1,7 @@
 ---
 title: "Getting Started with Robolectric: Headless Android Testing with Vagrant"
 date: "Sat, 08 Mar 2014 10:41:12 +0000"
-layout: post
-path: "/2014/3/8/getting-started-with-robolectric-headless-android-testing-with-vagrant/"
+url: "/2014/3/8/getting-started-with-robolectric-headless-android-testing-with-vagrant/"
 ---
 
 
@@ -36,7 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ['modifyvm', :id, '--usb', 'on']
     vb.customize ['usbfilter', 'add', '0', '--target', :id, '--name', '1197123b', '--vendorid', '0x04e8']
     vb.customize ['usbfilter', 'add', '0', '--target', :id, '--name', 'android', '--vendorid', '0x18d1']
-  end  
+  end
 end
 ```
 
@@ -150,7 +149,7 @@ Current State:      Busy```
 
 Find your Android device and use these parameters to change our Vagrantfile:
 
-SerialNumber -> –name  
+SerialNumber -> –name
  VendorId -> –vendorid
 
 ```
@@ -192,5 +191,3 @@ mvn clean install && mvn android:deploy```
 ## Fin
 
 That’s it. The app should be installed on your connected devices. It won’t start automatically, but you can navigate to the newly installed `Robolectric Sample` app and start it up.
-
-

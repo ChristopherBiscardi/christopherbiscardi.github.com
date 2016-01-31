@@ -1,14 +1,16 @@
 /**
  * Normalize styles are first, so they end up first in the stylesheet
  */
-// import 'normalize.css';
-// import './css/reboot.css';
 import '@sa-labs/fate-core/core.css';
 import 'normalize-opentype.css/normalize-opentype.css';
 import React, { Component } from 'react';
+import { Route, IndexRoute } from 'react-router';
 import Relay from 'react-relay';
 import Nav from './components/Nav';
-import Hero from './components/Hero';
+import Home, {
+  queries as HomeQueries,
+  HomeComponent
+} from './components/Home';
 import styles from './routes.css';
 
 class App extends Component {
@@ -26,19 +28,9 @@ class App extends Component {
   }
 }
 
-class HomeComponent extends Component {
-  render() {
-    return (
-      <div>
-        <Hero />
-        <h2><a href='/docker-machine'>Docker Machine</a></h2>
-      </div>
-    )
-  }
-}
-
 class PostComponent extends Component {
   render() {
+    console.log('postpage', this.props.params);
     return (
       <div dangerouslySetInnerHTML={{ __html: this.props.post.body }}>
       </div>
@@ -47,7 +39,7 @@ class PostComponent extends Component {
 }
 const Post = Relay.createContainer(PostComponent, {
  fragments: {
-   post: () => Relay.QL`fragment on BlogPost {
+   post: () =>  Relay.QL`fragment on BlogPost {
     body
    }`
  },
@@ -63,42 +55,35 @@ class PostsPage extends Component {
 
 class NoMatch extends Component {
   render() {
+    console.log(this.props);
     return (
       <div>404</div>
     )
   }
 }
 
-export default [{
-  path: '/',
-  component: App,
-  indexRoute: {
-    component: HomeComponent
-  },
-  childRoutes: [{
-    path: '/posts',
-    component: PostsPage
-  },{
-    path: ':slug',
-    component: Post,
-    queries: {
-    post: (Component) => Relay.QL`
+const PostQueries = {
+  post: (Component) => Relay.QL`
                 query PostQuery {
                   post(slug: $slug) {
                     ${ Component.getFragment('post') }
                   }
                 }
               `
-    }
-  },{
-    path: '*',
-    component: NoMatch
-  }, ],
-}];
-// (
-//     <Route path="/" component={App}>
-//       <IndexRoute component={Home}
-//                   queries={HomeQueries} />
-//       <Route path="*" component={NoMatch}/>
-//     </Route>
-// )
+}
+
+export default (
+  <Route path='/' component={App}>
+    <Route path='/posts' component={PostsPage} />
+    <Route path=':slug'
+           component={Post}
+           queries={PostQueries} />
+    <Route path='/:year/:month/:day/:slug/'
+           component={Post}
+           queries={PostQueries} />
+    <IndexRoute component={Home} 
+                queries={HomeQueries}
+                renderLoading={() => <HomeComponent isLoading={true} /> }/>
+    <Route path='*' component={NoMatch} />
+  </Route>
+)

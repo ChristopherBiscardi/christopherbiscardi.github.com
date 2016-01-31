@@ -1,8 +1,7 @@
 ---
 title: "Getting Started With Snap (and User Authentication): Part 1"
 date: "Tue, 07 Jan 2014 07:53:48 +0000"
-layout: post
-path: "/2014/1/6/getting-started-with-snap-and-user-authentication-part-1/"
+url: "/2014/1/6/getting-started-with-snap-and-user-authentication-part-1/"
 ---
 
 
@@ -24,7 +23,7 @@ or download the package for ghc-7.6.3 [here](http://www.haskell.org/ghc/download
 <code class="bash">hsenv --ghc=/path/to/downloaded/ghc-7.6.3-x86_64-apple-darwin.tar.bz2
 ```
 
-From here on out the process is the same if you’re using hsenv or not.  
+From here on out the process is the same if you’re using hsenv or not.
  Create a new directory named “abc” and enter it. This will also function as the name of our project and executable.
 
 ```
@@ -60,5 +59,3 @@ In the next post we’ll take a look at the code we generated and take a brief o
 [Part 2 – Auth](http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/)
 
 [Part 3 – Postgres Backed Auth](http://www.christopherbiscardi.com/2014/01/11/getting-started-with-snap-and-user-authentication-part-3/)
-
-

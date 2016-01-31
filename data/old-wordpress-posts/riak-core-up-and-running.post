@@ -1,8 +1,7 @@
 ---
 title: "Riak Core: Up and Running"
 date: "Sun, 13 Jan 2013 07:21:44 +0000"
-layout: post
-path: "/2013/1/12/riak-core-up-and-running/"
+url: "/2013/1/12/riak-core-up-and-running/"
 ---
 
 
@@ -14,5 +13,3 @@ Some of the current Riak Core resources available are:
 - [Riak Pipe](http://vimeo.com/53910999) Bryan Fink’s talk from Ricon 2012
 - [Yokozuna](http://vimeo.com/54266574) Ryan Zezeski’s talk about integration between Riak Core and Solr
 - [Introducing Riak Core](http://basho.com/blog/technical/2010/07/30/introducing-riak-core/) Another Basho post with some useful information on the files included in Riak Core
-
-

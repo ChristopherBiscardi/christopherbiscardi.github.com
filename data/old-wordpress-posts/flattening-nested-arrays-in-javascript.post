@@ -1,8 +1,7 @@
 ---
 title: "Flattening Nested Arrays in JavaScript"
 date: "Mon, 06 Jan 2014 01:52:04 +0000"
-layout: post
-path: "/2014/1/5/flattening-nested-arrays-in-javascript/"
+url: "/2014/1/5/flattening-nested-arrays-in-javascript/"
 ---
 
 
@@ -20,5 +19,3 @@ I was writing a quick script today and came across a nice use case for .apply to
 ```
 
 If you need a recursive (ie: infinitely nested) array flattened, check out the source for Underscore’s [flatten()](http://underscorejs.org/#flatten) function, which uses concat.apply for shallow arrays.
-
-

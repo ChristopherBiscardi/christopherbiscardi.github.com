@@ -1,8 +1,7 @@
 ---
 title: "Installing Montage: A Riak sibling resolution library written in Haskell, on OSX"
 date: "Fri, 26 Jul 2013 04:42:26 +0000"
-layout: post
-path: "/2013/7/25/installing-montage-a-riak-sibling-resolution-library-written-in-haskell-on-osx/"
+url: "/2013/7/25/installing-montage-a-riak-sibling-resolution-library-written-in-haskell-on-osx/"
 ---
 
 
@@ -41,7 +40,7 @@ Next I installed some C dependencies using homebrew (http://brew.sh/):
 brew install libev redo libsodium
 ```
 
-Grab the nitro C code from http://gonitro.io/  
+Grab the nitro C code from http://gonitro.io/
  I used v0.2.0
 
 ```
@@ -61,5 +60,3 @@ cd montage
 git checkout 8ac5d81328b29ddf547673f158a1185b40ceec85
 cabal install
 ```
-
-

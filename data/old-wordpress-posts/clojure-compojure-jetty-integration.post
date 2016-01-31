@@ -1,8 +1,7 @@
 ---
 title: "Clojure Compojure Jetty Integration"
 date: "Mon, 18 Feb 2013 06:04:36 +0000"
-layout: post
-path: "/2013/2/17/clojure-compojure-jetty-integration/"
+url: "/2013/2/17/clojure-compojure-jetty-integration/"
 ---
 
 
@@ -25,7 +24,7 @@ under :main write the name of the module that has your (defroutes), we’re goin
 
 Now in projectname.handler add :gen-class and ring.adapter.jetty to (use).
 
-Lower in the same file, include a new function called -main.  
+Lower in the same file, include a new function called -main.
  This is the function java will call to start the server.
 
 In this case my defroutes was named app-routes so that’s what goes after run-jetty.
@@ -55,5 +54,3 @@ lein compile
 lein uberjar
 java -jar target/whatever-STANDALONE.jar
 ```
-
-

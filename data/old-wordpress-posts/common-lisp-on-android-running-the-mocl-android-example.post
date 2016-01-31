@@ -1,8 +1,7 @@
 ---
 title: "Common Lisp on Android: Running the MOCL Android Example"
 date: "Fri, 10 Jan 2014 19:00:14 +0000"
-layout: post
-path: "/2014/1/10/common-lisp-on-android-running-the-mocl-android-example/"
+url: "/2014/1/10/common-lisp-on-android-running-the-mocl-android-example/"
 ---
 
 
@@ -48,5 +47,3 @@ After all of that, `cd LispContacts/jni`
 then run: `ndk-build`
 
 At this point the code has compiled and you’re good to go. You may have to close ADK and reopen it to get ADK to see the mocl files. I might do another post on the code in the example… Give me a comment if that’s something you’re interested in.
-
-

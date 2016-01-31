@@ -1,17 +1,16 @@
 ---
 title: "Language Comparisons 0000001"
 date: "Wed, 05 Feb 2014 15:53:51 +0000"
-layout: post
-path: "/2014/2/5/language-comparisons-0000001/"
+url: "/2014/2/5/language-comparisons-0000001/"
 ---
 
 
 In a thread on HN recently there was a prompt:
 
-> Read in a file full of numbers, one number on each line  
->  Represent those numbers as integers in your program  
->  Replace each number with that number times its line number  
->  Write the file out elsewhere  
+> Read in a file full of numbers, one number on each line
+>  Represent those numbers as integers in your program
+>  Replace each number with that number times its line number
+>  Write the file out elsewhere
 >  And complete the task right now at your computer as fast as possible, you’re being timed
 
 Ignoring the spurious nature of the comment (and ignoring the benefits/drawbacks of interview-programming in general) there were a few responses:
@@ -212,5 +211,3 @@ It is approximately the same level as the previous awk script and a pretty easy 
 64
 81
 100```
-
-

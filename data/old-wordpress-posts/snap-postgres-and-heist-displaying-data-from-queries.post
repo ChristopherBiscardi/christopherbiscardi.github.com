@@ -1,8 +1,7 @@
 ---
 title: "Snap, Postgres and Heist: Displaying Data from Queries"
 date: "Tue, 08 Apr 2014 11:02:10 +0000"
-layout: post
-path: "/2014/4/8/snap-postgres-and-heist-displaying-data-from-queries/"
+url: "/2014/4/8/snap-postgres-and-heist-displaying-data-from-queries/"
 ---
 
 
@@ -79,5 +78,3 @@ We are rendering our new template `auth_users_splice.tpl` with our mapped splice
 ## End
 
 That's it. Feel free to pull the code from [github](https://github.com/ChristopherBiscardi/snap-postgres-heist) and leave any questions you have below.
-
-

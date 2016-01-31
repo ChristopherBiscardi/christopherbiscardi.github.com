@@ -1,0 +1,52 @@
+.posts {
+    padding-top: 30px;
+    lost-center: 960px;
+}
+.post:first-child,
+.post:nth-child(2) {
+    lost-column: 1/2 2;
+}
+.post {
+    lost-column: 1/3 0;
+    margin-bottom: 30px;
+}
+
+.image {
+    margin-bottom: 0.8rem;
+    /*
+      Because percent padding is relative to width, the "height" will
+      be 2/5 of the width.
+    */
+    height: 0;
+    padding-bottom: 40%;
+    /* Originally from http://lea.verou.me/css3patterns/#blueprint-grid */
+    background-color: #dbdbdb;
+    background-image: linear-gradient(white 2px, transparent 2px),
+      linear-gradient(90deg, white 2px, transparent 2px),
+      linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px
+}
+
+.heading {
+    color: #373a3c;
+    margin-bottom: 0;
+}
+
+.meta {
+    font-size: 0.8rem;
+}
+
+.readMore {
+    color: #AEAEAE;
+    font-size: 0.8rem;
+}
+
+.excerpt {
+    margin-bottom: .5rem;
+}
+
+.postsWrapper {
+    background: white;
+}
