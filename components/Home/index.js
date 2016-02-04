@@ -17,8 +17,7 @@ class Post extends Component {
   render() {
     const {
       title, date, excerpt, featuredImage, timeToRead, url
-    } = this.props;
-    console.log('Post', this.props)
+    } = this.props.post.attributes;
     return (
       <div className={styles.post}>
         <div className={styles.image}></div>
@@ -30,35 +29,40 @@ class Post extends Component {
     )
   }
 }
+
+const PostContainer = Relay.createContainer(Post, {
+  fragments: {
+    post: () => Relay.QL`
+      fragment on BlogPost {
+        attributes { title, slug, url, excerpt, date, timeToRead }
+    }`
+  }
+});
+
 export class HomeComponent extends Component {
   static propTypes = {
     isLoading: bool
   };
-  static defaultProps = {
-    blogposts: {
-      allPosts: []
-    }
-  };
 
   render() {
-//    console.log(this.props);
+    console.log('HC', this.props.root.posts.edges);
     const {
       isLoading,
-      blogposts
+      root
     } = this.props;
 
     return (
       <div>
-      <Hero />
-      <div className={styles.postsWrapper}>
-      <div className={styles.posts}>
-      {
-        blogposts.allPosts && blogposts.allPosts.map( post => (
-          <Post key={post.attributes.slug} {...post} {...post.attributes} isLoading={isLoading} />
-        ))
-      }
-      </div>
-      </div>
+        <Hero />
+        <div className={styles.postsWrapper}>
+          <div className={styles.posts}>
+          {
+            root.posts.edges.map( ({ node }) => (
+              <PostContainer key={node.attributes.slug} post={node} />
+            ))
+          }
+        </div>
+        </div>
       </div>
     )
   }
@@ -66,20 +70,17 @@ export class HomeComponent extends Component {
 
 export default Relay.createContainer(HomeComponent, {
   fragments: {
-    blogposts: () => Relay.QL`fragment on Query {
-                    allPosts(limit: 5) {
-                      attributes { title, slug, url, excerpt, date, timeToRead }
-                    }
+    root: () => Relay.QL`
+      fragment on Query {
+        posts(first: 5) {
+          pageInfo { hasNextPage }
+          edges {
+            node {
+              ${ PostContainer.getFragment('post') }
+              attributes { slug }
+            }
+          }
+      }
     }`
   }
-})
-
-export const queries = {
-  blogposts: (Component) => Relay.QL`
-                query HomeQuery {
-                  root {
-                    ${ Component.getFragment('blogposts') }
-                  }
-                }
-              `
-}
+});

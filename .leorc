@@ -3,10 +3,10 @@
     "@sa-labs/leo-plugin-blogpost",
     "@sa-labs/leo-plugin-markdown",
     "@sa-labs/leo-plugin-fate",
-    "@sa-labs/leo-plugin-cssstats",
     "@sa-labs/leo-plugin-images"
   ],
   "urls": [
-    "/"
+    "/",
+    "/whatever/new-test-post/"
   ]
 }

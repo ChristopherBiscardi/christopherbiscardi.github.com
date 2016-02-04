@@ -17,7 +17,7 @@ The gist with the relevant .cabal and DataSource is
 
 We will need a people table to store our people:
 
-```
+```sql
 CREATE TABLE people (
     _id bigserial primary key,
     first_name text NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE people (
 
 And some data to query:
 
-```
+```sql
 INSERT INTO people ("first_name", "last_name", "age") VALUES ('Bob','Seger',69);
 INSERT INTO people ("first_name", "last_name", "age") VALUES ('Billy','Idol',58);
 ```

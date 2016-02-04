@@ -1,59 +1,59 @@
 /*
   Five-color theme from a single blue hue.
 */
-.hljs {
+:global .hljs {
   display: block;
   overflow-x: auto;
   padding: 0.5em;
   background: #eaeef3;
 }
 
-.hljs {
+:global .hljs {
   color: #00193a;
 }
 
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-title,
-.hljs-section,
-.hljs-doctag,
-.hljs-name,
-.hljs-strong {
+:global .hljs-keyword,
+:global .hljs-selector-tag,
+:global .hljs-title,
+:global .hljs-section,
+:global .hljs-doctag,
+:global .hljs-name,
+:global .hljs-strong {
   font-weight: bold;
 }
 
-.hljs-comment {
+:global .hljs-comment {
   color: #738191;
 }
 
-.hljs-string,
-.hljs-title,
-.hljs-section,
-.hljs-built_in,
-.hljs-literal,
-.hljs-type,
-.hljs-addition,
-.hljs-tag,
-.hljs-quote,
-.hljs-name,
-.hljs-selector-id,
-.hljs-selector-class {
+:global .hljs-string,
+:global .hljs-title,
+:global .hljs-section,
+:global .hljs-built_in,
+:global .hljs-literal,
+:global .hljs-type,
+:global .hljs-addition,
+:global .hljs-tag,
+:global .hljs-quote,
+:global .hljs-name,
+:global .hljs-selector-id,
+:global .hljs-selector-class {
   color: #0048ab;
 }
 
-.hljs-meta,
-.hljs-subst,
-.hljs-symbol,
-.hljs-regexp,
-.hljs-attribute,
-.hljs-deletion,
-.hljs-variable,
-.hljs-template-variable,
-.hljs-link,
-.hljs-bullet {
+:global .hljs-meta,
+:global .hljs-subst,
+:global .hljs-symbol,
+:global .hljs-regexp,
+:global .hljs-attribute,
+:global .hljs-deletion,
+:global .hljs-variable,
+:global .hljs-template-variable,
+:global .hljs-link,
+:global .hljs-bullet {
   color: #4c81c9;
 }
 
-.hljs-emphasis {
+:global .hljs-emphasis {
   font-style: italic;
 }
