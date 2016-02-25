@@ -54,7 +54,7 @@ pgstate
 
 If we check out the value of `r` we see a `Just Person`.
 
-```
+```haskell
 Just (Person {_id = PersonId 1, first_name = "Bob", last_name = "Seger", age = 69})
 ```
 
@@ -65,7 +65,7 @@ First, we need a datatype to be querying. Of note is that we've `newtype`'d
 `PersonId`, so we'll use `GeneralizedNewtypeDeriving` to get the `FromField`
 instance from `Int`
 
-```
+```haskell
 newtype PersonId = PersonId Int deriving (Show, Eq, FromField)
 
 data Person = Person { _id        :: PersonId

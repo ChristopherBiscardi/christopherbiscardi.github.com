@@ -6,7 +6,6 @@
     "@sa-labs/leo-plugin-images"
   ],
   "urls": [
-    "/",
-    "/whatever/new-test-post/"
+    "/"
   ]
 }

@@ -7,7 +7,8 @@ url: "/2014/10/17/emacs-in-docker/"
 
 [![docker-emacs](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611480/docker-emacs_rscg2o.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611480/docker-emacs_rscg2o.png)
 
-Assuming a docker installation (either boot2docker or just docker) and a version of `1.3` or higher, we can use Volumes to enable a portable emacs installation.
+Assuming a docker installation (either boot2docker or just docker) and a version
+of `1.3` or higher, we can use Volumes to enable a portable emacs installation.
 
 
 # Using My Image
@@ -18,7 +19,8 @@ To use mine, pull the image:
 docker pull biscarch/emacs
 ```
 
-set up a function to mount the `pwd` at `/files` inside the container and open an emacs at `/files`:
+set up a function to mount the `pwd` at `/files` inside the container and open
+an emacs at `/files`:
 
 NOTE: This is what I have in my `.zshrc`; YMMV.
 
@@ -59,4 +61,6 @@ and you’ll be in an emacs. All edits in `/files` will persist to the host:
 
 ### Build Yours
 
-To build your own `docker-emacs`, check out my [Automated Build](https://registry.hub.docker.com/u/biscarch/emacs/) and the [GitHub Repo](https://github.com/ChristopherBiscardi/docker-emacs) for `biscarch/emacs`
+To build your own `docker-emacs`, check out my [Automated
+Build](https://registry.hub.docker.com/u/biscarch/emacs/) and the [GitHub
+Repo](https://github.com/ChristopherBiscardi/docker-emacs) for `biscarch/emacs`

@@ -13,3 +13,9 @@ body {
   background: #efefef;
   font-family: "Proxima Nova"
 }
+
+blockquote {
+    margin-left: -23px;
+    padding-left: 20px;
+    border-left: 3px solid black;
+}

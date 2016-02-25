@@ -6,30 +6,39 @@ url: "/2014/2/7/geospatial-indexing-with-riak-search-2-0-yokozunasolr/"
 ---
 
 
-In this post we will be using curl to construct a geospatial index using Riak Search 2 (also known as Yokozuna) which is backed by Solr.
+In this post we will be using curl to construct a geospatial index using Riak
+Search 2 (also known as Yokozuna) which is backed by Solr.
 
-I’ll be using [Riak Pre11](http://docs.basho.com/riak/2.0.0pre11/downloads/) for this.
+I’ll be using [Riak Pre11](http://docs.basho.com/riak/2.0.0pre11/downloads/) for
+this.
 
 In `etc/riak.conf` change `search` to `on`:
  (It was on line 411 for me)
 
-`search = on`
+```
+search = on
+```
 
 Make sure your `ulimit` is 4096 or greater:
 
-`<code class="bash">ulimit -n 4096`
+```bash
+ulimit -n 4096
+```
 
 Then start Riak. I’m using `console` myself, but `start` would also work.
 
-`<code class="bash">./bin/riak console`
+```bash
+./bin/riak console
+```
 
 
 ## Creating a Schema
 
-Let’s create a schema so that Solr indexes our data correctly (file available [here](https://gist.github.com/ChristopherBiscardi/8876815)):
+Let’s create a schema so that Solr indexes our data correctly (file available
+[here](https://gist.github.com/ChristopherBiscardi/8876815)):
 
-```
-<code class="xml" style="overflow-x:scroll"><?xml version="1.0" encoding="UTF-8"?>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <schema name="geotest" version="1.5">
   <uniqueKey>_yz_id
   <fields>
@@ -134,96 +143,118 @@ Let’s create a schema so that Solr indexes our data correctly (file available 
       </analyzer>
     </fieldType>
   </types>
-</schema>```
+</schema>
+```
 
 The important parts here are the schema name being `geotest`
 
-`<code class="xml"><schema name="geotest" version="1.5">`
+```xml
+<schema name="geotest" version="1.5">
+```
 
 our two fields. `name` and `loc`
 
-```
-<code class="xml" style="overflow-x:scroll">    <field name="name" type="string" indexed="true" stored="true"/>
+```xml
+    <field name="name" type="string" indexed="true" stored="true"/>
     <field name="loc"  type="location_rpt"  indexed="true" stored="true"/>```
 
 and our fieldType `location_rpt`
 
-```
-<code class="xml" style="overflow-x:scroll">	<fieldType name="location_rpt"   class="solr.SpatialRecursivePrefixTreeFieldType"
+```xml
+	<fieldType name="location_rpt"   class="solr.SpatialRecursivePrefixTreeFieldType"
 	               distErrPct="0.025"
 	               maxDistErr="0.000009"
 	               units="degrees"
-	            />```
+	            />
+```
 
-Pretty much everything else is boilerplate so that the Riak Solr integration works.
-
+Pretty much everything else is boilerplate so that the Riak Solr integration
+works.
 
 ## Upload Schema
 
-We can now upload this schema (I saved the schema above as schema.xml in my current directory):
+We can now upload this schema (I saved the schema above as schema.xml in my
+current directory):
 
-```
-<code class="bash">curl -i -XPUT http://localhost:8098/search/schema/geotest \
+```bash
+curl -i -XPUT http://localhost:8098/search/schema/geotest \
   -H 'content-type: application/xml' \
-  --data-binary @schema.xml```
+  --data-binary @schema.xml
+```
 
 
 ## Create Index
 
-…and we create an index named “my_geo_index” which uses the schema (name = “geotest”) we just uploaded.
+…and we create an index named “my_geo_index” which uses the schema (name =
+“geotest”) we just uploaded.
 
-```
-<code class="bash">curl -i -XPUT http://localhost:8098/search/index/my_geo_index \
+```bash
+curl -i -XPUT http://localhost:8098/search/index/my_geo_index \
   -H 'content-type: application/json' \
-  -d '{"schema":"geotest"}'```
+  -d '{"schema":"geotest"}'
+```
 
 They should both return 204 responses.
 
 
 ## Create Bucket Type
 
-Next we’ll create a bucket type named “geo_type” using the `riak-admin` command. Our bucket type won’t have any special properties, it just needs to exist.
+Next we’ll create a bucket type named “geo_type” using the `riak-admin` command.
+Our bucket type won’t have any special properties, it just needs to exist.
 
-`<code class="bash">./bin/riak-admin bucket-type create geo_type '{"props":{}}'`
+```bash
+./bin/riak-admin bucket-type create geo_type '{"props":{}}'
+```
 
 
 ## Activate Bucket Type
 
 We also need to activate our new bucket type:
 
-`<code class="bash">./bin/riak-admin bucket-type activate geo_type`
+```bash
+./bin/riak-admin bucket-type activate geo_type
+```
 
 
 ## Create Bucket
 
-We will now create a bucket named “stuff” under the `geo_type` bucket type. In addition, this command associates the Solr index `my_geo_index` with the bucket `stuff`
+We will now create a bucket named “stuff” under the `geo_type` bucket type. In
+addition, this command associates the Solr index `my_geo_index` with the bucket
+`stuff`
 
-```
-<code class="bash">curl -XPUT 'http://localhost:8098/types/geo_type/buckets/stuff/props' \
+```bash
+curl -XPUT 'http://localhost:8098/types/geo_type/buckets/stuff/props' \
   -H 'content-type: application/json' \
-  -d '{"props":{"search_index":"my_geo_index"}}'```
+  -d '{"props":{"search_index":"my_geo_index"}}'
+```
 
 
 ## Indexing Data
 
 That’s it. Let’s index some data!
 
-```
-<code class="bash" style="overflow-x:scroll">curl -i -H 'content-type: application/json' -X PUT 'http://localhost:8098/types/geo_type/buckets/stuff/keys/sf' -d '{"name":"San Francisco", "loc":"37.774929,-122.419416"}'
+```bash
+curl -i -H 'content-type: application/json' -X PUT 'http://localhost:8098/types/geo_type/buckets/stuff/keys/sf' -d '{"name":"San Francisco", "loc":"37.774929,-122.419416"}'
 curl -i -H 'content-type: application/json' -X PUT 'http://localhost:8098/types/geo_type/buckets/stuff/keys/sj' -d '{"name":"San Jose", "loc":"37.339386,-121.894955"}'
-curl -i -H 'content-type: application/json' -X PUT 'http://localhost:8098/types/geo_type/buckets/stuff/keys/mv' -d '{"name":"Mountain View", "loc":"37.386052,-122.083851"}'```
+curl -i -H 'content-type: application/json' -X PUT 'http://localhost:8098/types/geo_type/buckets/stuff/keys/mv' -d '{"name":"Mountain View", "loc":"37.386052,-122.083851"}'
+```
 
 
 ## Querying
 
-Now for the fun part. Let’s find all of our data, scored and sorted by distance. The score will return a distance (in degrees). We are querying from a location in Palo Alto, California, so we should see fairly small distances to Mountain View, San Jose and San Francisco.
+Now for the fun part. Let’s find all of our data, scored and sorted by distance.
+The score will return a distance (in degrees). We are querying from a location
+in Palo Alto, California, so we should see fairly small distances to Mountain
+View, San Jose and San Francisco.
 
-`<code class="bash" style="overflow-x:scroll">curl 'http://localhost:8098/search/my_geo_index?&fl=*,score&sort=score%20asc&q={!geofilt%20score=distance%20filter=false%20sfield=loc%20pt=37.441883,-122.143019%20d=10}&wt=json'`
+```bash
+curl 'http://localhost:8098/search/my_geo_index?&fl=*,score&sort=score%20asc&q={!geofilt%20score=distance%20filter=false%20sfield=loc%20pt=37.441883,-122.143019%20d=10}&wt=json'
+```
 
 The query returns the results:
 
-```
-<code class="Javascript" style="overflow-x:scroll">{
+```javascript
+{
    "responseHeader":{
       "status":0,
       "QTime":24,
@@ -279,12 +310,20 @@ The query returns the results:
          }
       ]
    }
-}```
+}
+```
 
-You’ll notice that there are two San Franciscos. This is because I inserted data twice into Riak without using a VClock the second time (While I was writing this post), resulting in siblings. This issue is easily resolvable by resolving the siblings as mentioned [here](http://docs.basho.com/riak/latest/theory/concepts/Vector-Clocks/).
+You’ll notice that there are two San Franciscos. This is because I inserted data
+twice into Riak without using a VClock the second time (While I was writing this
+post), resulting in siblings. This issue is easily resolvable by resolving the
+siblings as mentioned
+[here](http://docs.basho.com/riak/latest/theory/concepts/Vector-Clocks/).
 
-Now, we can convert to miles by multiplying the score (which is degrees) by `69.09341`. If we do this for San Jose it would be `.2221485 * 69.09341`, or about `15.34 mi`.
+Now, we can convert to miles by multiplying the score (which is degrees) by
+`69.09341`. If we do this for San Jose it would be `.2221485 * 69.09341`, or
+about `15.34 mi`.
 
 For Kilometers we use `111.1951`, which gives us about `24.7 km`.
 
-Since our query location was from Palo Alto, California, we can see that San Jose is indeed, approximately that 15 miles away. Our search was successful!
+Since our query location was from Palo Alto, California, we can see that San
+Jose is indeed, approximately that 15 miles away. Our search was successful!

@@ -28,9 +28,19 @@ class App extends Component {
 
 class PostsPage extends Component {
   render() {
-//    console.log('PostsPage', this.props.root);
+    const { edges } = this.props.root.posts
     return (
-      <div dangerouslySetInnerHTML={{ __html: JSON.stringify(this.props.root, 4) }}/>
+      <ul>
+      {
+        edges.map(({ node }) => {
+          const { title, excerpt, url, slug } = node.attributes;
+          return <li key={slug}>
+          <h5><a href={url}>{title}</a></h5>
+          <p>{excerpt}</p>
+          </li>
+        })
+      }
+      </ul>
     )
   }
 }
@@ -39,7 +49,14 @@ const Posts = Relay.createContainer(PostsPage, {
   fragments: {
     root: () => Relay.QL`
       fragment on Query {
-        post(slug: "new-test-post") { body }
+        posts(first: 50) {
+          pageInfo { hasNextPage }
+          edges {
+            node {
+              attributes { slug, title, url, excerpt }
+            }
+          }
+      }
     }`
   }
 });

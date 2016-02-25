@@ -29,8 +29,7 @@ I’ve never used Flask before, so this will take a little longer than normal. I
 
 To connect to the Mongo Instance on Heroku || localhost:
 
-```
-<code class="python">
+```python
   import pymongo
 
   # Get MongoDB URL if on Heroku, else use localhost
@@ -52,8 +51,7 @@ To connect to the Mongo Instance on Heroku || localhost:
 
 And set up some content negotiation formatters:
 
-```
-<code class="python">
+```python
 # Content Negotiation Formatters
 
 

@@ -11,28 +11,33 @@ In this post we will deploy our Snap app to Heroku.
 [part 2](http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/)
 [part 3](http://www.christopherbiscardi.com/2014/01/11/getting-started-with-snap-and-user-authentication-part-3/)
 
-First, we need to put a `Procfile` in the root of our project; Save this as `Procfile`
-
-`web: cabal run -- -p $PORT`
-
-If you’ve been following along and haven’t yet put the code into version control, now is the time to do that by running `git init`, `git add` and `git commit -m "message"`.
-
-This command will create a new Heroku app with a Haskell buildpack. You can find more information on the buildpack [here]()
-
-`heroku create --stack=cedar --buildpack https://github.com/begriffs/heroku-buildpack-ghc.git`
-
-<span style="font-style:italic">–note: You can now deploy the app to Heroku, but you will get an error about connecting to PostgreSQL</span>
-
-At this point we have two basic choices: We can run PostgreSQL as a Heroku extension or we can host PostgreSQL somewhere else. Hosting elsewhere is easier because the other options are
-
-1. Write a Pull Request for [Configurator](https://github.com/bos/configurator) to enable dynamic creation of `Config`s (Then we parse the Heroku PostgreSQL ENV variable and pass the new `Config` instead of our file in the PostgreSQL snaplet directory)
-2. Write a Pull Request for [snaplet-postgresql-simple](https://github.com/mightybyte/snaplet-postgresql-simple) that enables bypassing the `Config` in favor of parsing the ENV variable. This would likely involve writing a new [pgsInit” and initHelper’](https://github.com/mightybyte/snaplet-postgresql-simple/blob/master/src/Snap/Snaplet/PostgresqlSimple.hs#L278-301) and is, in fact, something I started doing for this blog post before I got distracted.
-3. Write some code that runs before the snaplets are initialized that reads the ENV variable, parses it into a `Configurator` parsable config file, writes it out to `/snaplets/postgres-simple/devel.cfg`. The snaplet would then read in the config file as normal when initialized.
-
-`devel.cfg` looks like this:
+First, we need to put a `Procfile` in the root of our project; Save this as
+`Procfile`
 
 ```
-<code style="overflow-x:scroll">host = "localhost"
+web: cabal run -- -p $PORT
+```
+
+If you’ve been following along and haven’t yet put the code into version
+control, now is the time to do that by running `git init`, `git add` and `git
+commit -m "message"`.
+
+This command will create a new Heroku app with a Haskell buildpack. You can find
+more information on the buildpack
+[here](https://github.com/begriffs/heroku-buildpack-ghc)
+
+```
+heroku create --stack=cedar --buildpack https://github.com/begriffs/heroku-buildpack-ghc.git
+```
+
+> note: You can now deploy the app to Heroku, but you will get an error about connecting to PostgreSQL
+
+At this point we have two basic choices: We can run PostgreSQL as a Heroku
+extension or we can host PostgreSQL somewhere else. For this example, we'll
+hosting elsewhere. `devel.cfg` looks like this:
+
+```yaml
+host = "localhost"
 port = 5432
 user = "postgres"
 pass = ""
@@ -48,8 +53,10 @@ idleTime = 5
 
 # Maximum number of resources to keep open per stripe.  The smallest
 # acceptable value is 1.
-maxResourcesPerStripe = 20```
+maxResourcesPerStripe = 20
+```
 
-The final option is to just host PostgreSQL somewhere other than Heroku and modify the config file to point there.
+The final option is to just host PostgreSQL somewhere other than Heroku and
+modify the config file to point there.
 
 [![CBLogo_2014_transparent](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png)

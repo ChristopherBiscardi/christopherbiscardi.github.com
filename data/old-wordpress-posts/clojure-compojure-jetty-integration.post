@@ -13,8 +13,7 @@ I have some extra dependencies such as hiccup that aren’t strictly necessary. 
 
 under :main write the name of the module that has your (defroutes), we’re going to add a -main function to the same file.
 
-```
-<code class="clojure">
+```clojure
 :dependencies [[org.clojure/clojure "1.4.0"]
               [compojure "1.1.5"]
               [ring/ring-jetty-adapter "1.2.0-beta1"]
@@ -27,10 +26,10 @@ Now in projectname.handler add :gen-class and ring.adapter.jetty to (use).
 Lower in the same file, include a new function called -main.
  This is the function java will call to start the server.
 
-In this case my defroutes was named app-routes so that’s what goes after run-jetty.
+In this case my defroutes was named app-routes so that’s what goes after
+run-jetty.
 
-```
-<code class="clojure">
+```clojure
 (ns projectname.handler
  (:gen-class)
  (:use [compojure.core]
@@ -48,8 +47,7 @@ In this case my defroutes was named app-routes so that’s what goes after run-j
 
 That’s it. You should be able to
 
-```
-<code class="bash">
+```bash
 lein compile
 lein uberjar
 java -jar target/whatever-STANDALONE.jar

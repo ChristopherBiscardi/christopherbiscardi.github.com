@@ -45,7 +45,6 @@ export class HomeComponent extends Component {
   };
 
   render() {
-    console.log('HC', this.props.root.posts.edges);
     const {
       isLoading,
       root

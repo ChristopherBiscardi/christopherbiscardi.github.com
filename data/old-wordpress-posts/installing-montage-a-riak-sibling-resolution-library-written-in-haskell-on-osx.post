@@ -9,8 +9,7 @@ Here is a description of how I installed Montage (https://github.com/bumptech/mo
 
 First clone these repos (the relevant commit I used is listed below each clone command)
 
-```
-<code class="bash">
+```bash
 mkdir montage_deps
 cd montage_deps
 
@@ -35,16 +34,14 @@ cd ..
 
 Next I installed some C dependencies using homebrew (http://brew.sh/):
 
-```
-<code class="bash">
+```bash
 brew install libev redo libsodium
 ```
 
 Grab the nitro C code from http://gonitro.io/
  I used v0.2.0
 
-```
-<code class="bash">
+```bash
 cd folder_with_nitro_code
 redo
 sudo redo install
@@ -52,8 +49,7 @@ sudo redo install
 
 We are now ready to install Montage
 
-```
-<code class="bash">
+```bash
 cd montage_deps
 git clone https://github.com/bumptech/montage.git
 cd montage
