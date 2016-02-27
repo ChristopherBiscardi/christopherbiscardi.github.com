@@ -1,13 +1,18 @@
 # Developing
 
-## Run API
-
+```shell
+npm i
+npm run update-schema
+npm start
 ```
+
+## GraphiQL Data Explorer
+
+```shell
 npm run api
 ```
 
-## Build and Serve Site
+Then open http://localhost:3000/graphql in your favorite browser to
+see GraphiQL.
 
-```
-npm run site
-```
+![graphiql](./graphiql.png)

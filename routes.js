@@ -9,14 +9,12 @@ import Relay from 'react-relay';
 import Nav from './components/Nav';
 import Home from './components/Home';
 import Post from './components/Post';
+import Posts from './pages/Posts';
 import styles from './routes.css';
 
 class App extends Component {
   render() {
-    const {
-      children,
-      ...props
-    } = this.props;
+    const { children, ...props } = this.props;
     return (
       <div>
         <Nav/>
@@ -26,44 +24,8 @@ class App extends Component {
   }
 }
 
-class PostsPage extends Component {
-  render() {
-    const { edges } = this.props.root.posts
-    return (
-      <ul>
-      {
-        edges.map(({ node }) => {
-          const { title, excerpt, url, slug } = node.attributes;
-          return <li key={slug}>
-          <h5><a href={url}>{title}</a></h5>
-          <p>{excerpt}</p>
-          </li>
-        })
-      }
-      </ul>
-    )
-  }
-}
-
-const Posts = Relay.createContainer(PostsPage, {
-  fragments: {
-    root: () => Relay.QL`
-      fragment on Query {
-        posts(first: 50) {
-          pageInfo { hasNextPage }
-          edges {
-            node {
-              attributes { slug, title, url, excerpt }
-            }
-          }
-      }
-    }`
-  }
-});
-
 class NoMatch extends Component {
   render() {
-//    console.log('No Match', this.props);
     return (
       <div>404</div>
     )
