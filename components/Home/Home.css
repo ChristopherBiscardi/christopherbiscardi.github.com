@@ -12,6 +12,7 @@
 }
 
 .image {
+    composes: blueprintBg from '../../css/globals.css';
     margin-bottom: 0.8rem;
     /*
       Because percent padding is relative to width, the "height" will
@@ -19,14 +20,6 @@
     */
     height: 0;
     padding-bottom: 40%;
-    /* Originally from http://lea.verou.me/css3patterns/#blueprint-grid */
-    background-color: #dbdbdb;
-    background-image: linear-gradient(white 2px, transparent 2px),
-      linear-gradient(90deg, white 2px, transparent 2px),
-      linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
-    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px
 }
 
 .heading {

@@ -10,8 +10,11 @@ html {
   -ms-text-size-adjust: 100%;
 }
 body {
-  background: #efefef;
-  font-family: "Proxima Nova"
+  background: white;
+  /*   Switch back to 
+   font-family: "Proxima Nova"
+ */
+  font-family: Roboto;
 }
 
 blockquote {
