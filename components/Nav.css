@@ -3,7 +3,7 @@
 /* #202B31 */
 
 .wrapper {
-    background: lowlight-bg-color;
+    background: white;
 }
 
 .nav {
@@ -31,10 +31,10 @@
   }
 }
 .items > li:hover {
-  border-color: white;
+  border-color: #202B31;
 }
 .itemLink {
-  color: white;
+  color: #202B31;
 }
 
 /* #22292e */

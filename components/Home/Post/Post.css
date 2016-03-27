@@ -1,0 +1,46 @@
+.post:first-child,
+.post:nth-child(2) {
+    lost-column: 1/2 2;
+}
+
+.post {
+    lost-column: 1/3 0;
+    margin-bottom: 2rem;
+}
+
+@media only screen and (max-width: 480px) {
+    .post,
+    .post:first-child,
+    .post:nth-child(2) {
+        lost-column: 1/1 1;
+    }
+}
+
+.image {
+    composes: blueprintBg from '../../../css/globals.css';
+    margin-bottom: 0.2rem;
+    /*
+      Because percent padding is relative to width, the "height" will
+      be 2/5 of the width.
+    */
+    height: 0;
+    padding-bottom: 40%;
+}
+
+.heading {
+    color: #373a3c;
+    margin-bottom: 0;
+}
+
+.meta {
+    font-size: 0.8rem;
+}
+
+.readMore {
+    color: #AEAEAE;
+    font-size: 0.8rem;
+}
+
+.excerpt {
+    margin-bottom: .5rem;
+}

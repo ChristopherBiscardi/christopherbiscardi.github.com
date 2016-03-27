@@ -4,7 +4,7 @@
 :global .hljs {
   display: block;
   overflow-x: auto;
-  padding: 0.5em;
+  padding: 1rem;
   background: #eaeef3;
 }
 

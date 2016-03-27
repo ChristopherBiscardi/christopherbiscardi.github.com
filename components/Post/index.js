@@ -14,8 +14,8 @@ class PostComponent extends Component {
     return (
       <div className={styles.container}>
         <div className={styles.singleColumn}>
-          <div>{date} &middot; {timeToRead} minutes to read</div>
-          <h1>{title}</h1>
+          <h1 className={styles.title}>{title}</h1>
+          <div className={styles.meta}>{date} &middot; {timeToRead} minute read</div>
           <div dangerouslySetInnerHTML={{ __html: this.props.root.post.body }} />
         </div>
       </div>

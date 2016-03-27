@@ -1,45 +1,53 @@
+.postsWrapper {
+    padding: 0 2rem;
+}
 .posts {
-    padding-top: 30px;
+    padding: 1rem 0;
     lost-center: 960px;
 }
-.post:first-child,
-.post:nth-child(2) {
-    lost-column: 1/2 2;
-}
-.post {
-    lost-column: 1/3 0;
-    margin-bottom: 30px;
+
+.stickyWrapper {
+    display: flex;
+    padding: 1rem 2rem;
+    background: #EDF8FE;
+    color: #202B31;
 }
 
-.image {
-    composes: blueprintBg from '../../css/globals.css';
-    margin-bottom: 0.8rem;
-    /*
-      Because percent padding is relative to width, the "height" will
-      be 2/5 of the width.
-    */
-    height: 0;
-    padding-bottom: 40%;
-}
-
-.heading {
-    color: #373a3c;
-    margin-bottom: 0;
-}
-
-.meta {
-    font-size: 0.8rem;
+.stickyInnerWrapper {
+    lost-center: 960px;
 }
 
 .readMore {
-    color: #AEAEAE;
+    color: #0B95E1;
     font-size: 0.8rem;
+    margin: 0;
 }
 
-.excerpt {
-    margin-bottom: .5rem;
+.stickyMeta {
+    lost-column: 2/10 2;
 }
 
-.postsWrapper {
-    background: white;
+.stickyContent {
+    lost-column: 8/10 2;
+}
+
+.featured {
+    text-align: end;
+    margin-bottom: 0;
+    color: #0B95E1;
+}
+@media only screen and (max-width: 480px) {
+    .stickyWrapper {
+        lost-flex-container: column;
+    }
+    .stickyMeta {
+        lost-column: 1/1 1;
+    }
+
+    .stickyContent {
+        lost-column: 1/1 1;
+    }
+    .featured {
+        font-weight: bold;
+    }
 }

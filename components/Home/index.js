@@ -3,39 +3,43 @@ import { Link } from 'react-router';
 import Relay from 'react-relay';
 import Hero from '../Hero';
 import styles from './Home.css';
-
 const { bool, string } = PropTypes;
 
-/**
- * nothing, loading, none, one, some, too many, incorrect, correct, done
- */
+import Post from './Post';
 
-class Post extends Component {
-  static propTypes = {
-    title: string
-  };
+class StickyComponent extends Component {
   render() {
     const {
-      title, date, excerpt, featuredImage, timeToRead, url
-    } = this.props.post.attributes;
+      title, excerpt, url
+    } = this.props.sticky.attributes
     return (
-      <div className={styles.post}>
-        <div className={styles.image}></div>
-        <Link to={url}><h4 className={styles.heading}>{title}</h4></Link>
-        <span className={styles.meta}>{date} &bull; {timeToRead} min read</span>
-        <p className={styles.excerpt}>{excerpt}</p>
-        <Link to={url} className={styles.readMore}>Read more...</Link>
-      </div>
+      <Link to={url}>
+        <div className={styles.stickyWrapper}>
+          <div className={styles.stickyInnerWrapper}>
+
+            <div className={styles.stickyMeta}>
+              <p className={styles.featured}>Featured</p>
+            </div>
+
+            <div className={styles.stickyContent}>
+              <h3>{title}</h3>
+              <p>{excerpt}</p>
+              <p className={styles.readMore}>Read more...</p>
+            </div>
+
+          </div>
+        </div>
+      </Link>
     )
   }
 }
 
-const PostContainer = Relay.createContainer(Post, {
+const StickyContainer = Relay.createContainer(StickyComponent, {
   fragments: {
-    post: () => Relay.QL`
+    sticky: () => Relay.QL`
       fragment on BlogPost {
-        attributes { title, slug, url, excerpt, date, timeToRead }
-    }`
+          attributes { title, url, excerpt }
+      }`
   }
 });
 
@@ -49,15 +53,15 @@ export class HomeComponent extends Component {
       isLoading,
       root
     } = this.props;
-
     return (
       <div>
         <Hero />
+        <StickyContainer sticky={root.sticky}/>
         <div className={styles.postsWrapper}>
           <div className={styles.posts}>
           {
             root.posts.edges.map( ({ node }) => (
-              <PostContainer key={node.attributes.slug} post={node} />
+              <Post key={node.attributes.slug} post={node} />
             ))
           }
         </div>
@@ -75,11 +79,14 @@ export default Relay.createContainer(HomeComponent, {
           pageInfo { hasNextPage }
           edges {
             node {
-              ${ PostContainer.getFragment('post') }
+              ${ Post.getFragment('post') }
               attributes { slug }
             }
           }
-      }
+        }
+        sticky: post(slug: "deploying-a-minecraft-server-with-docker-machine") {
+          ${ StickyContainer.getFragment('sticky') }
+        }
     }`
   }
 });

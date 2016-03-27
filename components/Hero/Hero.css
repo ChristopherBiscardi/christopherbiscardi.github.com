@@ -1,7 +1,14 @@
 @value text-color from "../../css/globals.css";
 
 .wrapper {
-  composes: blueprintBg from '../../css/globals.css';
+  /* colorzilla's gradient generator is cool. You should use it */
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#edf8fe+0,0b95e1+100 */
+  background: #edf8fe; /* Old browsers */
+  background: -moz-linear-gradient(-45deg,  #edf8fe 0%, #0b95e1 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg,  #edf8fe 0%,#0b95e1 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg,  #edf8fe 0%,#0b95e1 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#edf8fe', endColorstr='#0b95e1',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  
   min-height:500px;
   height: 60vh;
   width: 100%;

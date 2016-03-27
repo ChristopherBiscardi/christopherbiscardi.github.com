@@ -4,4 +4,21 @@
 }
 .singleColumn {
     lost-column: 1/1;
+    padding: 1rem;
+}
+
+.title {
+    font-size: 1.17rem;
+}
+.meta {
+    font-size: .8rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+    color: #a1a6a9;
+}
+
+@media only screen and (max-width: 480px) {
+    :global .hljs {
+        margin: 1rem -1rem;
+    }
 }

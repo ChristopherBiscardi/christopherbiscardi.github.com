@@ -46,9 +46,13 @@ peopledb=# select * from people;
 
 We can then head into ghci and check out the Haxl DataSource.
 
-```
+```haskell
 ghci DataSource.hs
-let cinfo = defaultConnectInfo {connectUser = "pgsuper", connectPassword = "password", connectDatabase = "peopledb"}
+let cinfo = defaultConnectInfo {
+    connectUser = "pgsuper"
+  , connectPassword = "password"
+  , connectDatabase = "peopledb"
+  }
 pgstate
 ```
 
