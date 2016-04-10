@@ -2,6 +2,15 @@
     lost-center: 700px;
     
 }
+.container a {
+    background-color: transparent;
+    background-repeat: repeat-x;
+    background-size: 1px 1px;
+    background-image: linear-gradient(to bottom,#0B95E1 75%,#0B95E1 75%);
+    text-shadow: -2px 1px 0 #fcfcfc,-1px 1px 0 #fcfcfc,0 1px 0 #fcfcfc,1px 1px 0 #fcfcfc,2px 1px 0 #fcfcfc,-1px -1px 0 #fcfcfc,1px -1px 0 #fcfcfc,-1px 0 0 #fcfcfc,1px 0 0 #fcfcfc;
+    background-position: 0 99.9%;
+    text-decoration: none;
+}
 .singleColumn {
     lost-column: 1/1;
     padding: 1rem;

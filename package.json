@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/superawesomelabs/leo-default-starter#readme",
   "dependencies": {
-    "@sa-labs/leo-core": "/Users/chris/Dropbox/projects/_superawesomelabs/leo/packages/leo-core",
-    "@sa-labs/leo-plugin-blogpost": "/Users/chris/Dropbox/projects/_superawesomelabs/leo/packages/leo-plugin-blogpost",
+    "@sa-labs/leo-core": "^0.2.5",
+    "@sa-labs/leo-plugin-blogpost": "^0.2.3",
     "@sa-labs/leo-plugin-fate": "^0.0.4",
     "@sa-labs/leo-plugin-images": "0.2.0",
-    "@sa-labs/leo-plugin-markdown": "/Users/chris/Dropbox/projects/_superawesomelabs/leo/packages/leo-plugin-markdown",
+    "@sa-labs/leo-plugin-markdown": "^0.2.2",
     "frontmatter-loader": "0.0.1",
     "lost": "^6.6.3",
     "normalize-opentype.css": "^0.2.4"

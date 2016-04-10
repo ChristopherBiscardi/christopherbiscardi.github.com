@@ -34,7 +34,14 @@
   border-color: #202B31;
 }
 .itemLink {
-  color: #202B31;
+    color: #202B31;
+    background-color: transparent;
+    background-repeat: repeat-x;
+    background-size: 1px 1px;
+    background-image: linear-gradient(to bottom,#202B31 75%,#202B31 75%);
+    text-shadow: -2px 1px 0 #fcfcfc,-1px 1px 0 #fcfcfc,0 1px 0 #fcfcfc,1px 1px 0 #fcfcfc,2px 1px 0 #fcfcfc,-1px -1px 0 #fcfcfc,1px -1px 0 #fcfcfc,-1px 0 0 #fcfcfc,1px 0 0 #fcfcfc;
+    background-position: 0 99.9%;
+    text-decoration: none;
 }
 
 /* #22292e */
