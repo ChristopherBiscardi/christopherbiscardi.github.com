@@ -1,0 +1,112 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".1lmegp0cgso" data-react-checksum="-2055773116"><div class="Nav__wrapper___u7BUA" data-reactid=".1lmegp0cgso.0"><nav class="Nav__nav___1e2Pp" data-reactid=".1lmegp0cgso.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".1lmegp0cgso.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".1lmegp0cgso.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".1lmegp0cgso.0.0.1"><li data-reactid=".1lmegp0cgso.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".1lmegp0cgso.0.0.1.0.0">Posts</a></li><li data-reactid=".1lmegp0cgso.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".1lmegp0cgso.0.0.1.1.0">AMA</a></li><li data-reactid=".1lmegp0cgso.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".1lmegp0cgso.0.0.1.2.0">Books</a></li><li data-reactid=".1lmegp0cgso.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".1lmegp0cgso.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".1lmegp0cgso.1"><div class="Post__container___3xG6t" data-reactid=".1lmegp0cgso.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".1lmegp0cgso.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".1lmegp0cgso.1.0.0.0">Getting Started With Snap (and User Authentication): Part 2</h1><div class="Post__meta___1jyEB" data-reactid=".1lmegp0cgso.1.0.0.1"><span data-reactid=".1lmegp0cgso.1.0.0.1.0">Jan 10th, 2014</span><span data-reactid=".1lmegp0cgso.1.0.0.1.1"> · </span><span data-reactid=".1lmegp0cgso.1.0.0.1.2">3</span><span data-reactid=".1lmegp0cgso.1.0.0.1.3"> minute read</span></div><div data-reactid=".1lmegp0cgso.1.0.0.2"><p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png" alt="CBLogo_2014_transparent"></a></p>
+<p><a href="https://github.com/ChristopherBiscardi/Getting-Started-with-Snap-and-User-Authentication">Git Repo</a>
+<a href="http://www.christopherbiscardi.com/2014/01/07/getting-started-with-snap-and-user-authentication-part-1/">part 1</a></p>
+<p>The file structure now looks like this:</p>
+<pre class="hljs"><code>  - abc.cabal
+  - log/
+     - access.log
+     - error.log
+  - snaplets/
+     - heist/
+        - templates/
+           - _login.tpl
+           - _new_user.tpl
+           - base.tpl
+           - index.tpl
+           - login.tpl
+           - new_user.tpl
+           - userform.tpl
+  - src/
+     - Application.hs
+     - Main.hs
+     - Site.hs
+  - static/
+     - screen.css
+</code></pre>
+<p><code>abc.cabal</code> includes our dependencies and build information. This file is read
+when we run <code>cabal install</code></p>
+<p><code>log</code> includes two files that log out what browsers <code>access</code> the site and what
+<code>error</code>s occur.</p>
+<p><code>snaplets</code> is where our snaplets store their files. In this case we only have
+<code>heist</code> there, which contains a <code>templates</code> folder that includes the templates
+we use to render the site.</p>
+<p><code>static</code> includes a simple stylesheet that is served when we visit the site.</p>
+<p><code>src</code> is the folder we’re currently concerned with. It includes three files:</p>
+<h5 id="mainhs">Main.hs</h5>
+<p>This file contains some boilerplate for dynamic recompilation of a snap site.
+We’ll be leaving this file alone.</p>
+<h5 id="applicationhs">Application.hs</h5>
+<p>Here we define our App datatype with the snaplets we will be using.</p>
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">data</span> <span class="hljs-type">App</span> = <span class="hljs-type">App</span></span>
+    { _heist :: <span class="hljs-type">Snaplet</span> (<span class="hljs-type">Heist</span> <span class="hljs-type">App</span>)
+    , _sess :: <span class="hljs-type">Snaplet</span> <span class="hljs-type">SessionManager</span>
+    , _auth :: <span class="hljs-type">Snaplet</span> (<span class="hljs-type">AuthManager</span> <span class="hljs-type">App</span>)
+    }
+</code></pre>
+<p>In this case we are using <code>heist</code>, <code>sessions</code> and <code>authentication</code>.</p>
+<p>Then we make a call to <code>makeLenses</code></p>
+<pre class="hljs"><code>makeLenses ''App
+</code></pre>
+<p><code>makeLenses</code> does some things under the hood like creating getters/setters and
+changing the names for the snaplets in our app to remove the underscore. This
+means that <code>_auth</code> will be referred to as <code>auth</code> in the rest of our app,
+including in <code>src/Site.hs</code>.</p>
+<p>We then define an instance for the Heist Snaplet so we don’t have to use <code>with heist</code> every time we want to render a template (More about this later).</p>
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">HasHeist</span> <span class="hljs-type">App</span> <span class="hljs-keyword">where</span></span>
+    heistLens = subSnaplet heist
+</code></pre>
+<p>and finally we declare a type alias so that we can use <code>AppHandler</code> instead of
+the longer <code>Handler App App</code> in the type signatures for our routes.</p>
+<pre class="hljs"><code>type AppHandler = Handler App App
+</code></pre>
+<h5 id="sitehs">Site.hs</h5>
+<p>This is where the meat of our site lives. The routing code, handlers and
+initialization for the entire app.</p>
+<p>The first route is <code>&quot;/login&quot;</code> which uses <code>handleLoginSubmit</code>.</p>
+<pre class="hljs"><code>(&quot;/login&quot;,    with auth handleLoginSubmit)
+</code></pre>
+<p><code>with auth</code> lets us work in the auth Snaplet for <code>handleLoginSubmit</code>.</p>
+<pre class="hljs"><code><span class="hljs-title">handleLoginSubmit</span> :: <span class="hljs-type">Handler</span> <span class="hljs-type">App</span> (<span class="hljs-type">AuthManager</span> <span class="hljs-type">App</span>) ()
+<span class="hljs-title">handleLoginSubmit</span> =
+    loginUser <span class="hljs-string">"login"</span> <span class="hljs-string">"password"</span> <span class="hljs-type">Nothing</span>
+              (_ -&gt; handleLogin err) (redirect <span class="hljs-string">"/"</span>)
+  <span class="hljs-keyword">where</span>
+    err = <span class="hljs-type">Just</span> <span class="hljs-string">"Unknown user or password"</span>
+</code></pre>
+<p>Since we’re working in the auth Snaplet our type signature for the handler has
+the type <code>Handler App (AuthManager App) ()</code>, which is slightly different from
+the type we aliased in <code>Application.hs</code>.</p>
+<p><code>loginUser</code> is a function from the auth snaplet. It takes the <code>username</code> field
+and the <code>password</code> field from a form submission, a “remember” field, a failure
+function and a success function, in that order. The type signature looks like
+this:</p>
+<pre class="hljs"><code><span class="hljs-title">loginUser</span>
+  :: <span class="hljs-type">ByteString</span> <span class="hljs-comment">-- name of username field</span>
+     -&gt; <span class="hljs-type">ByteString</span> <span class="hljs-comment">-- name of password field</span>
+     -&gt; <span class="hljs-type">Maybe</span> <span class="hljs-type">ByteString</span> <span class="hljs-comment">-- name of remember field (`Nothing` means there isn't one)</span>
+     -&gt; (<span class="hljs-type">AuthFailure</span> -&gt; <span class="hljs-type">Handler</span> b (<span class="hljs-type">AuthManager</span> b) ()) <span class="hljs-comment">-- failure function</span>
+     -&gt; <span class="hljs-type">Handler</span> b (<span class="hljs-type">AuthManager</span> b) () <span class="hljs-comment">-- success function</span>
+     -&gt; <span class="hljs-type">Handler</span> b (<span class="hljs-type">AuthManager</span> b) () <span class="hljs-comment">-- return value is a handler</span>
+</code></pre>
+<p>So going back to <code>handleLoginSubmit</code> we use:
+<code>&quot;login&quot;</code> as the username field
+<code>&quot;password&quot;</code> as the password field
+<code>Nothing</code> as the remember field
+<code>_ -&gt; handleLogin err</code> as our error function
+and <code>redirect &quot;/&quot;</code> as our success function.</p>
+<p><code>err</code> is defined as <code>Just &quot;Unknown user or password&quot;</code> which matches up with the
+type from <code>handleLogin</code>.</p>
+<p>The <code>handleLogin</code> code will be covered in a Heist tutorial at another time, but
+suffice it to say that <code>handleLogin</code> is rendering the login form with the error
+that we’ve supplied it (which is “Unknown user or password”).</p>
+<p>Our <code>&quot;/logout&quot;</code> route is pretty simple. Just call the snaplet-auth supplied
+function <code>logout</code> and redirect to <code>&quot;/&quot;</code></p>
+<p><code>&quot;/new_user&quot;</code> does a similar thing, except it displays the empty form on <code>GET</code>
+request and handles a form submit on <code>POST</code>.</p>
+<p>Next we’ll replace the backend, currently a json file, with postgres.</p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

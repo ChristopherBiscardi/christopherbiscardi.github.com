@@ -1,0 +1,75 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".24v8om5vs92" data-react-checksum="-451986351"><div class="Nav__wrapper___u7BUA" data-reactid=".24v8om5vs92.0"><nav class="Nav__nav___1e2Pp" data-reactid=".24v8om5vs92.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".24v8om5vs92.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".24v8om5vs92.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".24v8om5vs92.0.0.1"><li data-reactid=".24v8om5vs92.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".24v8om5vs92.0.0.1.0.0">Posts</a></li><li data-reactid=".24v8om5vs92.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".24v8om5vs92.0.0.1.1.0">AMA</a></li><li data-reactid=".24v8om5vs92.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".24v8om5vs92.0.0.1.2.0">Books</a></li><li data-reactid=".24v8om5vs92.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".24v8om5vs92.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".24v8om5vs92.1"><div class="Post__container___3xG6t" data-reactid=".24v8om5vs92.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".24v8om5vs92.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".24v8om5vs92.1.0.0.0">Using Databases inside of Snaplet Auth Restricted Routes</h1><div class="Post__meta___1jyEB" data-reactid=".24v8om5vs92.1.0.0.1"><span data-reactid=".24v8om5vs92.1.0.0.1.0">Jan 9th, 2014</span><span data-reactid=".24v8om5vs92.1.0.0.1.1"> · </span><span data-reactid=".24v8om5vs92.1.0.0.1.2">1</span><span data-reactid=".24v8om5vs92.1.0.0.1.3"> minute read</span></div><div data-reactid=".24v8om5vs92.1.0.0.2"><p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png" alt="CBLogo_2014_transparent"></a>
+The github repo for this code is at <a href="https://github.com/ChristopherBiscardi/Snap-Databased-within-Auth-Snaplet-Example">here</a>.</p>
+<p>tldr; use this instance:</p>
+<pre class="hljs"><code>&lt;code class=&quot;haskell&quot;&gt;instance HasPostgres (Handler App (AuthManager App)) where
+    getPostgresState = withTop pg get
+</code></pre>
+<p>The app we’re using was built by running <code>snap init</code> and adding the following code:</p>
+<h5 id="srcapplicationhs">src/Application.hs</h5>
+<p>In <code>src/Application.hs</code> we’ve added the following imports:</p>
+<p><code>import Snap.Snaplet.PostgresqlSimple</code></p>
+<p>and the following definition to our <code>App</code> datatype:</p>
+<p><code>,_pg :: Snaplet Postgres</code></p>
+<h5 id="srcsitehs">src/Site.hs</h5>
+<p>In <code>src/Site.hs</code> we’ve added the following language extensions:</p>
+<p><code>{-# LANGUAGE FlexibleInstances #-}</code></p>
+<p>Imports:</p>
+<pre class="hljs"><code>&lt;code class=&quot;haskell&quot;&gt;-- for &quot;get&quot;
+import Control.Monad.State.Class
+-- for &quot;liftIO&quot;
+import           Control.Monad.IO.Class
+--for &quot;writeJSON&quot;
+import           Snap.Extras.JSON
+-- for Non Snaplet-Auth related database queries
+import           Snap.Snaplet.PostgresqlSimple
+-- for Snaplet-Auth backed
+import           Snap.Snaplet.Auth.Backends.PostgresqlSimple```
+
+Instances:
+
+</code></pre>
+<p><code class="haskell">instance HasPostgres (Handler b App) where
+getPostgresState = with pg get</p>
+<p>instance HasPostgres (Handler App (AuthManager App)) where
+getPostgresState = withTop pg get</p>
+<pre class="hljs"><code>
+and Snaplet Init code:
+
+`&lt;code class=&quot;haskell&quot;&gt;p `
+
+
+## What's Going On
+
+We've also defined a convenience function `needsAuth` to restrict our `&quot;/postgres&quot;` route to only logged in users.
+
+</code></pre>
+<p><code class="haskell">needsAuth :: Handler App (AuthManager App) () -&gt; Handler App App ()
+needsAuth x = with auth $ requireUser auth (redirect “/”) x</p>
+<pre class="hljs"><code>
+`getFromPostgres` does the dirty work for us by querying a table that was created as part of the Snaplet-Auth backend. It will return a list of all users.
+
+</code></pre>
+<p><code class="haskell">getFromPostgres :: Handler App (AuthManager App) ()
+getFromPostgres = do
+–get the results
+results ```</p>
+<p><code>&quot;/postgres&quot;</code> is the url to hit to check to see if it’s working.</p>
+<p><code>, (&quot;/postgres&quot;, needsAuth getFromPostgres)</code></p>
+<h2 id="the-instance">The Instance</h2>
+<p>What’s really doing the heavy lifting of using the postgres snaplet inside of the auth snaplet’s route is this instance:</p>
+<pre class="hljs"><code>&lt;code class=&quot;haskell&quot;&gt;instance HasPostgres (Handler App (AuthManager App)) where
+    getPostgresState = withTop pg get
+</code></pre>
+<p>The important difference from the instance above it is <code>withTop</code> which can be found <a href="http://hackage.haskell.org/package/snap-0.6.0.2/docs/Snap-Snaplet.html">here</a>.</p>
+<p>From the docs:</p>
+<blockquote>
+<p>– | Like ‘with’ but doesn’t impose the requirement that the action
+– being run be a descendant of the current snaplet.</p>
+</blockquote>
+<p>Essentially, the auth snaplet doesn’t know anything about the postgres snaplet as we’ve instantiated it (it doesn’t keep around a reference from the Backend module), so we have to ask the parent context (using <code>withTop</code>).</p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

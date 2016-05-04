@@ -1,0 +1,106 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".1kmqhfrswwa" data-react-checksum="238954932"><div class="Nav__wrapper___u7BUA" data-reactid=".1kmqhfrswwa.0"><nav class="Nav__nav___1e2Pp" data-reactid=".1kmqhfrswwa.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".1kmqhfrswwa.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".1kmqhfrswwa.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".1kmqhfrswwa.0.0.1"><li data-reactid=".1kmqhfrswwa.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".1kmqhfrswwa.0.0.1.0.0">Posts</a></li><li data-reactid=".1kmqhfrswwa.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".1kmqhfrswwa.0.0.1.1.0">AMA</a></li><li data-reactid=".1kmqhfrswwa.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".1kmqhfrswwa.0.0.1.2.0">Books</a></li><li data-reactid=".1kmqhfrswwa.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".1kmqhfrswwa.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".1kmqhfrswwa.1"><div class="Post__container___3xG6t" data-reactid=".1kmqhfrswwa.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".1kmqhfrswwa.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".1kmqhfrswwa.1.0.0.0">Docker Machine</h1><div class="Post__meta___1jyEB" data-reactid=".1kmqhfrswwa.1.0.0.1"><span data-reactid=".1kmqhfrswwa.1.0.0.1.0">Dec 21st, 2014</span><span data-reactid=".1kmqhfrswwa.1.0.0.1.1"> · </span><span data-reactid=".1kmqhfrswwa.1.0.0.1.2">2</span><span data-reactid=".1kmqhfrswwa.1.0.0.1.3"> minute read</span></div><div data-reactid=".1kmqhfrswwa.1.0.0.2"><p>In this post, I will record the process through which I attempt to use
+Docker Machine to deploy a simple Haskell application on Digital
+Ocean.</p>
+<h2 id="zero-to-docker">Zero to Docker</h2>
+<p>To get an OSX docker machine running, I had to download
+<a href="https://github.com/docker/machine#try-it-out">two binaries</a>:
+<code>machine</code> and a version of docker with Identity Authentication. I will
+refer to these as <code>machine-docker</code> and
+<code>machine-docker-1.3.1-dev-identity-auth</code>
+respectively. <code>machine-docker</code> is a new binary while
+<code>machine-docker-1.3.1-dev-identity-auth</code> is the usual <code>docker</code> binary
+with some additional commits.</p>
+<ol>
+<li>Create an OSX machine using virtualbox. Name it <code>test-machine</code>:</li>
+</ol>
+<pre class="hljs"><code>&gt; machine-docker create <span class="hljs-_">-d</span> virtualbox <span class="hljs-built_in">test</span>-machine
+INFO[0000] Downloading boot2docker...
+INFO[0021] Creating SSH key...
+INFO[0021] Creating VirtualBox VM...
+INFO[0029] Starting VirtualBox VM...
+INFO[0029] Waiting <span class="hljs-keyword">for</span> VM to start...
+INFO[0061] <span class="hljs-string">"test-machine"</span> has been created and is now the active
+           machine. To point Docker at this machine, run: <span class="hljs-built_in">export</span>
+           DOCKER_HOST=$(machine url) DOCKER_AUTH=identity
+</code></pre>
+<ol start="2">
+<li>Create a function to export the desired env vars. I put this in my <code>~/.zshrc</code></li>
+</ol>
+<pre class="hljs"><code>to-<span class="hljs-function"><span class="hljs-title">machine</span></span>(){
+    <span class="hljs-built_in">export</span> DOCKER_HOST=$(machine-docker url) DOCKER_AUTH=identity
+}
+</code></pre>
+<ol start="3">
+<li>Test with <code>docker ps</code> in a new shell:</li>
+</ol>
+<pre class="hljs"><code>&gt; to-machine
+&gt; machine-docker-1.3.1-dev-identity-auth ps
+CONTAINER ID  IMAGE  COMMAND  CREATED  STATUS  PORTS  NAMES
+</code></pre>
+<h2 id="docker-to-digital-ocean">Docker to Digital Ocean</h2>
+<ol>
+<li>Create a <a href="https://cloud.digitalocean.com/settings/applications">Personal Access Token</a></li>
+</ol>
+<p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611477/Screenshot-2014-12-20-14.58.25_hvbvt6.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/h_181,w_660/v1428611477/Screenshot-2014-12-20-14.58.25_hvbvt6.png" alt="digital ocean application settings"></a></p>
+<ol start="2">
+<li>Name and Generate the token</li>
+</ol>
+<p><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611476/Screenshot-2014-12-20-14.58.47_kcvvzv.png" alt="Screenshot 2014-12-20 14.58.47"></p>
+<ol start="3">
+<li>After getting a token, I set it to <code>DO_TOKEN</code>:</li>
+</ol>
+<pre class="hljs"><code><span class="hljs-built_in">export</span> DO_TOKEN=mytokenhere235bhn2b23j5k
+</code></pre>
+<ol start="4">
+<li>Create a machine on Digital Ocean</li>
+</ol>
+<pre class="hljs"><code>&gt; machine-docker create <span class="hljs-_">-d</span> digitalocean --digitalocean-access-token=<span class="hljs-variable">$DO_TOKEN</span> biscarch/bot
+INFO[0000] Creating SSH key...
+INFO[0000] Creating Digital Ocean droplet...
+INFO[0002] Waiting <span class="hljs-keyword">for</span> SSH...
+INFO[0103] <span class="hljs-string">"biscarch/bot"</span> has been created and is now the active
+           machine. To point Docker at this machine, run: <span class="hljs-built_in">export</span>
+           DOCKER_HOST=$(machine url) DOCKER_AUTH=identity
+</code></pre>
+<ol start="5">
+<li>Point Docker at the Digital Ocean Machine <code>biscarch/bot</code></li>
+</ol>
+<pre class="hljs"><code>&gt; to-machine
+</code></pre>
+<ol start="6">
+<li><code>docker ps</code> on Digital Ocean</li>
+</ol>
+<pre class="hljs"><code>&gt; machine-docker-1.3.1-dev-identity-auth ps
+The authenticity of host <span class="hljs-string">"<span class="hljs-variable">$ip</span>:<span class="hljs-variable">$port</span>"</span> can<span class="hljs-string">'t be established.
+Remote key ID XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX
+Are you sure you want to continue connecting (yes/no)? yes
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+</span></code></pre>
+<h2 id="docker-run-on-digital-ocean"><code>docker run</code> on Digital Ocean</h2>
+<ol>
+<li>We can run an image using the
+<a href="https://github.com/snapforbeginners/barebones">barebones image</a>
+from <a href="http://snapforbeginners.com/">Snap for Beginners</a>
+interactively with a pseduo-tty:</li>
+</ol>
+<pre class="hljs"><code>&gt; machine-docker-1.3.1-dev-identity-auth run -itp 8000:8000 snapforbeginners/barebones
+no port specified, defaulting to port 8000
+Listening on http://0.0.0.0:8000/
+</code></pre>
+<ol start="2">
+<li>We can curl our Digital Ocean machine’s IP to see if the container
+is running:</li>
+</ol>
+<pre class="hljs"><code>&gt; curl <span class="hljs-variable">$DO_IP</span>:8000
+hello world
+</code></pre>
+<h2 id="fin">Fin</h2>
+<p>That’s it. We have a Docker Engine and a container running on Digital
+Ocean. We can also run multiple containers as Daemons and all of the
+normal goodness of the Docker CLI.</p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

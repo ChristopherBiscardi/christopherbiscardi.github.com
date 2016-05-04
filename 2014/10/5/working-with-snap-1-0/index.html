@@ -1,0 +1,73 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".le5lt9fm8" data-react-checksum="-1439230831"><div class="Nav__wrapper___u7BUA" data-reactid=".le5lt9fm8.0"><nav class="Nav__nav___1e2Pp" data-reactid=".le5lt9fm8.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".le5lt9fm8.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".le5lt9fm8.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".le5lt9fm8.0.0.1"><li data-reactid=".le5lt9fm8.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".le5lt9fm8.0.0.1.0.0">Posts</a></li><li data-reactid=".le5lt9fm8.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".le5lt9fm8.0.0.1.1.0">AMA</a></li><li data-reactid=".le5lt9fm8.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".le5lt9fm8.0.0.1.2.0">Books</a></li><li data-reactid=".le5lt9fm8.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".le5lt9fm8.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".le5lt9fm8.1"><div class="Post__container___3xG6t" data-reactid=".le5lt9fm8.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".le5lt9fm8.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".le5lt9fm8.1.0.0.0">Working with Snap 1.0</h1><div class="Post__meta___1jyEB" data-reactid=".le5lt9fm8.1.0.0.1"><span data-reactid=".le5lt9fm8.1.0.0.1.0">Oct 5th, 2014</span><span data-reactid=".le5lt9fm8.1.0.0.1.1"> · </span><span data-reactid=".le5lt9fm8.1.0.0.1.2">1</span><span data-reactid=".le5lt9fm8.1.0.0.1.3"> minute read</span></div><div data-reactid=".le5lt9fm8.1.0.0.2"><p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611482/snap_sks60m.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611482/snap_sks60m.png" alt="snap-framework"></a></p>
+<p>Snap 1.0 isn’t on Hackage yet, but here’s how you can play with it now.</p>
+<p>NOTE: This was written using ghc-7.8.3. The repo is <a href="https://github.com/ChristopherBiscardi/snap-micro-services">on GitHub</a></p>
+<p>First we’ll make a new directory for the project and one for the dependencies, then clone the dependencies for 1.0 that aren’t on Hackage:</p>
+<pre class="hljs"><code>&lt;code class=&quot;bash&quot; style=&quot;overflow-x:auto&quot;&gt;mkdir auth_server
+cd auth_server
+mkdir deps
+git clone git@github.com:snapframework/io-streams-haproxy.git deps/io-streams-haproxy
+git clone git@github.com:snapframework/snap.git deps/snap
+git clone git@github.com:snapframework/snap-core.git deps/snap-core
+git clone git@github.com:snapframework/snap-server.git deps/snap-server
+git clone git@github.com:snapframework/snap-loader-static.git deps/snap-loader-static
+git clone git@github.com:snapframework/heist.git deps/heist
+git clone git@github.com:snapframework/snap-templates.git deps/snap-templates
+</code></pre>
+<p>We should have a file structure that looks like this:</p>
+<ul>
+<li>auth_server/ - deps/ - io-streams-haproxy/</li>
+<li>snap/</li>
+<li>snap-core/</li>
+<li>snap-server/</li>
+<li>snap-loader-static/</li>
+<li>heist/</li>
+</ul>
+<p>We can now get a scaffolded app using <code>snap-templates</code>.</p>
+<pre class="hljs"><code>&lt;code class=&quot;bash&quot;&gt;cd auth_server/deps/snap-templates
+cabal build
+</code></pre>
+<p>Building <code>snap-templates</code> gives us the <code>snap</code> executable that we used to use from the <code>snap</code> project. In the project root, let’s init a new scaffold:</p>
+<pre class="hljs"><code>&lt;code class=&quot;bash&quot;&gt;cd auth_server
+./deps/snap-templates/dist/build/snap/snap init
+</code></pre>
+<p>Which leaves us with this structure at the top level:</p>
+<ul>
+<li>auth_server/ - auth-server.cabal</li>
+<li>deps/</li>
+<li>snaplets/</li>
+<li>src/</li>
+<li>static/</li>
+</ul>
+<p>If you haven’t created a new sandbox for this project, do that now and install the dependencies for the scaffold into the sandbox.</p>
+<pre class="hljs"><code>&lt;code class=&quot;bash&quot;&gt;cd auth_server
+cabal sandbox init
+cabal install --only-dependencies
+</code></pre>
+<p>We can’t build the app yet, since the scaffold is missing two things. We need to add <code>map-syntax</code> as a dependency to <code>auth-server.cabal</code> and we need to replace <code>noSplices</code> with <code>mempty</code> in <code>Site.hs</code> since <code>noSplices</code> has been deprecated.</p>
+<p>First, in <code>auth-server.cabal</code>, under <code>Build-depends</code> add <code>map-syntax</code>:</p>
+<pre class="hljs"><code>    xmlhtml                   &gt;= 0.1,
+    map-syntax                &gt;= 0.1
+</code></pre>
+<p>Next, we need to add two imports to <code>src/Site.hs</code>:</p>
+<pre class="hljs"><code>&lt;code class=&quot;haskell&quot;&gt;import           Data.Map.Syntax
+import           Data.Monoid        (mempty)
+</code></pre>
+<p>as well as replace <code>noSplices</code> with <code>mempty</code>:</p>
+<p>Before:</p>
+<pre class="hljs"><code>errs = maybe noSplices splice authError
+</code></pre>
+<p>After:</p>
+<pre class="hljs"><code> errs = maybe mempty splice authError
+</code></pre>
+<p>We can now build and run the project:</p>
+<pre class="hljs"><code>cd auth_server
+cabal build
+./dist/build/auth-server/auth-server
+</code></pre>
+<p>We now have a working Snap 1.0 app to play with. In a future blog post, we’ll explore the creation of a Users service.</p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

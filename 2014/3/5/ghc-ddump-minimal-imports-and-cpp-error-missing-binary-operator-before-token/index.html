@@ -1,0 +1,38 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".nycvrsw6tu" data-react-checksum="1624895363"><div class="Nav__wrapper___u7BUA" data-reactid=".nycvrsw6tu.0"><nav class="Nav__nav___1e2Pp" data-reactid=".nycvrsw6tu.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".nycvrsw6tu.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".nycvrsw6tu.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".nycvrsw6tu.0.0.1"><li data-reactid=".nycvrsw6tu.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".nycvrsw6tu.0.0.1.0.0">Posts</a></li><li data-reactid=".nycvrsw6tu.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".nycvrsw6tu.0.0.1.1.0">AMA</a></li><li data-reactid=".nycvrsw6tu.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".nycvrsw6tu.0.0.1.2.0">Books</a></li><li data-reactid=".nycvrsw6tu.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".nycvrsw6tu.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".nycvrsw6tu.1"><div class="Post__container___3xG6t" data-reactid=".nycvrsw6tu.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".nycvrsw6tu.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".nycvrsw6tu.1.0.0.0">GHC -ddump-minimal-imports and CPP error: missing binary operator before token &quot;(&quot;</h1><div class="Post__meta___1jyEB" data-reactid=".nycvrsw6tu.1.0.0.1"><span data-reactid=".nycvrsw6tu.1.0.0.1.0">Mar 5th, 2014</span><span data-reactid=".nycvrsw6tu.1.0.0.1.1"> · </span><span data-reactid=".nycvrsw6tu.1.0.0.1.2">1</span><span data-reactid=".nycvrsw6tu.1.0.0.1.3"> minute read</span></div><div data-reactid=".nycvrsw6tu.1.0.0.2"><p>Today I was trying to extract the minimal imports for a module using <code>ghc -ddump-minimal-imports</code> but I was getting this error on some files:</p>
+<pre class="hljs"><code>error: missing binary operator before token <span class="hljs-string">"("</span>
+<span class="hljs-comment">#if MIN_VERSION_base(4,4,0)</span>
+^
+</code></pre>
+<p>Which is related to the fact that <code>cabal</code> expands <code>MIN_VERSION_base</code> macros when
+running <code>cabal build</code>, so we don’t have them when running <code>ghc</code> or <code>ghci</code>.
+Luckily it’s an easy fix.</p>
+<p>Cabal generates a macros file relative to the root of the project at
+<code>dist/build/autogen/cabal_macros.h</code>. We can include this file to gain access to
+the macros:</p>
+<pre class="hljs"><code>ghc -ddump-minimal-imports -optP-include -optPdist/build/autogen/cabal_macros.h src/Types.hs
+</code></pre>
+<p>Which will now spit out our imports into a file called <code>Types.imports</code> and may
+look something like this:</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> Blaze.ByteString.Builder
+    ( <span class="hljs-type">Builder</span>, fromLazyByteString, fromByteString )
+<span class="hljs-keyword">import</span> Blaze.ByteString.Builder.Char.Utf8
+    ( fromText, fromLazyText )
+<span class="hljs-keyword">import</span> Control.Applicative
+    ( <span class="hljs-type">Applicative</span>((), pure), <span class="hljs-type">Alternative</span>((), empty), () )
+<span class="hljs-keyword">import</span> Control.Exception.Lifted
+    ( <span class="hljs-type">ErrorCall</span>(..),
+      <span class="hljs-type">Exception</span>,
+      <span class="hljs-type">Handler</span>(..),
+      <span class="hljs-type">SomeException</span>(..),
+      catch,
+      catches,
+      mask,
+      onException,
+      throwIO )
+</code></pre>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

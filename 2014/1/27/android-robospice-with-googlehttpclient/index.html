@@ -1,0 +1,321 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".20vewoz0rk2" data-react-checksum="906070081"><div class="Nav__wrapper___u7BUA" data-reactid=".20vewoz0rk2.0"><nav class="Nav__nav___1e2Pp" data-reactid=".20vewoz0rk2.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".20vewoz0rk2.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".20vewoz0rk2.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".20vewoz0rk2.0.0.1"><li data-reactid=".20vewoz0rk2.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".20vewoz0rk2.0.0.1.0.0">Posts</a></li><li data-reactid=".20vewoz0rk2.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".20vewoz0rk2.0.0.1.1.0">AMA</a></li><li data-reactid=".20vewoz0rk2.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".20vewoz0rk2.0.0.1.2.0">Books</a></li><li data-reactid=".20vewoz0rk2.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".20vewoz0rk2.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".20vewoz0rk2.1"><div class="Post__container___3xG6t" data-reactid=".20vewoz0rk2.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".20vewoz0rk2.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".20vewoz0rk2.1.0.0.0">Android RoboSpice with GoogleHttpClient</h1><div class="Post__meta___1jyEB" data-reactid=".20vewoz0rk2.1.0.0.1"><span data-reactid=".20vewoz0rk2.1.0.0.1.0">Jan 27th, 2014</span><span data-reactid=".20vewoz0rk2.1.0.0.1.1"> · </span><span data-reactid=".20vewoz0rk2.1.0.0.1.2">7</span><span data-reactid=".20vewoz0rk2.1.0.0.1.3"> minute read</span></div><div data-reactid=".20vewoz0rk2.1.0.0.2"><p>In this post we will examine an example app in which we make a RoboSpice request
+using GoogleHttpClient.</p>
+<p>The github repo is
+<a href="https://github.com/ChristopherBiscardi/robospice-googlehttpclient-example">here</a>.</p>
+<h2 id="dependencies">Dependencies</h2>
+<p>First, we need to grab the RoboSpice dependency JARs from the <code>repository</code> repo.</p>
+<pre class="hljs"><code>git <span class="hljs-built_in">clone</span> https://github.com/octo-online/robospice/tree/repository
+</code></pre>
+<p>Inside of
+<a href="https://github.com/octo-online/robospice/tree/repository/dependencies/1.4.11/robospice-google-http-client">1.4.11/robospice-google-http-client</a>
+are the JARs we need to include in the project. If you are using Eclipse copy
+the JARs into your <code>libs/</code> folder and add them to the build path in <code>Project -&gt; Properties -&gt; Libraries</code> by clicking <code>Add JARs</code>. You may also need to click the
+<code>Order and Export</code> tab, check their boxes and move the included JARs to the top.</p>
+<p>We will also need one JAR from the Google-Http-Lib
+<a href="https://code.google.com/p/google-http-java-client/wiki/Setup#Download_Library_with_Dependencies">source</a>.
+It is <code>google-http-client-1.17.0</code>. Again, if using Eclipse, add it to your
+project in the same way.</p>
+<h2 id="classes">Classes</h2>
+<p>We are going to create a few files:</p>
+<ul>
+<li><a href="#spice-base">BaseSpiceActivity.java</a></li>
+<li><a href="#spice-reddit">Reddit*.java</a></li>
+<li><a href="#spice-request-reddit">SpiceRequestReddit.java</a></li>
+</ul>
+<h4 id="basespiceactivity">BaseSpiceActivity</h4>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> com.octo.android.robospice.JacksonGoogleHttpClientSpiceService;
+<span class="hljs-keyword">import</span> com.octo.android.robospice.SpiceManager;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BaseSpiceActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Activity</span> </span>{
+	<span class="hljs-keyword">private</span> SpiceManager spiceManager = <span class="hljs-keyword">new</span> SpiceManager(JacksonGoogleHttpClientSpiceService.class);
+
+	<span class="hljs-meta">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onStart</span><span class="hljs-params">()</span> </span>{
+		spiceManager.start(<span class="hljs-keyword">this</span>);
+		<span class="hljs-keyword">super</span>.onStart();
+	}
+
+	<span class="hljs-meta">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onStop</span><span class="hljs-params">()</span> </span>{
+		spiceManager.shouldStop();
+		<span class="hljs-keyword">super</span>.onStop();
+	}
+
+	<span class="hljs-function"><span class="hljs-keyword">protected</span> SpiceManager <span class="hljs-title">getSpiceManager</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">return</span> spiceManager;
+	}
+
+}
+</code></pre>
+<p>The big thing we’re doing in this file is creating an instance of <code>SpiceManager</code>
+that will be accessible in the activities that inherit from this base class
+(like our <code>MainActivity.java</code> will).</p>
+<p>We then start <code>spiceManager</code> in <code>onStart()</code> and stop it in <code>onStop</code>. This will
+ensure that our activities have a <code>SpiceManager</code> accessible when they start and
+clean up after themselves when they stop.</p>
+<p>The final piece is a getter function (<code>getSpiceManager()</code>) so that we have easy
+access to the <code>spiceManager</code> in our activities.</p>
+<h4 id="redditjava">Reddit*.java</h4>
+<p>We will be getting our data from Reddit, so we first need to examine the
+responses we’re going to get. I’ve chosen a subreddit where all the posts are
+very similar (/r/Riak). Here is a sample API response:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-string">"kind"</span>:<span class="hljs-string">"Listing"</span>,
+   <span class="hljs-string">"data"</span>:{
+      <span class="hljs-string">"modhash"</span>:<span class="hljs-string">"3mxugaulcd1f8b500be09"</span>,
+      <span class="hljs-string">"children"</span>:[
+         {
+            <span class="hljs-string">"kind"</span>:<span class="hljs-string">"t3"</span>,
+            <span class="hljs-string">"data"</span>:{
+               <span class="hljs-string">"domain"</span>:<span class="hljs-string">"github.com"</span>,
+               <span class="hljs-string">"banned_by"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"media_embed"</span>:{
+
+               },
+               <span class="hljs-string">"subreddit"</span>:<span class="hljs-string">"Riak"</span>,
+               <span class="hljs-string">"selftext_html"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"selftext"</span>:<span class="hljs-string">""</span>,
+               <span class="hljs-string">"likes"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"secure_media"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"link_flair_text"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"id"</span>:<span class="hljs-string">"19v60r"</span>,
+               <span class="hljs-string">"secure_media_embed"</span>:{
+
+               },
+               <span class="hljs-string">"clicked"</span>:<span class="hljs-literal">false</span>,
+               <span class="hljs-string">"stickied"</span>:<span class="hljs-literal">false</span>,
+               <span class="hljs-string">"author"</span>:<span class="hljs-string">"BonzoESC"</span>,
+               <span class="hljs-string">"media"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"score"</span>:<span class="hljs-number">1</span>,
+               <span class="hljs-string">"approved_by"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"over_18"</span>:<span class="hljs-literal">false</span>,
+               <span class="hljs-string">"hidden"</span>:<span class="hljs-literal">false</span>,
+               <span class="hljs-string">"thumbnail"</span>:<span class="hljs-string">""</span>,
+               <span class="hljs-string">"subreddit_id"</span>:<span class="hljs-string">"t5_2s3vw"</span>,
+               <span class="hljs-string">"edited"</span>:<span class="hljs-literal">false</span>,
+               <span class="hljs-string">"link_flair_css_class"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"author_flair_css_class"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"downs"</span>:<span class="hljs-number">0</span>,
+               <span class="hljs-string">"saved"</span>:<span class="hljs-literal">false</span>,
+               <span class="hljs-string">"is_self"</span>:<span class="hljs-literal">false</span>,
+               <span class="hljs-string">"permalink"</span>:<span class="hljs-string">"/r/Riak..riak/"</span>,
+               <span class="hljs-string">"name"</span>:<span class="hljs-string">"t3_19v60r"</span>,
+               <span class="hljs-string">"created"</span>:<span class="hljs-number">1362687827.0</span>,
+               <span class="hljs-string">"url"</span>:<span class="hljs-string">"https://github.com/basho/riak_dt"</span>,
+               <span class="hljs-string">"author_flair_text"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"title"</span>:<span class="hljs-string">"riak_dt: CRDT for Riak"</span>,
+               <span class="hljs-string">"created_utc"</span>:<span class="hljs-number">1362687827.0</span>,
+               <span class="hljs-string">"ups"</span>:<span class="hljs-number">1</span>,
+               <span class="hljs-string">"num_comments"</span>:<span class="hljs-number">0</span>,
+               <span class="hljs-string">"visited"</span>:<span class="hljs-literal">false</span>,
+               <span class="hljs-string">"num_reports"</span>:<span class="hljs-literal">null</span>,
+               <span class="hljs-string">"distinguished"</span>:<span class="hljs-literal">null</span>
+            }
+         }
+      ],
+      <span class="hljs-string">"after"</span>:<span class="hljs-literal">null</span>,
+      <span class="hljs-string">"before"</span>:<span class="hljs-literal">null</span>
+   }
+}
+</code></pre>
+<p>We will create a few classes to model the data. The first being <code>Reddit.java</code>.</p>
+<p>In <code>Reddit.java</code> we include the keys <code>kind</code> and <code>data</code> using <code>@Key</code>
+declarations. Then we declare their types.</p>
+<pre class="hljs"><code><span class="hljs-keyword">package</span> com.christopherbiscardi.robospicetest;
+
+<span class="hljs-keyword">import</span> com.google.api.client.util.Key;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Reddit</span> </span>{
+	<span class="hljs-meta">@Key</span>
+	<span class="hljs-keyword">private</span> String kind;
+	<span class="hljs-meta">@Key</span>
+	<span class="hljs-keyword">private</span> RedditData data;
+
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Reddit</span><span class="hljs-params">()</span> </span>{
+	}
+</code></pre>
+<p>Then define some basic getters for when we are dealing with our request’s
+response.</p>
+<pre class="hljs"><code>  <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getKind</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.kind;
+	}
+
+	<span class="hljs-function"><span class="hljs-keyword">public</span> RedditData <span class="hljs-title">getData</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.data;
+	}
+</code></pre>
+<p>and override some utility functions:</p>
+<pre class="hljs"><code>	<span class="hljs-meta">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">hashCode</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> prime = <span class="hljs-number">31</span>;
+		<span class="hljs-keyword">int</span> result = <span class="hljs-number">1</span>;
+		result = prime * result + ( kind == <span class="hljs-keyword">null</span> ? <span class="hljs-number">0</span> : kind.hashCode() ) + ( data == <span class="hljs-keyword">null</span> ? <span class="hljs-number">0</span> : data.hashCode() );
+		<span class="hljs-keyword">return</span> result;
+	}
+
+	<span class="hljs-meta">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">equals</span><span class="hljs-params">( Object obj )</span> </span>{
+		<span class="hljs-keyword">if</span> ( <span class="hljs-keyword">this</span> == obj ) {
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+		}
+		<span class="hljs-keyword">if</span> ( obj == <span class="hljs-keyword">null</span> ) {
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+		}
+		<span class="hljs-keyword">if</span> ( getClass() != obj.getClass() ) {
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+		}
+		Reddit other = (Reddit) obj;
+		<span class="hljs-keyword">if</span> ( kind == <span class="hljs-keyword">null</span> ) {
+			<span class="hljs-keyword">if</span> ( other.kind != <span class="hljs-keyword">null</span> ) {
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+			}
+		} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ( !kind.equals( other.kind ) ) {
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+		}
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+	}
+
+	<span class="hljs-meta">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">return</span> <span class="hljs-string">"Reddit [kind="</span> + kind + <span class="hljs-string">" "</span> + data + <span class="hljs-string">"]"</span>;
+	}
+}
+</code></pre>
+<p>The model files will all follow this same format: @Key definitions, getters,
+utilities.</p>
+<p>Our final model (<code>RedditListing.java</code>) is where we are getting the content we
+care about. We don’t have to include <code>@Key</code> for every key in our JSON response,
+so we’ll just grab the ones we care about:</p>
+<pre class="hljs"><code>	<span class="hljs-meta">@Key</span>
+	<span class="hljs-keyword">private</span> String domain;
+    <span class="hljs-meta">@Key</span>
+	<span class="hljs-keyword">private</span> String author;
+    <span class="hljs-meta">@Key</span>
+	<span class="hljs-keyword">private</span> String permalink;
+    <span class="hljs-meta">@Key</span>
+	<span class="hljs-keyword">private</span> String title;
+</code></pre>
+<h4 id="spicerequestredditjava">SpiceRequestReddit.java</h4>
+<p>To finish off our classes, we’ll create a SpiceRequest that takes a string (our
+subreddit) and returns a <code>Reddit</code>.</p>
+<pre class="hljs"><code><span class="hljs-keyword">package</span> com.christopherbiscardi.robospicetest;
+
+<span class="hljs-keyword">import</span> java.io.IOException;
+
+<span class="hljs-keyword">import</span> roboguice.util.temp.Ln;
+
+<span class="hljs-keyword">import</span> com.google.api.client.http.GenericUrl;
+<span class="hljs-keyword">import</span> com.google.api.client.http.HttpRequest;
+<span class="hljs-keyword">import</span> com.google.api.client.json.jackson.JacksonFactory;
+<span class="hljs-keyword">import</span> com.octo.android.robospice.request.googlehttpclient.GoogleHttpClientSpiceRequest;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SpiceRequestReddit</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">GoogleHttpClientSpiceRequest</span>&lt;<span class="hljs-title">reddit</span>&gt; </span>{
+	<span class="hljs-keyword">private</span> String baseUrl;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">SpiceRequestReddit</span><span class="hljs-params">( String subreddit )</span> </span>{
+        <span class="hljs-keyword">super</span>( Reddit.class );
+        <span class="hljs-keyword">this</span>.baseUrl = String.format( <span class="hljs-string">"http://www.reddit.com/r/%s.json"</span>, subreddit );
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Reddit <span class="hljs-title">loadDataFromNetwork</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException </span>{
+        Ln.d( <span class="hljs-string">"Call web service "</span> + baseUrl );
+        HttpRequest request = getHttpRequestFactory()<span class="hljs-comment">//</span>
+                .buildGetRequest( <span class="hljs-keyword">new</span> GenericUrl( baseUrl ) );
+        request.setParser( <span class="hljs-keyword">new</span> JacksonFactory().createJsonObjectParser() );
+        <span class="hljs-keyword">return</span> request.execute().parseAs( getResultType() );
+    }
+}&lt;/reddit&gt;
+</code></pre>
+<h2 id="calling-the-api">Calling the API</h2>
+<p>In <code>MainActivity.java</code> we need to add some code to execute the request:</p>
+<p>We need to extend our <code>MainActivity</code> from <code>BaseSpiceActivity</code></p>
+<pre class="hljs"><code><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseSpiceActivity</span> </span>{
+</code></pre>
+<p>Add a new <code>SpiceRequestReddit</code></p>
+<pre class="hljs"><code>java
+private SpiceRequestReddit spiceRequestReddit;
+</code></pre>
+<p>Instantiate it with the Riak subreddit;</p>
+<pre class="hljs"><code>spiceRequestReddit = <span class="hljs-keyword">new</span> SpiceRequestReddit( <span class="hljs-string">"Riak"</span> );
+</code></pre>
+<p>and implement our ResultHandler class:</p>
+<pre class="hljs"><code><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RedditSpiceRequestListener</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">RequestListener</span> </span>{
+
+		<span class="hljs-meta">@Override</span>
+		<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onRequestFailure</span><span class="hljs-params">( SpiceException spiceException )</span> </span>{
+			Toast.makeText( MainActivity.<span class="hljs-keyword">this</span>, <span class="hljs-string">"failure"</span>, Toast.LENGTH_SHORT ).show();
+		}
+
+		<span class="hljs-meta">@Override</span>
+		<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onRequestSuccess</span><span class="hljs-params">( <span class="hljs-keyword">final</span> Reddit result )</span> </span>{
+			Toast.makeText( MainActivity.<span class="hljs-keyword">this</span>, <span class="hljs-string">"success"</span>, Toast.LENGTH_SHORT ).show();
+			Log.e(<span class="hljs-string">"TEST"</span>,result.getData().toString());
+			Log.e(<span class="hljs-string">"TEST"</span>,result.getData().getChildren().get(<span class="hljs-number">0</span>).getData().getTitle());
+		}
+	}
+</code></pre>
+<p>We’ve just implemented a simple log to view the data, but we could have added it
+to an ArrayAdapter and displayed it in a ListView.</p>
+<p>Finally, we override the <code>onStart()</code> method to actually make the request.</p>
+<pre class="hljs"><code>  <span class="hljs-meta">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onStart</span><span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">super</span>.onStart();
+
+		setProgressBarIndeterminate( <span class="hljs-keyword">false</span> );
+		setProgressBarVisibility( <span class="hljs-keyword">true</span> );
+
+		getSpiceManager().execute( spiceRequestReddit, <span class="hljs-string">"json"</span>, DurationInMillis.ONE_MINUTE, <span class="hljs-keyword">new</span> RedditSpiceRequestListener() );
+	}
+</code></pre>
+<h2 id="androidmanifestxml">AndroidManifest.xml</h2>
+<p>Now that’s all the code we need to write, but we still need to register our
+service and permissions in <code>AndroidManifest.xml</code>. Notice we’ve added three
+<code>uses-permission</code> nodes and a <code>service</code> node.</p>
+<pre class="hljs"><code><span class="php"><span class="hljs-meta">&lt;?</span>xml version=<span class="hljs-string">"1.0"</span> encoding=<span class="hljs-string">"utf-8"</span><span class="hljs-meta">?&gt;</span></span>
+<span class="hljs-tag">&lt;<span class="hljs-name">manifest</span> <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">"http://schemas.android.com/apk/res/android"</span>
+    <span class="hljs-attr">package</span>=<span class="hljs-string">"com.christopherbiscardi.robospicetest"</span>
+    <span class="hljs-attr">android:versionCode</span>=<span class="hljs-string">"1"</span>
+    <span class="hljs-attr">android:versionName</span>=<span class="hljs-string">"1.0"</span> &gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">uses-sdk</span>
+        <span class="hljs-attr">android:minSdkVersion</span>=<span class="hljs-string">"8"</span>
+        <span class="hljs-attr">android:targetSdkVersion</span>=<span class="hljs-string">"17"</span> /&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.INTERNET"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.ACCESS_NETWORK_STATE"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.ACCESS_WIFI_STATE"</span> /&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">application</span>
+        <span class="hljs-attr">android:allowBackup</span>=<span class="hljs-string">"true"</span>
+        <span class="hljs-attr">android:icon</span>=<span class="hljs-string">"@drawable/ic_launcher"</span>
+        <span class="hljs-attr">android:label</span>=<span class="hljs-string">"@string/app_name"</span>
+        <span class="hljs-attr">android:theme</span>=<span class="hljs-string">"@style/AppTheme"</span> &gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">activity</span>
+            <span class="hljs-attr">android:name</span>=<span class="hljs-string">"com.christopherbiscardi.robospicetest.MainActivity"</span>
+            <span class="hljs-attr">android:label</span>=<span class="hljs-string">"@string/app_name"</span> &gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">intent-filter</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">action</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.intent.action.MAIN"</span> /&gt;</span>
+
+                <span class="hljs-tag">&lt;<span class="hljs-name">category</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.intent.category.LAUNCHER"</span> /&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">intent-filter</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">activity</span>&gt;</span>
+
+        <span class="hljs-tag">&lt;<span class="hljs-name">service</span>
+            <span class="hljs-attr">android:name</span>=<span class="hljs-string">"com.octo.android.robospice.JacksonGoogleHttpClientSpiceService"</span>
+            <span class="hljs-attr">android:exported</span>=<span class="hljs-string">"false"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">application</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">manifest</span>&gt;</span>
+</code></pre>
+<h2 id="fin">Fin</h2>
+<p>Now we can run the app and see the result (success or failure) pop up as a Toast
+as well as viewing the actual data in LogCat.</p>
+<p>Check out the github repository
+<a href="https://github.com/ChristopherBiscardi/robospice-googlehttpclient-example">here</a></p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

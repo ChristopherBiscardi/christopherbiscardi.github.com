@@ -1,0 +1,58 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".2eq5jlpme8" data-react-checksum="2030461350"><div class="Nav__wrapper___u7BUA" data-reactid=".2eq5jlpme8.0"><nav class="Nav__nav___1e2Pp" data-reactid=".2eq5jlpme8.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".2eq5jlpme8.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".2eq5jlpme8.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".2eq5jlpme8.0.0.1"><li data-reactid=".2eq5jlpme8.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".2eq5jlpme8.0.0.1.0.0">Posts</a></li><li data-reactid=".2eq5jlpme8.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".2eq5jlpme8.0.0.1.1.0">AMA</a></li><li data-reactid=".2eq5jlpme8.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".2eq5jlpme8.0.0.1.2.0">Books</a></li><li data-reactid=".2eq5jlpme8.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".2eq5jlpme8.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".2eq5jlpme8.1"><div class="Post__container___3xG6t" data-reactid=".2eq5jlpme8.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".2eq5jlpme8.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".2eq5jlpme8.1.0.0.0">Getting Started With Snap (and User Authentication): Part 3</h1><div class="Post__meta___1jyEB" data-reactid=".2eq5jlpme8.1.0.0.1"><span data-reactid=".2eq5jlpme8.1.0.0.1.0">Jan 11th, 2014</span><span data-reactid=".2eq5jlpme8.1.0.0.1.1"> · </span><span data-reactid=".2eq5jlpme8.1.0.0.1.2">1</span><span data-reactid=".2eq5jlpme8.1.0.0.1.3"> minute read</span></div><div data-reactid=".2eq5jlpme8.1.0.0.2"><p>In this post we will be replacing the JSON file (for user authentication) with a
+Postgres database.</p>
+<p><a href="https://github.com/ChristopherBiscardi/Getting-Started-with-Snap-and-User-Authentication/commit/72a77abac5d46554e659ddeef0a1abf7074a5c6f">Git Diff and Repo</a>
+<a href="http://www.christopherbiscardi.com/2014/01/07/getting-started-with-snap-and-user-authentication-part-1/">part 1</a>
+<a href="http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/">part 2</a></p>
+<p>In <code>abc.cabal</code> add <code>snaplet-postgresql-simple</code> to <code>Build-depends</code>:</p>
+<pre class="hljs"><code><span class="hljs-type">Build</span>-depends:
+    bytestring                &gt;= <span class="hljs-number">0.9</span><span class="hljs-number">.1</span>   &amp;&amp; = <span class="hljs-number">0.12</span>    &amp;&amp; = <span class="hljs-number">0.2</span><span class="hljs-number">.1</span>   &amp;&amp; = <span class="hljs-number">2</span>       &amp;&amp; = <span class="hljs-number">0.11</span>    &amp;&amp; = <span class="hljs-number">0.9</span>     &amp;&amp; = <span class="hljs-number">0.9</span>     &amp;&amp; = <span class="hljs-number">0.9</span>     &amp;&amp; = <span class="hljs-number">0.11</span>    &amp;&amp; = <span class="hljs-number">1.1</span>     &amp;&amp; = <span class="hljs-number">0.1</span>,
+    snaplet-postgresql-simple == <span class="hljs-number">0.4</span><span class="hljs-number">.1</span>```
+
+<span class="hljs-type">Then</span>, <span class="hljs-type">In</span> `src/<span class="hljs-type">Site</span>.hs` we’re going to add the following imports:
+
+```haskell
+<span class="hljs-keyword">import</span> Snap.Snaplet.PostgresqlSimple
+<span class="hljs-keyword">import</span> Snap.Snaplet.Auth.Backends.PostgresqlSimple
+</code></pre>
+<p>add this line to initialize the database in our Application Initialization code
+below session and about auth:</p>
+<pre class="hljs"><code>d
+</code></pre>
+<p>and replace this line:</p>
+<pre class="hljs"><code>initJsonFileAuthManager defAuthSettings sess &quot;users.json&quot;
+</code></pre>
+<p>with this line, which does the dirty work of using Postgres instead of a JSON
+file.</p>
+<pre class="hljs"><code>initPostgresAuth sess d
+</code></pre>
+<p>We’ll also add the initialized database snaplet to our returned App:</p>
+<pre class="hljs"><code>return $ App h s d a
+</code></pre>
+<p>We’re almost done, but first we’ll need to add <code>_db</code> to our App definition in
+<code>src/Application.hs</code>:</p>
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">data</span> <span class="hljs-type">App</span> = <span class="hljs-type">App</span></span>
+    { _heist :: <span class="hljs-type">Snaplet</span> (<span class="hljs-type">Heist</span> <span class="hljs-type">App</span>)
+    , _sess :: <span class="hljs-type">Snaplet</span> <span class="hljs-type">SessionManager</span>
+    , _db :: <span class="hljs-type">Snaplet</span> <span class="hljs-type">Postgres</span>
+    , _auth :: <span class="hljs-type">Snaplet</span> (<span class="hljs-type">AuthManager</span> <span class="hljs-type">App</span>)
+    }
+</code></pre>
+<p>and don’t forget the import for postgres in the same file.</p>
+<pre class="hljs"><code>import Snap.Snaplet.PostgresqlSimple
+</code></pre>
+<p>We are now using Postgres as a database for our authentication! <code>cabal install</code>
+and run <code>abc</code> to make sure it works. You may need to run the following in
+<code>psql</code>:</p>
+<pre class="hljs"><code>CREATE ROLE postgres LOGIN;
+CREATE DATABASE testdb;
+</code></pre>
+<p>also of note is that the git repo has bumped the version of abc to <code>0.2</code></p>
+<p><a href="http://www.christopherbiscardi.com/2014/01/07/getting-started-with-snap-and-user-authentication-part-1/">Part 1 - Beginnings</a>
+<a href="http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/">Part 2 - Auth</a></p>
+<p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png" alt="CBLogo_2014_transparent"></a></p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

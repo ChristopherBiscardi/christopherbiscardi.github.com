@@ -1,0 +1,19 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".upc9z4xjbe" data-react-checksum="-559229191"><div class="Nav__wrapper___u7BUA" data-reactid=".upc9z4xjbe.0"><nav class="Nav__nav___1e2Pp" data-reactid=".upc9z4xjbe.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".upc9z4xjbe.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".upc9z4xjbe.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".upc9z4xjbe.0.0.1"><li data-reactid=".upc9z4xjbe.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".upc9z4xjbe.0.0.1.0.0">Posts</a></li><li data-reactid=".upc9z4xjbe.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".upc9z4xjbe.0.0.1.1.0">AMA</a></li><li data-reactid=".upc9z4xjbe.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".upc9z4xjbe.0.0.1.2.0">Books</a></li><li data-reactid=".upc9z4xjbe.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".upc9z4xjbe.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".upc9z4xjbe.1"><div class="Post__container___3xG6t" data-reactid=".upc9z4xjbe.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".upc9z4xjbe.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".upc9z4xjbe.1.0.0.0">Flattening Nested Arrays in JavaScript</h1><div class="Post__meta___1jyEB" data-reactid=".upc9z4xjbe.1.0.0.1"><span data-reactid=".upc9z4xjbe.1.0.0.1.0">Jan 6th, 2014</span><span data-reactid=".upc9z4xjbe.1.0.0.1.1"> · </span><span data-reactid=".upc9z4xjbe.1.0.0.1.2">1</span><span data-reactid=".upc9z4xjbe.1.0.0.1.3"> minute read</span></div><div data-reactid=".upc9z4xjbe.1.0.0.2"><p>I was writing a quick script today and came across a nice use case for .apply to
+merge nested arrays into a single array. So I figured I’d share it.</p>
+<pre class="hljs"><code>    <span class="hljs-comment">//If we have nested arrays of depth = 1:</span>
+    <span class="hljs-keyword">var</span> arr = [[<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>],[<span class="hljs-number">4</span>,<span class="hljs-number">5</span>],<span class="hljs-number">6</span>];
+    <span class="hljs-comment">//we can flatten it by using concat and apply</span>
+    <span class="hljs-keyword">var</span> flat_arr = [].concat.apply([],arr);
+    <span class="hljs-comment">//and check the value</span>
+    <span class="hljs-built_in">console</span>.log(flat_arr);
+    <span class="hljs-comment">//logs [1,2,3,4,5,6]</span>
+</code></pre>
+<p>If you need a recursive (ie: infinitely nested) array flattened, check out the
+source for Underscore’s <a href="http://underscorejs.org/#flatten">flatten()</a> function,
+which uses concat.apply for shallow arrays.</p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

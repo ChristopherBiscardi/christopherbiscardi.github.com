@@ -1,0 +1,72 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".1iwsgxxejo2" data-react-checksum="-879068747"><div class="Nav__wrapper___u7BUA" data-reactid=".1iwsgxxejo2.0"><nav class="Nav__nav___1e2Pp" data-reactid=".1iwsgxxejo2.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".1iwsgxxejo2.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".1iwsgxxejo2.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".1iwsgxxejo2.0.0.1"><li data-reactid=".1iwsgxxejo2.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".1iwsgxxejo2.0.0.1.0.0">Posts</a></li><li data-reactid=".1iwsgxxejo2.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".1iwsgxxejo2.0.0.1.1.0">AMA</a></li><li data-reactid=".1iwsgxxejo2.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".1iwsgxxejo2.0.0.1.2.0">Books</a></li><li data-reactid=".1iwsgxxejo2.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".1iwsgxxejo2.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".1iwsgxxejo2.1"><div class="Post__container___3xG6t" data-reactid=".1iwsgxxejo2.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".1iwsgxxejo2.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".1iwsgxxejo2.1.0.0.0">Quick Tip: Haskell List Comprehensions</h1><div class="Post__meta___1jyEB" data-reactid=".1iwsgxxejo2.1.0.0.1"><span data-reactid=".1iwsgxxejo2.1.0.0.1.0">Feb 8th, 2013</span><span data-reactid=".1iwsgxxejo2.1.0.0.1.1"> · </span><span data-reactid=".1iwsgxxejo2.1.0.0.1.2">1</span><span data-reactid=".1iwsgxxejo2.1.0.0.1.3"> minute read</span></div><div data-reactid=".1iwsgxxejo2.1.0.0.2"><p>I think <a href="http://learnyouahaskell.com/starting-out#im-a-list-comprehension">list
+comprehensions</a>
+are my favorite reason to pull out Haskell.</p>
+<p>For example: I was recently asked this:</p>
+<p>You have a row of 100 school lockers. For each number from 1 to 100 walk down
+the line of lockers starting at the beginning, and switch the state of every nth
+locker. All of the lockers start closed.</p>
+<p>For example:
+we start off at 1 and switch all the lockers to open. (1,2,3,4,5,…)
+we then go to 2 and switch all of the lockers evenly divisible by 2. (2,4,6,8…)
+for 3 we flip every 3rd locker (3,6,9,12,…)
+4 is every 4th locker. (4,8,12,16,…)
+etc.</p>
+<h4 id="answer-below-this-line">Answer Below This Line</h4>
+<p>In Haskell this is easily accomplished using a list comprehension.</p>
+<p>We can observe through trial (ie: actually flipping every locker) that the
+lockers are flipped by their factors. (ie: 6 is flipped by 1,2,3,and 6), so
+we’ll write a quick comprehension to give us the factors of a number:</p>
+<p>In this example, we get the factors of 6</p>
+<pre class="hljs"><code>[x | x
+</code></pre>
+<p>links:
+<a href="http://learnyouahaskell.com/starting-out#texas-ranges">[1…6]</a>
+<a href="http://en.wikipedia.org/wiki/Modulo_operation">modulo</a>
+<a href="http://zvon.org/other/haskell/Outputprelude/mod_f.html">mod</a>
+<a href="http://www.haskell.org/haskellwiki/Infix_operator"><code>infix</code></a></p>
+<p>Essentially you can read the above code as</p>
+<pre class="hljs"><code><span class="hljs-type">Give</span> me x <span class="hljs-keyword">where</span> x is [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>] and <span class="hljs-number">6</span> is evenly divisible by x
+</code></pre>
+<p>and breaking it down:</p>
+<pre class="hljs"><code><span class="hljs-type">Give</span> me x
+[x
+
+<span class="hljs-title">where</span>
+|
+
+<span class="hljs-title">x</span>
+
+<span class="hljs-title">is</span>
+</code></pre>
+<p>We can then realize that if you flip something an even number of times, nothing
+changes. This means we’re looking for the number with an odd number of factors
+because we want the lockers that are open at the end.</p>
+<p>The code to determine an open locker will look like this, where factors is the
+code we just wrote.</p>
+<pre class="hljs"><code><span class="hljs-title">length</span> factors `mod` <span class="hljs-number">2</span> == <span class="hljs-number">1</span>
+</code></pre>
+<p>If we stick that in a list comprehension for all numbers [1…100] we have
+effectively filtered out all of the open lockers.</p>
+<pre class="hljs"><code>[n | n
+</code></pre>
+<p>But wait! There’s more! For the low low price of $19.95 we can realize there’s a
+pattern in the results. The pattern happens to be perfect squares. This is
+because perfect squares are the only numbers with an odd number of factors!</p>
+<p>for example:
+9’s factors are 1,3 and 9.
+While 8’s factors are 1,2,4 and 8</p>
+<p>We can now write a far more efficient list comprehension.</p>
+<pre class="hljs"><code>[x*x | x &lt;- [<span class="hljs-number">1.</span><span class="hljs-number">.10</span>]]
+</code></pre>
+<p>Which can be read as:
+give me x*x where x is [1,2,3,4,5,6,7,8,9,10]</p>
+<p>We can also expand this into an function using an infinite list, just in case we
+want to calculate how many lockers are open if we have 50081 lockers.</p>
+<pre class="hljs"><code><span class="hljs-title">let</span> lockers = [x*x | x
+</code></pre>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

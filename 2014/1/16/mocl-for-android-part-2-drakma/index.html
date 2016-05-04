@@ -1,0 +1,76 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".mjr0obyy2y" data-react-checksum="216032098"><div class="Nav__wrapper___u7BUA" data-reactid=".mjr0obyy2y.0"><nav class="Nav__nav___1e2Pp" data-reactid=".mjr0obyy2y.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".mjr0obyy2y.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".mjr0obyy2y.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".mjr0obyy2y.0.0.1"><li data-reactid=".mjr0obyy2y.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".mjr0obyy2y.0.0.1.0.0">Posts</a></li><li data-reactid=".mjr0obyy2y.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".mjr0obyy2y.0.0.1.1.0">AMA</a></li><li data-reactid=".mjr0obyy2y.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".mjr0obyy2y.0.0.1.2.0">Books</a></li><li data-reactid=".mjr0obyy2y.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".mjr0obyy2y.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".mjr0obyy2y.1"><div class="Post__container___3xG6t" data-reactid=".mjr0obyy2y.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".mjr0obyy2y.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".mjr0obyy2y.1.0.0.0">MOCL for Android Part 2: Drakma</h1><div class="Post__meta___1jyEB" data-reactid=".mjr0obyy2y.1.0.0.1"><span data-reactid=".mjr0obyy2y.1.0.0.1.0">Jan 16th, 2014</span><span data-reactid=".mjr0obyy2y.1.0.0.1.1"> · </span><span data-reactid=".mjr0obyy2y.1.0.0.1.2">1</span><span data-reactid=".mjr0obyy2y.1.0.0.1.3"> minute read</span></div><div data-reactid=".mjr0obyy2y.1.0.0.2"><p>In this post we will enable Drakma HTTP support in the Android/MOCL example
+code. I have forked the repo <a href="https://github.com/ChristopherBiscardi/mocl-example-lisp-contacts-android">on
+Github</a>
+for posterity. The first post is
+<a href="http://www.christopherbiscardi.com/2014/01/10/common-lisp-on-android-running-the-mocl-android-example/">here</a>
+and it will get you set up with the Android/MOCL example without Drakma.</p>
+<p>First we must download dependencies.</p>
+<p><a href="http://weitz.de/drakma/#install">Drakma</a>
+<a href="http://common-lisp.net/projects/usocket/releases/">USocket</a>
+<a href="http://weitz.de/flexi-streams/">Flexi-Streams</a>
+<a href="http://weitz.de/chunga/">Chunga</a>
+<a href="http://www.cliki.net/cl-base64">CL-BASE64</a>
+<a href="http://www.cliki.net/puri">Puri</a></p>
+<p>My libs are located in mocl/systems. So I that’s where I place the folders of
+code, then link the .asd files. The instructions may change slightly with
+different versions of libs.</p>
+<pre class="hljs"><code><span class="hljs-built_in">cd</span> mocl/systems
+ln <span class="hljs-_">-s</span> drakma-1.3.7/drakma.asd drakma.asd
+ln <span class="hljs-_">-s</span> usocket-0.6.1/usocket.asd usocket.asd
+git <span class="hljs-built_in">clone</span> https://github.com/edicl/cl-ppcre.git
+ln <span class="hljs-_">-s</span> cl-ppcre/cl-ppcre.asd cl-ppcre.asd
+</code></pre>
+<p>Note that <code>cl-ppcre-unicode.asd</code> also exists. Also of note is the version of
+<code>trivial-gray-streams</code> in use here. As of this writing the current version is
+causing issues and the version presented below should be used.</p>
+<pre class="hljs"><code>ln <span class="hljs-_">-s</span> flexi-streams-1.0.12/flexi-streams.asd flexi-streams.asd
+git <span class="hljs-built_in">clone</span> https://git.gitorious.org/trivial-gray-streams/wukix-trivial-gray-streams.git
+ln <span class="hljs-_">-s</span> wukix-trivial-gray-streams/trivial-gray-streams.asd trivial-gray-streams.asd
+ln <span class="hljs-_">-s</span> chunga-1.1.5/chunga.asd chunga.asd
+ln <span class="hljs-_">-s</span> cl-base64-3.3.3/cl-base64.asd cl-base64.asd
+ln <span class="hljs-_">-s</span> puri-1.5.5/puri.asd puri.asd
+</code></pre>
+<p>So after doing the linking dance we can uncomment the Drakma code in app.lisp (5
+lines):</p>
+<pre class="hljs"><code>(<span class="hljs-name">pushnew</span> <span class="hljs-symbol">:drakma-no-ssl</span> *features*)
+   (<span class="hljs-name">require</span> <span class="hljs-symbol">:drakma</span>)
+</code></pre>
+<pre class="hljs"><code>(<span class="hljs-name">declaim</span> (<span class="hljs-name">call-in</span> net-test))
+(<span class="hljs-name">defun</span> net-test ()
+  (<span class="hljs-name">print</span> (<span class="hljs-name">drakma</span><span class="hljs-symbol">:http-request</span> <span class="hljs-string">"http://wukix.com"</span>)))
+</code></pre>
+<p>but we have to change out <code>http://wukix.com</code> because as of this writing wukix
+has changed their site to redirect to https, and drakma can’t use ssl yet. In my
+case I changed it to <code>http://www.cliki.net/</code> because it currently accepts over
+http.</p>
+<p>and add <code>net_test</code> to our <code>MainActivity.java</code>. In this case we just log out the
+result</p>
+<pre class="hljs"><code>CL.cl_init();
+<span class="hljs-keyword">try</span> {
+    String dataDir = getDataDir();
+    CL.set_temp_dir(dataDir);
+    CL.set_doc_dir(dataDir);
+    CL.set_font_path(getAssetPath(<span class="hljs-string">"DejaVuSans.ttf"</span>));
+    CL.load_contacts();
+} <span class="hljs-keyword">catch</span> (Exception e) {
+    <span class="hljs-comment">// TODO Auto-generated catch block</span>
+    e.printStackTrace();
+}
+
+Log.e(<span class="hljs-string">"CL"</span>,CL.net_test());
+</code></pre>
+<p>and run:</p>
+<pre class="hljs"><code><span class="hljs-built_in">cd</span> mocl-example-lisp-contacts-android
+mocl --android LispContacts app.lisp
+<span class="hljs-built_in">cd</span> LispContacts/jni
+ndk-build
+</code></pre>
+<p>Then simply debug the project in ADK and watch the logcat output. The result
+should show up as an error, since we used <code>Log.e(&quot;&quot;,&quot;&quot;)</code>, with a tag of CL.</p>
+<p><a href="http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png"><img src="http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png" alt="CBLogo_2014_transparent"></a></p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

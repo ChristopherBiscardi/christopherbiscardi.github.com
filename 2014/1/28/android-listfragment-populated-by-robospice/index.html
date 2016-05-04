@@ -1,0 +1,166 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".14b7map4ll2" data-react-checksum="694556922"><div class="Nav__wrapper___u7BUA" data-reactid=".14b7map4ll2.0"><nav class="Nav__nav___1e2Pp" data-reactid=".14b7map4ll2.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".14b7map4ll2.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".14b7map4ll2.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".14b7map4ll2.0.0.1"><li data-reactid=".14b7map4ll2.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".14b7map4ll2.0.0.1.0.0">Posts</a></li><li data-reactid=".14b7map4ll2.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".14b7map4ll2.0.0.1.1.0">AMA</a></li><li data-reactid=".14b7map4ll2.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".14b7map4ll2.0.0.1.2.0">Books</a></li><li data-reactid=".14b7map4ll2.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".14b7map4ll2.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".14b7map4ll2.1"><div class="Post__container___3xG6t" data-reactid=".14b7map4ll2.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".14b7map4ll2.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".14b7map4ll2.1.0.0.0">Android ListFragment Populated by RoboSpice</h1><div class="Post__meta___1jyEB" data-reactid=".14b7map4ll2.1.0.0.1"><span data-reactid=".14b7map4ll2.1.0.0.1.0">Jan 28th, 2014</span><span data-reactid=".14b7map4ll2.1.0.0.1.1"> · </span><span data-reactid=".14b7map4ll2.1.0.0.1.2">4</span><span data-reactid=".14b7map4ll2.1.0.0.1.3"> minute read</span></div><div data-reactid=".14b7map4ll2.1.0.0.2"><p>In this post we are going to add a ListFragment backed by the RoboSpice data
+from the <a href="http://www.christopherbiscardi.com/2014/01/27/android-robospice-with-googlehttpclient/">first
+post</a></p>
+<p>The git repo is
+<a href="https://github.com/ChristopherBiscardi/robospice-googlehttpclient-example/tree/8f64ab7d761d095737811018624b0da31b6e4b7b">here</a>.</p>
+<p>Firstly, we are going to need to bump the sdk version to 11 in
+<code>AndroidManifest.xml</code>. We could use the support version of the Fragment api, but
+in this instance we don’t need to.</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">uses-sdk</span>
+        <span class="hljs-attr">android:minSdkVersion</span>=<span class="hljs-string">"11"</span>
+        <span class="hljs-attr">android:targetSdkVersion</span>=<span class="hljs-string">"17"</span> /&gt;</span>
+</code></pre>
+<p>Then we’ll create a RedditListFragment by extending ListFragment:</p>
+<pre class="hljs"><code><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RedditListFragment</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ListFragment</span> </span>{
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onListItemClick</span><span class="hljs-params">(ListView l, View v, <span class="hljs-keyword">int</span> position, <span class="hljs-keyword">long</span> id)</span> </span>{
+        Log.e(<span class="hljs-string">"RedditListingsClick"</span>,position + <span class="hljs-string">" "</span> + id);
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> View <span class="hljs-title">onCreateView</span><span class="hljs-params">(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState)</span> </span>{
+        ArrayList&lt;redditchild&gt; redditChildren = <span class="hljs-keyword">new</span> ArrayList&lt;redditchild&gt;();
+        RedditChildAdapter adapter = <span class="hljs-keyword">new</span> RedditChildAdapter(inflater.getContext(), redditChildren);
+        setListAdapter(adapter);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.onCreateView(inflater, container, savedInstanceState);
+    }
+}&lt;/redditchild&gt;&lt;/redditchild&gt;
+</code></pre>
+<p>Notably, we have it set to log out the position of taps to LogCat and we set a
+new adapter (with empty content) for the ListView.</p>
+<h4 id="item-reddit-listingxml">item_reddit_listing.xml</h4>
+<p>We also need an item layout to display our data. We use a simple <code>LinearLayout</code>
+with vertical alignment and some sensible margins to arrange our three
+<code>TextView</code>s. We set some stylistic effects (color, bold/italics) on our
+<code>TextView</code>s to make the display a little nicer.</p>
+<p>Of note is the <code>android:id</code> fields. We will use these in our adapter to identify
+each <code>TextView</code>.</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">LinearLayout</span> <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">"http://schemas.android.com/apk/res/android"</span>
+    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"fill_parent"</span>
+    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"fill_parent"</span>
+    <span class="hljs-attr">android:background</span>=<span class="hljs-string">"#EDEDED"</span>
+    <span class="hljs-attr">android:orientation</span>=<span class="hljs-string">"vertical"</span>
+    <span class="hljs-attr">android:paddingBottom</span>=<span class="hljs-string">"10dp"</span>
+    <span class="hljs-attr">android:paddingLeft</span>=<span class="hljs-string">"20dp"</span>
+    <span class="hljs-attr">android:paddingRight</span>=<span class="hljs-string">"20dp"</span>
+    <span class="hljs-attr">android:paddingTop</span>=<span class="hljs-string">"10dp"</span> &gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">TextView</span>
+        <span class="hljs-attr">android:id</span>=<span class="hljs-string">"@+id/rTitle"</span>
+        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:textColor</span>=<span class="hljs-string">"#454545"</span>
+        <span class="hljs-attr">android:textStyle</span>=<span class="hljs-string">"bold"</span> /&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">TextView</span>
+        <span class="hljs-attr">android:id</span>=<span class="hljs-string">"@+id/rAuthor"</span>
+        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:textColor</span>=<span class="hljs-string">"#acacac"</span>
+        <span class="hljs-attr">android:textStyle</span>=<span class="hljs-string">"italic"</span> /&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">TextView</span>
+        <span class="hljs-attr">android:id</span>=<span class="hljs-string">"@+id/rDomain"</span>
+        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">"wrap_content"</span>
+        <span class="hljs-attr">android:textColor</span>=<span class="hljs-string">"#acacac"</span> /&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">LinearLayout</span>&gt;</span>
+</code></pre>
+<h4 id="redditchildadapter">RedditChildAdapter</h4>
+<p>Next we need to extend an adapter to map the data we get from RoboSpice to the
+<code>item_reddit_listing.xml</code> layout.</p>
+<p>Notably, we are using the ViewHolder pattern for performance and using
+<code>child.getData()</code> to get at each <code>RedditListing</code>.</p>
+<pre class="hljs"><code><span class="hljs-keyword">package</span> com.christopherbiscardi.robospicetest.lists;
+
+<span class="hljs-keyword">import</span> java.util.ArrayList;
+
+<span class="hljs-keyword">import</span> com.christopherbiscardi.robospicetest.R;
+<span class="hljs-keyword">import</span> com.christopherbiscardi.robospicetest.RedditChild;
+
+<span class="hljs-keyword">import</span> android.content.Context;
+<span class="hljs-keyword">import</span> android.view.LayoutInflater;
+<span class="hljs-keyword">import</span> android.view.View;
+<span class="hljs-keyword">import</span> android.view.ViewGroup;
+<span class="hljs-keyword">import</span> android.widget.ArrayAdapter;
+<span class="hljs-keyword">import</span> android.widget.TextView;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RedditChildAdapter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ArrayAdapter</span>&lt;<span class="hljs-title">redditchild</span>&gt; </span>{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ViewHolder</span> </span>{
+        TextView title;
+        TextView author;
+        TextView domain;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">RedditChildAdapter</span><span class="hljs-params">(Context context, ArrayList&lt;redditchild&gt; redditChildren)</span> </span>{
+        <span class="hljs-keyword">super</span>(context, R.layout.item_reddit_listing, redditChildren);
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> View <span class="hljs-title">getView</span><span class="hljs-params">(<span class="hljs-keyword">int</span> position, View convertView, ViewGroup parent)</span> </span>{
+        <span class="hljs-comment">// Get the data item for this position</span>
+        RedditChild child = getItem(position);
+        <span class="hljs-comment">// Check if an existing view is being reused, otherwise inflate the view</span>
+           ViewHolder viewHolder; <span class="hljs-comment">// view lookup cache stored in tag</span>
+           <span class="hljs-keyword">if</span> (convertView == <span class="hljs-keyword">null</span>) {
+              viewHolder = <span class="hljs-keyword">new</span> ViewHolder();
+              LayoutInflater inflater = LayoutInflater.from(getContext());
+              convertView = inflater.inflate(R.layout.item_reddit_listing, <span class="hljs-keyword">null</span>);
+              viewHolder.title = (TextView) convertView.findViewById(R.id.rTitle);
+              viewHolder.author = (TextView) convertView.findViewById(R.id.rAuthor);
+              viewHolder.domain = (TextView) convertView.findViewById(R.id.rDomain);
+              convertView.setTag(viewHolder);
+           } <span class="hljs-keyword">else</span> {
+               viewHolder = (ViewHolder) convertView.getTag();
+           }
+           <span class="hljs-comment">// Populate the data into the template view using the data object</span>
+           viewHolder.title.setText(child.getData().getTitle());
+           viewHolder.author.setText(child.getData().getAuthor());
+           viewHolder.domain.setText(child.getData().getDomain());
+           <span class="hljs-comment">// Return the completed view to render on screen</span>
+           <span class="hljs-keyword">return</span> convertView;
+    }
+}
+&lt;/redditchild&gt;&lt;/redditchild&gt;
+</code></pre>
+<h4 id="mainactivityjava">MainActivity.java</h4>
+<p>Finally, in <code>MainActivity.java</code>:</p>
+<p>Add a RedditListFragment to the view using FragmentManager:</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onCreate</span><span class="hljs-params">(Bundle savedInstanceState)</span> </span>{
+    <span class="hljs-keyword">super</span>.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    FragmentManager fm = getFragmentManager();
+
+    <span class="hljs-keyword">if</span> (fm.findFragmentById(android.R.id.content) == <span class="hljs-keyword">null</span>) {
+        RedditListFragment list = <span class="hljs-keyword">new</span> RedditListFragment();
+        fm.beginTransaction().add(android.R.id.content, list).commit();
+    }
+    spiceRequestReddit = <span class="hljs-keyword">new</span> SpiceRequestReddit( <span class="hljs-string">"Riak"</span> );
+}
+</code></pre>
+<p>Then in our Request Listener add the data to the ListFragment Adapter:</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onRequestSuccess</span><span class="hljs-params">( <span class="hljs-keyword">final</span> Reddit result )</span> </span>{
+    Toast.makeText( MainActivity.<span class="hljs-keyword">this</span>, <span class="hljs-string">"success"</span>, Toast.LENGTH_SHORT ).show();
+    Log.e(<span class="hljs-string">"TEST"</span>,result.toString());
+    Log.e(<span class="hljs-string">"TEST"</span>,result.getData().getChildren().get(<span class="hljs-number">0</span>).getData().getTitle());
+
+    ListView listView = (ListView) findViewById(android.R.id.list);
+    RedditChildAdapter adapter = (RedditChildAdapter) listView.getAdapter();
+    adapter.clear();
+    adapter.addAll(result.getData().getChildren());
+
+}
+</code></pre>
+<p>At this point we’re good to go. Fire up the app and you should see something
+similar to this:</p>
+<figure class="wp-caption aligncenter" id="attachment_448" style="width: 187px;">[![Screenshot of the sample Reddit app](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_188/v1428611518/Screenshot_2014-01-27-16-44-50_njyscb.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611518/Screenshot_2014-01-27-16-44-50_njyscb.png)<figcaption class="wp-caption-text">Screenshot of the sample Reddit app</figcaption></figure>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

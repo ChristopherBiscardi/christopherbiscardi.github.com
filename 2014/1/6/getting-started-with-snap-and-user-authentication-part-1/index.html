@@ -1,0 +1,48 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".2310s35dnc8" data-react-checksum="660958306"><div class="Nav__wrapper___u7BUA" data-reactid=".2310s35dnc8.0"><nav class="Nav__nav___1e2Pp" data-reactid=".2310s35dnc8.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".2310s35dnc8.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".2310s35dnc8.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".2310s35dnc8.0.0.1"><li data-reactid=".2310s35dnc8.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".2310s35dnc8.0.0.1.0.0">Posts</a></li><li data-reactid=".2310s35dnc8.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".2310s35dnc8.0.0.1.1.0">AMA</a></li><li data-reactid=".2310s35dnc8.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".2310s35dnc8.0.0.1.2.0">Books</a></li><li data-reactid=".2310s35dnc8.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".2310s35dnc8.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".2310s35dnc8.1"><div class="Post__container___3xG6t" data-reactid=".2310s35dnc8.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".2310s35dnc8.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".2310s35dnc8.1.0.0.0">Getting Started With Snap (and User Authentication): Part 1</h1><div class="Post__meta___1jyEB" data-reactid=".2310s35dnc8.1.0.0.1"><span data-reactid=".2310s35dnc8.1.0.0.1.0">Jan 7th, 2014</span><span data-reactid=".2310s35dnc8.1.0.0.1.1"> · </span><span data-reactid=".2310s35dnc8.1.0.0.1.2">1</span><span data-reactid=".2310s35dnc8.1.0.0.1.3"> minute read</span></div><div data-reactid=".2310s35dnc8.1.0.0.2"><p><a href="http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/">Part 2</a></p>
+<p>Before we get started, there is a quickstart on the snap-framework site
+<a href="http://snapframework.com/docs/quickstart">here</a> that goes into the <code>barebones</code>
+scaffold project a bit. This course will go a little more in depth into the
+<code>default</code> project, exploring user authentication.</p>
+<p>I use <a href="https://github.com/Paczesiowa/hsenv">hsenv</a> to create separate Haskell
+environments, but that is not a requirement and beginners may be more
+comfortable installing the <a href="http://www.haskell.org/platform/">Haskell Platform</a></p>
+<p>If you wish to use hsenv, you can run this on newer versions:</p>
+<pre class="hljs"><code>hsenv --ghc=7.6.3
+</code></pre>
+<p>or download the package for ghc-7.6.3
+<a href="http://www.haskell.org/ghc/download_ghc_7_6_3">here</a> and run this:</p>
+<pre class="hljs"><code>hsenv --ghc=/path/to/downloaded/ghc-7.6.3-x86_64-apple-darwin.tar.bz2
+</code></pre>
+<p>From here on out the process is the same if you’re using hsenv or not. Create a
+new directory named “abc” and enter it. This will also function as the name of
+our project and executable.</p>
+<pre class="hljs"><code>mkdir abc
+<span class="hljs-built_in">cd</span> abc
+</code></pre>
+<p>It’s good to update the package list when starting a new project:</p>
+<pre class="hljs"><code>cabal update
+cabal install cabal-install
+</code></pre>
+<p>After updating and installing the new version of cabal-instal we can install
+snap:</p>
+<pre class="hljs"><code>cabal install snap
+</code></pre>
+<p>At this point we will have the <code>snap</code> CLI and can run init to scaffold a default
+project. After scaffolding, we then run <code>cabal install</code> to compile the binary
+and <code>abc</code> to run the project. <code>abc</code> will also take a port as such: <code>abc -p 8000</code></p>
+<pre class="hljs"><code>snap init
+cabal install
+abc -p 8000
+</code></pre>
+<p>Our app, abc, should now be running. Navigate to <code>localhost:8000</code> (or the port
+you specified) in your browser to take a look.</p>
+<p>In the next post we’ll take a look at the code we generated and take a brief
+overview of what it does.</p>
+<p><a href="http://www.christopherbiscardi.com/2014/01/10/getting-started-with-snap-and-user-authentication-part-2/">Part 2 – Auth</a></p>
+<p><a href="http://www.christopherbiscardi.com/2014/01/11/getting-started-with-snap-and-user-authentication-part-3/">Part 3 – Postgres Backed Auth</a></p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

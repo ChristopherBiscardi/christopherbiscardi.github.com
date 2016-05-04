@@ -1,0 +1,80 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.9d56a516f70356a9b04feaf105275e9d.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".17qw6ilpk6y" data-react-checksum="-560250796"><div class="Nav__wrapper___u7BUA" data-reactid=".17qw6ilpk6y.0"><nav class="Nav__nav___1e2Pp" data-reactid=".17qw6ilpk6y.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".17qw6ilpk6y.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".17qw6ilpk6y.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".17qw6ilpk6y.0.0.1"><li data-reactid=".17qw6ilpk6y.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".17qw6ilpk6y.0.0.1.0.0">Posts</a></li><li data-reactid=".17qw6ilpk6y.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama" class="Nav__itemLink___H6Isv" data-reactid=".17qw6ilpk6y.0.0.1.1.0">AMA</a></li><li data-reactid=".17qw6ilpk6y.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".17qw6ilpk6y.0.0.1.2.0">Books</a></li><li data-reactid=".17qw6ilpk6y.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".17qw6ilpk6y.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".17qw6ilpk6y.1"><div class="Post__container___3xG6t" data-reactid=".17qw6ilpk6y.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".17qw6ilpk6y.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".17qw6ilpk6y.1.0.0.0">Episode 1: A New Blog</h1><div class="Post__meta___1jyEB" data-reactid=".17qw6ilpk6y.1.0.0.1"><span data-reactid=".17qw6ilpk6y.1.0.0.1.0">Mar 27th, 2016</span><span data-reactid=".17qw6ilpk6y.1.0.0.1.1"> · </span><span data-reactid=".17qw6ilpk6y.1.0.0.1.2">1</span><span data-reactid=".17qw6ilpk6y.1.0.0.1.3"> minute read</span></div><div data-reactid=".17qw6ilpk6y.1.0.0.2"><p>Hooray! A new published version of my blog (which also happens to
+include everything on this domain and thus is not just a blog).</p>
+<h1 id="a-new-blog-engine">A New Blog Engine</h1>
+<p>I did what everyone tells you not to and wrote a whole new engine to
+build the new version of this blog. I dubbed it Leo and you can check
+it out <a href="https://github.com/superawesomelabs/leo">on GitHub</a> if you are so inclined. It, for example,
+supports conditionally including drafts in the output with env vars:</p>
+<pre class="hljs"><code>BLOGPOST_RENDER_DRAFTS=<span class="hljs-literal">true</span> npm start
+</code></pre>
+<p>I’ll do a more in-depth discussion of the static-site engine beneath
+this site in a different post. The technical architecture is fairly
+interesting itself since it uses Relay, GraphQL and React.</p>
+<h2 id="authoring">Authoring</h2>
+<p>The markdown implementation is <a href="https://github.com/markdown-it/markdown-it">markdown-it</a>, which
+supports commonmark in it’s default configuration and has a plugin
+system. Hopefully I won’t abuse the plugin system too much… or I may
+just end up with a custom markdown syntax  ¯\_(ツ)_/¯</p>
+<h3 id="emoji-shortcode-support">Emoji Shortcode Support</h3>
+<pre class="hljs"><code>:poop: :) :fire: :joy: :sunglasses: :dizzy_face: :athletic_shoe:
+:tongue:
+</code></pre>
+<p>yields</p>
+<p>💩 😃 🔥 😂 😎 😵 👟 👅</p>
+<p>Unfortunately, for some reason they only work in <code>&lt;p&gt;</code>
+tags. Experimentally they use the correct utf-8 code in headers, but
+render with an effect similar to <code>visibility: hidden</code>.</p>
+<h3 id="youtubevimeo">Youtube/Vimeo</h3>
+<p>YouTube support is enabled via “shortcodes” from
+<a href="https://www.npmjs.com/package/markdown-it-video">markdown-it-video</a></p>
+<pre class="hljs"><code>@[youtube](https://youtu.be/kOU2kB8xvnQ)
+</code></pre>
+<p>turns into</p>
+<p><div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" id="ytplayer" type="text/html" width="640" height="390" src="//www.youtube.com/embed/kOU2kB8xvnQ" frameborder="0"></iframe></div></p>
+<h2 id="headers">Headers</h2>
+<ul>
+<li><a href="https://www.npmjs.com/package/markdown-it-named-headers">markdown-it-named-headers</a></li>
+</ul>
+<p>headers have <code>name</code> attributes automatically associated with them, but
+they aren’t “auto-linked”. This means that you have to either guess at
+the <code>#slugified</code> representation or inspect element. I’d like to change
+this to have a clickable link in the future.</p>
+<h2 id="footnotes">Footnotes</h2>
+<p>Pandoc-style footnotes are enabled.<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
+<h2 id="postcss">PostCSS</h2>
+<ul>
+<li>More on <a href="https://github.com/postcss/postcss#plugins">PostCSS</a></li>
+</ul>
+<p>I have a component library system<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup> in development that’s also
+being used in places on this site. It uses PostCSS for the CSS
+generation. <a href="https://github.com/seaneking/postcss-responsive-type">postcss-responsive-type</a> is
+responsible for the font-size changing depending on viewport size (try
+it, it’s cool!). This yields a nice effect where the entire site
+scales a bit, based on typography size, between phones and 4k screens.</p>
+<h1 id="design">Design</h1>
+<p>Ok, so I spent 0 time designing this thing. It’s mainly an exploration
+of the functionality of <a href="https://github.com/superawesomelabs/leo">Leo</a> (which was used to build the
+site). That means there are significant areas to improve in terms of
+design. You may notice, for example, that there are some blueprint-ish
+placeholders for featured post images, etc.</p>
+<h2 id="fonts">Fonts</h2>
+<p>Roboto is <em>ok</em>, but a stack based on <a href="https://typekit.com/fonts/proxima-nova">Proxima Nova</a> is
+probably where I’ll end up long term.</p>
+<h1 id="open-source">Open Source</h1>
+<p>The source for this site is on <a href="website">GitHub</a> and the source for
+the static site generation tool <a href="https://github.com/superawesomelabs/leo">is there too</a>.</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1"  class="footnote-item"><p>Enabled by <a href="https://github.com/markdown-it/markdown-it-footnote">markdown-it-footnote</a> <a href="#fnref1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn2"  class="footnote-item"><p>Not open source yet, but will live at <a href="https://github.com/superawesomelabs/fate">superawesomelabs/fate</a> <a href="#fnref2" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>
