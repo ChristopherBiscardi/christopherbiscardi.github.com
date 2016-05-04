@@ -11,14 +11,21 @@ html {
 }
 body {
   background: white;
-  /*   Switch back to 
-   font-family: "Proxima Nova"
- */
-  font-family: Roboto;
+  /** 
+   * Switch back to 
+   * font-family: "Proxima Nova"?
+   * This stack is meant to yield system-native fonts across all
+   * devices.
+   */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
 blockquote {
     margin-left: -23px;
     padding-left: 20px;
     border-left: 3px solid black;
+}
+
+code {
+    font-family: "Meslo LG M DZ for Powerline";
 }
