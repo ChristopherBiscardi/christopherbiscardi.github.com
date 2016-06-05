@@ -1,0 +1,143 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.fb354817e9ba604f47bb6a23702bb15a.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".cuc6jhbqa6" data-react-checksum="1259345014"><div class="Nav__wrapper___u7BUA" data-reactid=".cuc6jhbqa6.0"><nav class="Nav__nav___1e2Pp" data-reactid=".cuc6jhbqa6.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".cuc6jhbqa6.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".cuc6jhbqa6.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".cuc6jhbqa6.0.0.1"><li data-reactid=".cuc6jhbqa6.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".cuc6jhbqa6.0.0.1.0.0">Posts</a></li><li data-reactid=".cuc6jhbqa6.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama/issues?q=is%3Aissue+is%3Aclosed" class="Nav__itemLink___H6Isv" data-reactid=".cuc6jhbqa6.0.0.1.1.0">AMA</a></li><li data-reactid=".cuc6jhbqa6.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".cuc6jhbqa6.0.0.1.2.0">Books</a></li><li data-reactid=".cuc6jhbqa6.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".cuc6jhbqa6.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".cuc6jhbqa6.1"><div class="Post__container___3xG6t" data-reactid=".cuc6jhbqa6.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".cuc6jhbqa6.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".cuc6jhbqa6.1.0.0.0">Instrumenting Servant with Prometheus</h1><div class="Post__meta___1jyEB" data-reactid=".cuc6jhbqa6.1.0.0.1"><span data-reactid=".cuc6jhbqa6.1.0.0.1.0">May 21st, 2016</span><span data-reactid=".cuc6jhbqa6.1.0.0.1.1"> · </span><span data-reactid=".cuc6jhbqa6.1.0.0.1.2">2</span><span data-reactid=".cuc6jhbqa6.1.0.0.1.3"> minute read</span></div><div data-reactid=".cuc6jhbqa6.1.0.0.2"><p>To set up a Servant/WAI application with monitoring, we will first
+scaffold a servant application using stack.</p>
+<pre class="hljs"><code>&gt; stack new servant-prometheus \
+https://raw.githubusercontent.com/commercialhaskell/stack-templates/8cb4889fb7c502c18f6f9ecf9<span class="hljs-built_in">cd</span>62aef58589c21/servant.hsfiles \
+--resolver nightly-2016-05-21
+</code></pre>
+<p>To instrument our servant application, add the following three
+dependencies to <code>servant-prometheus.cabal</code> under the <code>build-depends</code>
+of the <code>library</code>.</p>
+<pre class="hljs"><code>, wai-middleware-prometheus &gt;= 0.1.0.1
+, prometheus-client &gt;= 0.1.0.1
+, prometheus-metrics-ghc &gt;= 0.1.0.1
+</code></pre>
+<p>In <code>src/Lib.hs</code> we need the following 3 imports. They are fully
+qualified for clarity.</p>
+<pre class="hljs"><code>import Network.Wai.Middleware.Prometheus (prometheus, PrometheusSettings(..))
+import Prometheus (register)
+import Prometheus.Metric.GHC (ghcMetrics)
+</code></pre>
+<p>All of our work will be in the <code>startApp</code> function defined in the same
+file. Currently, <code>startApp</code> is defined as <code>run 8080 app</code>. We are going
+to change that to the following.</p>
+<pre class="hljs"><code>startApp = do
+  register ghcMetrics
+  let promMiddleware = prometheus $ PrometheusSettings [&quot;metrics&quot;] True True
+  run 8080 $ promMiddleware $ app
+</code></pre>
+<p>We also need <code>{-# LANGUAGE OverloadedStrings #-}</code> for the
+<code>[&quot;metrics&quot;]</code> literal.</p>
+<p>Finally, to actually enable consumption of GHC metrics, we need to
+include the <code>-T</code> flag in our executable. The <code>executable</code>'s
+<code>ghc-options</code> becomes:</p>
+<pre class="hljs"><code>ghc-options: -threaded -rtsopts -with-rtsopts=-TN
+</code></pre>
+<p>After building and running, the servant server should be providing
+prometheus metrics at /metrics.</p>
+<pre class="hljs"><code>stack install --only-dependencies
+stack build
+stack exec servant-prometheus-exe
+</code></pre>
+<h1 id="details">Details</h1>
+<p>All three of the packages we added as dependencies come from
+<a href="https://github.com/fimad/prometheus-haskell">fimad/prometheus-haskell</a>.</p>
+<ul>
+<li>Prometheus Client
+<ul>
+<li>Defines the core data types and metrics. The other two packages
+build on client to provide their metrics.</li>
+<li>This is the package to use to set up custom metrics.</li>
+</ul>
+</li>
+<li>Prometheus Metrics GHC
+<ul>
+<li>Provides a set of custom metrics for Prometheus Client that are
+exposed from GHC’s runtime system.</li>
+</ul>
+</li>
+<li>WAI Middleware Prometheus
+<ul>
+<li>Instruments a WAI application, exposing common HTTP metrics. Also
+exposes those metrics on /metrics (or the url of the user’s
+choice)</li>
+</ul>
+</li>
+</ul>
+<p><a href="http://localhost:8080/metrics">localhost:8080/metrics</a> should now
+have the following output, which can be scraped by Prometheus.</p>
+<ul>
+<li><code>http_</code> prefixed metrics come from the WAI middleware</li>
+<li><code>ghc_</code> prefixed metrics come from <code>ghcMetrics</code></li>
+</ul>
+<pre class="hljs"><code># HELP http_request_duration_microseconds The HTTP request latencies in microseconds.
+# TYPE http_request_duration_microseconds summary
+http_request_duration_microseconds{handler=&quot;app&quot;,quantile=&quot;0.5&quot;} 258.0
+http_request_duration_microseconds{handler=&quot;app&quot;,quantile=&quot;0.9&quot;} 258.0
+http_request_duration_microseconds{handler=&quot;app&quot;,quantile=&quot;0.99&quot;} 258.0
+http_request_duration_microseconds_sum{handler=&quot;app&quot;} 258.0
+http_request_duration_microseconds_count{handler=&quot;app&quot;} 1
+# HELP ghc_sparks The number of sparks in the local spark pool.
+# TYPE ghc_sparks gauge
+ghc_sparks 0
+# HELP ghc_capabilities The number of threads that can run truly simultaneously.
+# TYPE ghc_capabilities gauge
+ghc_capabilities 1
+# HELP ghc_bytes_allocated Total number of bytes allocated.
+# TYPE ghc_bytes_allocated gauge
+ghc_bytes_allocated 249136
+# HELP ghc_num_gcs The number of garbage collections performed.
+# TYPE ghc_num_gcs gauge
+ghc_num_gcs 3
+# HELP ghc_max_bytes_used The maximum number of live bytes seen so far.
+# TYPE ghc_max_bytes_used gauge
+ghc_max_bytes_used 65576
+# HELP ghc_cumulative_bytes_used The cumulative total bytes used.
+# TYPE ghc_cumulative_bytes_used gauge
+ghc_cumulative_bytes_used 149136
+# HELP ghc_bytes_copied The number of bytes copied during garbage collection.
+# TYPE ghc_bytes_copied gauge
+ghc_bytes_copied 76344
+# HELP ghc_current_bytes_used The number of current live bytes.
+# TYPE ghc_current_bytes_used gauge
+ghc_current_bytes_used 65504
+# HELP ghc_current_bytes_slop The current number of bytes lost to slop.
+# TYPE ghc_current_bytes_slop gauge
+ghc_current_bytes_slop 0
+# HELP ghc_max_bytes_slop The maximum number of bytes lost to slop so far.
+# TYPE ghc_max_bytes_slop gauge
+ghc_max_bytes_slop 8152
+# HELP ghc_peak_megabytes_allocated The maximum number of megabytes allocated.
+# TYPE ghc_peak_megabytes_allocated gauge
+ghc_peak_megabytes_allocated 1
+# HELP ghc_mutator_cpu_seconds The CPU time spent running mutator threads.
+# TYPE ghc_mutator_cpu_seconds gauge
+ghc_mutator_cpu_seconds 1.471e-3
+# HELP ghc_mutator_wall_seconds The wall clock time spent running mutator threads.
+# TYPE ghc_mutator_wall_seconds gauge
+ghc_mutator_wall_seconds 1.48e-3
+# HELP ghc_gc_cpu_seconds The CPU time spent running GC.
+# TYPE ghc_gc_cpu_seconds gauge
+ghc_gc_cpu_seconds 1.428e-3
+# HELP ghc_gc_wall_seconds The wall clock time spent running GC.
+# TYPE ghc_gc_wall_seconds gauge
+ghc_gc_wall_seconds 1.781416e-3
+# HELP ghc_cpu_seconds Total CPU time elapsed since program start.
+# TYPE ghc_cpu_seconds gauge
+ghc_cpu_seconds 0.352497
+# HELP ghc_wall_seconds Total wall clock time elapsed since start.
+# TYPE ghc_wall_seconds gauge
+ghc_wall_seconds 28.681236189
+# HELP ghc_parallel_total_bytes_copied Number of bytes copied during GC, minus space held by mutable lists held by the capabilities.
+# TYPE ghc_parallel_total_bytes_copied gauge
+ghc_parallel_total_bytes_copied 0
+# HELP ghc_parallel_max_bytes_copied Sum of number of bytes copied
+each GC by the most active GC thread each GC.
+# TYPE ghc_parallel_max_bytes_copied gauge
+ghc_parallel_max_bytes_copied 0
+</code></pre>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>

@@ -1313,6 +1313,9 @@ tbody, caption {
     background-position: 0 99.9%;
     text-decoration: none;
 }
+.Post__container___3xG6t img {
+    max-width: 100%;
+}
 .Post__singleColumn___3RGaV {
     flex: 0 0 auto;
     width: calc(99.99% * 1/1 - (30px - 30px * 1/1));
@@ -1356,6 +1359,9 @@ tbody, caption {
     max-width: 968px;
     margin-left: auto;
     margin-right: auto;
+    img {
+        max-width: 100%;
+    }
 }/*
   Five-color theme from a single blue hue.
 */

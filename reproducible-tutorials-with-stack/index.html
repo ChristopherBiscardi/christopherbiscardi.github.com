@@ -1,0 +1,31 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" type="text/css" href="/styles.fb354817e9ba604f47bb6a23702bb15a.css"/></head><body class="landing-page"><div id="react-mount"><div data-reactid=".210lr6glqri" data-react-checksum="-943478192"><div class="Nav__wrapper___u7BUA" data-reactid=".210lr6glqri.0"><nav class="Nav__nav___1e2Pp" data-reactid=".210lr6glqri.0.0"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid=".210lr6glqri.0.0.0"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid=".210lr6glqri.0.0.0.0"/></a><ul class="Nav__items___1oDCD" data-reactid=".210lr6glqri.0.0.1"><li data-reactid=".210lr6glqri.0.0.1.0"><a class="Nav__itemLink___H6Isv" href="/posts" data-reactid=".210lr6glqri.0.0.1.0.0">Posts</a></li><li data-reactid=".210lr6glqri.0.0.1.1"><a href="https://github.com/ChristopherBiscardi/ama/issues?q=is%3Aissue+is%3Aclosed" class="Nav__itemLink___H6Isv" data-reactid=".210lr6glqri.0.0.1.1.0">AMA</a></li><li data-reactid=".210lr6glqri.0.0.1.2"><a class="Nav__itemLink___H6Isv" href="/books" data-reactid=".210lr6glqri.0.0.1.2.0">Books</a></li><li data-reactid=".210lr6glqri.0.0.1.3"><a class="Nav__itemLink___H6Isv" href="/projects" data-reactid=".210lr6glqri.0.0.1.3.0">Projects</a></li></ul></nav></div><div data-reactid=".210lr6glqri.1"><div class="Post__container___3xG6t" data-reactid=".210lr6glqri.1.0"><div class="Post__singleColumn___3RGaV" data-reactid=".210lr6glqri.1.0.0"><h1 class="Post__title___1k3xj" data-reactid=".210lr6glqri.1.0.0.0">Reproducible Tutorials with Stack</h1><div class="Post__meta___1jyEB" data-reactid=".210lr6glqri.1.0.0.1"><span data-reactid=".210lr6glqri.1.0.0.1.0">Apr 9th, 2016</span><span data-reactid=".210lr6glqri.1.0.0.1.1"> · </span><span data-reactid=".210lr6glqri.1.0.0.1.2">1</span><span data-reactid=".210lr6glqri.1.0.0.1.3"> minute read</span></div><div data-reactid=".210lr6glqri.1.0.0.2"><p>Stack yields some nice benefits for blogging, tutorials, and more. The
+main benefit I want to talk about today is reproducibility when using
+stack to start a new project (in a tutorial).</p>
+<h2 id="resolvers">Resolvers</h2>
+<p>To ensure repeatable resolutions, choose a specific
+<a href="https://www.stackage.org/nightly-2016-04-10">resolver</a>. Since even the nightlies get unique identifiers,
+we can ensure that any future attempt at reproducing a given tutorial
+is more likely to be successful.</p>
+<h2 id="templates">Templates</h2>
+<p>Stack can use templates from github. Pointing to a specific template,
+whether custom or from the <a href="https://github.com/commercialhaskell/stack-templates">stack-templates</a> repo, is good
+as well. Cloning git repos could be used as an alternative here, but
+one advantage of using Stack’s support is that you can now have a
+single repo of templates and point to a specific git commit/file.</p>
+<h2 id="code">Code</h2>
+<p>A fully qualified reproducible template commmand could look like:</p>
+<pre class="hljs"><code>stack new servant-users \
+https://raw.githubusercontent.com/commercialhaskell/stack-templates/9a18e8762b8f048d403dabe5c19552ceb5292318/servant.hsfiles \
+--resolver nightly-2016-04-10
+</code></pre>
+<p>– note</p>
+<p>Effectively, doing this is trying to freeze the (Hackage) world at a
+specific point in time for a specific .cabal setup. I’d argue that
+doing this is more useful (for tutorials) than trying to make sure a
+tutorial compiles with any arbitrary future set of packages.</p>
+</div></div></div></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>
