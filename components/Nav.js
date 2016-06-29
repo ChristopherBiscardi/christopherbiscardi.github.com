@@ -15,7 +15,7 @@ export default class Nav extends Component {
           <li><Link to='/posts'
                     className={styles.itemLink}
                     activeClassName={styles.active}>Posts</Link></li>
-          <li><a href='https://github.com/ChristopherBiscardi/ama'
+          <li><a href='https://github.com/ChristopherBiscardi/ama/issues?q=is%3Aissue+is%3Aclosed'
                  className={styles.itemLink}>AMA</a></li>
           <li><Link to='/books'
                     className={styles.itemLink}

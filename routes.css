@@ -1,7 +1,7 @@
 @import "./css/mono-blue.css";
 
 html {
-  font-size: responsive 12px 21px;
+  font-size: responsive 16px 21px;
   /* min-size, max-size */
   font-range: 420px 1280px;
   /* viewport widths between which font-size is fluid */
@@ -27,5 +27,5 @@ blockquote {
 }
 
 code {
-    font-family: "Meslo LG M DZ for Powerline";
+    font-family: "Meslo LG M DZ for Powerline", monospace;
 }

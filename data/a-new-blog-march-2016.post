@@ -51,12 +51,12 @@ YouTube support is enabled via "shortcodes" from
 [markdown-it-video](https://www.npmjs.com/package/markdown-it-video)
 
 ```
-@[youtube](https://youtu.be/kOU2kB8xvnQ)
+@[youtube](https://youtu.be/rO7oDZZb7K0)
 ```
 
 turns into
 
-@[youtube](https://youtu.be/kOU2kB8xvnQ)
+@[youtube](https://youtu.be/rO7oDZZb7K0)
 
 ## Headers
 

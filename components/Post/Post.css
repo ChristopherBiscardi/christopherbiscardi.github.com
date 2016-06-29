@@ -1,5 +1,5 @@
 .container {
-    lost-center: 700px;
+    lost-center: 45rem;
     
 }
 .container a {
@@ -10,6 +10,9 @@
     text-shadow: -2px 1px 0 #fcfcfc,-1px 1px 0 #fcfcfc,0 1px 0 #fcfcfc,1px 1px 0 #fcfcfc,2px 1px 0 #fcfcfc,-1px -1px 0 #fcfcfc,1px -1px 0 #fcfcfc,-1px 0 0 #fcfcfc,1px 0 0 #fcfcfc;
     background-position: 0 99.9%;
     text-decoration: none;
+}
+.container img {
+    max-width: 100%;
 }
 .singleColumn {
     lost-column: 1/1;
