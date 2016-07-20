@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import styles from './Hero.css';
 
-export default class Nav extends Component {
+export default class Hero extends Component {
   render() {
     return (
       <div className={styles.wrapper}>

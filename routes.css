@@ -1,4 +1,3 @@
-@import "./css/mono-blue.css";
 
 html {
   font-size: responsive 16px 21px;
@@ -11,9 +10,7 @@ html {
 }
 body {
   background: white;
-  /** 
-   * Switch back to 
-   * font-family: "Proxima Nova"?
+  /**
    * This stack is meant to yield system-native fonts across all
    * devices.
    */
@@ -29,3 +26,12 @@ blockquote {
 code {
     font-family: "Meslo LG M DZ for Powerline", monospace;
 }
+
+a {
+    color: #0B95E1;
+    text-decoration: none;
+}
+
+/* a:visited { */
+/*     color: color(#0B95E1 shade(50%)); */
+/* } */

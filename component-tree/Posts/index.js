@@ -13,8 +13,12 @@ class PostsPage extends Component {
           const { title, excerpt, url, slug } = node.attributes;
           return (
             <li key={slug}>
-              <h5><a href={url}>{title}</a></h5>
-              <p>{excerpt}</p>
+              <h5 className={styles.heading}>
+                <a href={url}
+                   className={styles.a}
+                >{title}</a>
+              </h5>
+              <p className={styles.excerpt}>{excerpt}</p>
             </li>
           )
         })

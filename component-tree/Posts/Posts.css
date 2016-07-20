@@ -1,0 +1,20 @@
+.container {
+    list-style: none;
+    lost-center: 968px;
+    img {
+        max-width: 100%;
+    }
+}
+
+.heading {
+    composes: h5 from 'basscss-type-scale/index.css';
+    composes: m0 from 'basscss-margin/index.css';
+}
+
+.a {
+    composes: break-a-decoration-on-overlap from '../../css/globals.css';
+}
+
+.excerpt {
+    composes: mt0 from 'basscss-margin/index.css';
+}

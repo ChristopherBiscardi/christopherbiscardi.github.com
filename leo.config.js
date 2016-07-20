@@ -1,22 +1,42 @@
-var hljs = require('highlight.js');
+const hljs = require('highlight.js');
+const hook = require('css-modules-require-hook');
+
+// CSS Modules Require Hook
+// This may cause issues one day due to overloaded require
+hook({
+  generateScopedName: '[name]__[local]___[hash:base64:5]',
+  append: [
+      require('postcss-import'),
+      require('postcss-brand-colors'),
+      require('postcss-responsive-type'),
+      require('postcss-cssnext')({
+        browsers: 'last 2 versions'
+      }),
+  ]
+});
+
+const css = require('./css/mono-blue.css');
+
+hljs.configure({ classNames: css });
+
+function highlight (str, lang) {
+  if (lang && hljs.getLanguage(lang)) {
+    try {
+      return `<pre class="${css['hljs']}"><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
+    } catch (__) {
+      console.log('failed to highlight');
+    }
+  }
+
+  return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+}
+
 var md = require('markdown-it')({
   html: true,
   linkify: true,
   typographer: true,
   highlight: highlight,
-})
-
-function highlight (str, lang) {
-  if (lang && hljs.getLanguage(lang)) {
-    try {
-      return '<pre class="hljs"><code>' +
-             hljs.highlight(lang, str, true).value +
-             '</code></pre>';
-    } catch (__) {}
-  }
-
-  return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-}
+});
 
 module.exports = {
   "plugins": [
