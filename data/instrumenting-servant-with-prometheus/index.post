@@ -17,7 +17,7 @@ To instrument our servant application, add the following three
 dependencies to `servant-prometheus.cabal` under the `build-depends`
 of the `library`. 
 
-```
+```haskell
 , wai-middleware-prometheus >= 0.1.0.1
 , prometheus-client >= 0.1.0.1
 , prometheus-metrics-ghc >= 0.1.0.1
@@ -26,7 +26,7 @@ of the `library`.
 In `src/Lib.hs` we need the following 3 imports. They are fully
 qualified for clarity.
 
-```
+```haskell
 import Network.Wai.Middleware.Prometheus (prometheus, PrometheusSettings(..))
 import Prometheus (register)
 import Prometheus.Metric.GHC (ghcMetrics)
@@ -36,7 +36,7 @@ All of our work will be in the `startApp` function defined in the same
 file. Currently, `startApp` is defined as `run 8080 app`. We are going
 to change that to the following.
 
-```
+```haskell
 startApp = do
   register ghcMetrics
   let promMiddleware = prometheus $ PrometheusSettings ["metrics"] True True
@@ -57,7 +57,7 @@ ghc-options: -threaded -rtsopts -with-rtsopts=-TN
 After building and running, the servant server should be providing
 prometheus metrics at /metrics.
 
-```
+```bash
 stack install --only-dependencies
 stack build
 stack exec servant-prometheus-exe

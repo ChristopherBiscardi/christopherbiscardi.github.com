@@ -1,4 +1,4 @@
-const hljs = require('highlight.js');
+const hljs = require('hljs-modules');
 const hook = require('css-modules-require-hook');
 
 // CSS Modules Require Hook
@@ -28,7 +28,7 @@ function highlight (str, lang) {
     }
   }
 
-  return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+  return `<pre class="${css['hljs']}"><code>${md.utils.escapeHtml(str)}</code></pre>`;
 }
 
 var md = require('markdown-it')({

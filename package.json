@@ -28,22 +28,26 @@
   },
   "homepage": "https://github.com/superawesomelabs/leo-default-starter#readme",
   "dependencies": {
-    "@sa-labs/leo-core": "/Users/chris/Dropbox/projects/_superawesomelabs/leo/packages/leo-core",
-    "@sa-labs/leo-plugin-blogpost": "^0.2.3",
-    "@sa-labs/leo-plugin-fate": "/Users/chris/Dropbox/projects/_superawesomelabs/leo/packages/leo-plugin-fate",
-    "@sa-labs/leo-plugin-images": "0.2.0",
-    "@sa-labs/leo-plugin-markdown": "^0.2.2",
+    "@sa-labs/leo-core": "0.4.2",
+    "@sa-labs/leo-plugin-blogpost": "0.4.2",
+    "@sa-labs/leo-plugin-fate": "0.4.1",
+    "@sa-labs/leo-plugin-images": "0.4.1",
+    "@sa-labs/leo-plugin-markdown": "0.4.1",
     "frontmatter-loader": "0.0.1",
     "lost": "^6.6.3",
     "normalize-opentype.css": "^0.2.4",
     "utility-opentype": "^0.1.4"
   },
   "devDependencies": {
+    "basscss": "^8.0.1",
+    "basscss-addons": "^1.0.0-beta4",
+    "css-modules-require-hook": "^4.0.1",
     "http-server": "^0.8.5",
     "markdown-it-emoji": "^1.1.1",
     "markdown-it-footnote": "^2.0.0",
     "markdown-it-named-headers": "0.0.4",
     "markdown-it-video": "^0.2.1",
-    "normalize.css": "^3.0.3"
+    "postcss-debug": "^0.3.0",
+    "sanitize.css": "^4.1.0"
   }
 }

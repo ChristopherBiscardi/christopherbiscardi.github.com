@@ -16,7 +16,11 @@
 }
 .singleColumn {
     lost-column: 1/1;
-    padding: 1rem;
+    padding: 0 1rem;
+}
+
+.img {
+    width: 100%;
 }
 
 .title {

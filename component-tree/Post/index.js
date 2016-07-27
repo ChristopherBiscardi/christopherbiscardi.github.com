@@ -13,14 +13,27 @@ class PostComponent extends Component {
       timeToRead,
       title,
       updatedAt,
-      publishedAt
-      } = this.props.root.post.attributes;
+      publishedAt,
+      headerImage
+    } = this.props.root.post.attributes;
+
     return (
-      <div className={styles.container}>
-        <div className={styles.singleColumn}>
-          <h1 className={styles.title}>{title}</h1>
-          <div className={styles.meta}>{updatedAt} &middot; {timeToRead} minute read</div>
-          <div dangerouslySetInnerHTML={{ __html: this.props.root.post.body }} />
+      <div>
+        <div className={styles.container}>
+          <div className={styles.singleColumn}>
+            <h1 className={styles.title}>{title}</h1>
+            <div className={styles.meta}>{updatedAt} &middot; {timeToRead} minute read</div>
+          </div>
+        </div>
+        {
+          headerImage ? (
+            <img className={styles.img} src={headerImage} />
+          ) : null
+        }
+        <div className={styles.container}>
+          <div className={styles.singleColumn}>
+            <div dangerouslySetInnerHTML={{ __html: this.props.root.post.body }} />
+          </div>
         </div>
       </div>
     )
@@ -32,7 +45,13 @@ export default Relay.createContainer(PostComponent, {
  fragments: {
    root: () =>  Relay.QL`fragment on Query {
      post(slug: $slug) {
-       attributes { title, updatedAt, publishedAt, timeToRead }
+       attributes {
+         title,
+         updatedAt,
+         publishedAt,
+         timeToRead,
+         headerImage
+       }
        body
      }
    }`

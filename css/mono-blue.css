@@ -3,11 +3,12 @@
   Five-color theme from a single blue hue.
 */
 .hljs {
-    background: color(var(--aqua) lightness(+20%));
+    background: color(#69c lightness(+30%));
     composes: p2 from 'basscss-padding/index.css';
     display: block;
     overflow-x: auto;
     color: #00193a;
+    border-left: 2px solid #69c;
 }
 @media only screen and (max-width: 480px) {
     .hljs {
