@@ -15,11 +15,21 @@ class Post extends Component {
       excerpt,
       featuredImage,
       timeToRead,
-      url
+      url,
+      headerImage
     } = this.props.post.attributes;
+
+    var maybeHeaderImage = <div className={styles.blueprintHeader}></div>;
+    if(headerImage) {
+      maybeHeaderImage = (
+        <div className={styles.imageHeader}
+             style={{backgroundImage: `url(${headerImage})`}}></div>
+      );
+    }
+
     return (
       <div className={styles.post}>
-        <div className={styles.image}></div>
+        {maybeHeaderImage}
         <Link to={url}><h4 className={styles.heading}>{title}</h4></Link>
         <span className={styles.meta}>{updatedAt} &bull; {timeToRead} minute read </span>
         <p className={styles.excerpt}>{excerpt}</p>
@@ -33,7 +43,15 @@ export default Relay.createContainer(Post, {
   fragments: {
     post: () => Relay.QL`
       fragment on BlogPost {
-        attributes { title, slug, url, excerpt, updatedAt, timeToRead }
+        attributes {
+          title
+          slug
+          url
+          excerpt
+          updatedAt
+          timeToRead
+          headerImage
+        }
     }`
   }
 });

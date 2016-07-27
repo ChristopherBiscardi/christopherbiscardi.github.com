@@ -16,8 +16,7 @@
     }
 }
 
-.image {
-    composes: blueprintBg from '../../../css/globals.css';
+.postHeader {
     margin-bottom: 0.2rem;
     /*
       Because percent padding is relative to width, the "height" will
@@ -25,6 +24,16 @@
     */
     height: 0;
     padding-bottom: 40%;
+}
+
+.imageHeader {
+    composes: postHeader;
+    background-position: center;
+    background-size: cover;
+}
+.blueprintHeader {
+    composes: postHeader;
+    composes: blueprintBg from '../../../css/globals.css';
 }
 
 .heading {

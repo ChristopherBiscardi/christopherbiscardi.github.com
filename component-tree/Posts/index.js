@@ -12,7 +12,7 @@ class PostsPage extends Component {
         edges.map(({ node }) => {
           const { title, excerpt, url, slug } = node.attributes;
           return (
-            <li key={slug}>
+            <li className={styles.li} key={slug}>
               <h5 className={styles.heading}>
                 <a href={url}
                    className={styles.a}

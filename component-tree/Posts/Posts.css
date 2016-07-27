@@ -18,3 +18,7 @@
 .excerpt {
     composes: mt0 from 'basscss-margin/index.css';
 }
+
+.li {
+    min-width: 100%;
+}
