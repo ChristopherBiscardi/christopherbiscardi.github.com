@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import Relay from 'react-relay';
 import styles from './Posts.css';
+import PostCard from '../../components/PostCard';
 
 class PostsPage extends Component {
   render() {
@@ -10,15 +11,11 @@ class PostsPage extends Component {
       <ul className={styles.container}>
       {
         edges.map(({ node }) => {
-          const { title, excerpt, url, slug } = node.attributes;
           return (
-            <li className={styles.li} key={slug}>
-              <h5 className={styles.heading}>
-                <a href={url}
-                   className={styles.a}
-                >{title}</a>
-              </h5>
-              <p className={styles.excerpt}>{excerpt}</p>
+            <li className={styles.li}
+                key={node.attributes.slug}
+            >
+              <PostCard post={node}/>
             </li>
           )
         })
@@ -36,7 +33,10 @@ export default Relay.createContainer(PostsPage, {
           pageInfo { hasNextPage }
           edges {
             node {
-              attributes { slug, timeToRead, title, url, excerpt }
+              attributes {
+                slug,
+              }
+              ${PostCard.getFragment('post')}
             }
           }
       }

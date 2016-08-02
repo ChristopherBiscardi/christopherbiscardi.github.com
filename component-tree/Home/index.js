@@ -2,10 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import Relay from 'react-relay';
 import Hero from '../Hero';
+import Post from '../../components/PostCard';
 import styles from './Home.css';
 const { bool, string } = PropTypes;
-
-import Post from './Post';
 
 class StickyComponent extends Component {
   render() {
@@ -61,7 +60,12 @@ export class HomeComponent extends Component {
           <div className={styles.posts}>
           {
             root.posts.edges.map( ({ node }) => (
-              <Post key={node.attributes.slug} post={node} />
+              // lost-column div size here
+              <div className={styles.post}
+                   key={node.attributes.slug}
+              >
+                <Post post={node} />
+              </div>
             ))
           }
         </div>

@@ -23,6 +23,9 @@ export default class Nav extends Component {
           <li><Link to='/projects'
                     className={styles.itemLink}
                     activeClassName={styles.active}>Projects</Link></li>
+          <li><Link to='/about'
+                    className={styles.itemLink}
+                    activeClassName={styles.active}>About</Link></li>
         </ul>
       </nav>
       </div>

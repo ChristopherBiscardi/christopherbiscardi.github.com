@@ -3,7 +3,7 @@
  */
 import 'sanitize.css/sanitize.css';
 import 'normalize-opentype.css/normalize-opentype.css';
-import "./css/mono-blue.css";
+import "./css/highlight.css";
 import React, { Component } from 'react';
 import { Route, IndexRoute } from 'react-router';
 import Relay from 'react-relay';

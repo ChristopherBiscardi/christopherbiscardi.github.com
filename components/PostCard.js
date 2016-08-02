@@ -2,9 +2,9 @@ import React, { Component, PropTypes } from 'react';
 const { bool, string } = PropTypes;
 import Relay from 'react-relay';
 import { Link } from 'react-router';
-import styles from './Post.css';
+import styles from './PostCard.css';
 
-class Post extends Component {
+class PostCard extends Component {
   static propTypes = {
     title: string
   };
@@ -39,7 +39,7 @@ class Post extends Component {
   }
 }
 
-export default Relay.createContainer(Post, {
+export default Relay.createContainer(PostCard, {
   fragments: {
     post: () => Relay.QL`
       fragment on BlogPost {

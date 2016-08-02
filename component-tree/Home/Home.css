@@ -1,20 +1,30 @@
 .postsWrapper {
     padding: 0 2rem;
+    background-color: #010d13;
 }
 .posts {
     padding: 1rem 0;
-    lost-center: 960px;
+    lost-center: 1440px;
+}
+
+.post:first-child,
+.post:nth-child(2) {
+    lost-column: 1/2 2;
+}
+.post {
+    display: flex;
+    lost-column: 1/3 0;
 }
 
 .stickyWrapper {
     display: flex;
     padding: 1rem 2rem;
-    background: #EDF8FE;
-    color: #202B31;
+    background-color: #010d13;
+    color: white;
 }
 
 .stickyInnerWrapper {
-    lost-center: 960px;
+    lost-center: 1440px;
 }
 
 .readMore {

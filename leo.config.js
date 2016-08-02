@@ -15,7 +15,7 @@ hook({
   ]
 });
 
-const css = require('./css/mono-blue.css');
+const css = require('./css/highlight.css');
 
 hljs.configure({ classNames: css });
 

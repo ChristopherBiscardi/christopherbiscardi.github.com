@@ -1,9 +1,10 @@
+@value grid-constrain-width from '../../css/globals.css';
+
 .container {
     list-style: none;
-    lost-center: 968px;
-    img {
-        max-width: 100%;
-    }
+    lost-center: 1440px;
+    background-color: #010d13;
+    padding: 0 1rem;
 }
 
 .heading {
@@ -20,5 +21,14 @@
 }
 
 .li {
-    min-width: 100%;
+    lost-column: 1/3;
+    display: flex;
+}
+
+@media only screen and (max-width: 480px) {
+    .li,
+    .li:first-child,
+    .li:nth-child(2) {
+        lost-column: 1/1 1;
+    }
 }
