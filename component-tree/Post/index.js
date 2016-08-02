@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+const { bool, string } = PropTypes;
 import { Link } from 'react-router';
 import Relay from 'react-relay';
+import Helmet from 'react-helmet';
+
 import Hero from '../Hero';
 import styles from './Post.css';
-
-const { bool, string } = PropTypes;
 
 class PostComponent extends Component {
   render() {
@@ -14,11 +15,28 @@ class PostComponent extends Component {
       title,
       updatedAt,
       publishedAt,
-      headerImage
+      headerImage,
+      canonicalURL,
+      url
     } = this.props.root.post.attributes;
 
     return (
       <div>
+        <Helmet
+            title={title}
+            meta={[
+              {
+                property: "og-title",
+                content: title
+              }, {
+                property: "og-type",
+                content: "article"
+              }, {
+                property: "og-url",
+                content: __DOMAIN__ + (canonicalURL || url)
+              }
+            ]}
+        />
         <div className={styles.container}>
           <div className={styles.singleColumn}>
             <h1 className={styles.title}>{title}</h1>
@@ -50,7 +68,9 @@ export default Relay.createContainer(PostComponent, {
          updatedAt,
          publishedAt,
          timeToRead,
-         headerImage
+         headerImage,
+         url
+         canonicalURL
        }
        body
      }

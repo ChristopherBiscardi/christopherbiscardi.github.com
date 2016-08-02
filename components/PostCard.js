@@ -30,8 +30,10 @@ class PostCard extends Component {
     return (
       <div className={styles.post}>
         {maybeHeaderImage}
-        <Link to={url}><h4 className={styles.heading}>{title}</h4></Link>
-        <span className={styles.meta}>{updatedAt} &bull; {timeToRead} minute read </span>
+        <div>
+          <Link to={url}><h4 className={styles.heading}>{title}</h4></Link>
+          <span className={styles.meta}>{updatedAt} &bull; {timeToRead} minute read </span>
+        </div>
         <p className={styles.excerpt}>{excerpt}</p>
         <Link to={url} className={styles.readMore}>Read more...</Link>
       </div>

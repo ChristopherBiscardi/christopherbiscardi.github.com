@@ -4,7 +4,8 @@ export default class HTML extends Component {
 
   render() {
     const {
-      bundleAssets
+      bundleAssets,
+      helmet
     } = this.props;
 
     return (
@@ -13,6 +14,10 @@ export default class HTML extends Component {
         <meta charSet="utf-8"/>
         <meta httpEquiv="X-UA-Compatible" content="IE=edge"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        {helmet.base.toComponent()}
+        {helmet.title.toComponent()}
+        {helmet.meta.toComponent()}
+        {helmet.link.toComponent()}
         <link rel="stylesheet" type="text/css" href={`/${bundleAssets.css}`}/>
       </head>
       <body className="landing-page">

@@ -53,5 +53,8 @@ module.exports = {
                 .use(require('markdown-it-named-headers'))
                 .use(require('markdown-it-video'))
                 .use(require('markdown-it-footnote'))
+  },
+  "define": {
+    __DOMAIN__: JSON.stringify("http://christopherbiscardi.com")
   }
 }

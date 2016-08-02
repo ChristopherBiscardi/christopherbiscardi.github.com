@@ -5,6 +5,7 @@ import Hero from '../Hero';
 import Post from '../../components/PostCard';
 import styles from './Home.css';
 const { bool, string } = PropTypes;
+import Helmet from 'react-helmet';
 
 class StickyComponent extends Component {
   render() {
@@ -54,6 +55,9 @@ export class HomeComponent extends Component {
     } = this.props;
     return (
       <div>
+        <Helmet
+            title="Chris Biscardi"
+        />
         <Hero />
         <StickyContainer sticky={root.sticky}/>
         <div className={styles.postsWrapper}>
