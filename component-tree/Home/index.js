@@ -57,6 +57,18 @@ export class HomeComponent extends Component {
       <div>
         <Helmet
             title="Chris Biscardi"
+            meta={[
+              {
+                property: "og:url",
+                content: __DOMAIN__
+              }, {
+                property: "og:description",
+                content: "Chris Biscardi builds products for startups using functional programming."
+              }, {
+                property: "og:image",
+                content: __DOMAIN__ + require('../Hero/default-bg.jpeg')
+              },
+            ]}
         />
         <Hero />
         <StickyContainer sticky={root.sticky}/>
