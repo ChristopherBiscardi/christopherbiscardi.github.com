@@ -7,8 +7,9 @@ html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
 }
+
 body {
-  background: white;
+  background: #010d13;
   /**
    * This stack is meant to yield system-native fonts across all
    * devices.

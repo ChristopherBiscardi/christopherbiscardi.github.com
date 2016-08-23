@@ -6,11 +6,11 @@ import PostCard from '../../components/PostCard';
 
 class PostsPage extends Component {
   render() {
-    const { edges } = this.props.root.posts
+    const { root } = this.props;
     return (
       <ul className={styles.container}>
       {
-        edges.map(({ node }) => {
+        root.posts && root.posts.edges.map(({ node }) => {
           return (
             <li className={styles.li}
                 key={node.attributes.slug}

@@ -21,7 +21,7 @@ class PostComponent extends Component {
     } = this.props.root.post.attributes;
 
     return (
-      <div>
+      <div className={styles.page}>
         { this.renderHelmet() }
         <div className={styles.container}>
           <div className={styles.singleColumn}>

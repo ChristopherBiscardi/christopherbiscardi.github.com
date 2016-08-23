@@ -11,6 +11,7 @@ import Relay from 'react-relay';
 import Home from './component-tree/Home';
 import Post from './component-tree/Post';
 import Posts from './component-tree/Posts';
+import About from './component-tree/About';
 import App from './component-tree';
 import styles from './routes.css';
 
@@ -31,7 +32,9 @@ export default (
     <Route path='/posts/'
            queries={RootQuery}
            component={Posts} />
-    <Route path=':slug'
+    <Route path='/about/'
+           component={About} />
+    <Route path=':slug/'
            component={Post}
            queries={RootQuery} />
     <Route path='/:year/:month/:day/:slug/'
@@ -42,8 +45,3 @@ export default (
     <Route path='*' component={NoMatch} />
   </Route>
 )
-
-  /*
-
-renderLoading={() => <HomeComponent isLoading={true} /> }
-*/

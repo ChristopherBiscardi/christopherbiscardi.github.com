@@ -46,7 +46,8 @@ module.exports = {
     "@sa-labs/leo-plugin-images"
   ],
   "urls": [
-    "/"
+    "/",
+    "/about/"
   ],
   "@sa-labs/leo-plugin-markdown": {
     instance: md.use(require('markdown-it-emoji'))

@@ -53,6 +53,7 @@ export class HomeComponent extends Component {
       isLoading,
       root
     } = this.props;
+
     return (
       <div>
         <Helmet
@@ -75,7 +76,7 @@ export class HomeComponent extends Component {
         <div className={styles.postsWrapper}>
           <div className={styles.posts}>
           {
-            root.posts.edges.map( ({ node }) => (
+            root.posts && root.posts.edges.map( ({ node }) => (
               // lost-column div size here
               <div className={styles.post}
                    key={node.attributes.slug}

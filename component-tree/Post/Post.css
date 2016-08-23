@@ -1,6 +1,8 @@
+.page {
+  background: white;
+}
 .container {
-    lost-center: 45rem;
-    
+  lost-center: 45rem;
 }
 .container a {
     background-color: transparent;
@@ -14,9 +16,16 @@
 .container img {
     max-width: 100%;
 }
+
 .singleColumn {
-    lost-column: 1/1;
-    padding: 0 1rem;
+  lost-column: 1/1;
+  padding: 0 1rem;
+}
+
+.singleColumn  p code {
+  background: color(#69c lightness(+30%));
+  padding: .1rem .6rem;
+  font-size: .8rem;
 }
 
 .img {

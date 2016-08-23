@@ -5,7 +5,9 @@ export default class HTML extends Component {
   render() {
     const {
       bundleAssets,
-      helmet
+      helmet,
+      data,
+      body,
     } = this.props;
 
     return (
@@ -18,13 +20,15 @@ export default class HTML extends Component {
         {helmet.title.toComponent()}
         {helmet.meta.toComponent()}
         {helmet.link.toComponent()}
-        <link rel="stylesheet" type="text/css" href={`/${bundleAssets.css}`}/>
+        <link rel="stylesheet" type="text/css" href={`/${bundleAssets.static.css}`}/>
       </head>
       <body className="landing-page">
-        <div id="react-mount" dangerouslySetInnerHTML={{__html: this.props.body}} />
-      {/* Temporarily remove the client JS
-        <script src={`/${bundleAssets.js}`} />
-      */}
+        <div id="react-mount" dangerouslySetInnerHTML={{__html: body}} />
+        <script id="preloadedData"
+                type="application/json"
+                dangerouslySetInnerHTML={{__html: JSON.stringify(data)}}
+        />
+        <script src={'/js/client.js'} />
         <script dangerouslySetInnerHTML={{__html: `(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
           m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
