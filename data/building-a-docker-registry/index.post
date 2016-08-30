@@ -1,0 +1,480 @@
+---
+title: "Building a Docker Registry"
+slug: "building-a-docker-registry"
+publishedAt: "Aug 8th, 2016"
+status: "draft"
+---
+
+Containers are surging right now. This series of blog posts will
+explore a small corner of that universe by building a Docker Registry
+that adheres to the [Docker Registry HTTP V2 API][v2-api]. The
+information contained in these posts will take a conceptual approach
+rather than a step-by-step approach. The code will be available in
+full on GitHub, as the [Superhuman Registry][superhuman-registry].
+
+# Intro
+
+For this project we'll use Haskell as the implementation language so
+that we can use Servant.
+
+> Servant is a set of packages for declaring web APIs at the
+> type-level and then using those API specifications to:
+
+* write servers (this part of servant can be considered a web
+  framework), 
+* obtain client functions (in Haskell),
+* generate client functions for other programming languages,
+* generate documentation
+
+Servant allows us to specify everything from request bodies to Headers
+at the type level, which will help us be explicit as we explore
+Manifests, Tags and Digests. Since the purpose of this set of articles
+is informative, the types will help ground our conversations.
+
+# Getting Started
+
+Firstly, we'll need a new Haskell project. [Stack][stack] provides
+nice templating functionality, so we'll use that to scaffold a new
+project.
+
+```haskell
+stack new servant sr --resolver nightly-2016-07-31
+```
+
+Since we aren't focusing on Servant itself for this series, we'll
+skip a bunch of the boilerplate and backing code to focus in on the
+handlers and business logic. The code for this section *is*
+[on GitHub][lib.hs-1] for those that want to investigate further.
+
+## Routes
+
+One of the benefits of working from a spec is that there are a full
+set of routes already penned out for us to implement so we can achieve
+compatibility with the wider ecosystem of tools, such as the Docker
+Engine.
+
+To start, we'll translate the routes pretty loosely. Then we'll go
+back and fill in the return types as we write each of the route
+handlers. Translating the [V2 API][v2-api] into types looks like the
+following.
+
+```haskell
+type Head = Verb 'HEAD 200
+
+type V2Base = "v2" :> Get '[JSON] (Headers '[
+  Header "Docker-Distribution-API-Version" String
+  ] NoContent)
+
+-- | Main API Type
+type API = V2Base :<|> "v2" :> V2API
+
+-- | V2 API Definition
+type V2API = Metadata
+  :<|> "_catalog" :> Get '[JSON] NoContent
+
+type Tags = "tags" :> "list" :> Get '[JSON] NoContent 
+
+type Metadata = Capture "name" Name :> (
+  Tags :<|>
+  "manifests" :> Manifests :<|>
+  "blobs" :> Blobs
+  )
+
+type Blobs = Digests :<|> Upload
+
+type Manifests = Capture "reference" Ref :> (
+  Get '[JSON] NoContent :<|>
+  Put '[JSON] NoContent :<|>
+  Delete '[JSON] NoContent :<|>
+  Head '[JSON] NoContent
+  ) 
+
+type Digests = Capture "digest" Digest :> (
+  Head '[JSON] NoContent :<|>
+  Get '[JSON] NoContent :<|>
+  Delete '[JSON] NoContent
+  )
+
+type Upload = "uploads" :> (
+  Post '[JSON] NoContent :<|>
+  Capture "uuid" UUID :> (
+    Get '[JSON] NoContent :<|>
+    Patch '[JSON] NoContent :<|>
+    Put '[JSON] NoContent :<|>
+    Delete '[JSON] NoContent
+    )
+  )
+```
+
+This produces a set of routes that lay out as follows:
+
+```
+/
+└─ v2/
+   ├─•
+   ┆
+   ┆
+   ├─ <capture>/
+   │  ├─ blobs/
+   │  │  ├─ <capture>/
+   │  │  │  ├─•
+   │  │  │  ┆
+   │  │  │  ├─•
+   │  │  │  ┆
+   │  │  │  └─•
+   │  │  ┆
+   │  │  └─ uploads/
+   │  │     ├─•
+   │  │     ┆
+   │  │     ┆
+   │  │     └─ <capture>/
+   │  │        ├─•
+   │  │        ┆
+   │  │        ├─•
+   │  │        ┆
+   │  │        ├─•
+   │  │        ┆
+   │  │        └─•
+   │  ├─ manifests/
+   │  │  └─ <capture>/
+   │  │     ├─•
+   │  │     ┆
+   │  │     ├─•
+   │  │     ┆
+   │  │     ├─•
+   │  │     ┆
+   │  │     └─•
+   │  └─ tags/
+   │     └─ list/
+   │        └─•
+   ┆
+   └─ _catalog/
+      └─•
+```
+
+This matches up with the spec quite well and gives us a nice base to
+start writing more specific code without worrying about whether we'll
+miss a route.
+
+## The Types
+
+If we take a closer look at the types we just wrote out we see a bunch
+of concepts including `Name`, `Tags`, `Manifests`, `Blobs`, and
+`Digests`. Interestingly, we don't see an `Image` or `Container`
+anywhere.
+
+### Name
+
+We use `Name` to represent an repository name. `Name`s must adhere to
+a specific regex (`[a-z0-9]+(?:[._-][a-z0-9]+)*`) and be less than 256
+characters. In plain english from the spec:
+
+> A repository name is broken up into path components. A component of
+> a repository name must be at least one lowercase, alpha-numeric
+> characters, optionally separated by periods, dashes or
+> underscores.
+
+### Tags
+
+`Tags` are strings that reference images. For example, if we were
+using `debian` and wanted to only use the tag `jessie`, we could pull
+using the format `debian:jessie`.
+
+### Manifests
+
+An image manifest provides a configuration and a set of
+layers for a container image. It looks like the following JSON:
+
+```javascript
+{
+    "schemaVersion": 2,
+    "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+    "config": {
+        "mediaType": "application/vnd.docker.container.image.v1+json",
+        "size": 7023,
+        "digest": "sha256:b5b2b2c507a0944348e0303114d8d93aaaa081732b86451d9bce1f432a537bc7"
+    },
+    "layers": [
+        {
+            "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+            "size": 32654,
+            "digest": "sha256:e692418e4cbaf90ca69d05a66403747baa33ee08806650b51fab815ad7fc331f"
+        },
+        {
+            "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+            "size": 16724,
+            "digest": "sha256:3c3a4604a545cdc127456d94e421cd355bca5b528f4a9c1905b15da2eb4a4c6b"
+        },
+        {
+            "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+            "size": 73109,
+            "digest": "sha256:ec4b8955958665577945c89419d1af06b5f7636b4ac3da7f12184802ad867736"
+        }
+    ],
+}
+```
+
+### Blobs & Digests
+
+Layers are stored in the blob portion of the registry, keyed by
+digest.
+
+## Our First Handler
+
+The first route we'll look at implementing is also the most
+simple. It's the route that lets clients know that this registry
+implements the V2 APIs.
+
+The type of the `/v2` route is
+
+```haskell
+type V2Base = "v2" :> Get '[JSON] (Headers '[
+  Header "Docker-Distribution-API-Version" String
+  ] NoContent)
+```
+
+Which breaks down to a `GET` request with an `application/json`
+content type. The response has a single header,
+`Docker-Distribution-API-Version`, which is what lets a client know
+which API version our registry implements. We also send back no body
+content. Finally, we can dig a bit deeper into `Get`, which is a type
+alias for `Verb 'GET 200`. This tells us that a successful response
+will have a 200 code.
+
+The only other valid codes for this route `401 Unauthorized` and `429
+Too Many Requests` but since we haven't implemented authorization or
+rate-limiting, we'll skip that for now.
+
+```haskell
+v2 :: App (Headers '[Header "Docker-Distribution-API-Version" String] NoContent)
+v2 = do
+  $(logTM) InfoS "registry/2.0"
+  return $ addHeader "registry/2.0" NoContent
+```
+
+Our logging is pretty basic right now. We'll worry about bulking it up
+later. For now, we're going to leave the default Katip stdout which
+leaves us with time, loglevel, hostname (container id), thread id and
+source location:
+
+```
+[2016-08-08 21:47:50][superhuman-registry][Info][85f79bec070f][33][ThreadId 11][sr-0.1.0.0-61fGnb6tOFbKD5fzBNSxKr:Lib src/Lib.hs:63:5] registry/2.0
+```
+
+# Dealing with Layers
+
+The primary purpose of a Registry is to store layers and manifests so
+a client (such as a Docker Engine) can pull images. We'll avoid
+supporting legacy versions of the registry for security and simplicity
+reasons, which means our registry will only work for docker 1.10 and
+above. Benefits of this include not having to rewrite v2 manifests
+into the v1 format.
+
+## Docker Client
+
+We need to figure out what the docker is doing on a push. Since I'm
+running Docker for Mac, booting a server to act as a registry is
+pretty simple. We'll use `nc` for a first attempt.
+
+```shell
+docker run -itp 9000:9000 alpine nc -l 9000
+```
+
+Now that we have a server acting as a "registry", we need to tag and
+push an image to it.
+
+```shell
+> docker tag hello-world localhost:9000/hello-world
+> docker push localhost:9000/hello-world
+The push refers to a repository [localhost:9000/hello-world]
+Put http://localhost:9000/v1/repositories/hello-world/: EOF
+```
+
+Great! Our server is listening and the engine is pushing to the right
+place. If it wasn't, we could've seen something like this:
+
+```shell
+Put http://localhost:9000/v1/repositories/hello-world/: read tcp
+[::1]:56492->[::1]:9000: read: connection reset by peer
+```
+
+There's a problem though, `nc` doesn't implement the `/v2/` endpoint,
+so the docker client falls back to v1 of the api. Luckily, we've
+implemented the v2 endpoint already so we'll skip netcat and jump back
+into Haskell.
+
+We can use `Wai.Middleware.RequestLogger` to log out everything docker
+tries to do to our registry. Using docker-compose to boot up our
+registry and re-attempting the push yields:
+
+```
+api_1  | GET /v2/
+api_1  |   Accept:
+api_1  |   Status: 200 OK 0.000190373s
+api_1  | Prelude.undefined
+api_1  | CallStack (from HasCallStack):
+api_1  |   error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
+api_1  |   undefined, called at src/SR/Blobs.hs:26:14 in sr-0.1.0.0-5isXdkrmBvbJTFdJY734op:SR.Blobs
+api_1  | Prelude.undefined
+api_1  | CallStack (from HasCallStack):
+api_1  |   error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
+api_1  |   undefined, called at src/SR/Blobs.hs:26:14 in sr-0.1.0.0-5isXdkrmBvbJTFdJY734op:SR.Blobs
+```
+
+From the information, we see that the `/v2/` route is working as
+expected, but we hit `undefined` at `src/SR/Blobs.hs:26:14`, which is
+totally expected because we haven't implemented `uploadBlob`
+yet. Notice that the engine retries the upload request.
+
+If the route didn't exist, we would have seen a 404 in the logs.
+
+```
+api_1  | GET /v2/
+api_1  |   Accept:
+api_1  |   Status: 200 OK 0.011277359s
+api_1  | POST /v2/hello-world/blobs/uploads/
+api_1  |   Accept:
+api_1  |   Status: 404 Not Found 0.000028066s
+```
+
+This matches with what we know about the
+[upload process](https://github.com/docker/distribution/blob/dea554fc7cce2f2e7af5b1e1d38e28c5e96e1d9e/docs/spec/api.md#starting-an-upload).
+
+## uploadBlob
+
+We can throw a couple print statements in to replace the undefined as
+such:
+
+```haskell
+uploadBlob :: Namespace -> Name -> App NoContent
+uploadBlob namespace' name' = do
+  liftIO $ print namespace'
+  liftIO $ print name'
+  return NoContent
+```
+
+Which will yield us some progress when trying to push.
+
+```
+api_1  | GET /v2/
+api_1  |   Accept:
+api_1  |   Status: 200 OK 0.004299263s
+api_1  | Namespace "lib"
+api_1  | Name "hello-world"
+api_1  | POST /v2/lib/hello-world/blobs/uploads/
+api_1  |   Accept:
+api_1  |   Status: 200 OK 0.000105174s
+```
+
+This is good progress, but we clearly have some issues since the
+docker engine is still retrying the endpoint.
+
+There are two approaches to blob upload
+[monolithic][v2-monolithic-upload] and
+[resumeable][v2-resumeable-upload]. The docs for
+`/v2/<name>/blobs/uploads` detail that the digest query param is the
+differentiator between monolithic and resumable upload.
+
+> Initiate a resumable blob upload. If successful, an upload location
+> will be provided to complete the upload. Optionally, if the digest
+> parameter is present, the request body will be used to complete the
+> upload in a single request.
+
+Let's take a look at an implementation for the `uploadBlob`
+(`<>/blobs/uploads`) route. We modifiy the type to reflect the various
+headers and response codes (docker engine is a picky client). All of
+the relevant information is communicated through headers, so we return
+`NoContent` as well. `PostAccepted` is a shortcut for `202` responses.
+
+```haskell
+PostAccepted '[JSON] (Headers '[
+  Header "Location" URI,
+  Header "Range" String,
+  Header "Docker-Upload-UUID" UUID
+] NoContent)
+```
+
+Now the handler code. We generate a new uuid to send back in the
+response. Our first go is just trying to get the docker client to
+continue to the next request but in the future we should do something
+with the uuid so we can respond to status requests. `uploadAPI` might
+look scary, but it's just specifying the route we want to generate for
+the `Location` header. We do this so that Servant will automatically
+check that the route is valid for the `api` we are serving and we get
+a compile error if it doesn't typecheck.
+
+We add 3 headers, setting the Range to `"0-0"` because we are only
+responding to resumable upload requests for now. (Otherwise we'd have
+to handle the case of an extra query string parameter). Once we
+generate the `Location` and the `Docker-Upload-UUID`, we send them
+back so the docker engine can start uploading blobs at the specified
+`Location`.
+
+```haskell
+uploadBlob :: Namespace -> Name -> App (Headers '[
+    Header "Location" URI,
+    Header "Range" String,
+    Header "Docker-Upload-UUID" UUID
+  ] NoContent)
+uploadBlob namespace' name' = do
+  uuid <- liftIO $ nextRandom
+  let uploadAPI = Proxy :: Proxy ("v2" :> Capture "namespace" Namespace :> Capture "name" Name :> "blobs" :> "uploads" :> Capture "uuid" UUID :> Put '[JSON] NoContent)
+      mkURI = safeLink api uploadAPI
+      uri = mkURI namespace' name' uuid
+      response = addHeader uri
+        $ addHeader "0-0"
+        $ addHeader uuid NoContent
+  $(logTM) InfoS (logStr $ show $ getHeaders response)
+  return response
+```
+
+We also need a couple instances which allow us to render types like
+`UUID` into path components and headers. (note: these are orphan
+instances, but we could fix that by using a newtype and declaring the
+instances for the newtypes instead).
+
+```haskell
+instance FromHttpApiData UUID where
+  parseUrlPiece text = case (fromText text) of
+    Nothing -> Left $ T.append "Invalid UUID" text
+    Just uuid -> Right uuid
+instance ToByteString URI where
+  builder = lazyByteString . pack . show
+instance ToHttpApiData UUID where
+  toUrlPiece = toText
+  toHeader = toASCIIBytes
+instance ToByteString UUID where
+  builder = lazyByteString . toLazyASCIIBytes
+```
+
+We push again to test the route
+
+```
+docker push localhost:9000/lib/hello-world
+```
+
+And voilà, we get the desired effect. The docker engine accepts the
+UUID and tries to upload blobs to `PATCH
+/v2/lib/hello-world/blobs/uploads/v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55`. That's
+totally not the right URI though. We've accidentally used a relative
+URI in our `Location` header. We'll fix that though :)
+
+```
+GET /v2/
+  Accept:
+  Status: 200 OK 0.000458567s
+[2016-08-30 18:12:49][superhuman-registry][Info][b4fa86e02706][6258][ThreadId 15][sr-0.1.0.0-4uXdy03mbpG98AEB4xHfiO:SR.Blobs src/SR/Blobs.hs:47:5] [("Location","v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55"),("Range","0-0"),("Docker-Upload-UUID","aeab6f5e-4b80-4c7b-9027-616b1cbe6a55")]
+POST /v2/lib/hello-world/blobs/uploads/
+  Accept:
+  Status: 202 Accepted 0.000303745s
+PATCH /v2/lib/hello-world/blobs/uploads/v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55
+  Accept:
+  Status: 404 Not Found 0.000041239s
+```
+
+[v2-api]: https://github.com/docker/distribution/blob/bfa0a9c0973b5026d2e942dec29115c120e7f731/docs/spec/api.md
+[v2-monolithic-upload]: https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-monolithic-blob-upload
+[v2-resumeable-upload]: https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-resumable-blob-upload
+[superhuman-registry]: https://github.com/ChristopherBiscardi/superhuman-registry
+[stack]: https://www.haskellstack.org/
+[lib.hs-1]: https://github.com/ChristopherBiscardi/superhuman-registry/blob/861b20d317132d3ea43dc05cc03d507ca325d3e0/src/Lib.hs
