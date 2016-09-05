@@ -1,7 +1,7 @@
 ---
 title: "Building a Docker Registry"
 slug: "building-a-docker-registry"
-publishedAt: "Aug 8th, 2016"
+publishedAt: "Sep 3rd, 2016"
 status: "draft"
 ---
 
@@ -471,6 +471,66 @@ PATCH /v2/lib/hello-world/blobs/uploads/v2/lib/hello-world/blobs/uploads/aeab6f5
   Accept:
   Status: 404 Not Found 0.000041239s
 ```
+
+## patchBlob
+
+The next route, as shown in the logs above, is the `PATCH` to the
+`Location` header we sent back down. The type for the `PATCH` route
+changes to:
+
+```haskell
+ReqBody '[OctetStream] ByteString :>
+  Header "range" String :>
+  PatchNoContent '[JSON] (Headers '[
+    Header "Location" URI,
+    Header "Range" String,
+    Header "Docker-Upload-UUID" UUID
+  ] NoContent)
+```
+
+We need to accept and echo back the `Range` header, while the request
+body comes in as an `OctetStream`. We take this information and just
+write out the `OctetStream` to a file for now.
+
+```haskell
+patchBlob :: Namespace
+          -> Name
+          -> UUID
+          -> ByteString
+          -> Maybe String
+          -> App (Headers '[
+    Header "Location" URI,
+    Header "Range" String,
+    Header "Docker-Upload-UUID" UUID
+  ] NoContent)
+patchBlob namespace' name' uuid' blob range' = do
+  liftIO $ Data.ByteString.writeFile ("./tmp/" ++ toString uuid') blob
+  response <- mkHeaders range' uuid' namespace' name'
+  return response
+```
+
+With this code (and another upload attempt from the engine), we can
+see that the next request is a `PUT`, which indicates the last request
+for this layer.
+
+```
+GET /v2/
+  Accept:
+  Status: 200 OK 0.005978465s
+[2016-09-03 20:21:39][superhuman-registry][Info][b4fa86e02706][130][ThreadId 14][sr-0.1.0.0-7Q5s7SCyVcbA5o0UAD7J0W:SR.Blobs src/SR/Blobs.hs:74:5] [("Location","http://localhost:9000/v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b"),("Range","0-0"),("Docker-Upload-UUID","f525cc29-b588-417b-aac2-85c5752ce07b")]
+POST /v2/lib/hello-world/blobs/uploads/
+  Accept:
+  Status: 202 Accepted 0.000442272s
+PATCH /v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b
+  Accept:
+  Status: 204 No Content 0.012519558s
+PUT /v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b
+  Params: [("digest","sha256:a9d36faac0fe2a855f798346f33bd48917bf3af9b6e4b77870ef8862fee8a8a3")]
+  Accept:
+  Status: 200 OK 0.000077408s
+```
+
+[docs](https://github.com/docker/distribution/blob/41f383fb9a3b4e3ff428a92db4f7836f8053058b/docs/spec/api.md#patch-blob-upload)
 
 [v2-api]: https://github.com/docker/distribution/blob/bfa0a9c0973b5026d2e942dec29115c120e7f731/docs/spec/api.md
 [v2-monolithic-upload]: https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-monolithic-blob-upload
