@@ -1,0 +1,116 @@
+---
+title: "System Level CSS In A Component Based World"
+slug: "system-level-css-in-a-component-based-world"
+publishedAt: "Jun 29th, 2016"
+status: "draft"
+---
+
+CSS is Hard.
+
+To motivate the code in this article, the following links may be
+considered Prior Art.
+
+* [Basscss](http://www.basscss.com/)
+* [Welcome to the Future - CSSModules](http://glenmaddern.com/articles/css-modules)
+* [Building and Shipping Functional CSS](https://blog.colepeters.com/building-and-shipping-functional-css/)
+
+What follows is a technique for making system-level adjustments to
+components which can be shipped via NPM. We base the lowest layer on
+Basscss, but this is incidental.
+
+# Composing Classes
+
+We can compose classes from NPM modules such as `basscss-padding`
+using the following syntax.
+
+```css
+.table-row {
+composes: p1 from 'basscss-padding';
+flex-grow: 0;
+}
+```
+
+This might compile to the following (depending on customization of the
+CSSModule mangling rules).
+
+```css
+table-row__Table-__3hG_O
+p1__basscss-padding-__2lqGa
+```
+
+This is exciting because we have "namespaced" a third-party library
+that will never conflict with any other classnames.
+
+> note: webpack was used to execute the previous example, which allows
+> us to resolve `basscss-padding` to
+> `node_modules/basscss-padding/index.css`
+
+# System Wide Adjustments
+
+Making adjustments to each of our components in one-off overrides is
+commonplace. What if we could make adjustments on a *system* level
+instead? Using basscss gives us a great jump off to enable a team of
+humans to collaborate on a site while keying in control points to make
+system level adjustments.
+
+These adjustments can be made in the form of CSS variables. For those
+unfamiliar, CSS Variables can be declared in `:root` blocks and used
+in other places.
+
+```css
+:root {
+--space-1: 1rem;
+}
+
+.my-thing {
+padding: var(--space-1);
+}
+```
+
+A key point is that each of the basscss modules provides a set of
+these variables. To override basscss variables when using
+`postcss-cssnext` just supply the new values under
+`features.customProperties.variables` where `customProperties` is the
+plugin name.
+
+```javascript
+require('postcss-cssnext')({
+browsers: ['last 2 versions'],
+features: {
+customProperties: {
+variables: {
+"--space-1": "50px",
+}
+}
+}
+})
+```
+
+# But wait, there’s more
+
+import the basscss classes into JS and use them to scaffold one-off
+app-specific components.
+
+```javascript
+import React, { Component } from 'react';
+import { p1 } from 'basscss-padding';
+import cx from 'classnames';
+
+export default class Bass extends Component {
+  render() {
+    return (
+      <div className={cx(p1,m2)}></div>
+    )
+  }
+}
+
+```
+
+# But wait, there’s more 2
+
+This provides a way to publish components to npm, then universally
+modify the underlying assumptions. i.e. we can build on top of
+basscss, ship a React element, allow the consumer to not write *any*
+css, but still enable a level of flexibility on the system level.
+
+

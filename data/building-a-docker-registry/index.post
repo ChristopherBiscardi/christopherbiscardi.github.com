@@ -474,9 +474,9 @@ PATCH /v2/lib/hello-world/blobs/uploads/v2/lib/hello-world/blobs/uploads/aeab6f5
 
 ## patchBlob
 
-The next route, as shown in the logs above, is the `PATCH` to the
-`Location` header we sent back down. The type for the `PATCH` route
-changes to:
+The [next route][patch-blob-upload], as shown in the logs above, is
+the `PATCH` to the `Location` header we sent back down. The type for
+the `PATCH` route changes to:
 
 ```haskell
 ReqBody '[OctetStream] ByteString :>
@@ -530,8 +530,131 @@ PUT /v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b
   Status: 200 OK 0.000077408s
 ```
 
-[docs](https://github.com/docker/distribution/blob/41f383fb9a3b4e3ff428a92db4f7836f8053058b/docs/spec/api.md#patch-blob-upload)
+## putBlob
 
+After `PATCH`s finish flowing in, the client sends a `PUT` request
+with the digest and potentially any final layer content. Note that at
+this point, we have not implemented any append functionality so our
+`PATCH` endpoint will only work for small layers. Likewise, our `PUT`
+and the `HEAD` that comes after it will be very minimal, omitting
+critical functionality. This is so that we can get through all of the
+requests and confirm a full upload flow.
+
+The `Digest` for a layer is a sha256 hash as such:
+
+```
+sha256:6c3c624b58dbbcd3c0dd82b4c53f04194d1247c6eebdaab7c610cf7d66709b3b
+```
+
+Our handler will just emit `NoContent` so we can skip the validation
+code and get on with groking the entire request flow.
+
+```haskell
+putBlob :: Namespace
+        -> Name
+        -> UUID
+        -> Maybe Digest
+        -> App NoContent
+putBlob namespace' name' uuid' digest' = do
+  case digest' of
+    Nothing -> return NoContent
+    Just a -> return NoContent
+```
+
+## headDigest
+
+This is getting familiar, so we will move on to a minimal `HEAD` which
+is a request to check to see if a particular layer (identified by
+`Digest`) has been uploaded. Our version responds "yes" to every
+single `HEAD` request, indicating that the layer exists in the
+registry already. Luckily for us the Docker client doesn't seem to
+validate the `Content-Length` header which means we can just echo the
+`Digest` back in a header and call it done.
+
+```haskell
+headDigest :: Namespace
+           -> Name
+           -> Digest
+           -> App (Headers '[
+    Header "Content-Length" Int,
+    Header "Docker-Content-Digest" Digest
+    ] NoContent)
+headDigest namespace' name' digest' = do
+  return $ addHeader 0
+         $ addHeader digest' NoContent
+```
+
+## putManifest
+
+With the rest of the pieces in place, we receive a `PUT` to upload the
+`Manifest` for an image. When uploading the `Manifest` for an image,
+it is interesting to note that this is the first reference to a `Tag`
+that we have seen so far. In this case, it is `latest`.
+
+```
+PUT /v2/lib/hello-world/manifests/latest
+```
+
+It is also interesting to remind ourselves that `docker pull` works if
+we use the sha256 hash of the `Manifest`. To see this in action let's
+grab the sha for `hello-world`, which we've been using to test our
+registry.
+
+```bash
+> docker inspect -f "{{ .RepoDigests}}" hello-world
+[hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9]
+> docker pull hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9
+sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9: Pulling from library/hello-world
+Digest: sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9
+Status: Image is up to date for hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9
+```
+
+This is useful because a `Reference`, which is the final path segment
+in the `PUT` URL, can be a `Digest` OR a `Tag`. We need to know this
+because the response headers need the `Digest`.
+
+```
+201 Created
+Location: <url>
+Content-Length: 0
+Docker-Content-Digest: <digest>
+```
+
+### Manifests
+
+The `Manifest` for `hello-world` is a
+[v2+json](https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-2.md#image-manifest-field-descriptions)
+style manifest. The other major option for us is going to be a
+Manifest List, aka a Fat Manifest.
+
+```javascript
+{
+   "schemaVersion": 2,
+   "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+   "config": {
+      "mediaType": "application/vnd.docker.container.image.v1+json",
+      "digest": "sha256:c54a2cc56cbb2f04003c1cd4507e118af7c0d340fe7e2720f70976c4b75237dc"
+   },
+   "layers": [
+      {
+         "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+         "size": 1,
+         "digest": "sha256:c04b14da8d1441880ed3fe6106fb2cc6fa1c9661846ac0266b8a5ec8edf37b7c"
+      }
+   ]
+}
+```
+
+For us, it is important to note the mechanics behind backward
+compatibility work. 
+
+> When pushing images, clients which support the new manifest format
+> should first construct a manifest in the new format.
+
+Which is great for us because that means we only have to code support
+for v2 manifests and compatible clients will behave appropriately.
+
+[patch-blob-upload]: https://github.com/docker/distribution/blob/41f383fb9a3b4e3ff428a92db4f7836f8053058b/docs/spec/api.md#patch-blob-upload
 [v2-api]: https://github.com/docker/distribution/blob/bfa0a9c0973b5026d2e942dec29115c120e7f731/docs/spec/api.md
 [v2-monolithic-upload]: https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-monolithic-blob-upload
 [v2-resumeable-upload]: https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-resumable-blob-upload

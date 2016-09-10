@@ -1,0 +1,16 @@
+---
+title: "Cog Command Bundles"
+slug: "cog-command-bundles"
+publishedAt: "Aug 20th, 2016"
+status: "draft"
+---
+
+[Cog][cog] is a advanced Chatops bot.
+
+# Architecture
+
+## Cog
+## Relay
+## Docker
+
+[cog]: https://operable.io/
