@@ -1,0 +1,41 @@
+.container {
+    lost-center: 45rem;
+    
+}
+.container a {
+    background-color: transparent;
+    background-repeat: repeat-x;
+    background-size: 1px 1px;
+    background-image: linear-gradient(to bottom,#0B95E1 75%,#0B95E1 75%);
+    text-shadow: -2px 1px 0 #fcfcfc,-1px 1px 0 #fcfcfc,0 1px 0 #fcfcfc,1px 1px 0 #fcfcfc,2px 1px 0 #fcfcfc,-1px -1px 0 #fcfcfc,1px -1px 0 #fcfcfc,-1px 0 0 #fcfcfc,1px 0 0 #fcfcfc;
+    background-position: 0 99.9%;
+    text-decoration: none;
+}
+.container img {
+    max-width: 100%;
+}
+
+.singleColumn {
+  lost-column: 1/1;
+  padding: 0 1rem;
+}
+
+.singleColumn  p code {
+  background: color(#69c lightness(+30%));
+  padding: .1rem .6rem;
+  font-size: .8rem;
+}
+
+.img {
+    width: 100%;
+}
+
+.title {
+    font-size: 1.17rem;
+}
+.meta {
+    font-size: .8rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+    color: #a1a6a9;
+}
