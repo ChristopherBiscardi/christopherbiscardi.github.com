@@ -105,7 +105,7 @@ export default Relay.createContainer(HomeComponent, {
             }
           }
         }
-        sticky: post(slug: "deploying-a-minecraft-server-with-docker-machine") {
+        sticky: post(slug: "building-a-docker-registry") {
           ${ StickyContainer.getFragment('sticky') }
         }
     }`
