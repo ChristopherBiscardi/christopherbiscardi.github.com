@@ -1012,7 +1012,75 @@ runPG action = do
     ...
 ```
 
-# Postgres patchBlob
+# Postgres headBlob
+
+At this point I figured out that Docker will ask to mount if you push
+an image, then retag it and push the retagged image.
+
+```shell
+docker tag hello-world localhost:9000/biscarch/hello-worlds
+docker push localhost:9000/biscarch/hello-worlds
+docker tag hello-world localhost:9000/biscarch/hello-world-2
+docker push localhost:9000/biscarch/hello-world-2
+```
+
+The last push produces the following request to blob upload:
+
+```
+GET /v2/
+  Accept:
+  Status: 200 OK 0.002441185s
+POST /v2/biscarch/hello-world-2/blobs/uploads/
+  Params: [("from","biscarch/hello-worlds"),("mount","sha256:c04b14da8d1441880ed3fe6106fb2cc6fa1c9661846ac0266b8a5ec8edf37b7c")]
+  Accept:
+```
+
+To implement `putBlob` we'll need to make our hacky `headBlob` return
+404s. This gives us a nice spot to implement a `blobs` table which
+will form the basis of our `catalog`.
+
+TODO: implement CREATE TABLE `blobs` here.
+
+```sql
+-- Table
+CREATE TABLE sr.blobs (
+  -- id is a sha256 hash
+  -- TODO: limit this to sha256 length?
+  id TEXT PRIMARY KEY,
+  -- id of the hashed blob
+  lo_id OID,
+  -- maybe remove repo_name?
+  repo_name VARCHAR(256) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  modified_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+```
+
+Our `HEAD` handler will check to see if the blob exists in our
+`catalog`. If it does, we need to get the `Content-Length` of the blob
+to return. If it does not exist we just 404.
+
+```haskell
+headDigest :: Namespace
+           -> Name
+           -> Digest
+           -> App (Headers '[
+    Header "Content-Length" Int,
+    Header "Docker-Content-Digest" Digest
+    ] NoContent)
+headDigest namespace' name' digest' = do
+  blobExists <- headBlob digest'
+  case blobExists of
+    BLOB_EXISTS d' -> return addHeader 0
+                    $ addHeader digest' NoContent
+    UNKNOWN_BLOB -> throwError err404
+```
+
+# Fixing patchBlob
+
+
+# Postgres putBlob
+
 
 [patch-blob-upload]: https://github.com/docker/distribution/blob/41f383fb9a3b4e3ff428a92db4f7836f8053058b/docs/spec/api.md#patch-blob-upload
 [v2-api]: https://github.com/docker/distribution/blob/bfa0a9c0973b5026d2e942dec29115c120e7f731/docs/spec/api.md
