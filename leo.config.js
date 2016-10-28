@@ -39,21 +39,25 @@ var md = require('markdown-it')({
 });
 
 module.exports = {
+  "scaffolding": "@sa-labs/leo-scaffolding-relay",
   "plugins": [
     "@sa-labs/leo-plugin-blogpost",
     "@sa-labs/leo-plugin-markdown",
     "@sa-labs/leo-plugin-fate",
-    "@sa-labs/leo-plugin-images"
+    "@sa-labs/leo-plugin-images",
+    "./leo-plugins/blogpost-archives",
   ],
   "urls": [
     "/",
     "/about/"
   ],
-  "@sa-labs/leo-plugin-markdown": {
-    instance: md.use(require('markdown-it-emoji'))
-                .use(require('markdown-it-named-headers'))
-                .use(require('markdown-it-video'))
-                .use(require('markdown-it-footnote'))
+  pluginOpts: {
+    "@sa-labs/leo-plugin-markdown": {
+      instance: md.use(require('markdown-it-emoji'))
+                  .use(require('markdown-it-named-headers'))
+                  .use(require('markdown-it-video'))
+                  .use(require('markdown-it-footnote'))
+    }
   },
   "define": {
     __DOMAIN__: JSON.stringify("http://christopherbiscardi.com")
