@@ -1,0 +1,34 @@
+---
+title: "MonoRepo Application Development"
+slug: "monorepo-application-development"
+publishedAt: "Oct 4th, 2016"
+status: 'draft'
+---
+
+Building scalable UI solutions is tough business. In my recent work
+I've been involved in building UI infrastructure that can scale from 2
+to 20+ projects with limited team members. This post details an
+approach that I use to enable my product teams through
+standardization and unification.
+
+# Building Blocks
+
+* babel-preset
+* shareable eslint
+* stylelint
+* postcss-stack (and other CSS approaches)
+
+# Creating Component Libraries
+
+* React-Storybook
+ - Writing useful stories
+ - Deploying static storybooks in containers for PR review
+
+# Building Applications
+
+Relay/GraphQL
+React
+
+# Building Marketing Sites
+
+Leo
