@@ -1,8 +1,8 @@
 .container {
   list-style: none;
   lost-flex-container: row;
-    background-color: #010d13;
-    padding: 0 1rem;
+  background-color: #FAFAFA;
+  padding: 0 1rem;
 }
 @media (width >= 1440px) {
   lost-center: 1440px;

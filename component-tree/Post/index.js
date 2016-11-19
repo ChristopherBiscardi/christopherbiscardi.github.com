@@ -1,14 +1,54 @@
 import React, { Component, PropTypes } from 'react';
 const { bool, string } = PropTypes;
 import { Link } from 'react-router';
-import Relay from 'react-relay';
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
+import Fragment from 'graphql-fragments';
 import Helmet from 'react-helmet';
 
 import Hero from '../Hero';
 import styles from './Post.css';
 
 class PostComponent extends Component {
+  static fragments = {
+    post: new Fragment(gql`
+      fragment PostFragment on BlogPost {
+        body
+        attributes {
+          title
+          updatedAt
+          publishedAt
+          timeToRead
+          headerImage
+          url
+          canonicalURL
+          excerpt
+        }
+      }
+      `)
+  }
+  renderLoading() {
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className={styles.singleColumn}>
+            <h1 className={styles.titleEmpty}>                 </h1>
+            <div className={styles.metaEmpty}>               </div>
+          </div>
+        </div>
+          <img className={styles.imgEmpty} />
+            <div className={styles.container}>
+              <div className={styles.singleColumn}>
+              </div>
+            </div>
+      </div>
+    )
+  }
   render() {
+    const { loading, root } = this.props.data;
+    if(loading) {
+      return this.renderLoading();
+    }
     const {
       timeToRead,
       title,
@@ -18,7 +58,7 @@ class PostComponent extends Component {
       canonicalURL,
       url,
       excerpt
-    } = this.props.root.post.attributes;
+    } = root.post.attributes;
 
     return (
       <div className={styles.page}>
@@ -36,7 +76,7 @@ class PostComponent extends Component {
         }
         <div className={styles.container}>
           <div className={styles.singleColumn}>
-            <div dangerouslySetInnerHTML={{ __html: this.props.root.post.body }} />
+            <div dangerouslySetInnerHTML={{ __html: root.post.body }} />
           </div>
         </div>
       </div>
@@ -51,7 +91,7 @@ class PostComponent extends Component {
       canonicalURL,
       url,
       excerpt
-    } = this.props.root.post.attributes;
+    } = this.props.data.root.post.attributes;
 
     return (
       <Helmet
@@ -99,23 +139,19 @@ class PostComponent extends Component {
   }
 }
 
-export default Relay.createContainer(PostComponent, {
- initialVariables: { slug: null },
- fragments: {
-   root: () =>  Relay.QL`fragment on Query {
-     post(slug: $slug) {
-       attributes {
-         title,
-         updatedAt,
-         publishedAt,
-         timeToRead,
-         headerImage,
-         url
-         canonicalURL
-         excerpt
-       }
-       body
-     }
-   }`
- },
-});
+const Query = gql`query PostQuery($slug: String!) {
+  root {
+    post(slug: $slug) {
+      ...PostFragment
+    }
+  }
+}`
+
+export default graphql(Query, {
+  options: ({ params }) => {
+    return {
+      fragments: PostComponent.fragments.post.fragments(),
+      variables: { slug: params.slug },
+    }
+  },
+})(PostComponent);

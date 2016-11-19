@@ -3,7 +3,7 @@
 /* #202B31 */
 
 .wrapper {
-    background: #010d13;
+    background: white;
 }
 
 .nav {
@@ -34,14 +34,14 @@
   border-color: #202B31;
 }
 .itemLink {
-    color: #fcfcfc;
-    background-color: transparent;
-    background-repeat: repeat-x;
-    background-size: 1px 1px;
-    background-image: linear-gradient(to bottom,#202B31 75%,#202B31 75%);
-    text-shadow: -2px 1px 0 #010d13,-1px 1px 0 #010d13,0 1px 0 #010d13,1px 1px 0 #010d13,2px 1px 0 #010d13,-1px -1px 0 #010d13,1px -1px 0 #010d13,-1px 0 0 #010d13,1px 0 0 #010d13;
-    background-position: 0 99.9%;
-    text-decoration: none;
+  color: #010d13;
+  background-color: transparent;
+  background-repeat: repeat-x;
+  background-size: 1px 1px;
+  background-image: linear-gradient(to bottom,#202B31 75%,#202B31 75%);
+  text-shadow: -2px 1px 0 #fcfcfc,-1px 1px 0 #fcfcfc,0 1px 0 #fcfcfc,1px 1px 0 #fcfcfc,2px 1px 0 #fcfcfc,-1px -1px 0 #fcfcfc,1px -1px 0 #fcfcfc,-1px 0 0 #fcfcfc,1px 0 0 #fcfcfc;
+  background-position: 0 99.9%;
+  text-decoration: none;
 }
 
 /* #22292e */
@@ -58,5 +58,5 @@
   height: 1.8rem;
 }
 .active {
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid #010d13;
 }

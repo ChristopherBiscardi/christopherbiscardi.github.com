@@ -10,7 +10,7 @@
 }
 .postsWrapper {
     padding: 0 2rem;
-    background-color: #010d13;
+    background-color: #FAFAFA;
 }
 .posts, .stickyInnerWrapper {
   lost-flex-container: row;
@@ -23,8 +23,8 @@
 .stickyWrapper {
     display: flex;
     padding: 1rem 2rem;
-    background-color: #010d13;
-    color: white;
+    background-color: #FAFAFA;
+  color: #010d13;
 }
 
 .readMore {

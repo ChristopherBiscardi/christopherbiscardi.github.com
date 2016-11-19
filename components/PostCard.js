@@ -1,12 +1,27 @@
 import React, { Component, PropTypes } from 'react';
 const { bool, string } = PropTypes;
-import Relay from 'react-relay';
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
+import Fragment from 'graphql-fragments';
 import { Link } from 'react-router';
 import styles from './PostCard.css';
 
 class PostCard extends Component {
-  static propTypes = {
-    title: string
+  static fragments = {
+    post: new Fragment(gql`
+      fragment PostFragment on BlogPost {
+        body
+        attributes {
+          title
+          slug
+          url
+          excerpt
+          updatedAt
+          timeToRead
+          headerImage
+        }
+      }
+    `),
   };
   render() {
     const {
@@ -41,19 +56,8 @@ class PostCard extends Component {
   }
 }
 
-export default Relay.createContainer(PostCard, {
-  fragments: {
-    post: () => Relay.QL`
-      fragment on BlogPost {
-        attributes {
-          title
-          slug
-          url
-          excerpt
-          updatedAt
-          timeToRead
-          headerImage
-        }
-    }`
-  }
-});
+PostCard.propTypes = {
+  post: PostCard.fragments.post.propType
+};
+
+export default PostCard;
