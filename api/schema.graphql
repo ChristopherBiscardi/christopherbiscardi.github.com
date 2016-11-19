@@ -1,0 +1,61 @@
+schema {
+  query: Root
+}
+
+type BlogPost {
+  attributes: BlogPostAttributes
+  rawBody: String
+  body: String
+}
+
+type BlogPostAttributes {
+  title: String
+  slug: String
+  updatedAt: String
+  publishedAt: String
+  url: String
+  canonicalURL: String
+  excerpt: String
+  timeToRead: Int
+  headerImage: String
+}
+
+type BlogPostConnection {
+  pageInfo: PageInfo!
+  edges: [BlogPostEdge]
+}
+
+type BlogPostEdge {
+  node: BlogPost
+  cursor: String!
+}
+
+type Markdown {
+  attributes: MarkdownAttributes
+  rawBody: String
+  body: String
+}
+
+type MarkdownAttributes {
+  title: String
+  date: String
+  url: String
+  canonicalURL: String
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Query {
+  post(slug: String): BlogPost
+  posts(after: String, first: Int, before: String, last: Int): BlogPostConnection
+  md(slug: String): Markdown
+}
+
+type Root {
+  root: Query!
+}

@@ -1,0 +1,891 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title data-react-helmet="true">Building a Docker Registry</title><meta data-react-helmet="true" property="description" content="Containers are surging right now. This series of blog posts will
+explore a small corner of that universe by building a Docker Registry
+that…"/><meta data-react-helmet="true" property="og:title" content="Building a Docker Registry"/><meta data-react-helmet="true" property="og:type" content="article"/><meta data-react-helmet="true" property="og:url" content="http://christopherbiscardi.com/building-a-docker-registry/"/><meta data-react-helmet="true" property="og:description" content="Containers are surging right now. This series of blog posts will
+explore a small corner of that universe by building a Docker Registry
+that…"/><meta data-react-helmet="true" property="og:image" content="http://christopherbiscardi.com/da49167186a7e54073552e04d715a80f.png"/><meta data-react-helmet="true" property="twitter:card" content="summary"/><meta data-react-helmet="true" property="twitter:title" content="Building a Docker Registry"/><meta data-react-helmet="true" property="twitter:description" content="Containers are surging right now. This series of blog posts will
+explore a small corner of that universe by building a Docker Registry
+that…"/><meta data-react-helmet="true" property="twitter:url" content="http://christopherbiscardi.com/building-a-docker-registry/"/><link rel="stylesheet" type="text/css" href="/styles.f25bf9e6682280946ba2e441a544b407.css"/></head><body class="landing-page"><div id="content"><div data-reactroot="" data-reactid="1" data-react-checksum="-575947965"><div class="Nav__wrapper___u7BUA" data-reactid="2"><nav class="Nav__nav___1e2Pp" data-reactid="3"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid="4"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid="5"/></a><ul class="Nav__items___1oDCD" data-reactid="6"><li data-reactid="7"><a class="Nav__itemLink___H6Isv" href="/posts/" data-reactid="8">Posts</a></li><li data-reactid="9"><a href="https://github.com/ChristopherBiscardi/ama/issues?q=is%3Aissue+is%3Aclosed" class="Nav__itemLink___H6Isv" data-reactid="10">AMA</a></li><li data-reactid="11"><a class="Nav__itemLink___H6Isv" href="/books/" data-reactid="12">Books</a></li><li data-reactid="13"><a class="Nav__itemLink___H6Isv" href="/projects/" data-reactid="14">Projects</a></li><li data-reactid="15"><a class="Nav__itemLink___H6Isv" href="/about/" data-reactid="16">About</a></li></ul></nav></div><div data-reactid="17"><div class="Post__page___15ves" data-reactid="18"><!-- react-empty: 19 --><div class="Post__container___f_rKX" data-reactid="20"><div class="Post__singleColumn___tYK8R" data-reactid="21"><h1 class="Post__title___2I6DZ" data-reactid="22">Building a Docker Registry</h1><div class="Post__meta___1fVoc" data-reactid="23"><!-- react-text: 24 -->Oct 3rd, 2016<!-- /react-text --><!-- react-text: 25 --> · <!-- /react-text --><!-- react-text: 26 -->20<!-- /react-text --><!-- react-text: 27 --> minute read<!-- /react-text --></div></div></div><img class="Post__img___VXS1J" src="/da49167186a7e54073552e04d715a80f.png" data-reactid="28"/><div class="Post__container___f_rKX" data-reactid="29"><div class="Post__singleColumn___tYK8R" data-reactid="30"><div data-reactid="31"><p>Containers are surging right now. This series of blog posts will
+explore a small corner of that universe by building a Docker Registry
+that adheres to the <a href="https://github.com/docker/distribution/blob/bfa0a9c0973b5026d2e942dec29115c120e7f731/docs/spec/api.md">Docker Registry HTTP V2 API</a>. The
+information contained in these posts will take a conceptual approach
+rather than a step-by-step approach. The code will be available in
+full on GitHub, as the <a href="https://github.com/ChristopherBiscardi/superhuman-registry">Superhuman Registry</a>.</p>
+<h1 id="intro">Intro</h1>
+<p>For this project we’ll use Haskell as the implementation language so
+that we can use Servant.</p>
+<blockquote>
+<p>Servant is a set of packages for declaring web APIs at the
+type-level and then using those API specifications to:</p>
+</blockquote>
+<ul>
+<li>write servers (this part of servant can be considered a web
+framework),</li>
+<li>obtain client functions (in Haskell),</li>
+<li>generate client functions for other programming languages,</li>
+<li>generate documentation</li>
+</ul>
+<p>Servant allows us to specify everything from request bodies to Headers
+at the type level, which will help us be explicit as we explore
+Manifests, Tags and Digests. Since the purpose of this set of articles
+is informative, the types will help ground our conversations.</p>
+<h1 id="getting-started">Getting Started</h1>
+<p>Firstly, we’ll need a new Haskell project. <a href="https://www.haskellstack.org/">Stack</a> provides
+nice templating functionality, so we’ll use that to scaffold a new
+project.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">stack</span> new servant sr <span class="highlight__hljs-comment___UYk12">--resolver nightly-2016-07-31</span>
+</code></pre>
+<p>Since we aren’t focusing on Servant itself for this series, we’ll
+skip a bunch of the boilerplate and backing code to focus in on the
+handlers and business logic. The code for this section <em>is</em>
+<a href="https://github.com/ChristopherBiscardi/superhuman-registry/blob/861b20d317132d3ea43dc05cc03d507ca325d3e0/src/Lib.hs">on GitHub</a> for those that want to investigate further.</p>
+<h2 id="routes">Routes</h2>
+<p>One of the benefits of working from a spec is that there are a full
+set of routes already penned out for us to implement so we can achieve
+compatibility with the wider ecosystem of tools, such as the Docker
+Engine.</p>
+<p>To start, we’ll translate the routes pretty loosely. Then we’ll go
+back and fill in the return types as we write each of the route
+handlers. Translating the <a href="https://github.com/docker/distribution/blob/bfa0a9c0973b5026d2e942dec29115c120e7f731/docs/spec/api.md">V2 API</a> into types looks like the
+following.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">Head</span> = <span class="highlight__hljs-type___11WfV">Verb</span> '<span class="highlight__hljs-type___11WfV">HEAD</span> 200</span>
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">V2Base</span> = "v2" :&gt; <span class="highlight__hljs-type___11WfV">Get</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+  <span class="highlight__hljs-type___11WfV">Header</span> "<span class="highlight__hljs-type___11WfV">Docker</span>-<span class="highlight__hljs-type___11WfV">Distribution</span>-<span class="highlight__hljs-type___11WfV">API</span>-<span class="highlight__hljs-type___11WfV">Version</span>" <span class="highlight__hljs-type___11WfV">String</span>
+  ] <span class="highlight__hljs-type___11WfV">NoContent</span>)</span>
+
+<span class="highlight__hljs-comment___UYk12">-- | Main API Type</span>
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">API</span> = <span class="highlight__hljs-type___11WfV">V2Base</span> :&lt;|&gt; "v2" :&gt; <span class="highlight__hljs-type___11WfV">V2API</span></span>
+
+<span class="highlight__hljs-comment___UYk12">-- | V2 API Definition</span>
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">V2API</span> = <span class="highlight__hljs-type___11WfV">Metadata</span></span>
+  :&lt;|&gt; <span class="highlight__hljs-string___1SffY">"_catalog"</span> :&gt; <span class="highlight__hljs-type___11WfV">Get</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span>
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">Tags</span> = "tags" :&gt; "list" :&gt; <span class="highlight__hljs-type___11WfV">Get</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> </span>
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">Metadata</span> = <span class="highlight__hljs-type___11WfV">Capture</span> "name" <span class="highlight__hljs-type___11WfV">Name</span> :&gt; (
+  <span class="highlight__hljs-type___11WfV">Tags</span> :&lt;|&gt;
+  "<span class="highlight__hljs-title___1fl8Q">manifests</span>" :&gt; <span class="highlight__hljs-type___11WfV">Manifests</span> :&lt;|&gt;
+  "<span class="highlight__hljs-title___1fl8Q">blobs</span>" :&gt; <span class="highlight__hljs-type___11WfV">Blobs</span>
+  )</span>
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">Blobs</span> = <span class="highlight__hljs-type___11WfV">Digests</span> :&lt;|&gt; <span class="highlight__hljs-type___11WfV">Upload</span></span>
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">Manifests</span> = <span class="highlight__hljs-type___11WfV">Capture</span> "reference" <span class="highlight__hljs-type___11WfV">Ref</span> :&gt; (
+  <span class="highlight__hljs-type___11WfV">Get</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+  <span class="highlight__hljs-type___11WfV">Put</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+  <span class="highlight__hljs-type___11WfV">Delete</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+  <span class="highlight__hljs-type___11WfV">Head</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span>
+  ) </span>
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">Digests</span> = <span class="highlight__hljs-type___11WfV">Capture</span> "digest" <span class="highlight__hljs-type___11WfV">Digest</span> :&gt; (
+  <span class="highlight__hljs-type___11WfV">Head</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+  <span class="highlight__hljs-type___11WfV">Get</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+  <span class="highlight__hljs-type___11WfV">Delete</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span>
+  )</span>
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">Upload</span> = "uploads" :&gt; (
+  <span class="highlight__hljs-type___11WfV">Post</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+  <span class="highlight__hljs-type___11WfV">Capture</span> "<span class="highlight__hljs-title___1fl8Q">uuid</span>" <span class="highlight__hljs-type___11WfV">UUID</span> :&gt; (
+    <span class="highlight__hljs-type___11WfV">Get</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+    <span class="highlight__hljs-type___11WfV">Patch</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+    <span class="highlight__hljs-type___11WfV">Put</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span> :&lt;|&gt;
+    <span class="highlight__hljs-type___11WfV">Delete</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span>
+    )</span>
+  )
+</code></pre>
+<p>This produces a set of routes that lay out as follows:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>/
+└─ v2/
+   ├─•
+   ┆
+   ┆
+   ├─ &lt;capture&gt;/
+   │  ├─ blobs/
+   │  │  ├─ &lt;capture&gt;/
+   │  │  │  ├─•
+   │  │  │  ┆
+   │  │  │  ├─•
+   │  │  │  ┆
+   │  │  │  └─•
+   │  │  ┆
+   │  │  └─ uploads/
+   │  │     ├─•
+   │  │     ┆
+   │  │     ┆
+   │  │     └─ &lt;capture&gt;/
+   │  │        ├─•
+   │  │        ┆
+   │  │        ├─•
+   │  │        ┆
+   │  │        ├─•
+   │  │        ┆
+   │  │        └─•
+   │  ├─ manifests/
+   │  │  └─ &lt;capture&gt;/
+   │  │     ├─•
+   │  │     ┆
+   │  │     ├─•
+   │  │     ┆
+   │  │     ├─•
+   │  │     ┆
+   │  │     └─•
+   │  └─ tags/
+   │     └─ list/
+   │        └─•
+   ┆
+   └─ _catalog/
+      └─•
+</code></pre>
+<p>This matches up with the spec quite well and gives us a nice base to
+start writing more specific code without worrying about whether we’ll
+miss a route.</p>
+<h2 id="the-types">The Types</h2>
+<p>If we take a closer look at the types we just wrote out we see a bunch
+of concepts including <code>Name</code>, <code>Tags</code>, <code>Manifests</code>, <code>Blobs</code>, and
+<code>Digests</code>. Interestingly, we don’t see an <code>Image</code> or <code>Container</code>
+anywhere.</p>
+<h3 id="name">Name</h3>
+<p>We use <code>Name</code> to represent an repository name. <code>Name</code>s must adhere to
+a specific regex (<code>[a-z0-9]+(?:[._-][a-z0-9]+)*</code>) and be less than 256
+characters. In plain english from the spec:</p>
+<blockquote>
+<p>A repository name is broken up into path components. A component of
+a repository name must be at least one lowercase, alpha-numeric
+characters, optionally separated by periods, dashes or
+underscores.</p>
+</blockquote>
+<h3 id="tags">Tags</h3>
+<p><code>Tags</code> are strings that reference images. For example, if we were
+using <code>debian</code> and wanted to only use the tag <code>jessie</code>, we could pull
+using the format <code>debian:jessie</code>.</p>
+<h3 id="manifests">Manifests</h3>
+<p>An image manifest provides a configuration and a set of
+layers for a container image. It looks like the following JSON:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>{
+    <span class="highlight__hljs-string___1SffY">"schemaVersion"</span>: <span class="highlight__hljs-number___2gmaH">2</span>,
+    <span class="highlight__hljs-string___1SffY">"mediaType"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.distribution.manifest.v2+json"</span>,
+    <span class="highlight__hljs-string___1SffY">"config"</span>: {
+        <span class="highlight__hljs-string___1SffY">"mediaType"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.container.image.v1+json"</span>,
+        <span class="highlight__hljs-string___1SffY">"size"</span>: <span class="highlight__hljs-number___2gmaH">7023</span>,
+        <span class="highlight__hljs-string___1SffY">"digest"</span>: <span class="highlight__hljs-string___1SffY">"sha256:b5b2b2c507a0944348e0303114d8d93aaaa081732b86451d9bce1f432a537bc7"</span>
+    },
+    <span class="highlight__hljs-string___1SffY">"layers"</span>: [
+        {
+            <span class="highlight__hljs-string___1SffY">"mediaType"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.image.rootfs.diff.tar.gzip"</span>,
+            <span class="highlight__hljs-string___1SffY">"size"</span>: <span class="highlight__hljs-number___2gmaH">32654</span>,
+            <span class="highlight__hljs-string___1SffY">"digest"</span>: <span class="highlight__hljs-string___1SffY">"sha256:e692418e4cbaf90ca69d05a66403747baa33ee08806650b51fab815ad7fc331f"</span>
+        },
+        {
+            <span class="highlight__hljs-string___1SffY">"mediaType"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.image.rootfs.diff.tar.gzip"</span>,
+            <span class="highlight__hljs-string___1SffY">"size"</span>: <span class="highlight__hljs-number___2gmaH">16724</span>,
+            <span class="highlight__hljs-string___1SffY">"digest"</span>: <span class="highlight__hljs-string___1SffY">"sha256:3c3a4604a545cdc127456d94e421cd355bca5b528f4a9c1905b15da2eb4a4c6b"</span>
+        },
+        {
+            <span class="highlight__hljs-string___1SffY">"mediaType"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.image.rootfs.diff.tar.gzip"</span>,
+            <span class="highlight__hljs-string___1SffY">"size"</span>: <span class="highlight__hljs-number___2gmaH">73109</span>,
+            <span class="highlight__hljs-string___1SffY">"digest"</span>: <span class="highlight__hljs-string___1SffY">"sha256:ec4b8955958665577945c89419d1af06b5f7636b4ac3da7f12184802ad867736"</span>
+        }
+    ],
+}
+</code></pre>
+<h3 id="blobs-digests">Blobs &amp; Digests</h3>
+<p>Layers are stored in the blob portion of the registry, keyed by
+digest.</p>
+<h2 id="our-first-handler">Our First Handler</h2>
+<p>The first route we’ll look at implementing is also the most
+simple. It’s the route that lets clients know that this registry
+implements the V2 APIs.</p>
+<p>The type of the <code>/v2</code> route is</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">type</span> <span class="highlight__hljs-type___11WfV">V2Base</span> = "v2" :&gt; <span class="highlight__hljs-type___11WfV">Get</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+  <span class="highlight__hljs-type___11WfV">Header</span> "<span class="highlight__hljs-type___11WfV">Docker</span>-<span class="highlight__hljs-type___11WfV">Distribution</span>-<span class="highlight__hljs-type___11WfV">API</span>-<span class="highlight__hljs-type___11WfV">Version</span>" <span class="highlight__hljs-type___11WfV">String</span>
+  ] <span class="highlight__hljs-type___11WfV">NoContent</span>)</span>
+</code></pre>
+<p>Which breaks down to a <code>GET</code> request with an <code>application/json</code>
+content type. The response has a single header,
+<code>Docker-Distribution-API-Version</code>, which is what lets a client know
+which API version our registry implements. We also send back no body
+content. Finally, we can dig a bit deeper into <code>Get</code>, which is a type
+alias for <code>Verb 'GET 200</code>. This tells us that a successful response
+will have a 200 code.</p>
+<p>The only other valid codes for this route <code>401 Unauthorized</code> and <code>429 Too Many Requests</code> but since we haven’t implemented authorization or
+rate-limiting, we’ll skip that for now.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">v2</span> :: <span class="highlight__hljs-type___11WfV">App</span> (<span class="highlight__hljs-type___11WfV">Headers</span> '[<span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Distribution-API-Version"</span> <span class="highlight__hljs-type___11WfV">String</span>] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+<span class="highlight__hljs-title___1fl8Q">v2</span> = <span class="highlight__hljs-keyword___som98">do</span>
+  $(logTM) <span class="highlight__hljs-type___11WfV">InfoS</span> <span class="highlight__hljs-string___1SffY">"registry/2.0"</span>
+  return $ addHeader <span class="highlight__hljs-string___1SffY">"registry/2.0"</span> <span class="highlight__hljs-type___11WfV">NoContent</span>
+</code></pre>
+<p>Our logging is pretty basic right now. We’ll worry about bulking it up
+later. For now, we’re going to leave the default Katip stdout which
+leaves us with time, loglevel, hostname (container id), thread id and
+source location:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>[2016-08-08 21:47:50][superhuman-registry][Info][85f79bec070f][33][ThreadId 11][sr-0.1.0.0-61fGnb6tOFbKD5fzBNSxKr:Lib src/Lib.hs:63:5] registry/2.0
+</code></pre>
+<h1 id="dealing-with-layers">Dealing with Layers</h1>
+<p>The primary purpose of a Registry is to store layers and manifests so
+a client (such as a Docker Engine) can pull images. We’ll avoid
+supporting legacy versions of the registry for security and simplicity
+reasons, which means our registry will only work for docker 1.10 and
+above. Benefits of this include not having to rewrite v2 manifests
+into the v1 format.</p>
+<h2 id="docker-client">Docker Client</h2>
+<p>We need to figure out what the docker is doing on a push. Since I’m
+running Docker for Mac, booting a server to act as a registry is
+pretty simple. We’ll use <code>nc</code> for a first attempt.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>docker run -itp 9000:9000 alpine nc -l 9000
+</code></pre>
+<p>Now that we have a server acting as a “registry”, we need to tag and
+push an image to it.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>&gt; docker tag hello-world localhost:9000/hello-world
+&gt; docker push localhost:9000/hello-world
+The push refers to a repository [localhost:9000/hello-world]
+Put http://localhost:9000/v1/repositories/hello-world/: EOF
+</code></pre>
+<p>Great! Our server is listening and the engine is pushing to the right
+place. If it wasn’t, we could’ve seen something like this:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>Put http://localhost:9000/v1/repositories/hello-world/: read tcp
+[::1]:56492-&gt;[::1]:9000: read: connection reset by peer
+</code></pre>
+<p>There’s a problem though, <code>nc</code> doesn’t implement the <code>/v2/</code> endpoint,
+so the docker client falls back to v1 of the api. Luckily, we’ve
+implemented the v2 endpoint already so we’ll skip netcat and jump back
+into Haskell.</p>
+<p>We can use <code>Wai.Middleware.RequestLogger</code> to log out everything docker
+tries to do to our registry. Using docker-compose to boot up our
+registry and re-attempting the push yields:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>api_1  | GET /v2/
+api_1  |   Accept:
+api_1  |   Status: 200 OK 0.000190373s
+api_1  | Prelude.undefined
+api_1  | CallStack (from HasCallStack):
+api_1  |   error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
+api_1  |   undefined, called at src/SR/Blobs.hs:26:14 in sr-0.1.0.0-5isXdkrmBvbJTFdJY734op:SR.Blobs
+api_1  | Prelude.undefined
+api_1  | CallStack (from HasCallStack):
+api_1  |   error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
+api_1  |   undefined, called at src/SR/Blobs.hs:26:14 in sr-0.1.0.0-5isXdkrmBvbJTFdJY734op:SR.Blobs
+</code></pre>
+<p>From the information, we see that the <code>/v2/</code> route is working as
+expected, but we hit <code>undefined</code> at <code>src/SR/Blobs.hs:26:14</code>, which is
+totally expected because we haven’t implemented <code>uploadBlob</code>
+yet. Notice that the engine retries the upload request.</p>
+<p>If the route didn’t exist, we would have seen a 404 in the logs.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>api_1  | GET /v2/
+api_1  |   Accept:
+api_1  |   Status: 200 OK 0.011277359s
+api_1  | POST /v2/hello-world/blobs/uploads/
+api_1  |   Accept:
+api_1  |   Status: 404 Not Found 0.000028066s
+</code></pre>
+<p>This matches with what we know about the
+<a href="https://github.com/docker/distribution/blob/dea554fc7cce2f2e7af5b1e1d38e28c5e96e1d9e/docs/spec/api.md#starting-an-upload">upload process</a>.</p>
+<h2 id="uploadblob">uploadBlob</h2>
+<p>We can throw a couple print statements in to replace the undefined as
+such:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">uploadBlob</span> :: <span class="highlight__hljs-type___11WfV">Namespace</span> -&gt; <span class="highlight__hljs-type___11WfV">Name</span> -&gt; <span class="highlight__hljs-type___11WfV">App</span> <span class="highlight__hljs-type___11WfV">NoContent</span>
+<span class="highlight__hljs-title___1fl8Q">uploadBlob</span> namespace' name' = <span class="highlight__hljs-keyword___som98">do</span>
+  liftIO $ print namespace'
+  liftIO $ print name'
+  return <span class="highlight__hljs-type___11WfV">NoContent</span>
+</code></pre>
+<p>Which will yield us some progress when trying to push.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>api_1  | GET /v2/
+api_1  |   Accept:
+api_1  |   Status: 200 OK 0.004299263s
+api_1  | Namespace &quot;lib&quot;
+api_1  | Name &quot;hello-world&quot;
+api_1  | POST /v2/lib/hello-world/blobs/uploads/
+api_1  |   Accept:
+api_1  |   Status: 200 OK 0.000105174s
+</code></pre>
+<p>This is good progress, but we clearly have some issues since the
+docker engine is still retrying the endpoint.</p>
+<p>There are two approaches to blob upload
+<a href="https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-monolithic-blob-upload">monolithic</a> and
+<a href="https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-resumable-blob-upload">resumeable</a>. The docs for
+<code>/v2/&lt;name&gt;/blobs/uploads</code> detail that the digest query param is the
+differentiator between monolithic and resumable upload.</p>
+<blockquote>
+<p>Initiate a resumable blob upload. If successful, an upload location
+will be provided to complete the upload. Optionally, if the digest
+parameter is present, the request body will be used to complete the
+upload in a single request.</p>
+</blockquote>
+<p>Let’s take a look at an implementation for the <code>uploadBlob</code>
+(<code>&lt;&gt;/blobs/uploads</code>) route. We modifiy the type to reflect the various
+headers and response codes (docker engine is a picky client). All of
+the relevant information is communicated through headers, so we return
+<code>NoContent</code> as well. <code>PostAccepted</code> is a shortcut for <code>202</code> responses.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-type___11WfV">PostAccepted</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+  <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Location"</span> <span class="highlight__hljs-type___11WfV">URI</span>,
+  <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Range"</span> <span class="highlight__hljs-type___11WfV">String</span>,
+  <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Upload-UUID"</span> <span class="highlight__hljs-type___11WfV">UUID</span>
+] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+</code></pre>
+<p>Now the handler code. We generate a new uuid to send back in the
+response. Our first go is just trying to get the docker client to
+continue to the next request but in the future we should do something
+with the uuid so we can respond to status requests. <code>uploadAPI</code> might
+look scary, but it’s just specifying the route we want to generate for
+the <code>Location</code> header. We do this so that Servant will automatically
+check that the route is valid for the <code>api</code> we are serving and we get
+a compile error if it doesn’t typecheck.</p>
+<p>We add 3 headers, setting the Range to <code>&quot;0-0&quot;</code> because we are only
+responding to resumable upload requests for now. (Otherwise we’d have
+to handle the case of an extra query string parameter). Once we
+generate the <code>Location</code> and the <code>Docker-Upload-UUID</code>, we send them
+back so the docker engine can start uploading blobs at the specified
+<code>Location</code>.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">uploadBlob</span> :: <span class="highlight__hljs-type___11WfV">Namespace</span> -&gt; <span class="highlight__hljs-type___11WfV">Name</span> -&gt; <span class="highlight__hljs-type___11WfV">App</span> (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Location"</span> <span class="highlight__hljs-type___11WfV">URI</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Range"</span> <span class="highlight__hljs-type___11WfV">String</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Upload-UUID"</span> <span class="highlight__hljs-type___11WfV">UUID</span>
+  ] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+<span class="highlight__hljs-title___1fl8Q">uploadBlob</span> namespace' name' = <span class="highlight__hljs-keyword___som98">do</span>
+  uuid &lt;- liftIO $ nextRandom
+  <span class="highlight__hljs-keyword___som98">let</span> uploadAPI = <span class="highlight__hljs-type___11WfV">Proxy</span> :: <span class="highlight__hljs-type___11WfV">Proxy</span> (<span class="highlight__hljs-string___1SffY">"v2"</span> :&gt; <span class="highlight__hljs-type___11WfV">Capture</span> <span class="highlight__hljs-string___1SffY">"namespace"</span> <span class="highlight__hljs-type___11WfV">Namespace</span> :&gt; <span class="highlight__hljs-type___11WfV">Capture</span> <span class="highlight__hljs-string___1SffY">"name"</span> <span class="highlight__hljs-type___11WfV">Name</span> :&gt; <span class="highlight__hljs-string___1SffY">"blobs"</span> :&gt; <span class="highlight__hljs-string___1SffY">"uploads"</span> :&gt; <span class="highlight__hljs-type___11WfV">Capture</span> <span class="highlight__hljs-string___1SffY">"uuid"</span> <span class="highlight__hljs-type___11WfV">UUID</span> :&gt; <span class="highlight__hljs-type___11WfV">Put</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+      mkURI = safeLink api uploadAPI
+      uri = mkURI namespace' name' uuid
+      response = addHeader uri
+        $ addHeader <span class="highlight__hljs-string___1SffY">"0-0"</span>
+        $ addHeader uuid <span class="highlight__hljs-type___11WfV">NoContent</span>
+  $(logTM) <span class="highlight__hljs-type___11WfV">InfoS</span> (logStr $ show $ getHeaders response)
+  return response
+</code></pre>
+<p>We also need a couple instances which allow us to render types like
+<code>UUID</code> into path components and headers. (note: these are orphan
+instances, but we could fix that by using a newtype and declaring the
+instances for the newtypes instead).</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">instance</span> <span class="highlight__hljs-type___11WfV">FromHttpApiData</span> <span class="highlight__hljs-type___11WfV">UUID</span> <span class="highlight__hljs-keyword___som98">where</span></span>
+  parseUrlPiece text = <span class="highlight__hljs-keyword___som98">case</span> (fromText text) <span class="highlight__hljs-keyword___som98">of</span>
+    <span class="highlight__hljs-type___11WfV">Nothing</span> -&gt; <span class="highlight__hljs-type___11WfV">Left</span> $ <span class="highlight__hljs-type___11WfV">T</span>.append <span class="highlight__hljs-string___1SffY">"Invalid UUID"</span> text
+    <span class="highlight__hljs-type___11WfV">Just</span> uuid -&gt; <span class="highlight__hljs-type___11WfV">Right</span> uuid
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">instance</span> <span class="highlight__hljs-type___11WfV">ToByteString</span> <span class="highlight__hljs-type___11WfV">URI</span> <span class="highlight__hljs-keyword___som98">where</span></span>
+  builder = lazyByteString . pack . show
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">instance</span> <span class="highlight__hljs-type___11WfV">ToHttpApiData</span> <span class="highlight__hljs-type___11WfV">UUID</span> <span class="highlight__hljs-keyword___som98">where</span></span>
+  toUrlPiece = toText
+  toHeader = toASCIIBytes
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">instance</span> <span class="highlight__hljs-type___11WfV">ToByteString</span> <span class="highlight__hljs-type___11WfV">UUID</span> <span class="highlight__hljs-keyword___som98">where</span></span>
+  builder = lazyByteString . toLazyASCIIBytes
+</code></pre>
+<p>We push again to test the route</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>docker push localhost:9000/lib/hello-world
+</code></pre>
+<p>And voilà, we get the desired effect. The docker engine accepts the
+UUID and tries to upload blobs to <code>PATCH /v2/lib/hello-world/blobs/uploads/v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55</code>. That’s
+totally not the right URI though. We’ve accidentally used a relative
+URI in our <code>Location</code> header. We’ll fix that though 😃</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>GET /v2/
+  Accept:
+  Status: 200 OK 0.000458567s
+[2016-08-30 18:12:49][superhuman-registry][Info][b4fa86e02706][6258][ThreadId 15][sr-0.1.0.0-4uXdy03mbpG98AEB4xHfiO:SR.Blobs src/SR/Blobs.hs:47:5] [(&quot;Location&quot;,&quot;v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55&quot;),(&quot;Range&quot;,&quot;0-0&quot;),(&quot;Docker-Upload-UUID&quot;,&quot;aeab6f5e-4b80-4c7b-9027-616b1cbe6a55&quot;)]
+POST /v2/lib/hello-world/blobs/uploads/
+  Accept:
+  Status: 202 Accepted 0.000303745s
+PATCH /v2/lib/hello-world/blobs/uploads/v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55
+  Accept:
+  Status: 404 Not Found 0.000041239s
+</code></pre>
+<h2 id="patchblob">patchBlob</h2>
+<p>The <a href="https://github.com/docker/distribution/blob/41f383fb9a3b4e3ff428a92db4f7836f8053058b/docs/spec/api.md#patch-blob-upload">next route</a>, as shown in the logs above, is
+the <code>PATCH</code> to the <code>Location</code> header we sent back down. The type for
+the <code>PATCH</code> route changes to:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-type___11WfV">ReqBody</span> '[<span class="highlight__hljs-type___11WfV">OctetStream</span>] <span class="highlight__hljs-type___11WfV">ByteString</span> :&gt;
+  <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"range"</span> <span class="highlight__hljs-type___11WfV">String</span> :&gt;
+  <span class="highlight__hljs-type___11WfV">PatchNoContent</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Location"</span> <span class="highlight__hljs-type___11WfV">URI</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Range"</span> <span class="highlight__hljs-type___11WfV">String</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Upload-UUID"</span> <span class="highlight__hljs-type___11WfV">UUID</span>
+  ] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+</code></pre>
+<p>We need to accept and echo back the <code>Range</code> header, while the request
+body comes in as an <code>OctetStream</code>. We take this information and just
+write out the <code>OctetStream</code> to a file for now.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">patchBlob</span> :: <span class="highlight__hljs-type___11WfV">Namespace</span>
+          -&gt; <span class="highlight__hljs-type___11WfV">Name</span>
+          -&gt; <span class="highlight__hljs-type___11WfV">UUID</span>
+          -&gt; <span class="highlight__hljs-type___11WfV">ByteString</span>
+          -&gt; <span class="highlight__hljs-type___11WfV">Maybe</span> <span class="highlight__hljs-type___11WfV">String</span>
+          -&gt; <span class="highlight__hljs-type___11WfV">App</span> (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Location"</span> <span class="highlight__hljs-type___11WfV">URI</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Range"</span> <span class="highlight__hljs-type___11WfV">String</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Upload-UUID"</span> <span class="highlight__hljs-type___11WfV">UUID</span>
+  ] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+<span class="highlight__hljs-title___1fl8Q">patchBlob</span> namespace' name' uuid' blob range' = <span class="highlight__hljs-keyword___som98">do</span>
+  liftIO $ <span class="highlight__hljs-type___11WfV">Data</span>.<span class="highlight__hljs-type___11WfV">ByteString</span>.writeFile (<span class="highlight__hljs-string___1SffY">"./tmp/"</span> ++ toString uuid') blob
+  response &lt;- mkHeaders range' uuid' namespace' name'
+  return response
+</code></pre>
+<p>With this code (and another upload attempt from the engine), we can
+see that the next request is a <code>PUT</code>, which indicates the last request
+for this layer.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>GET /v2/
+  Accept:
+  Status: 200 OK 0.005978465s
+[2016-09-03 20:21:39][superhuman-registry][Info][b4fa86e02706][130][ThreadId 14][sr-0.1.0.0-7Q5s7SCyVcbA5o0UAD7J0W:SR.Blobs src/SR/Blobs.hs:74:5] [(&quot;Location&quot;,&quot;http://localhost:9000/v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b&quot;),(&quot;Range&quot;,&quot;0-0&quot;),(&quot;Docker-Upload-UUID&quot;,&quot;f525cc29-b588-417b-aac2-85c5752ce07b&quot;)]
+POST /v2/lib/hello-world/blobs/uploads/
+  Accept:
+  Status: 202 Accepted 0.000442272s
+PATCH /v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b
+  Accept:
+  Status: 204 No Content 0.012519558s
+PUT /v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b
+  Params: [(&quot;digest&quot;,&quot;sha256:a9d36faac0fe2a855f798346f33bd48917bf3af9b6e4b77870ef8862fee8a8a3&quot;)]
+  Accept:
+  Status: 200 OK 0.000077408s
+</code></pre>
+<h2 id="putblob">putBlob</h2>
+<p>After <code>PATCH</code>s finish flowing in, the client sends a <code>PUT</code> request
+with the digest and potentially any final layer content. Note that at
+this point, we have not implemented any append functionality so our
+<code>PATCH</code> endpoint will only work for small layers. Likewise, our <code>PUT</code>
+and the <code>HEAD</code> that comes after it will be very minimal, omitting
+critical functionality. This is so that we can get through all of the
+requests and confirm a full upload flow.</p>
+<p>The <code>Digest</code> for a layer is a sha256 hash as such:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>sha256:6c3c624b58dbbcd3c0dd82b4c53f04194d1247c6eebdaab7c610cf7d66709b3b
+</code></pre>
+<p>Our handler will just emit <code>NoContent</code> so we can skip the validation
+code and get on with groking the entire request flow.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">putBlob</span> :: <span class="highlight__hljs-type___11WfV">Namespace</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">Name</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">UUID</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">Maybe</span> <span class="highlight__hljs-type___11WfV">Digest</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">App</span> <span class="highlight__hljs-type___11WfV">NoContent</span>
+<span class="highlight__hljs-title___1fl8Q">putBlob</span> namespace' name' uuid' digest' = <span class="highlight__hljs-keyword___som98">do</span>
+  <span class="highlight__hljs-keyword___som98">case</span> digest' <span class="highlight__hljs-keyword___som98">of</span>
+    <span class="highlight__hljs-type___11WfV">Nothing</span> -&gt; return <span class="highlight__hljs-type___11WfV">NoContent</span>
+    <span class="highlight__hljs-type___11WfV">Just</span> a -&gt; return <span class="highlight__hljs-type___11WfV">NoContent</span>
+</code></pre>
+<h2 id="headdigest">headDigest</h2>
+<p>This is getting familiar, so we will move on to a minimal <code>HEAD</code> which
+is a request to check to see if a particular layer (identified by
+<code>Digest</code>) has been uploaded. Our version responds “yes” to every
+single <code>HEAD</code> request, indicating that the layer exists in the
+registry already. Luckily for us the Docker client doesn’t seem to
+validate the <code>Content-Length</code> header which means we can just echo the
+<code>Digest</code> back in a header and call it done.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">headDigest</span> :: <span class="highlight__hljs-type___11WfV">Namespace</span>
+           -&gt; <span class="highlight__hljs-type___11WfV">Name</span>
+           -&gt; <span class="highlight__hljs-type___11WfV">Digest</span>
+           -&gt; <span class="highlight__hljs-type___11WfV">App</span> (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Content-Length"</span> <span class="highlight__hljs-type___11WfV">Int</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Content-Digest"</span> <span class="highlight__hljs-type___11WfV">Digest</span>
+    ] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+<span class="highlight__hljs-title___1fl8Q">headDigest</span> namespace' name' digest' = <span class="highlight__hljs-keyword___som98">do</span>
+  return $ addHeader <span class="highlight__hljs-number___2gmaH">0</span>
+         $ addHeader digest' <span class="highlight__hljs-type___11WfV">NoContent</span>
+</code></pre>
+<h2 id="putmanifest">putManifest</h2>
+<p>With the rest of the pieces in place, we receive a <code>PUT</code> to upload the
+<code>Manifest</code> for an image. When uploading the <code>Manifest</code> for an image,
+it is interesting to note that this is the first reference to a <code>Tag</code>
+that we have seen so far. In this case, it is <code>latest</code>.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>PUT /v2/lib/hello-world/manifests/latest
+</code></pre>
+<p>It is also interesting to remind ourselves that <code>docker pull</code> works if
+we use the sha256 hash of the <code>Manifest</code>. To see this in action let’s
+grab the sha for <code>hello-world</code>, which we’ve been using to test our
+registry.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>&gt; docker inspect <span class="hljs-_">-f</span> <span class="highlight__hljs-string___1SffY">"{{ .RepoDigests}}"</span> hello-world
+[hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9]
+&gt; docker pull hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9
+sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9: Pulling from library/hello-world
+Digest: sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9
+Status: Image is up to date <span class="highlight__hljs-keyword___som98">for</span> hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9
+</code></pre>
+<p>This is useful because a <code>Reference</code>, which is the final path segment
+in the <code>PUT</code> URL, can be a <code>Digest</code> OR a <code>Tag</code>. We need to know this
+because the response headers need the <code>Digest</code>.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>201 Created
+Location: &lt;url&gt;
+Content-Length: 0
+Docker-Content-Digest: &lt;digest&gt;
+</code></pre>
+<h3 id="manifests">Manifests</h3>
+<p>The <code>Manifest</code> for <code>hello-world</code> is a
+<a href="https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-2.md#image-manifest-field-descriptions">v2+json</a>
+style manifest. The other major option for us is going to be a
+Manifest List, aka a Fat Manifest. Our <code>Manifest</code> looks as the
+following, with a single layer.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>{
+   <span class="highlight__hljs-string___1SffY">"schemaVersion"</span>: <span class="highlight__hljs-number___2gmaH">2</span>,
+   <span class="highlight__hljs-string___1SffY">"mediaType"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.distribution.manifest.v2+json"</span>,
+   <span class="highlight__hljs-string___1SffY">"config"</span>: {
+      <span class="highlight__hljs-string___1SffY">"mediaType"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.container.image.v1+json"</span>,
+      <span class="highlight__hljs-string___1SffY">"digest"</span>: <span class="highlight__hljs-string___1SffY">"sha256:c54a2cc56cbb2f04003c1cd4507e118af7c0d340fe7e2720f70976c4b75237dc"</span>
+   },
+   <span class="highlight__hljs-string___1SffY">"layers"</span>: [
+      {
+         <span class="highlight__hljs-string___1SffY">"mediaType"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.image.rootfs.diff.tar.gzip"</span>,
+         <span class="highlight__hljs-string___1SffY">"size"</span>: <span class="highlight__hljs-number___2gmaH">1</span>,
+         <span class="highlight__hljs-string___1SffY">"digest"</span>: <span class="highlight__hljs-string___1SffY">"sha256:c04b14da8d1441880ed3fe6106fb2cc6fa1c9661846ac0266b8a5ec8edf37b7c"</span>
+      }
+   ]
+}
+</code></pre>
+<p>We can parse the above <code>Manifest</code> JSON into the following Haskell
+datatype. In the future we can also do digest validation for each
+digest in the manifest.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-type___11WfV">V2_2</span> {
+  schemaVersion = <span class="highlight__hljs-number___2gmaH">2</span>,
+  mediaType = <span class="highlight__hljs-type___11WfV">Manifest_V2_JSON</span>,
+  config = <span class="highlight__hljs-type___11WfV">Config</span> {
+      cMediaType = <span class="highlight__hljs-type___11WfV">V1_JSON</span>,
+      cSize = <span class="highlight__hljs-number___2gmaH">7023</span>,
+      cDigest = <span class="highlight__hljs-string___1SffY">"sha256:b5b2b2c507a0944348e0303114d8d93aaaa081732b86451d9bce1f432a537bc7"</span>
+      },
+  layers = [
+      <span class="highlight__hljs-type___11WfV">Layer</span> {
+          lMediaType = <span class="highlight__hljs-type___11WfV">Diff</span>,
+          lSize = <span class="highlight__hljs-number___2gmaH">32654</span>,
+          lDigest = <span class="highlight__hljs-string___1SffY">"sha256:e692418e4cbaf90ca69d05a66403747baa33ee08806650b51fab815ad7fc331f"</span>,
+          lUrls = <span class="highlight__hljs-type___11WfV">Nothing</span>
+          },
+      <span class="highlight__hljs-type___11WfV">Layer</span> {
+          lMediaType = <span class="highlight__hljs-type___11WfV">Diff</span>,
+          lSize = <span class="highlight__hljs-number___2gmaH">16724</span>,
+          lDigest = <span class="highlight__hljs-string___1SffY">"sha256:3c3a4604a545cdc127456d94e421cd355bca5b528f4a9c1905b15da2eb4a4c6b"</span>,
+          lUrls = <span class="highlight__hljs-type___11WfV">Nothing</span>
+          },
+      <span class="highlight__hljs-type___11WfV">Layer</span> {
+          lMediaType = <span class="highlight__hljs-type___11WfV">Diff</span>,
+          lSize = <span class="highlight__hljs-number___2gmaH">73109</span>,
+          lDigest = <span class="highlight__hljs-string___1SffY">"sha256:ec4b8955958665577945c89419d1af06b5f7636b4ac3da7f12184802ad867736"</span>,
+          lUrls = <span class="highlight__hljs-type___11WfV">Nothing</span>
+          }
+      ]
+  }
+</code></pre>
+<p>For us, it is important to note how the mechanics behind backward
+compatibility work.</p>
+<blockquote>
+<p>When pushing images, clients which support the new manifest format
+should first construct a manifest in the new format.</p>
+</blockquote>
+<p>Which is great for us because that means we only have to code support
+for v2 manifests and compatible clients will behave appropriately.</p>
+<h3 id="implementing-the-handler">Implementing the Handler</h3>
+<p>At this point, it’s useful to set up a proxy. After doing that, we can
+log out arbitrary parts of the requests/responses to find the
+following headers coming from the docker engine request to <code>putManifest</code>.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>{
+  <span class="highlight__hljs-string___1SffY">"connection"</span>: <span class="highlight__hljs-string___1SffY">"close"</span>,
+  <span class="highlight__hljs-string___1SffY">"accept-encoding"</span>: <span class="highlight__hljs-string___1SffY">"gzip"</span>,
+  <span class="highlight__hljs-string___1SffY">"content-type"</span>: <span class="highlight__hljs-string___1SffY">"application/vnd.docker.distribution.manifest.v2+json"</span>,
+  <span class="highlight__hljs-string___1SffY">"content-length"</span>: <span class="highlight__hljs-string___1SffY">"482"</span>,
+  <span class="highlight__hljs-string___1SffY">"user-agent"</span>: <span class="highlight__hljs-string___1SffY">"docker/1.12.1 go/go1.6.3 git-commit/23cf638 kernel/4.4.20-moby os/linux arch/amd64 UpstreamClient(Docker-Client/1.12.1 \\(darwin\\))"</span>,
+  <span class="highlight__hljs-string___1SffY">"host"</span>: <span class="highlight__hljs-string___1SffY">"localhost:8000"</span>
+}
+</code></pre>
+<p>The one we <em>really</em> care about is the <code>Content-Type</code> header. The
+request identifies the type of <code>Manifest</code> based on the <code>Content-Type</code>,
+so we can easily handle different <code>Manifest</code> content. To add support
+for the <code>vnd.docker.distribution.manifest.v2+json</code> <code>Content-Type</code>, we
+can write the implementation for a new Servant <code>Content-Type</code>.</p>
+<p><a href="/servant-custom-content-types/">Read More on Custom Content-Types</a></p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">data</span> <span class="highlight__hljs-type___11WfV">HashedJSON</span> = <span class="highlight__hljs-type___11WfV">HashedJSON</span> <span class="highlight__hljs-type___11WfV">String</span></span>
+<span class="highlight__hljs-class___mOeOV">
+<span class="highlight__hljs-keyword___som98">instance</span> <span class="highlight__hljs-type___11WfV">Accept</span> <span class="highlight__hljs-type___11WfV">HashedJSON</span> <span class="highlight__hljs-keyword___som98">where</span></span>
+  contentType _ = <span class="highlight__hljs-string___1SffY">"application"</span> // <span class="highlight__hljs-string___1SffY">"vnd.docker.distribution.manifest.v2+json"</span>
+<span class="highlight__hljs-class___mOeOV">
+<span class="highlight__hljs-keyword___som98">instance</span> <span class="highlight__hljs-type___11WfV">FromJSON</span> a =&gt; <span class="highlight__hljs-type___11WfV">MimeUnrender</span> <span class="highlight__hljs-type___11WfV">HashedJSON</span> (<span class="highlight__hljs-type___11WfV">Digest</span> <span class="highlight__hljs-type___11WfV">SHA256</span>, <span class="highlight__hljs-title___1fl8Q">a</span>) <span class="highlight__hljs-keyword___som98">where</span></span>
+   mimeUnrender _ bs = <span class="highlight__hljs-keyword___som98">case</span> eitherDecodeLenient bs <span class="highlight__hljs-keyword___som98">of</span>
+     <span class="highlight__hljs-type___11WfV">Left</span> err -&gt; <span class="highlight__hljs-type___11WfV">Left</span> err
+     <span class="highlight__hljs-type___11WfV">Right</span> val -&gt; <span class="highlight__hljs-type___11WfV">Right</span> (mkLazyDigest bs, val)
+</code></pre>
+<p>Note that we have also included the ability to hash the incoming
+content with this <code>Content-Type</code>. This means our handlers don’t have
+to worry about dealing with hashing.</p>
+<p>Our route with the new <code>Content-Type</code> looks like the following, where
+<code>CH</code> comes from the <a href="https://hackage.haskell.org/package/cryptonite">cryptonite</a> package. The request body
+is specified as a tuple of <code>(Digest, Manfiest)</code> which comes from the
+<code>HashedJSON</code> <code>Content-Type</code>.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>  <span class="highlight__hljs-type___11WfV">ReqBody</span> '[<span class="highlight__hljs-type___11WfV">HashedJSON</span>] (<span class="highlight__hljs-type___11WfV">CH</span>.<span class="highlight__hljs-type___11WfV">Digest</span> <span class="highlight__hljs-type___11WfV">CH</span>.<span class="highlight__hljs-type___11WfV">SHA256</span>, <span class="highlight__hljs-type___11WfV">Manifest</span>) :&gt;
+    <span class="highlight__hljs-type___11WfV">PutCreated</span> '[<span class="highlight__hljs-type___11WfV">JSON</span>] (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+      <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Content-Length"</span> <span class="highlight__hljs-type___11WfV">Int</span>,
+      <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Content-Digest"</span> <span class="highlight__hljs-type___11WfV">CDigest</span>
+      ] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+</code></pre>
+<p>We are still doing as little work as possible in the handler.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">putManifest</span> :: <span class="highlight__hljs-type___11WfV">Namespace</span>
+            -&gt; <span class="highlight__hljs-type___11WfV">Name</span>
+            -&gt; <span class="highlight__hljs-type___11WfV">Ref</span>
+            -&gt; (<span class="highlight__hljs-type___11WfV">CH</span>.<span class="highlight__hljs-type___11WfV">Digest</span> <span class="highlight__hljs-type___11WfV">CH</span>.<span class="highlight__hljs-type___11WfV">SHA256</span>, <span class="highlight__hljs-type___11WfV">Manifest</span>)
+            -&gt; <span class="highlight__hljs-type___11WfV">App</span> (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Content-Length"</span> <span class="highlight__hljs-type___11WfV">Int</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Content-Digest"</span> <span class="highlight__hljs-type___11WfV">CDigest</span>
+    ] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+<span class="highlight__hljs-title___1fl8Q">putManifest</span> namespace' name ref' (digest, manifest) = <span class="highlight__hljs-keyword___som98">do</span>
+  liftIO $ print <span class="highlight__hljs-string___1SffY">"putManifest"</span>
+  liftIO $ print digest
+  return $ addHeader <span class="highlight__hljs-number___2gmaH">0</span>
+         $ addHeader (<span class="highlight__hljs-type___11WfV">CDigest</span> digest) <span class="highlight__hljs-type___11WfV">NoContent</span>
+</code></pre>
+<p>Success!</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>&quot;putManifest&quot;
+6741f4d4187d8b5bcdf338c6a8dbbef12604e31211b3f57e4873f623f64dba80
+PUT /v2/biscarch/hello-world/manifests/latest
+  Request Body: {
+   &quot;schemaVersion&quot;: 2,
+   &quot;mediaType&quot;: &quot;application/vnd.docker.distribution.manifest.v2+json&quot;,
+   &quot;config&quot;: {
+      &quot;mediaType&quot;: &quot;application/vnd.docker.container.image.v1+json&quot;,
+      &quot;digest&quot;: &quot;sha256:c54a2cc56cbb2f04003c1cd4507e118af7c0d340fe7e2720f70976c4b75237dc&quot;
+   },
+   &quot;layers&quot;: [
+      {
+         &quot;mediaType&quot;: &quot;application/vnd.docker.image.rootfs.diff.tar.gzip&quot;,
+         &quot;digest&quot;: &quot;sha256:c04b14da8d1441880ed3fe6106fb2cc6fa1c9661846ac0266b8a5ec8edf37b7c&quot;
+      }
+   ]
+}
+  Accept:
+  Status: 201 Created 0.000758785s
+</code></pre>
+<hr>
+<h1 id="a-gadt-rises">A GADT Rises</h1>
+<p>Now that we have a fully “working” image upload (at least, the docker
+engine is convinced we handled everything correctly), we have two ways
+forward.</p>
+<ol>
+<li>Truly implement <code>push</code> compatibility complete with resumable
+upload, etc.</li>
+<li>Execute the same “as little as possible” process to complete a
+<code>docker pull</code>.</li>
+</ol>
+<p>Since we eventually we want to support multiple backends, Option 1
+will have to happen in the future. To do this, we would start off with
+a GADT that defines the various operations that need to be implemented
+for a new backend.</p>
+<p>To refresh, here is the list of handlers we need to implement for
+<code>push</code> compatibility.</p>
+<ul>
+<li>uploadBlob</li>
+<li>patchBlob</li>
+<li>putBlob</li>
+<li>headDigest</li>
+<li>putManifest</li>
+</ul>
+<p>What we want in the end is a Generalized Algebraic Data Type that
+defines what it means to be a <code>RegistryBackend</code>. An example
+declaration for the <code>uploadBlob</code> functionality shows that a compliant
+backend would need to declare a function which too a <code>RepoName</code>,
+<code>UUID</code>, <code>Maybe Digest</code> and returned an <code>Either UploadError NoContent</code>. We would use <code>UploadError</code> to restrict the types of errors
+which come back so we can communicate with exists clients such as the
+Docker engine.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">class</span> <span class="highlight__hljs-type___11WfV">RegistryBackend</span> b <span class="highlight__hljs-keyword___som98">where</span></span>
+  uploadBlob :: b
+             -&gt; <span class="highlight__hljs-type___11WfV">RepoName</span>
+             -&gt; <span class="highlight__hljs-type___11WfV">UUID</span>
+             -&gt; <span class="highlight__hljs-type___11WfV">Maybe</span> <span class="highlight__hljs-type___11WfV">Digest</span>
+             -&gt; <span class="highlight__hljs-type___11WfV">Either</span> <span class="highlight__hljs-type___11WfV">UploadError</span> <span class="highlight__hljs-type___11WfV">NoContent</span>
+  ...
+</code></pre>
+<p>This involves a couple of pieces including changing our handler types
+from the following (which uses <code>App</code> directly).</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">putBlob</span> :: <span class="highlight__hljs-type___11WfV">Namespace</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">Name</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">UUID</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">Maybe</span> <span class="highlight__hljs-type___11WfV">Digest</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">App</span> <span class="highlight__hljs-type___11WfV">NoContent</span>
+</code></pre>
+<p>to something more general. Possibly just a <code>HasRegistryBackend</code>
+constraint on the monad (<code>App</code> is also a monad).</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">putBlob</span> :: ( <span class="highlight__hljs-type___11WfV">KatipContext</span> m, <span class="highlight__hljs-type___11WfV">RegistryBackend</span> m )
+        =&gt; <span class="highlight__hljs-type___11WfV">Namespace</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">Name</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">UUID</span>
+        -&gt; <span class="highlight__hljs-type___11WfV">Maybe</span> <span class="highlight__hljs-type___11WfV">Digest</span>
+        -&gt; m <span class="highlight__hljs-type___11WfV">NoContent</span>
+</code></pre>
+<p>This would allow us to move configuration of the server into the
+executables while still allowing the library to provide guarentees
+about what it needs to be able to function. In effect, allowing us to
+build binaries that target Postgres, File Systems, and other
+interesting data stores.</p>
+<p>We will keep this in mind as we move forward with a concrete
+implementation based on Postgres. This concrete implementation will
+inform us as to which abstractions make sense. An interesting choice
+for the second store implementation would be something without
+transactions and different consistency guarentees such as S3 or a KV
+store.</p>
+<h1 id="postgres-uploadblob">Postgres uploadBlob</h1>
+<p>Since we now need a “real” backend, we’ll spin up Postgres using
+<a href="http://sqitch.org/">sqitch</a> for migrations. The official Postgres image allows us
+to use a shell script to initialize the db so all we need to do in
+addition is install sqitch:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>FROM postgres
+
+RUN apt-get update &amp;&amp; apt-get install sqitch -y
+
+COPY . /opt/sqitch
+WORKDIR /opt/sqitch
+
+COPY ./initdb.sh /docker-entrypoint-initdb.d/initdb.sh
+</code></pre>
+<p><a href="https://github.com/ChristopherBiscardi/superhuman-registry/blob/9508e1b1b6887c8d4e412fad0ddd8f89676f8192/sqitch/initdb.sh">initdb.sh</a>
+is the following script to execute sqitch:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>#!/bin/bash
+set -e
+
+cd /opt/sqitch &amp;&amp; sqitch -u &quot;$POSTGRES_USER&quot; deploy --verify
+</code></pre>
+<p>The migrations (in order) are the following three. The first sets up
+our SR schema.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-comment___UYk12">-- Deploy sr:appschema to pg</span>
+
+<span class="highlight__hljs-keyword___som98">BEGIN</span>;
+
+<span class="highlight__hljs-keyword___som98">CREATE</span> <span class="highlight__hljs-keyword___som98">SCHEMA</span> sr;
+
+<span class="highlight__hljs-keyword___som98">COMMIT</span>;
+</code></pre>
+<p>The second registers uuid-ossp, which we will use when tracking upload
+requests.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-comment___UYk12">-- Deploy sr:uuid-ossp to pg</span>
+<span class="highlight__hljs-comment___UYk12">-- requires: appschema</span>
+
+<span class="highlight__hljs-keyword___som98">BEGIN</span>;
+
+<span class="highlight__hljs-keyword___som98">CREATE</span> EXTENSION <span class="highlight__hljs-string___1SffY">"uuid-ossp"</span>;
+
+<span class="highlight__hljs-keyword___som98">COMMIT</span>;
+</code></pre>
+<p>Finally, we implement a table with automatic <code>created_at</code> and
+<code>modified_at</code> timestamps. These timestamps will help us implement
+garbage collection for abandoned uploads. We let Postgres handle
+generation of unique UUIDs on <code>INSERT</code> and leave the creation of a
+Large Object for the future.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-comment___UYk12">-- Deploy sr:blob-uploads to pg</span>
+<span class="highlight__hljs-comment___UYk12">-- requires: uuid-ossp</span>
+
+<span class="highlight__hljs-keyword___som98">BEGIN</span>;
+
+<span class="highlight__hljs-comment___UYk12">-- Table</span>
+<span class="highlight__hljs-keyword___som98">CREATE</span> <span class="highlight__hljs-keyword___som98">TABLE</span> sr.blob_uploads (
+  <span class="highlight__hljs-keyword___som98">id</span> <span class="highlight__hljs-keyword___som98">UUID</span> PRIMARY <span class="highlight__hljs-keyword___som98">KEY</span> <span class="highlight__hljs-keyword___som98">DEFAULT</span> uuid_generate_v4(),
+  lo_id <span class="highlight__hljs-keyword___som98">OID</span>,
+  repo_name <span class="highlight__hljs-built_in___3uuyR">VARCHAR</span>(<span class="highlight__hljs-number___2gmaH">256</span>) <span class="highlight__hljs-keyword___som98">NOT</span> <span class="highlight__hljs-literal___1V6TY">NULL</span>,
+  created_at <span class="highlight__hljs-keyword___som98">TIMESTAMP</span> <span class="highlight__hljs-keyword___som98">WITH</span> <span class="highlight__hljs-keyword___som98">TIME</span> ZONE <span class="highlight__hljs-keyword___som98">NOT</span> <span class="highlight__hljs-literal___1V6TY">NULL</span>,
+  modified_at <span class="highlight__hljs-keyword___som98">TIMESTAMP</span> <span class="highlight__hljs-keyword___som98">WITH</span> <span class="highlight__hljs-keyword___som98">TIME</span> ZONE <span class="highlight__hljs-keyword___som98">NOT</span> <span class="highlight__hljs-literal___1V6TY">NULL</span>
+);
+
+<span class="highlight__hljs-comment___UYk12">-- Automatically update modified_at</span>
+<span class="highlight__hljs-keyword___som98">CREATE</span> <span class="highlight__hljs-keyword___som98">OR</span> <span class="highlight__hljs-keyword___som98">REPLACE</span> <span class="highlight__hljs-keyword___som98">FUNCTION</span> update_modified_column()
+<span class="highlight__hljs-keyword___som98">RETURNS</span> <span class="highlight__hljs-keyword___som98">TRIGGER</span> <span class="highlight__hljs-keyword___som98">AS</span> $$
+<span class="highlight__hljs-keyword___som98">BEGIN</span>
+    NEW.modified_at = <span class="highlight__hljs-keyword___som98">now</span>();
+    <span class="highlight__hljs-comment___UYk12">-- Force created_at to never change</span>
+    NEW.created_at = OLD.created_at;
+    RETURN NEW;
+<span class="highlight__hljs-keyword___som98">END</span>;
+$$ language 'plpgsql';
+
+<span class="highlight__hljs-keyword___som98">CREATE</span> <span class="highlight__hljs-keyword___som98">TRIGGER</span> update_blob_upload_modtime
+<span class="highlight__hljs-keyword___som98">BEFORE</span> <span class="highlight__hljs-keyword___som98">UPDATE</span> <span class="highlight__hljs-keyword___som98">ON</span> sr.blob_uploads
+<span class="highlight__hljs-keyword___som98">FOR</span> <span class="highlight__hljs-keyword___som98">EACH</span> <span class="highlight__hljs-keyword___som98">ROW</span> <span class="highlight__hljs-keyword___som98">EXECUTE</span> <span class="highlight__hljs-keyword___som98">PROCEDURE</span> update_modified_column();
+
+<span class="highlight__hljs-comment___UYk12">-- | Automatically populate created_at</span>
+<span class="highlight__hljs-comment___UYk12">-- Use a trigger so it's impossible to override on insert</span>
+<span class="highlight__hljs-keyword___som98">CREATE</span> <span class="highlight__hljs-keyword___som98">OR</span> <span class="highlight__hljs-keyword___som98">REPLACE</span> <span class="highlight__hljs-keyword___som98">FUNCTION</span> populate_create_column()
+<span class="highlight__hljs-keyword___som98">RETURNS</span> <span class="highlight__hljs-keyword___som98">TRIGGER</span> <span class="highlight__hljs-keyword___som98">AS</span> $$
+<span class="highlight__hljs-keyword___som98">BEGIN</span>
+    NEW.created_at = <span class="highlight__hljs-keyword___som98">now</span>();
+    NEW.modified_at = now();
+    RETURN NEW;	
+<span class="highlight__hljs-keyword___som98">END</span>;
+$$ language 'plpgsql';
+
+<span class="highlight__hljs-keyword___som98">CREATE</span> <span class="highlight__hljs-keyword___som98">TRIGGER</span> insert_blob_upload_createtime
+<span class="highlight__hljs-keyword___som98">BEFORE</span> <span class="highlight__hljs-keyword___som98">INSERT</span> <span class="highlight__hljs-keyword___som98">ON</span> sr.blob_uploads
+<span class="highlight__hljs-keyword___som98">FOR</span> <span class="highlight__hljs-keyword___som98">EACH</span> <span class="highlight__hljs-keyword___som98">ROW</span> <span class="highlight__hljs-keyword___som98">EXECUTE</span> <span class="highlight__hljs-keyword___som98">PROCEDURE</span> populate_create_column();
+
+<span class="highlight__hljs-keyword___som98">COMMIT</span>;
+</code></pre>
+<p>To handle the initialization of new uploads, we use the following
+query which grabs a connection from the pool, executes the statement
+and returns the UUID of the new upload.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-comment___UYk12">-- | Insert a new upload for a Repos</span>
+<span class="highlight__hljs-title___1fl8Q">startNewUpload</span> :: <span class="highlight__hljs-type___11WfV">Reponame</span> -&gt; <span class="highlight__hljs-type___11WfV">App</span> <span class="highlight__hljs-type___11WfV">UUID</span>
+<span class="highlight__hljs-title___1fl8Q">startNewUpload</span> repo = runPG (query repo insertNewUpload)
+
+<span class="highlight__hljs-comment___UYk12">-- | PG automatically creates uuid, created_at and modified_at</span>
+<span class="highlight__hljs-title___1fl8Q">insertNewUpload</span> :: <span class="highlight__hljs-type___11WfV">Query</span> <span class="highlight__hljs-type___11WfV">Text</span> <span class="highlight__hljs-type___11WfV">UUID</span>
+<span class="highlight__hljs-title___1fl8Q">insertNewUpload</span> =
+  statement sql encoder decoder <span class="highlight__hljs-type___11WfV">True</span>
+  <span class="highlight__hljs-keyword___som98">where</span>
+    sql =
+      <span class="highlight__hljs-string___1SffY">"INSERT INTO sr.blob_uploads (repo_name) VALUES ($1) RETURNING id"</span>
+    encoder =
+      <span class="highlight__hljs-type___11WfV">E</span>.value <span class="highlight__hljs-type___11WfV">E</span>.text
+    decoder =
+      <span class="highlight__hljs-type___11WfV">D</span>.singleRow (<span class="highlight__hljs-type___11WfV">D</span>.value <span class="highlight__hljs-type___11WfV">D</span>.uuid)
+</code></pre>
+<p><code>runPG</code> is a utility function which handles any connection
+errors.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">runPG</span> :: <span class="highlight__hljs-type___11WfV">Session</span> a -&gt; <span class="highlight__hljs-type___11WfV">App</span> a
+<span class="highlight__hljs-title___1fl8Q">runPG</span> action = <span class="highlight__hljs-keyword___som98">do</span>
+  pool &lt;- asks acPGPool
+  res &lt;- liftIO $ <span class="highlight__hljs-type___11WfV">P</span>.use pool action
+  <span class="highlight__hljs-keyword___som98">case</span> res <span class="highlight__hljs-keyword___som98">of</span>
+    <span class="highlight__hljs-type___11WfV">Left</span> usageError -&gt; <span class="highlight__hljs-keyword___som98">do</span>
+    ...
+</code></pre>
+<h1 id="postgres-headblob">Postgres headBlob</h1>
+<p>At this point I figured out that Docker will ask to mount if you push
+an image, then retag it and push the retagged image.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>docker tag hello-world localhost:9000/biscarch/hello-worlds
+docker push localhost:9000/biscarch/hello-worlds
+docker tag hello-world localhost:9000/biscarch/hello-world-2
+docker push localhost:9000/biscarch/hello-world-2
+</code></pre>
+<p>The last push produces the following request to blob upload:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>GET /v2/
+  Accept:
+  Status: 200 OK 0.002441185s
+POST /v2/biscarch/hello-world-2/blobs/uploads/
+  Params: [(&quot;from&quot;,&quot;biscarch/hello-worlds&quot;),(&quot;mount&quot;,&quot;sha256:c04b14da8d1441880ed3fe6106fb2cc6fa1c9661846ac0266b8a5ec8edf37b7c&quot;)]
+  Accept:
+</code></pre>
+<p>To implement <code>putBlob</code> we’ll need to make our hacky <code>headBlob</code> return
+404s. This gives us a nice spot to implement a <code>blobs</code> table which
+will form the basis of our <code>catalog</code>.</p>
+<p>TODO: implement CREATE TABLE <code>blobs</code> here.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-comment___UYk12">-- Table</span>
+<span class="highlight__hljs-keyword___som98">CREATE</span> <span class="highlight__hljs-keyword___som98">TABLE</span> sr.blobs (
+  <span class="highlight__hljs-comment___UYk12">-- id is a sha256 hash</span>
+  <span class="highlight__hljs-comment___UYk12">-- <span class="hljs-doctag">TODO:</span> limit this to sha256 length?</span>
+  <span class="highlight__hljs-keyword___som98">id</span> <span class="highlight__hljs-built_in___3uuyR">TEXT</span> PRIMARY <span class="highlight__hljs-keyword___som98">KEY</span>,
+  <span class="highlight__hljs-comment___UYk12">-- id of the hashed blob</span>
+  lo_id <span class="highlight__hljs-keyword___som98">OID</span>,
+  <span class="highlight__hljs-comment___UYk12">-- maybe remove repo_name?</span>
+  repo_name <span class="highlight__hljs-built_in___3uuyR">VARCHAR</span>(<span class="highlight__hljs-number___2gmaH">256</span>) <span class="highlight__hljs-keyword___som98">NOT</span> <span class="highlight__hljs-literal___1V6TY">NULL</span>,
+  created_at <span class="highlight__hljs-keyword___som98">TIMESTAMP</span> <span class="highlight__hljs-keyword___som98">WITH</span> <span class="highlight__hljs-keyword___som98">TIME</span> ZONE <span class="highlight__hljs-keyword___som98">NOT</span> <span class="highlight__hljs-literal___1V6TY">NULL</span>,
+  modified_at <span class="highlight__hljs-keyword___som98">TIMESTAMP</span> <span class="highlight__hljs-keyword___som98">WITH</span> <span class="highlight__hljs-keyword___som98">TIME</span> ZONE <span class="highlight__hljs-keyword___som98">NOT</span> <span class="highlight__hljs-literal___1V6TY">NULL</span>
+);
+</code></pre>
+<p>Our <code>HEAD</code> handler will check to see if the blob exists in our
+<code>catalog</code>. If it does, we need to get the <code>Content-Length</code> of the blob
+to return. If it does not exist we just 404.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-title___1fl8Q">headDigest</span> :: <span class="highlight__hljs-type___11WfV">Namespace</span>
+           -&gt; <span class="highlight__hljs-type___11WfV">Name</span>
+           -&gt; <span class="highlight__hljs-type___11WfV">Digest</span>
+           -&gt; <span class="highlight__hljs-type___11WfV">App</span> (<span class="highlight__hljs-type___11WfV">Headers</span> '[
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Content-Length"</span> <span class="highlight__hljs-type___11WfV">Int</span>,
+    <span class="highlight__hljs-type___11WfV">Header</span> <span class="highlight__hljs-string___1SffY">"Docker-Content-Digest"</span> <span class="highlight__hljs-type___11WfV">Digest</span>
+    ] <span class="highlight__hljs-type___11WfV">NoContent</span>)
+<span class="highlight__hljs-title___1fl8Q">headDigest</span> namespace' name' digest' = <span class="highlight__hljs-keyword___som98">do</span>
+  blobExists &lt;- headBlob digest'
+  <span class="highlight__hljs-keyword___som98">case</span> blobExists <span class="highlight__hljs-keyword___som98">of</span>
+    <span class="highlight__hljs-type___11WfV">BLOB_EXISTS</span> d' -&gt; return addHeader <span class="highlight__hljs-number___2gmaH">0</span>
+                    $ addHeader digest' <span class="highlight__hljs-type___11WfV">NoContent</span>
+    <span class="highlight__hljs-type___11WfV">UNKNOWN_BLOB</span> -&gt; throwError err404
+</code></pre>
+<h1 id="fixing-patchblob">Fixing patchBlob</h1>
+<h1 id="postgres-putblob">Postgres putBlob</h1>
+</div></div></div></div></div></div></div><script charset="UTF-8">window.__APOLLO_STATE__={"apollo":{"data":{"$ROOT_QUERY.root.post({\"slug\":\"building-a-docker-registry\"})":{"body":"<p>Containers are surging right now. This series of blog posts will\nexplore a small corner of that universe by building a Docker Registry\nthat adheres to the <a href=\"https://github.com/docker/distribution/blob/bfa0a9c0973b5026d2e942dec29115c120e7f731/docs/spec/api.md\">Docker Registry HTTP V2 API</a>. The\ninformation contained in these posts will take a conceptual approach\nrather than a step-by-step approach. The code will be available in\nfull on GitHub, as the <a href=\"https://github.com/ChristopherBiscardi/superhuman-registry\">Superhuman Registry</a>.</p>\n<h1 id=\"intro\">Intro</h1>\n<p>For this project we’ll use Haskell as the implementation language so\nthat we can use Servant.</p>\n<blockquote>\n<p>Servant is a set of packages for declaring web APIs at the\ntype-level and then using those API specifications to:</p>\n</blockquote>\n<ul>\n<li>write servers (this part of servant can be considered a web\nframework),</li>\n<li>obtain client functions (in Haskell),</li>\n<li>generate client functions for other programming languages,</li>\n<li>generate documentation</li>\n</ul>\n<p>Servant allows us to specify everything from request bodies to Headers\nat the type level, which will help us be explicit as we explore\nManifests, Tags and Digests. Since the purpose of this set of articles\nis informative, the types will help ground our conversations.</p>\n<h1 id=\"getting-started\">Getting Started</h1>\n<p>Firstly, we’ll need a new Haskell project. <a href=\"https://www.haskellstack.org/\">Stack</a> provides\nnice templating functionality, so we’ll use that to scaffold a new\nproject.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">stack</span> new servant sr <span class=\"highlight__hljs-comment___UYk12\">--resolver nightly-2016-07-31</span>\n</code></pre>\n<p>Since we aren’t focusing on Servant itself for this series, we’ll\nskip a bunch of the boilerplate and backing code to focus in on the\nhandlers and business logic. The code for this section <em>is</em>\n<a href=\"https://github.com/ChristopherBiscardi/superhuman-registry/blob/861b20d317132d3ea43dc05cc03d507ca325d3e0/src/Lib.hs\">on GitHub</a> for those that want to investigate further.</p>\n<h2 id=\"routes\">Routes</h2>\n<p>One of the benefits of working from a spec is that there are a full\nset of routes already penned out for us to implement so we can achieve\ncompatibility with the wider ecosystem of tools, such as the Docker\nEngine.</p>\n<p>To start, we’ll translate the routes pretty loosely. Then we’ll go\nback and fill in the return types as we write each of the route\nhandlers. Translating the <a href=\"https://github.com/docker/distribution/blob/bfa0a9c0973b5026d2e942dec29115c120e7f731/docs/spec/api.md\">V2 API</a> into types looks like the\nfollowing.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">Head</span> = <span class=\"highlight__hljs-type___11WfV\">Verb</span> '<span class=\"highlight__hljs-type___11WfV\">HEAD</span> 200</span>\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">V2Base</span> = \"v2\" :&gt; <span class=\"highlight__hljs-type___11WfV\">Get</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n  <span class=\"highlight__hljs-type___11WfV\">Header</span> \"<span class=\"highlight__hljs-type___11WfV\">Docker</span>-<span class=\"highlight__hljs-type___11WfV\">Distribution</span>-<span class=\"highlight__hljs-type___11WfV\">API</span>-<span class=\"highlight__hljs-type___11WfV\">Version</span>\" <span class=\"highlight__hljs-type___11WfV\">String</span>\n  ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)</span>\n\n<span class=\"highlight__hljs-comment___UYk12\">-- | Main API Type</span>\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">API</span> = <span class=\"highlight__hljs-type___11WfV\">V2Base</span> :&lt;|&gt; \"v2\" :&gt; <span class=\"highlight__hljs-type___11WfV\">V2API</span></span>\n\n<span class=\"highlight__hljs-comment___UYk12\">-- | V2 API Definition</span>\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">V2API</span> = <span class=\"highlight__hljs-type___11WfV\">Metadata</span></span>\n  :&lt;|&gt; <span class=\"highlight__hljs-string___1SffY\">\"_catalog\"</span> :&gt; <span class=\"highlight__hljs-type___11WfV\">Get</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">Tags</span> = \"tags\" :&gt; \"list\" :&gt; <span class=\"highlight__hljs-type___11WfV\">Get</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> </span>\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">Metadata</span> = <span class=\"highlight__hljs-type___11WfV\">Capture</span> \"name\" <span class=\"highlight__hljs-type___11WfV\">Name</span> :&gt; (\n  <span class=\"highlight__hljs-type___11WfV\">Tags</span> :&lt;|&gt;\n  \"<span class=\"highlight__hljs-title___1fl8Q\">manifests</span>\" :&gt; <span class=\"highlight__hljs-type___11WfV\">Manifests</span> :&lt;|&gt;\n  \"<span class=\"highlight__hljs-title___1fl8Q\">blobs</span>\" :&gt; <span class=\"highlight__hljs-type___11WfV\">Blobs</span>\n  )</span>\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">Blobs</span> = <span class=\"highlight__hljs-type___11WfV\">Digests</span> :&lt;|&gt; <span class=\"highlight__hljs-type___11WfV\">Upload</span></span>\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">Manifests</span> = <span class=\"highlight__hljs-type___11WfV\">Capture</span> \"reference\" <span class=\"highlight__hljs-type___11WfV\">Ref</span> :&gt; (\n  <span class=\"highlight__hljs-type___11WfV\">Get</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n  <span class=\"highlight__hljs-type___11WfV\">Put</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n  <span class=\"highlight__hljs-type___11WfV\">Delete</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n  <span class=\"highlight__hljs-type___11WfV\">Head</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n  ) </span>\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">Digests</span> = <span class=\"highlight__hljs-type___11WfV\">Capture</span> \"digest\" <span class=\"highlight__hljs-type___11WfV\">Digest</span> :&gt; (\n  <span class=\"highlight__hljs-type___11WfV\">Head</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n  <span class=\"highlight__hljs-type___11WfV\">Get</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n  <span class=\"highlight__hljs-type___11WfV\">Delete</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n  )</span>\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">Upload</span> = \"uploads\" :&gt; (\n  <span class=\"highlight__hljs-type___11WfV\">Post</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n  <span class=\"highlight__hljs-type___11WfV\">Capture</span> \"<span class=\"highlight__hljs-title___1fl8Q\">uuid</span>\" <span class=\"highlight__hljs-type___11WfV\">UUID</span> :&gt; (\n    <span class=\"highlight__hljs-type___11WfV\">Get</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n    <span class=\"highlight__hljs-type___11WfV\">Patch</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n    <span class=\"highlight__hljs-type___11WfV\">Put</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span> :&lt;|&gt;\n    <span class=\"highlight__hljs-type___11WfV\">Delete</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n    )</span>\n  )\n</code></pre>\n<p>This produces a set of routes that lay out as follows:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>/\n└─ v2/\n   ├─•\n   ┆\n   ┆\n   ├─ &lt;capture&gt;/\n   │  ├─ blobs/\n   │  │  ├─ &lt;capture&gt;/\n   │  │  │  ├─•\n   │  │  │  ┆\n   │  │  │  ├─•\n   │  │  │  ┆\n   │  │  │  └─•\n   │  │  ┆\n   │  │  └─ uploads/\n   │  │     ├─•\n   │  │     ┆\n   │  │     ┆\n   │  │     └─ &lt;capture&gt;/\n   │  │        ├─•\n   │  │        ┆\n   │  │        ├─•\n   │  │        ┆\n   │  │        ├─•\n   │  │        ┆\n   │  │        └─•\n   │  ├─ manifests/\n   │  │  └─ &lt;capture&gt;/\n   │  │     ├─•\n   │  │     ┆\n   │  │     ├─•\n   │  │     ┆\n   │  │     ├─•\n   │  │     ┆\n   │  │     └─•\n   │  └─ tags/\n   │     └─ list/\n   │        └─•\n   ┆\n   └─ _catalog/\n      └─•\n</code></pre>\n<p>This matches up with the spec quite well and gives us a nice base to\nstart writing more specific code without worrying about whether we’ll\nmiss a route.</p>\n<h2 id=\"the-types\">The Types</h2>\n<p>If we take a closer look at the types we just wrote out we see a bunch\nof concepts including <code>Name</code>, <code>Tags</code>, <code>Manifests</code>, <code>Blobs</code>, and\n<code>Digests</code>. Interestingly, we don’t see an <code>Image</code> or <code>Container</code>\nanywhere.</p>\n<h3 id=\"name\">Name</h3>\n<p>We use <code>Name</code> to represent an repository name. <code>Name</code>s must adhere to\na specific regex (<code>[a-z0-9]+(?:[._-][a-z0-9]+)*</code>) and be less than 256\ncharacters. In plain english from the spec:</p>\n<blockquote>\n<p>A repository name is broken up into path components. A component of\na repository name must be at least one lowercase, alpha-numeric\ncharacters, optionally separated by periods, dashes or\nunderscores.</p>\n</blockquote>\n<h3 id=\"tags\">Tags</h3>\n<p><code>Tags</code> are strings that reference images. For example, if we were\nusing <code>debian</code> and wanted to only use the tag <code>jessie</code>, we could pull\nusing the format <code>debian:jessie</code>.</p>\n<h3 id=\"manifests\">Manifests</h3>\n<p>An image manifest provides a configuration and a set of\nlayers for a container image. It looks like the following JSON:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>{\n    <span class=\"highlight__hljs-string___1SffY\">\"schemaVersion\"</span>: <span class=\"highlight__hljs-number___2gmaH\">2</span>,\n    <span class=\"highlight__hljs-string___1SffY\">\"mediaType\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.distribution.manifest.v2+json\"</span>,\n    <span class=\"highlight__hljs-string___1SffY\">\"config\"</span>: {\n        <span class=\"highlight__hljs-string___1SffY\">\"mediaType\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.container.image.v1+json\"</span>,\n        <span class=\"highlight__hljs-string___1SffY\">\"size\"</span>: <span class=\"highlight__hljs-number___2gmaH\">7023</span>,\n        <span class=\"highlight__hljs-string___1SffY\">\"digest\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"sha256:b5b2b2c507a0944348e0303114d8d93aaaa081732b86451d9bce1f432a537bc7\"</span>\n    },\n    <span class=\"highlight__hljs-string___1SffY\">\"layers\"</span>: [\n        {\n            <span class=\"highlight__hljs-string___1SffY\">\"mediaType\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.image.rootfs.diff.tar.gzip\"</span>,\n            <span class=\"highlight__hljs-string___1SffY\">\"size\"</span>: <span class=\"highlight__hljs-number___2gmaH\">32654</span>,\n            <span class=\"highlight__hljs-string___1SffY\">\"digest\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"sha256:e692418e4cbaf90ca69d05a66403747baa33ee08806650b51fab815ad7fc331f\"</span>\n        },\n        {\n            <span class=\"highlight__hljs-string___1SffY\">\"mediaType\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.image.rootfs.diff.tar.gzip\"</span>,\n            <span class=\"highlight__hljs-string___1SffY\">\"size\"</span>: <span class=\"highlight__hljs-number___2gmaH\">16724</span>,\n            <span class=\"highlight__hljs-string___1SffY\">\"digest\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"sha256:3c3a4604a545cdc127456d94e421cd355bca5b528f4a9c1905b15da2eb4a4c6b\"</span>\n        },\n        {\n            <span class=\"highlight__hljs-string___1SffY\">\"mediaType\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.image.rootfs.diff.tar.gzip\"</span>,\n            <span class=\"highlight__hljs-string___1SffY\">\"size\"</span>: <span class=\"highlight__hljs-number___2gmaH\">73109</span>,\n            <span class=\"highlight__hljs-string___1SffY\">\"digest\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"sha256:ec4b8955958665577945c89419d1af06b5f7636b4ac3da7f12184802ad867736\"</span>\n        }\n    ],\n}\n</code></pre>\n<h3 id=\"blobs-digests\">Blobs &amp; Digests</h3>\n<p>Layers are stored in the blob portion of the registry, keyed by\ndigest.</p>\n<h2 id=\"our-first-handler\">Our First Handler</h2>\n<p>The first route we’ll look at implementing is also the most\nsimple. It’s the route that lets clients know that this registry\nimplements the V2 APIs.</p>\n<p>The type of the <code>/v2</code> route is</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">type</span> <span class=\"highlight__hljs-type___11WfV\">V2Base</span> = \"v2\" :&gt; <span class=\"highlight__hljs-type___11WfV\">Get</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n  <span class=\"highlight__hljs-type___11WfV\">Header</span> \"<span class=\"highlight__hljs-type___11WfV\">Docker</span>-<span class=\"highlight__hljs-type___11WfV\">Distribution</span>-<span class=\"highlight__hljs-type___11WfV\">API</span>-<span class=\"highlight__hljs-type___11WfV\">Version</span>\" <span class=\"highlight__hljs-type___11WfV\">String</span>\n  ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)</span>\n</code></pre>\n<p>Which breaks down to a <code>GET</code> request with an <code>application/json</code>\ncontent type. The response has a single header,\n<code>Docker-Distribution-API-Version</code>, which is what lets a client know\nwhich API version our registry implements. We also send back no body\ncontent. Finally, we can dig a bit deeper into <code>Get</code>, which is a type\nalias for <code>Verb 'GET 200</code>. This tells us that a successful response\nwill have a 200 code.</p>\n<p>The only other valid codes for this route <code>401 Unauthorized</code> and <code>429 Too Many Requests</code> but since we haven’t implemented authorization or\nrate-limiting, we’ll skip that for now.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">v2</span> :: <span class=\"highlight__hljs-type___11WfV\">App</span> (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[<span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Distribution-API-Version\"</span> <span class=\"highlight__hljs-type___11WfV\">String</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n<span class=\"highlight__hljs-title___1fl8Q\">v2</span> = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  $(logTM) <span class=\"highlight__hljs-type___11WfV\">InfoS</span> <span class=\"highlight__hljs-string___1SffY\">\"registry/2.0\"</span>\n  return $ addHeader <span class=\"highlight__hljs-string___1SffY\">\"registry/2.0\"</span> <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n</code></pre>\n<p>Our logging is pretty basic right now. We’ll worry about bulking it up\nlater. For now, we’re going to leave the default Katip stdout which\nleaves us with time, loglevel, hostname (container id), thread id and\nsource location:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>[2016-08-08 21:47:50][superhuman-registry][Info][85f79bec070f][33][ThreadId 11][sr-0.1.0.0-61fGnb6tOFbKD5fzBNSxKr:Lib src/Lib.hs:63:5] registry/2.0\n</code></pre>\n<h1 id=\"dealing-with-layers\">Dealing with Layers</h1>\n<p>The primary purpose of a Registry is to store layers and manifests so\na client (such as a Docker Engine) can pull images. We’ll avoid\nsupporting legacy versions of the registry for security and simplicity\nreasons, which means our registry will only work for docker 1.10 and\nabove. Benefits of this include not having to rewrite v2 manifests\ninto the v1 format.</p>\n<h2 id=\"docker-client\">Docker Client</h2>\n<p>We need to figure out what the docker is doing on a push. Since I’m\nrunning Docker for Mac, booting a server to act as a registry is\npretty simple. We’ll use <code>nc</code> for a first attempt.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>docker run -itp 9000:9000 alpine nc -l 9000\n</code></pre>\n<p>Now that we have a server acting as a “registry”, we need to tag and\npush an image to it.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>&gt; docker tag hello-world localhost:9000/hello-world\n&gt; docker push localhost:9000/hello-world\nThe push refers to a repository [localhost:9000/hello-world]\nPut http://localhost:9000/v1/repositories/hello-world/: EOF\n</code></pre>\n<p>Great! Our server is listening and the engine is pushing to the right\nplace. If it wasn’t, we could’ve seen something like this:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>Put http://localhost:9000/v1/repositories/hello-world/: read tcp\n[::1]:56492-&gt;[::1]:9000: read: connection reset by peer\n</code></pre>\n<p>There’s a problem though, <code>nc</code> doesn’t implement the <code>/v2/</code> endpoint,\nso the docker client falls back to v1 of the api. Luckily, we’ve\nimplemented the v2 endpoint already so we’ll skip netcat and jump back\ninto Haskell.</p>\n<p>We can use <code>Wai.Middleware.RequestLogger</code> to log out everything docker\ntries to do to our registry. Using docker-compose to boot up our\nregistry and re-attempting the push yields:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>api_1  | GET /v2/\napi_1  |   Accept:\napi_1  |   Status: 200 OK 0.000190373s\napi_1  | Prelude.undefined\napi_1  | CallStack (from HasCallStack):\napi_1  |   error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err\napi_1  |   undefined, called at src/SR/Blobs.hs:26:14 in sr-0.1.0.0-5isXdkrmBvbJTFdJY734op:SR.Blobs\napi_1  | Prelude.undefined\napi_1  | CallStack (from HasCallStack):\napi_1  |   error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err\napi_1  |   undefined, called at src/SR/Blobs.hs:26:14 in sr-0.1.0.0-5isXdkrmBvbJTFdJY734op:SR.Blobs\n</code></pre>\n<p>From the information, we see that the <code>/v2/</code> route is working as\nexpected, but we hit <code>undefined</code> at <code>src/SR/Blobs.hs:26:14</code>, which is\ntotally expected because we haven’t implemented <code>uploadBlob</code>\nyet. Notice that the engine retries the upload request.</p>\n<p>If the route didn’t exist, we would have seen a 404 in the logs.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>api_1  | GET /v2/\napi_1  |   Accept:\napi_1  |   Status: 200 OK 0.011277359s\napi_1  | POST /v2/hello-world/blobs/uploads/\napi_1  |   Accept:\napi_1  |   Status: 404 Not Found 0.000028066s\n</code></pre>\n<p>This matches with what we know about the\n<a href=\"https://github.com/docker/distribution/blob/dea554fc7cce2f2e7af5b1e1d38e28c5e96e1d9e/docs/spec/api.md#starting-an-upload\">upload process</a>.</p>\n<h2 id=\"uploadblob\">uploadBlob</h2>\n<p>We can throw a couple print statements in to replace the undefined as\nsuch:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">uploadBlob</span> :: <span class=\"highlight__hljs-type___11WfV\">Namespace</span> -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span> -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n<span class=\"highlight__hljs-title___1fl8Q\">uploadBlob</span> namespace' name' = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  liftIO $ print namespace'\n  liftIO $ print name'\n  return <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n</code></pre>\n<p>Which will yield us some progress when trying to push.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>api_1  | GET /v2/\napi_1  |   Accept:\napi_1  |   Status: 200 OK 0.004299263s\napi_1  | Namespace &quot;lib&quot;\napi_1  | Name &quot;hello-world&quot;\napi_1  | POST /v2/lib/hello-world/blobs/uploads/\napi_1  |   Accept:\napi_1  |   Status: 200 OK 0.000105174s\n</code></pre>\n<p>This is good progress, but we clearly have some issues since the\ndocker engine is still retrying the endpoint.</p>\n<p>There are two approaches to blob upload\n<a href=\"https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-monolithic-blob-upload\">monolithic</a> and\n<a href=\"https://github.com/docker/distribution/blob/b1b100cf011b037b8821e8d0ae4f5ab3e2222c48/docs/spec/api.md#initiate-resumable-blob-upload\">resumeable</a>. The docs for\n<code>/v2/&lt;name&gt;/blobs/uploads</code> detail that the digest query param is the\ndifferentiator between monolithic and resumable upload.</p>\n<blockquote>\n<p>Initiate a resumable blob upload. If successful, an upload location\nwill be provided to complete the upload. Optionally, if the digest\nparameter is present, the request body will be used to complete the\nupload in a single request.</p>\n</blockquote>\n<p>Let’s take a look at an implementation for the <code>uploadBlob</code>\n(<code>&lt;&gt;/blobs/uploads</code>) route. We modifiy the type to reflect the various\nheaders and response codes (docker engine is a picky client). All of\nthe relevant information is communicated through headers, so we return\n<code>NoContent</code> as well. <code>PostAccepted</code> is a shortcut for <code>202</code> responses.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-type___11WfV\">PostAccepted</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n  <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Location\"</span> <span class=\"highlight__hljs-type___11WfV\">URI</span>,\n  <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Range\"</span> <span class=\"highlight__hljs-type___11WfV\">String</span>,\n  <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Upload-UUID\"</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n</code></pre>\n<p>Now the handler code. We generate a new uuid to send back in the\nresponse. Our first go is just trying to get the docker client to\ncontinue to the next request but in the future we should do something\nwith the uuid so we can respond to status requests. <code>uploadAPI</code> might\nlook scary, but it’s just specifying the route we want to generate for\nthe <code>Location</code> header. We do this so that Servant will automatically\ncheck that the route is valid for the <code>api</code> we are serving and we get\na compile error if it doesn’t typecheck.</p>\n<p>We add 3 headers, setting the Range to <code>&quot;0-0&quot;</code> because we are only\nresponding to resumable upload requests for now. (Otherwise we’d have\nto handle the case of an extra query string parameter). Once we\ngenerate the <code>Location</code> and the <code>Docker-Upload-UUID</code>, we send them\nback so the docker engine can start uploading blobs at the specified\n<code>Location</code>.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">uploadBlob</span> :: <span class=\"highlight__hljs-type___11WfV\">Namespace</span> -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span> -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Location\"</span> <span class=\"highlight__hljs-type___11WfV\">URI</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Range\"</span> <span class=\"highlight__hljs-type___11WfV\">String</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Upload-UUID\"</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n  ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n<span class=\"highlight__hljs-title___1fl8Q\">uploadBlob</span> namespace' name' = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  uuid &lt;- liftIO $ nextRandom\n  <span class=\"highlight__hljs-keyword___som98\">let</span> uploadAPI = <span class=\"highlight__hljs-type___11WfV\">Proxy</span> :: <span class=\"highlight__hljs-type___11WfV\">Proxy</span> (<span class=\"highlight__hljs-string___1SffY\">\"v2\"</span> :&gt; <span class=\"highlight__hljs-type___11WfV\">Capture</span> <span class=\"highlight__hljs-string___1SffY\">\"namespace\"</span> <span class=\"highlight__hljs-type___11WfV\">Namespace</span> :&gt; <span class=\"highlight__hljs-type___11WfV\">Capture</span> <span class=\"highlight__hljs-string___1SffY\">\"name\"</span> <span class=\"highlight__hljs-type___11WfV\">Name</span> :&gt; <span class=\"highlight__hljs-string___1SffY\">\"blobs\"</span> :&gt; <span class=\"highlight__hljs-string___1SffY\">\"uploads\"</span> :&gt; <span class=\"highlight__hljs-type___11WfV\">Capture</span> <span class=\"highlight__hljs-string___1SffY\">\"uuid\"</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span> :&gt; <span class=\"highlight__hljs-type___11WfV\">Put</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n      mkURI = safeLink api uploadAPI\n      uri = mkURI namespace' name' uuid\n      response = addHeader uri\n        $ addHeader <span class=\"highlight__hljs-string___1SffY\">\"0-0\"</span>\n        $ addHeader uuid <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n  $(logTM) <span class=\"highlight__hljs-type___11WfV\">InfoS</span> (logStr $ show $ getHeaders response)\n  return response\n</code></pre>\n<p>We also need a couple instances which allow us to render types like\n<code>UUID</code> into path components and headers. (note: these are orphan\ninstances, but we could fix that by using a newtype and declaring the\ninstances for the newtypes instead).</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">instance</span> <span class=\"highlight__hljs-type___11WfV\">FromHttpApiData</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span> <span class=\"highlight__hljs-keyword___som98\">where</span></span>\n  parseUrlPiece text = <span class=\"highlight__hljs-keyword___som98\">case</span> (fromText text) <span class=\"highlight__hljs-keyword___som98\">of</span>\n    <span class=\"highlight__hljs-type___11WfV\">Nothing</span> -&gt; <span class=\"highlight__hljs-type___11WfV\">Left</span> $ <span class=\"highlight__hljs-type___11WfV\">T</span>.append <span class=\"highlight__hljs-string___1SffY\">\"Invalid UUID\"</span> text\n    <span class=\"highlight__hljs-type___11WfV\">Just</span> uuid -&gt; <span class=\"highlight__hljs-type___11WfV\">Right</span> uuid\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">instance</span> <span class=\"highlight__hljs-type___11WfV\">ToByteString</span> <span class=\"highlight__hljs-type___11WfV\">URI</span> <span class=\"highlight__hljs-keyword___som98\">where</span></span>\n  builder = lazyByteString . pack . show\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">instance</span> <span class=\"highlight__hljs-type___11WfV\">ToHttpApiData</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span> <span class=\"highlight__hljs-keyword___som98\">where</span></span>\n  toUrlPiece = toText\n  toHeader = toASCIIBytes\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">instance</span> <span class=\"highlight__hljs-type___11WfV\">ToByteString</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span> <span class=\"highlight__hljs-keyword___som98\">where</span></span>\n  builder = lazyByteString . toLazyASCIIBytes\n</code></pre>\n<p>We push again to test the route</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>docker push localhost:9000/lib/hello-world\n</code></pre>\n<p>And voilà, we get the desired effect. The docker engine accepts the\nUUID and tries to upload blobs to <code>PATCH /v2/lib/hello-world/blobs/uploads/v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55</code>. That’s\ntotally not the right URI though. We’ve accidentally used a relative\nURI in our <code>Location</code> header. We’ll fix that though 😃</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>GET /v2/\n  Accept:\n  Status: 200 OK 0.000458567s\n[2016-08-30 18:12:49][superhuman-registry][Info][b4fa86e02706][6258][ThreadId 15][sr-0.1.0.0-4uXdy03mbpG98AEB4xHfiO:SR.Blobs src/SR/Blobs.hs:47:5] [(&quot;Location&quot;,&quot;v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55&quot;),(&quot;Range&quot;,&quot;0-0&quot;),(&quot;Docker-Upload-UUID&quot;,&quot;aeab6f5e-4b80-4c7b-9027-616b1cbe6a55&quot;)]\nPOST /v2/lib/hello-world/blobs/uploads/\n  Accept:\n  Status: 202 Accepted 0.000303745s\nPATCH /v2/lib/hello-world/blobs/uploads/v2/lib/hello-world/blobs/uploads/aeab6f5e-4b80-4c7b-9027-616b1cbe6a55\n  Accept:\n  Status: 404 Not Found 0.000041239s\n</code></pre>\n<h2 id=\"patchblob\">patchBlob</h2>\n<p>The <a href=\"https://github.com/docker/distribution/blob/41f383fb9a3b4e3ff428a92db4f7836f8053058b/docs/spec/api.md#patch-blob-upload\">next route</a>, as shown in the logs above, is\nthe <code>PATCH</code> to the <code>Location</code> header we sent back down. The type for\nthe <code>PATCH</code> route changes to:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-type___11WfV\">ReqBody</span> '[<span class=\"highlight__hljs-type___11WfV\">OctetStream</span>] <span class=\"highlight__hljs-type___11WfV\">ByteString</span> :&gt;\n  <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"range\"</span> <span class=\"highlight__hljs-type___11WfV\">String</span> :&gt;\n  <span class=\"highlight__hljs-type___11WfV\">PatchNoContent</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Location\"</span> <span class=\"highlight__hljs-type___11WfV\">URI</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Range\"</span> <span class=\"highlight__hljs-type___11WfV\">String</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Upload-UUID\"</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n  ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n</code></pre>\n<p>We need to accept and echo back the <code>Range</code> header, while the request\nbody comes in as an <code>OctetStream</code>. We take this information and just\nwrite out the <code>OctetStream</code> to a file for now.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">patchBlob</span> :: <span class=\"highlight__hljs-type___11WfV\">Namespace</span>\n          -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span>\n          -&gt; <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n          -&gt; <span class=\"highlight__hljs-type___11WfV\">ByteString</span>\n          -&gt; <span class=\"highlight__hljs-type___11WfV\">Maybe</span> <span class=\"highlight__hljs-type___11WfV\">String</span>\n          -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Location\"</span> <span class=\"highlight__hljs-type___11WfV\">URI</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Range\"</span> <span class=\"highlight__hljs-type___11WfV\">String</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Upload-UUID\"</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n  ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n<span class=\"highlight__hljs-title___1fl8Q\">patchBlob</span> namespace' name' uuid' blob range' = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  liftIO $ <span class=\"highlight__hljs-type___11WfV\">Data</span>.<span class=\"highlight__hljs-type___11WfV\">ByteString</span>.writeFile (<span class=\"highlight__hljs-string___1SffY\">\"./tmp/\"</span> ++ toString uuid') blob\n  response &lt;- mkHeaders range' uuid' namespace' name'\n  return response\n</code></pre>\n<p>With this code (and another upload attempt from the engine), we can\nsee that the next request is a <code>PUT</code>, which indicates the last request\nfor this layer.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>GET /v2/\n  Accept:\n  Status: 200 OK 0.005978465s\n[2016-09-03 20:21:39][superhuman-registry][Info][b4fa86e02706][130][ThreadId 14][sr-0.1.0.0-7Q5s7SCyVcbA5o0UAD7J0W:SR.Blobs src/SR/Blobs.hs:74:5] [(&quot;Location&quot;,&quot;http://localhost:9000/v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b&quot;),(&quot;Range&quot;,&quot;0-0&quot;),(&quot;Docker-Upload-UUID&quot;,&quot;f525cc29-b588-417b-aac2-85c5752ce07b&quot;)]\nPOST /v2/lib/hello-world/blobs/uploads/\n  Accept:\n  Status: 202 Accepted 0.000442272s\nPATCH /v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b\n  Accept:\n  Status: 204 No Content 0.012519558s\nPUT /v2/lib/hello-world/blobs/uploads/f525cc29-b588-417b-aac2-85c5752ce07b\n  Params: [(&quot;digest&quot;,&quot;sha256:a9d36faac0fe2a855f798346f33bd48917bf3af9b6e4b77870ef8862fee8a8a3&quot;)]\n  Accept:\n  Status: 200 OK 0.000077408s\n</code></pre>\n<h2 id=\"putblob\">putBlob</h2>\n<p>After <code>PATCH</code>s finish flowing in, the client sends a <code>PUT</code> request\nwith the digest and potentially any final layer content. Note that at\nthis point, we have not implemented any append functionality so our\n<code>PATCH</code> endpoint will only work for small layers. Likewise, our <code>PUT</code>\nand the <code>HEAD</code> that comes after it will be very minimal, omitting\ncritical functionality. This is so that we can get through all of the\nrequests and confirm a full upload flow.</p>\n<p>The <code>Digest</code> for a layer is a sha256 hash as such:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>sha256:6c3c624b58dbbcd3c0dd82b4c53f04194d1247c6eebdaab7c610cf7d66709b3b\n</code></pre>\n<p>Our handler will just emit <code>NoContent</code> so we can skip the validation\ncode and get on with groking the entire request flow.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">putBlob</span> :: <span class=\"highlight__hljs-type___11WfV\">Namespace</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">Maybe</span> <span class=\"highlight__hljs-type___11WfV\">Digest</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n<span class=\"highlight__hljs-title___1fl8Q\">putBlob</span> namespace' name' uuid' digest' = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  <span class=\"highlight__hljs-keyword___som98\">case</span> digest' <span class=\"highlight__hljs-keyword___som98\">of</span>\n    <span class=\"highlight__hljs-type___11WfV\">Nothing</span> -&gt; return <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n    <span class=\"highlight__hljs-type___11WfV\">Just</span> a -&gt; return <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n</code></pre>\n<h2 id=\"headdigest\">headDigest</h2>\n<p>This is getting familiar, so we will move on to a minimal <code>HEAD</code> which\nis a request to check to see if a particular layer (identified by\n<code>Digest</code>) has been uploaded. Our version responds “yes” to every\nsingle <code>HEAD</code> request, indicating that the layer exists in the\nregistry already. Luckily for us the Docker client doesn’t seem to\nvalidate the <code>Content-Length</code> header which means we can just echo the\n<code>Digest</code> back in a header and call it done.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">headDigest</span> :: <span class=\"highlight__hljs-type___11WfV\">Namespace</span>\n           -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span>\n           -&gt; <span class=\"highlight__hljs-type___11WfV\">Digest</span>\n           -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Content-Length\"</span> <span class=\"highlight__hljs-type___11WfV\">Int</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Content-Digest\"</span> <span class=\"highlight__hljs-type___11WfV\">Digest</span>\n    ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n<span class=\"highlight__hljs-title___1fl8Q\">headDigest</span> namespace' name' digest' = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  return $ addHeader <span class=\"highlight__hljs-number___2gmaH\">0</span>\n         $ addHeader digest' <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n</code></pre>\n<h2 id=\"putmanifest\">putManifest</h2>\n<p>With the rest of the pieces in place, we receive a <code>PUT</code> to upload the\n<code>Manifest</code> for an image. When uploading the <code>Manifest</code> for an image,\nit is interesting to note that this is the first reference to a <code>Tag</code>\nthat we have seen so far. In this case, it is <code>latest</code>.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>PUT /v2/lib/hello-world/manifests/latest\n</code></pre>\n<p>It is also interesting to remind ourselves that <code>docker pull</code> works if\nwe use the sha256 hash of the <code>Manifest</code>. To see this in action let’s\ngrab the sha for <code>hello-world</code>, which we’ve been using to test our\nregistry.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>&gt; docker inspect <span class=\"hljs-_\">-f</span> <span class=\"highlight__hljs-string___1SffY\">\"{{ .RepoDigests}}\"</span> hello-world\n[hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9]\n&gt; docker pull hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9\nsha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9: Pulling from library/hello-world\nDigest: sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9\nStatus: Image is up to date <span class=\"highlight__hljs-keyword___som98\">for</span> hello-world@sha256:0256e8a36e2070f7bf2d0b0763dbabdd67798512411de4cdcf9431a1feb60fd9\n</code></pre>\n<p>This is useful because a <code>Reference</code>, which is the final path segment\nin the <code>PUT</code> URL, can be a <code>Digest</code> OR a <code>Tag</code>. We need to know this\nbecause the response headers need the <code>Digest</code>.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>201 Created\nLocation: &lt;url&gt;\nContent-Length: 0\nDocker-Content-Digest: &lt;digest&gt;\n</code></pre>\n<h3 id=\"manifests\">Manifests</h3>\n<p>The <code>Manifest</code> for <code>hello-world</code> is a\n<a href=\"https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-2.md#image-manifest-field-descriptions\">v2+json</a>\nstyle manifest. The other major option for us is going to be a\nManifest List, aka a Fat Manifest. Our <code>Manifest</code> looks as the\nfollowing, with a single layer.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>{\n   <span class=\"highlight__hljs-string___1SffY\">\"schemaVersion\"</span>: <span class=\"highlight__hljs-number___2gmaH\">2</span>,\n   <span class=\"highlight__hljs-string___1SffY\">\"mediaType\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.distribution.manifest.v2+json\"</span>,\n   <span class=\"highlight__hljs-string___1SffY\">\"config\"</span>: {\n      <span class=\"highlight__hljs-string___1SffY\">\"mediaType\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.container.image.v1+json\"</span>,\n      <span class=\"highlight__hljs-string___1SffY\">\"digest\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"sha256:c54a2cc56cbb2f04003c1cd4507e118af7c0d340fe7e2720f70976c4b75237dc\"</span>\n   },\n   <span class=\"highlight__hljs-string___1SffY\">\"layers\"</span>: [\n      {\n         <span class=\"highlight__hljs-string___1SffY\">\"mediaType\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.image.rootfs.diff.tar.gzip\"</span>,\n         <span class=\"highlight__hljs-string___1SffY\">\"size\"</span>: <span class=\"highlight__hljs-number___2gmaH\">1</span>,\n         <span class=\"highlight__hljs-string___1SffY\">\"digest\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"sha256:c04b14da8d1441880ed3fe6106fb2cc6fa1c9661846ac0266b8a5ec8edf37b7c\"</span>\n      }\n   ]\n}\n</code></pre>\n<p>We can parse the above <code>Manifest</code> JSON into the following Haskell\ndatatype. In the future we can also do digest validation for each\ndigest in the manifest.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-type___11WfV\">V2_2</span> {\n  schemaVersion = <span class=\"highlight__hljs-number___2gmaH\">2</span>,\n  mediaType = <span class=\"highlight__hljs-type___11WfV\">Manifest_V2_JSON</span>,\n  config = <span class=\"highlight__hljs-type___11WfV\">Config</span> {\n      cMediaType = <span class=\"highlight__hljs-type___11WfV\">V1_JSON</span>,\n      cSize = <span class=\"highlight__hljs-number___2gmaH\">7023</span>,\n      cDigest = <span class=\"highlight__hljs-string___1SffY\">\"sha256:b5b2b2c507a0944348e0303114d8d93aaaa081732b86451d9bce1f432a537bc7\"</span>\n      },\n  layers = [\n      <span class=\"highlight__hljs-type___11WfV\">Layer</span> {\n          lMediaType = <span class=\"highlight__hljs-type___11WfV\">Diff</span>,\n          lSize = <span class=\"highlight__hljs-number___2gmaH\">32654</span>,\n          lDigest = <span class=\"highlight__hljs-string___1SffY\">\"sha256:e692418e4cbaf90ca69d05a66403747baa33ee08806650b51fab815ad7fc331f\"</span>,\n          lUrls = <span class=\"highlight__hljs-type___11WfV\">Nothing</span>\n          },\n      <span class=\"highlight__hljs-type___11WfV\">Layer</span> {\n          lMediaType = <span class=\"highlight__hljs-type___11WfV\">Diff</span>,\n          lSize = <span class=\"highlight__hljs-number___2gmaH\">16724</span>,\n          lDigest = <span class=\"highlight__hljs-string___1SffY\">\"sha256:3c3a4604a545cdc127456d94e421cd355bca5b528f4a9c1905b15da2eb4a4c6b\"</span>,\n          lUrls = <span class=\"highlight__hljs-type___11WfV\">Nothing</span>\n          },\n      <span class=\"highlight__hljs-type___11WfV\">Layer</span> {\n          lMediaType = <span class=\"highlight__hljs-type___11WfV\">Diff</span>,\n          lSize = <span class=\"highlight__hljs-number___2gmaH\">73109</span>,\n          lDigest = <span class=\"highlight__hljs-string___1SffY\">\"sha256:ec4b8955958665577945c89419d1af06b5f7636b4ac3da7f12184802ad867736\"</span>,\n          lUrls = <span class=\"highlight__hljs-type___11WfV\">Nothing</span>\n          }\n      ]\n  }\n</code></pre>\n<p>For us, it is important to note how the mechanics behind backward\ncompatibility work.</p>\n<blockquote>\n<p>When pushing images, clients which support the new manifest format\nshould first construct a manifest in the new format.</p>\n</blockquote>\n<p>Which is great for us because that means we only have to code support\nfor v2 manifests and compatible clients will behave appropriately.</p>\n<h3 id=\"implementing-the-handler\">Implementing the Handler</h3>\n<p>At this point, it’s useful to set up a proxy. After doing that, we can\nlog out arbitrary parts of the requests/responses to find the\nfollowing headers coming from the docker engine request to <code>putManifest</code>.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>{\n  <span class=\"highlight__hljs-string___1SffY\">\"connection\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"close\"</span>,\n  <span class=\"highlight__hljs-string___1SffY\">\"accept-encoding\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"gzip\"</span>,\n  <span class=\"highlight__hljs-string___1SffY\">\"content-type\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"application/vnd.docker.distribution.manifest.v2+json\"</span>,\n  <span class=\"highlight__hljs-string___1SffY\">\"content-length\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"482\"</span>,\n  <span class=\"highlight__hljs-string___1SffY\">\"user-agent\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"docker/1.12.1 go/go1.6.3 git-commit/23cf638 kernel/4.4.20-moby os/linux arch/amd64 UpstreamClient(Docker-Client/1.12.1 \\\\(darwin\\\\))\"</span>,\n  <span class=\"highlight__hljs-string___1SffY\">\"host\"</span>: <span class=\"highlight__hljs-string___1SffY\">\"localhost:8000\"</span>\n}\n</code></pre>\n<p>The one we <em>really</em> care about is the <code>Content-Type</code> header. The\nrequest identifies the type of <code>Manifest</code> based on the <code>Content-Type</code>,\nso we can easily handle different <code>Manifest</code> content. To add support\nfor the <code>vnd.docker.distribution.manifest.v2+json</code> <code>Content-Type</code>, we\ncan write the implementation for a new Servant <code>Content-Type</code>.</p>\n<p><a href=\"/servant-custom-content-types/\">Read More on Custom Content-Types</a></p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">data</span> <span class=\"highlight__hljs-type___11WfV\">HashedJSON</span> = <span class=\"highlight__hljs-type___11WfV\">HashedJSON</span> <span class=\"highlight__hljs-type___11WfV\">String</span></span>\n<span class=\"highlight__hljs-class___mOeOV\">\n<span class=\"highlight__hljs-keyword___som98\">instance</span> <span class=\"highlight__hljs-type___11WfV\">Accept</span> <span class=\"highlight__hljs-type___11WfV\">HashedJSON</span> <span class=\"highlight__hljs-keyword___som98\">where</span></span>\n  contentType _ = <span class=\"highlight__hljs-string___1SffY\">\"application\"</span> // <span class=\"highlight__hljs-string___1SffY\">\"vnd.docker.distribution.manifest.v2+json\"</span>\n<span class=\"highlight__hljs-class___mOeOV\">\n<span class=\"highlight__hljs-keyword___som98\">instance</span> <span class=\"highlight__hljs-type___11WfV\">FromJSON</span> a =&gt; <span class=\"highlight__hljs-type___11WfV\">MimeUnrender</span> <span class=\"highlight__hljs-type___11WfV\">HashedJSON</span> (<span class=\"highlight__hljs-type___11WfV\">Digest</span> <span class=\"highlight__hljs-type___11WfV\">SHA256</span>, <span class=\"highlight__hljs-title___1fl8Q\">a</span>) <span class=\"highlight__hljs-keyword___som98\">where</span></span>\n   mimeUnrender _ bs = <span class=\"highlight__hljs-keyword___som98\">case</span> eitherDecodeLenient bs <span class=\"highlight__hljs-keyword___som98\">of</span>\n     <span class=\"highlight__hljs-type___11WfV\">Left</span> err -&gt; <span class=\"highlight__hljs-type___11WfV\">Left</span> err\n     <span class=\"highlight__hljs-type___11WfV\">Right</span> val -&gt; <span class=\"highlight__hljs-type___11WfV\">Right</span> (mkLazyDigest bs, val)\n</code></pre>\n<p>Note that we have also included the ability to hash the incoming\ncontent with this <code>Content-Type</code>. This means our handlers don’t have\nto worry about dealing with hashing.</p>\n<p>Our route with the new <code>Content-Type</code> looks like the following, where\n<code>CH</code> comes from the <a href=\"https://hackage.haskell.org/package/cryptonite\">cryptonite</a> package. The request body\nis specified as a tuple of <code>(Digest, Manfiest)</code> which comes from the\n<code>HashedJSON</code> <code>Content-Type</code>.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>  <span class=\"highlight__hljs-type___11WfV\">ReqBody</span> '[<span class=\"highlight__hljs-type___11WfV\">HashedJSON</span>] (<span class=\"highlight__hljs-type___11WfV\">CH</span>.<span class=\"highlight__hljs-type___11WfV\">Digest</span> <span class=\"highlight__hljs-type___11WfV\">CH</span>.<span class=\"highlight__hljs-type___11WfV\">SHA256</span>, <span class=\"highlight__hljs-type___11WfV\">Manifest</span>) :&gt;\n    <span class=\"highlight__hljs-type___11WfV\">PutCreated</span> '[<span class=\"highlight__hljs-type___11WfV\">JSON</span>] (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n      <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Content-Length\"</span> <span class=\"highlight__hljs-type___11WfV\">Int</span>,\n      <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Content-Digest\"</span> <span class=\"highlight__hljs-type___11WfV\">CDigest</span>\n      ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n</code></pre>\n<p>We are still doing as little work as possible in the handler.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">putManifest</span> :: <span class=\"highlight__hljs-type___11WfV\">Namespace</span>\n            -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span>\n            -&gt; <span class=\"highlight__hljs-type___11WfV\">Ref</span>\n            -&gt; (<span class=\"highlight__hljs-type___11WfV\">CH</span>.<span class=\"highlight__hljs-type___11WfV\">Digest</span> <span class=\"highlight__hljs-type___11WfV\">CH</span>.<span class=\"highlight__hljs-type___11WfV\">SHA256</span>, <span class=\"highlight__hljs-type___11WfV\">Manifest</span>)\n            -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Content-Length\"</span> <span class=\"highlight__hljs-type___11WfV\">Int</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Content-Digest\"</span> <span class=\"highlight__hljs-type___11WfV\">CDigest</span>\n    ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n<span class=\"highlight__hljs-title___1fl8Q\">putManifest</span> namespace' name ref' (digest, manifest) = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  liftIO $ print <span class=\"highlight__hljs-string___1SffY\">\"putManifest\"</span>\n  liftIO $ print digest\n  return $ addHeader <span class=\"highlight__hljs-number___2gmaH\">0</span>\n         $ addHeader (<span class=\"highlight__hljs-type___11WfV\">CDigest</span> digest) <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n</code></pre>\n<p>Success!</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>&quot;putManifest&quot;\n6741f4d4187d8b5bcdf338c6a8dbbef12604e31211b3f57e4873f623f64dba80\nPUT /v2/biscarch/hello-world/manifests/latest\n  Request Body: {\n   &quot;schemaVersion&quot;: 2,\n   &quot;mediaType&quot;: &quot;application/vnd.docker.distribution.manifest.v2+json&quot;,\n   &quot;config&quot;: {\n      &quot;mediaType&quot;: &quot;application/vnd.docker.container.image.v1+json&quot;,\n      &quot;digest&quot;: &quot;sha256:c54a2cc56cbb2f04003c1cd4507e118af7c0d340fe7e2720f70976c4b75237dc&quot;\n   },\n   &quot;layers&quot;: [\n      {\n         &quot;mediaType&quot;: &quot;application/vnd.docker.image.rootfs.diff.tar.gzip&quot;,\n         &quot;digest&quot;: &quot;sha256:c04b14da8d1441880ed3fe6106fb2cc6fa1c9661846ac0266b8a5ec8edf37b7c&quot;\n      }\n   ]\n}\n  Accept:\n  Status: 201 Created 0.000758785s\n</code></pre>\n<hr>\n<h1 id=\"a-gadt-rises\">A GADT Rises</h1>\n<p>Now that we have a fully “working” image upload (at least, the docker\nengine is convinced we handled everything correctly), we have two ways\nforward.</p>\n<ol>\n<li>Truly implement <code>push</code> compatibility complete with resumable\nupload, etc.</li>\n<li>Execute the same “as little as possible” process to complete a\n<code>docker pull</code>.</li>\n</ol>\n<p>Since we eventually we want to support multiple backends, Option 1\nwill have to happen in the future. To do this, we would start off with\na GADT that defines the various operations that need to be implemented\nfor a new backend.</p>\n<p>To refresh, here is the list of handlers we need to implement for\n<code>push</code> compatibility.</p>\n<ul>\n<li>uploadBlob</li>\n<li>patchBlob</li>\n<li>putBlob</li>\n<li>headDigest</li>\n<li>putManifest</li>\n</ul>\n<p>What we want in the end is a Generalized Algebraic Data Type that\ndefines what it means to be a <code>RegistryBackend</code>. An example\ndeclaration for the <code>uploadBlob</code> functionality shows that a compliant\nbackend would need to declare a function which too a <code>RepoName</code>,\n<code>UUID</code>, <code>Maybe Digest</code> and returned an <code>Either UploadError NoContent</code>. We would use <code>UploadError</code> to restrict the types of errors\nwhich come back so we can communicate with exists clients such as the\nDocker engine.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">class</span> <span class=\"highlight__hljs-type___11WfV\">RegistryBackend</span> b <span class=\"highlight__hljs-keyword___som98\">where</span></span>\n  uploadBlob :: b\n             -&gt; <span class=\"highlight__hljs-type___11WfV\">RepoName</span>\n             -&gt; <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n             -&gt; <span class=\"highlight__hljs-type___11WfV\">Maybe</span> <span class=\"highlight__hljs-type___11WfV\">Digest</span>\n             -&gt; <span class=\"highlight__hljs-type___11WfV\">Either</span> <span class=\"highlight__hljs-type___11WfV\">UploadError</span> <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n  ...\n</code></pre>\n<p>This involves a couple of pieces including changing our handler types\nfrom the following (which uses <code>App</code> directly).</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">putBlob</span> :: <span class=\"highlight__hljs-type___11WfV\">Namespace</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">Maybe</span> <span class=\"highlight__hljs-type___11WfV\">Digest</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n</code></pre>\n<p>to something more general. Possibly just a <code>HasRegistryBackend</code>\nconstraint on the monad (<code>App</code> is also a monad).</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">putBlob</span> :: ( <span class=\"highlight__hljs-type___11WfV\">KatipContext</span> m, <span class=\"highlight__hljs-type___11WfV\">RegistryBackend</span> m )\n        =&gt; <span class=\"highlight__hljs-type___11WfV\">Namespace</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n        -&gt; <span class=\"highlight__hljs-type___11WfV\">Maybe</span> <span class=\"highlight__hljs-type___11WfV\">Digest</span>\n        -&gt; m <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n</code></pre>\n<p>This would allow us to move configuration of the server into the\nexecutables while still allowing the library to provide guarentees\nabout what it needs to be able to function. In effect, allowing us to\nbuild binaries that target Postgres, File Systems, and other\ninteresting data stores.</p>\n<p>We will keep this in mind as we move forward with a concrete\nimplementation based on Postgres. This concrete implementation will\ninform us as to which abstractions make sense. An interesting choice\nfor the second store implementation would be something without\ntransactions and different consistency guarentees such as S3 or a KV\nstore.</p>\n<h1 id=\"postgres-uploadblob\">Postgres uploadBlob</h1>\n<p>Since we now need a “real” backend, we’ll spin up Postgres using\n<a href=\"http://sqitch.org/\">sqitch</a> for migrations. The official Postgres image allows us\nto use a shell script to initialize the db so all we need to do in\naddition is install sqitch:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>FROM postgres\n\nRUN apt-get update &amp;&amp; apt-get install sqitch -y\n\nCOPY . /opt/sqitch\nWORKDIR /opt/sqitch\n\nCOPY ./initdb.sh /docker-entrypoint-initdb.d/initdb.sh\n</code></pre>\n<p><a href=\"https://github.com/ChristopherBiscardi/superhuman-registry/blob/9508e1b1b6887c8d4e412fad0ddd8f89676f8192/sqitch/initdb.sh\">initdb.sh</a>\nis the following script to execute sqitch:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>#!/bin/bash\nset -e\n\ncd /opt/sqitch &amp;&amp; sqitch -u &quot;$POSTGRES_USER&quot; deploy --verify\n</code></pre>\n<p>The migrations (in order) are the following three. The first sets up\nour SR schema.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-comment___UYk12\">-- Deploy sr:appschema to pg</span>\n\n<span class=\"highlight__hljs-keyword___som98\">BEGIN</span>;\n\n<span class=\"highlight__hljs-keyword___som98\">CREATE</span> <span class=\"highlight__hljs-keyword___som98\">SCHEMA</span> sr;\n\n<span class=\"highlight__hljs-keyword___som98\">COMMIT</span>;\n</code></pre>\n<p>The second registers uuid-ossp, which we will use when tracking upload\nrequests.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-comment___UYk12\">-- Deploy sr:uuid-ossp to pg</span>\n<span class=\"highlight__hljs-comment___UYk12\">-- requires: appschema</span>\n\n<span class=\"highlight__hljs-keyword___som98\">BEGIN</span>;\n\n<span class=\"highlight__hljs-keyword___som98\">CREATE</span> EXTENSION <span class=\"highlight__hljs-string___1SffY\">\"uuid-ossp\"</span>;\n\n<span class=\"highlight__hljs-keyword___som98\">COMMIT</span>;\n</code></pre>\n<p>Finally, we implement a table with automatic <code>created_at</code> and\n<code>modified_at</code> timestamps. These timestamps will help us implement\ngarbage collection for abandoned uploads. We let Postgres handle\ngeneration of unique UUIDs on <code>INSERT</code> and leave the creation of a\nLarge Object for the future.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-comment___UYk12\">-- Deploy sr:blob-uploads to pg</span>\n<span class=\"highlight__hljs-comment___UYk12\">-- requires: uuid-ossp</span>\n\n<span class=\"highlight__hljs-keyword___som98\">BEGIN</span>;\n\n<span class=\"highlight__hljs-comment___UYk12\">-- Table</span>\n<span class=\"highlight__hljs-keyword___som98\">CREATE</span> <span class=\"highlight__hljs-keyword___som98\">TABLE</span> sr.blob_uploads (\n  <span class=\"highlight__hljs-keyword___som98\">id</span> <span class=\"highlight__hljs-keyword___som98\">UUID</span> PRIMARY <span class=\"highlight__hljs-keyword___som98\">KEY</span> <span class=\"highlight__hljs-keyword___som98\">DEFAULT</span> uuid_generate_v4(),\n  lo_id <span class=\"highlight__hljs-keyword___som98\">OID</span>,\n  repo_name <span class=\"highlight__hljs-built_in___3uuyR\">VARCHAR</span>(<span class=\"highlight__hljs-number___2gmaH\">256</span>) <span class=\"highlight__hljs-keyword___som98\">NOT</span> <span class=\"highlight__hljs-literal___1V6TY\">NULL</span>,\n  created_at <span class=\"highlight__hljs-keyword___som98\">TIMESTAMP</span> <span class=\"highlight__hljs-keyword___som98\">WITH</span> <span class=\"highlight__hljs-keyword___som98\">TIME</span> ZONE <span class=\"highlight__hljs-keyword___som98\">NOT</span> <span class=\"highlight__hljs-literal___1V6TY\">NULL</span>,\n  modified_at <span class=\"highlight__hljs-keyword___som98\">TIMESTAMP</span> <span class=\"highlight__hljs-keyword___som98\">WITH</span> <span class=\"highlight__hljs-keyword___som98\">TIME</span> ZONE <span class=\"highlight__hljs-keyword___som98\">NOT</span> <span class=\"highlight__hljs-literal___1V6TY\">NULL</span>\n);\n\n<span class=\"highlight__hljs-comment___UYk12\">-- Automatically update modified_at</span>\n<span class=\"highlight__hljs-keyword___som98\">CREATE</span> <span class=\"highlight__hljs-keyword___som98\">OR</span> <span class=\"highlight__hljs-keyword___som98\">REPLACE</span> <span class=\"highlight__hljs-keyword___som98\">FUNCTION</span> update_modified_column()\n<span class=\"highlight__hljs-keyword___som98\">RETURNS</span> <span class=\"highlight__hljs-keyword___som98\">TRIGGER</span> <span class=\"highlight__hljs-keyword___som98\">AS</span> $$\n<span class=\"highlight__hljs-keyword___som98\">BEGIN</span>\n    NEW.modified_at = <span class=\"highlight__hljs-keyword___som98\">now</span>();\n    <span class=\"highlight__hljs-comment___UYk12\">-- Force created_at to never change</span>\n    NEW.created_at = OLD.created_at;\n    RETURN NEW;\n<span class=\"highlight__hljs-keyword___som98\">END</span>;\n$$ language 'plpgsql';\n\n<span class=\"highlight__hljs-keyword___som98\">CREATE</span> <span class=\"highlight__hljs-keyword___som98\">TRIGGER</span> update_blob_upload_modtime\n<span class=\"highlight__hljs-keyword___som98\">BEFORE</span> <span class=\"highlight__hljs-keyword___som98\">UPDATE</span> <span class=\"highlight__hljs-keyword___som98\">ON</span> sr.blob_uploads\n<span class=\"highlight__hljs-keyword___som98\">FOR</span> <span class=\"highlight__hljs-keyword___som98\">EACH</span> <span class=\"highlight__hljs-keyword___som98\">ROW</span> <span class=\"highlight__hljs-keyword___som98\">EXECUTE</span> <span class=\"highlight__hljs-keyword___som98\">PROCEDURE</span> update_modified_column();\n\n<span class=\"highlight__hljs-comment___UYk12\">-- | Automatically populate created_at</span>\n<span class=\"highlight__hljs-comment___UYk12\">-- Use a trigger so it's impossible to override on insert</span>\n<span class=\"highlight__hljs-keyword___som98\">CREATE</span> <span class=\"highlight__hljs-keyword___som98\">OR</span> <span class=\"highlight__hljs-keyword___som98\">REPLACE</span> <span class=\"highlight__hljs-keyword___som98\">FUNCTION</span> populate_create_column()\n<span class=\"highlight__hljs-keyword___som98\">RETURNS</span> <span class=\"highlight__hljs-keyword___som98\">TRIGGER</span> <span class=\"highlight__hljs-keyword___som98\">AS</span> $$\n<span class=\"highlight__hljs-keyword___som98\">BEGIN</span>\n    NEW.created_at = <span class=\"highlight__hljs-keyword___som98\">now</span>();\n    NEW.modified_at = now();\n    RETURN NEW;\t\n<span class=\"highlight__hljs-keyword___som98\">END</span>;\n$$ language 'plpgsql';\n\n<span class=\"highlight__hljs-keyword___som98\">CREATE</span> <span class=\"highlight__hljs-keyword___som98\">TRIGGER</span> insert_blob_upload_createtime\n<span class=\"highlight__hljs-keyword___som98\">BEFORE</span> <span class=\"highlight__hljs-keyword___som98\">INSERT</span> <span class=\"highlight__hljs-keyword___som98\">ON</span> sr.blob_uploads\n<span class=\"highlight__hljs-keyword___som98\">FOR</span> <span class=\"highlight__hljs-keyword___som98\">EACH</span> <span class=\"highlight__hljs-keyword___som98\">ROW</span> <span class=\"highlight__hljs-keyword___som98\">EXECUTE</span> <span class=\"highlight__hljs-keyword___som98\">PROCEDURE</span> populate_create_column();\n\n<span class=\"highlight__hljs-keyword___som98\">COMMIT</span>;\n</code></pre>\n<p>To handle the initialization of new uploads, we use the following\nquery which grabs a connection from the pool, executes the statement\nand returns the UUID of the new upload.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-comment___UYk12\">-- | Insert a new upload for a Repos</span>\n<span class=\"highlight__hljs-title___1fl8Q\">startNewUpload</span> :: <span class=\"highlight__hljs-type___11WfV\">Reponame</span> -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n<span class=\"highlight__hljs-title___1fl8Q\">startNewUpload</span> repo = runPG (query repo insertNewUpload)\n\n<span class=\"highlight__hljs-comment___UYk12\">-- | PG automatically creates uuid, created_at and modified_at</span>\n<span class=\"highlight__hljs-title___1fl8Q\">insertNewUpload</span> :: <span class=\"highlight__hljs-type___11WfV\">Query</span> <span class=\"highlight__hljs-type___11WfV\">Text</span> <span class=\"highlight__hljs-type___11WfV\">UUID</span>\n<span class=\"highlight__hljs-title___1fl8Q\">insertNewUpload</span> =\n  statement sql encoder decoder <span class=\"highlight__hljs-type___11WfV\">True</span>\n  <span class=\"highlight__hljs-keyword___som98\">where</span>\n    sql =\n      <span class=\"highlight__hljs-string___1SffY\">\"INSERT INTO sr.blob_uploads (repo_name) VALUES ($1) RETURNING id\"</span>\n    encoder =\n      <span class=\"highlight__hljs-type___11WfV\">E</span>.value <span class=\"highlight__hljs-type___11WfV\">E</span>.text\n    decoder =\n      <span class=\"highlight__hljs-type___11WfV\">D</span>.singleRow (<span class=\"highlight__hljs-type___11WfV\">D</span>.value <span class=\"highlight__hljs-type___11WfV\">D</span>.uuid)\n</code></pre>\n<p><code>runPG</code> is a utility function which handles any connection\nerrors.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">runPG</span> :: <span class=\"highlight__hljs-type___11WfV\">Session</span> a -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> a\n<span class=\"highlight__hljs-title___1fl8Q\">runPG</span> action = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  pool &lt;- asks acPGPool\n  res &lt;- liftIO $ <span class=\"highlight__hljs-type___11WfV\">P</span>.use pool action\n  <span class=\"highlight__hljs-keyword___som98\">case</span> res <span class=\"highlight__hljs-keyword___som98\">of</span>\n    <span class=\"highlight__hljs-type___11WfV\">Left</span> usageError -&gt; <span class=\"highlight__hljs-keyword___som98\">do</span>\n    ...\n</code></pre>\n<h1 id=\"postgres-headblob\">Postgres headBlob</h1>\n<p>At this point I figured out that Docker will ask to mount if you push\nan image, then retag it and push the retagged image.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>docker tag hello-world localhost:9000/biscarch/hello-worlds\ndocker push localhost:9000/biscarch/hello-worlds\ndocker tag hello-world localhost:9000/biscarch/hello-world-2\ndocker push localhost:9000/biscarch/hello-world-2\n</code></pre>\n<p>The last push produces the following request to blob upload:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>GET /v2/\n  Accept:\n  Status: 200 OK 0.002441185s\nPOST /v2/biscarch/hello-world-2/blobs/uploads/\n  Params: [(&quot;from&quot;,&quot;biscarch/hello-worlds&quot;),(&quot;mount&quot;,&quot;sha256:c04b14da8d1441880ed3fe6106fb2cc6fa1c9661846ac0266b8a5ec8edf37b7c&quot;)]\n  Accept:\n</code></pre>\n<p>To implement <code>putBlob</code> we’ll need to make our hacky <code>headBlob</code> return\n404s. This gives us a nice spot to implement a <code>blobs</code> table which\nwill form the basis of our <code>catalog</code>.</p>\n<p>TODO: implement CREATE TABLE <code>blobs</code> here.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-comment___UYk12\">-- Table</span>\n<span class=\"highlight__hljs-keyword___som98\">CREATE</span> <span class=\"highlight__hljs-keyword___som98\">TABLE</span> sr.blobs (\n  <span class=\"highlight__hljs-comment___UYk12\">-- id is a sha256 hash</span>\n  <span class=\"highlight__hljs-comment___UYk12\">-- <span class=\"hljs-doctag\">TODO:</span> limit this to sha256 length?</span>\n  <span class=\"highlight__hljs-keyword___som98\">id</span> <span class=\"highlight__hljs-built_in___3uuyR\">TEXT</span> PRIMARY <span class=\"highlight__hljs-keyword___som98\">KEY</span>,\n  <span class=\"highlight__hljs-comment___UYk12\">-- id of the hashed blob</span>\n  lo_id <span class=\"highlight__hljs-keyword___som98\">OID</span>,\n  <span class=\"highlight__hljs-comment___UYk12\">-- maybe remove repo_name?</span>\n  repo_name <span class=\"highlight__hljs-built_in___3uuyR\">VARCHAR</span>(<span class=\"highlight__hljs-number___2gmaH\">256</span>) <span class=\"highlight__hljs-keyword___som98\">NOT</span> <span class=\"highlight__hljs-literal___1V6TY\">NULL</span>,\n  created_at <span class=\"highlight__hljs-keyword___som98\">TIMESTAMP</span> <span class=\"highlight__hljs-keyword___som98\">WITH</span> <span class=\"highlight__hljs-keyword___som98\">TIME</span> ZONE <span class=\"highlight__hljs-keyword___som98\">NOT</span> <span class=\"highlight__hljs-literal___1V6TY\">NULL</span>,\n  modified_at <span class=\"highlight__hljs-keyword___som98\">TIMESTAMP</span> <span class=\"highlight__hljs-keyword___som98\">WITH</span> <span class=\"highlight__hljs-keyword___som98\">TIME</span> ZONE <span class=\"highlight__hljs-keyword___som98\">NOT</span> <span class=\"highlight__hljs-literal___1V6TY\">NULL</span>\n);\n</code></pre>\n<p>Our <code>HEAD</code> handler will check to see if the blob exists in our\n<code>catalog</code>. If it does, we need to get the <code>Content-Length</code> of the blob\nto return. If it does not exist we just 404.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-title___1fl8Q\">headDigest</span> :: <span class=\"highlight__hljs-type___11WfV\">Namespace</span>\n           -&gt; <span class=\"highlight__hljs-type___11WfV\">Name</span>\n           -&gt; <span class=\"highlight__hljs-type___11WfV\">Digest</span>\n           -&gt; <span class=\"highlight__hljs-type___11WfV\">App</span> (<span class=\"highlight__hljs-type___11WfV\">Headers</span> '[\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Content-Length\"</span> <span class=\"highlight__hljs-type___11WfV\">Int</span>,\n    <span class=\"highlight__hljs-type___11WfV\">Header</span> <span class=\"highlight__hljs-string___1SffY\">\"Docker-Content-Digest\"</span> <span class=\"highlight__hljs-type___11WfV\">Digest</span>\n    ] <span class=\"highlight__hljs-type___11WfV\">NoContent</span>)\n<span class=\"highlight__hljs-title___1fl8Q\">headDigest</span> namespace' name' digest' = <span class=\"highlight__hljs-keyword___som98\">do</span>\n  blobExists &lt;- headBlob digest'\n  <span class=\"highlight__hljs-keyword___som98\">case</span> blobExists <span class=\"highlight__hljs-keyword___som98\">of</span>\n    <span class=\"highlight__hljs-type___11WfV\">BLOB_EXISTS</span> d' -&gt; return addHeader <span class=\"highlight__hljs-number___2gmaH\">0</span>\n                    $ addHeader digest' <span class=\"highlight__hljs-type___11WfV\">NoContent</span>\n    <span class=\"highlight__hljs-type___11WfV\">UNKNOWN_BLOB</span> -&gt; throwError err404\n</code></pre>\n<h1 id=\"fixing-patchblob\">Fixing patchBlob</h1>\n<h1 id=\"postgres-putblob\">Postgres putBlob</h1>\n","attributes":{"type":"id","id":"$ROOT_QUERY.root.post({\"slug\":\"building-a-docker-registry\"}).attributes","generated":true},"__typename":"BlogPost"},"$ROOT_QUERY.root.post({\"slug\":\"building-a-docker-registry\"}).attributes":{"title":"Building a Docker Registry","updatedAt":"Oct 3rd, 2016","publishedAt":"Oct 3rd, 2016","timeToRead":20,"headerImage":"/da49167186a7e54073552e04d715a80f.png","url":"/building-a-docker-registry/","canonicalURL":null,"excerpt":"Containers are surging right now. This series of blog posts will\nexplore a small corner of that universe by building a Docker Registry\nthat…","__typename":"BlogPostAttributes"},"$ROOT_QUERY.root":{"post({\"slug\":\"building-a-docker-registry\"})":{"type":"id","id":"$ROOT_QUERY.root.post({\"slug\":\"building-a-docker-registry\"})","generated":true},"__typename":"Query"},"ROOT_QUERY":{"root":{"type":"id","id":"$ROOT_QUERY.root","generated":true}}}}};</script><script src="/js/client.js" charset="UTF-8"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>
