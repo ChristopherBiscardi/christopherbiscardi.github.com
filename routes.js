@@ -6,7 +6,6 @@ import 'normalize-opentype.css/normalize-opentype.css';
 import "./css/highlight.css";
 import React, { Component } from 'react';
 import { Route, IndexRoute } from 'react-router';
-import Relay from 'react-relay';
 
 import Home from './component-tree/Home';
 import Post from './component-tree/Post';
@@ -23,25 +22,25 @@ class NoMatch extends Component {
   }
 }
 
-const RootQuery = {
-  root: () => Relay.QL`query RootQuery { root }`
-}
-
 export default (
   <Route path='/' component={App}>
-    <Route path='/posts/'
-           queries={RootQuery}
-           component={Posts} />
-    <Route path='/about/'
-           component={About} />
-    <Route path=':slug/'
-           component={Post}
-           queries={RootQuery} />
-    <Route path='/:year/:month/:day/:slug/'
-           component={Post}
-           queries={RootQuery} />
-    <IndexRoute component={Home} 
-           queries={RootQuery}/>
+    <Route
+      path='/posts/'
+      component={Posts}
+    />
+    <Route
+      path='/about/'
+      component={About}
+    />
+    <Route
+      path=':slug/'
+      component={Post}
+    />
+    <Route
+      path='/:year/:month/:day/:slug/'
+      component={Post}
+    />
+    <IndexRoute component={Home} />
     <Route path='*' component={NoMatch} />
   </Route>
 )

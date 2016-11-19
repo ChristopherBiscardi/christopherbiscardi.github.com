@@ -1,12 +1,16 @@
 import React, { Component, PropTypes } from 'react';
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 import { Link } from 'react-router';
-import Relay from 'react-relay';
 import styles from './Posts.css';
 import PostCard from '../../components/PostCard';
 
 class PostsPage extends Component {
   render() {
-    const { root } = this.props;
+    const { root, loading } = this.props.data;
+    if(loading) {
+      return <h1>Loading</h1>;
+    }
     return (
       <ul className={styles.container}>
       {
@@ -25,10 +29,8 @@ class PostsPage extends Component {
   }
 }
 
-export default Relay.createContainer(PostsPage, {
-  fragments: {
-    root: () => Relay.QL`
-      fragment on Query {
+const Query = gql`query PostsQuery {
+      root {
         posts(first: 50) {
           pageInfo { hasNextPage }
           edges {
@@ -36,10 +38,16 @@ export default Relay.createContainer(PostsPage, {
               attributes {
                 slug,
               }
-              ${PostCard.getFragment('post')}
+              ...PostFragment
             }
           }
       }
-    }`
-  }
-});
+    }
+}`
+
+export default graphql(Query, {
+  options: ({ params }) => ({
+    fragments: PostCard.fragments.post.fragments(),
+    variables: {}
+  }),
+})(PostsPage)

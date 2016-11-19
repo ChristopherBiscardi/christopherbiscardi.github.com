@@ -2,8 +2,8 @@
 
 .wrapper {
     /* TODO: bg color should be pulled from header */
-    background-color: #010d13;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 59%, #010d13 100%), url(./default-bg.jpeg);
+    background-color: white;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 59%, #FAFAFA 100%), url(./default-bg.jpeg);
     background-size: cover;
     background-position: center;
 
@@ -27,7 +27,7 @@
 
 @media only screen and (max-width: 480px) {
     .wrapper {
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 39%, #010d13 65%), url(./default-bg.jpeg);
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 39%, white 65%), url(./default-bg.jpeg);
         margin-bottom: -10rem;
     }
 }

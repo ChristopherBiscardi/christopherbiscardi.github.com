@@ -39,7 +39,7 @@ var md = require('markdown-it')({
 });
 
 module.exports = {
-  "scaffolding": "@sa-labs/leo-scaffolding-relay",
+  "scaffolding": "./leo-plugins/scaffolding",
   "plugins": [
     "@sa-labs/leo-plugin-blogpost",
     "@sa-labs/leo-plugin-markdown",
@@ -49,7 +49,7 @@ module.exports = {
   ],
   "urls": [
     "/",
-    "/about/"
+    "/about/",
   ],
   pluginOpts: {
     "@sa-labs/leo-plugin-markdown": {

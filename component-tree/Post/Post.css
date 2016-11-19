@@ -31,13 +31,27 @@
 .img {
     width: 100%;
 }
+.imgEmpty {
+  padding-bottom: 40%;
+  width: 100%;
+}
 
 .title {
-    font-size: 1.17rem;
+  font-size: 1.17rem;
+}
+.titleEmpty {
+  font-size: 1.17rem;
+  background: #FAFAFA;
 }
 .meta {
     font-size: .8rem;
     margin-bottom: 1rem;
     font-style: italic;
     color: #a1a6a9;
+}
+
+.metaEmpty {
+  font-size: .8rem;
+  margin-bottom: 1rem;
+  background: #FAFAFA;
 }

@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 const { bool, string } = PropTypes;
 import { Link } from 'react-router';
-import Relay from 'react-relay';
 import Helmet from 'react-helmet';
 import headerImage from './header.jpg';
 
