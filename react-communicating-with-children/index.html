@@ -1,0 +1,105 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title data-react-helmet="true">React: Communicating With Children</title><meta data-react-helmet="true" property="description" content="How do custom React Components communicate with their children?"/><meta data-react-helmet="true" property="og:title" content="React: Communicating With Children"/><meta data-react-helmet="true" property="og:type" content="article"/><meta data-react-helmet="true" property="og:url" content="http://christopherbiscardi.com/react-communicating-with-children/"/><meta data-react-helmet="true" property="og:description" content="How do custom React Components communicate with their children?"/><meta data-react-helmet="true" property="og:image" content="http://christopherbiscardi.comnull"/><meta data-react-helmet="true" property="twitter:card" content="summary"/><meta data-react-helmet="true" property="twitter:title" content="React: Communicating With Children"/><meta data-react-helmet="true" property="twitter:description" content="How do custom React Components communicate with their children?"/><meta data-react-helmet="true" property="twitter:url" content="http://christopherbiscardi.com/react-communicating-with-children/"/><link rel="stylesheet" type="text/css" href="/styles.f25bf9e6682280946ba2e441a544b407.css"/></head><body class="landing-page"><div id="content"><div data-reactroot="" data-reactid="1" data-react-checksum="1689106338"><div class="Nav__wrapper___u7BUA" data-reactid="2"><nav class="Nav__nav___1e2Pp" data-reactid="3"><a class="Nav__logoWrapper___35yvY" href="/" data-reactid="4"><img class="Nav__logo___sw4O9" src="/69305db2985e926d498b513a21d28383.png" data-reactid="5"/></a><ul class="Nav__items___1oDCD" data-reactid="6"><li data-reactid="7"><a class="Nav__itemLink___H6Isv" href="/posts/" data-reactid="8">Posts</a></li><li data-reactid="9"><a href="https://github.com/ChristopherBiscardi/ama/issues?q=is%3Aissue+is%3Aclosed" class="Nav__itemLink___H6Isv" data-reactid="10">AMA</a></li><li data-reactid="11"><a class="Nav__itemLink___H6Isv" href="/books/" data-reactid="12">Books</a></li><li data-reactid="13"><a class="Nav__itemLink___H6Isv" href="/projects/" data-reactid="14">Projects</a></li><li data-reactid="15"><a class="Nav__itemLink___H6Isv" href="/about/" data-reactid="16">About</a></li></ul></nav></div><div data-reactid="17"><div class="Post__page___15ves" data-reactid="18"><!-- react-empty: 19 --><div class="Post__container___f_rKX" data-reactid="20"><div class="Post__singleColumn___tYK8R" data-reactid="21"><h1 class="Post__title___2I6DZ" data-reactid="22">React: Communicating With Children</h1><div class="Post__meta___1fVoc" data-reactid="23"><!-- react-text: 24 -->Nov 22nd, 2016<!-- /react-text --><!-- react-text: 25 --> · <!-- /react-text --><!-- react-text: 26 -->2<!-- /react-text --><!-- react-text: 27 --> minute read<!-- /react-text --></div></div></div><div class="Post__container___f_rKX" data-reactid="28"><div class="Post__singleColumn___tYK8R" data-reactid="29"><div data-reactid="30"><p>How do custom React Components communicate with their children?</p>
+<h1 id="a-simple-case">A Simple Case</h1>
+<p>Given two components, <code>A</code> and <code>B</code>, where <code>A</code> renders arbitrary
+children and <code>B</code> renders a <code>display</code> prop.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-keyword___som98">import</span> React, { Component } <span class="highlight__hljs-keyword___som98">from</span> <span class="highlight__hljs-string___1SffY">'react'</span>;
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">class</span> <span class="highlight__hljs-title___1fl8Q">A</span> <span class="highlight__hljs-keyword___som98">extends</span> <span class="highlight__hljs-title___1fl8Q">Component</span> </span>{
+  render() {
+    <span class="highlight__hljs-keyword___som98">return</span> <span class="xml"><span class="highlight__hljs-tag___2Bb-l">&lt;<span class="hljs-name">div</span>&gt;</span>
+      { this.props.children }
+    <span class="highlight__hljs-tag___2Bb-l">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  }
+}
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">class</span> <span class="highlight__hljs-title___1fl8Q">B</span> <span class="highlight__hljs-keyword___som98">extends</span> <span class="highlight__hljs-title___1fl8Q">Component</span> </span>{
+  render() {
+    <span class="highlight__hljs-keyword___som98">return</span> <span class="xml"><span class="highlight__hljs-tag___2Bb-l">&lt;<span class="hljs-name">span</span>&gt;</span>{this.props.display}<span class="highlight__hljs-tag___2Bb-l">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+  }
+}
+</code></pre>
+<p>They can be rendered with React DOM as such:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>ReactDOM.render(&lt;A&gt;
+  &lt;B display='thing-one'/&gt;
+  &lt;B display='thing-two'/&gt;
+  &lt;/A&gt;,
+  document.body)
+</code></pre>
+<p>which yields a simple <code>thing-onething-two</code> result.</p>
+<h1 id="controlling-props">Controlling Props</h1>
+<p>So far, nothing special. Let’s say we want A to control the display
+property of all <code>B</code>s or wrap every child in an element with a specific
+CSS class. We can simply alter the <code>A</code> component to map over any
+children, replacing the display prop using <code>cloneElement</code>.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">class</span> <span class="highlight__hljs-title___1fl8Q">A</span> <span class="highlight__hljs-keyword___som98">extends</span> <span class="highlight__hljs-title___1fl8Q">Component</span> </span>{
+  render() {
+    <span class="highlight__hljs-keyword___som98">const</span> { children } = <span class="highlight__hljs-keyword___som98">this</span>.props;
+    <span class="highlight__hljs-keyword___som98">return</span> <span class="xml"><span class="highlight__hljs-tag___2Bb-l">&lt;<span class="hljs-name">div</span>&gt;</span>
+      {
+        children &amp;&amp; React.Children.map(children, (child, i) =&gt; React.cloneElement(child, {
+          display: `thing-${i}`
+        }))
+      }
+    <span class="highlight__hljs-tag___2Bb-l">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  }
+}
+</code></pre>
+<p>Note that the same render:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>ReactDOM.render(&lt;A&gt;
+  &lt;B display='thing-one'/&gt;
+  &lt;B display='thing-two'/&gt;
+  &lt;/A&gt;,
+  document.body)
+</code></pre>
+<p>returns a new result <code>thing-0thing-1</code>. This is because we have
+successfully overridden the <code>display</code> prop of all children rendered by
+<code>A</code>.</p>
+<h1 id="handlers-and-state">Handlers and State</h1>
+<p>Let’s say that every time the user clicks on <code>B</code>, we want to update
+the state of <code>A</code> with a counter. We can simply add some inital state
+to <code>A</code> and pass in an additional handler prop which is defined on
+<code>A</code>. We use fat-arrow autobinding shorthand syntax so that <code>this</code> int
+he <code>onChildClick</code> handler refers to <code>A</code>'s <code>this</code>. Then we make sure
+that <code>B</code> can accept an <code>onClick</code> handler.</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code><span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">class</span> <span class="highlight__hljs-title___1fl8Q">A</span> <span class="highlight__hljs-keyword___som98">extends</span> <span class="highlight__hljs-title___1fl8Q">Component</span> </span>{
+  state = {
+    counter: <span class="highlight__hljs-number___2gmaH">0</span>
+  };
+  onChildClick = e =&gt; {
+    <span class="highlight__hljs-keyword___som98">this</span>.setState({
+      counter: <span class="highlight__hljs-keyword___som98">this</span>.state.counter + <span class="highlight__hljs-number___2gmaH">1</span>
+    })
+  };
+  render() {
+    <span class="highlight__hljs-keyword___som98">const</span> { children } = <span class="highlight__hljs-keyword___som98">this</span>.props;
+    <span class="highlight__hljs-keyword___som98">return</span> <span class="xml"><span class="highlight__hljs-tag___2Bb-l">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="highlight__hljs-tag___2Bb-l">&lt;<span class="hljs-name">h1</span>&gt;</span>{this.state.counter}<span class="highlight__hljs-tag___2Bb-l">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+      {
+        children &amp;&amp; React.Children.map(children, (child, i) =&gt; React.cloneElement(child, {
+          display: `thing-${i}`,
+          onClick: this.onChildClick
+        }))
+      }
+    <span class="highlight__hljs-tag___2Bb-l">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  }
+}
+
+<span class="highlight__hljs-class___mOeOV"><span class="highlight__hljs-keyword___som98">class</span> <span class="highlight__hljs-title___1fl8Q">B</span> <span class="highlight__hljs-keyword___som98">extends</span> <span class="highlight__hljs-title___1fl8Q">Component</span> </span>{
+  render() {
+    <span class="highlight__hljs-keyword___som98">return</span> <span class="xml"><span class="highlight__hljs-tag___2Bb-l">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">onClick</span>=<span class="highlight__hljs-string___1SffY">{this.props.onClick}</span>&gt;</span>{this.props.display}<span class="highlight__hljs-tag___2Bb-l">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+  }
+}
+</code></pre>
+<p>Now, rendering the same way as before, we get a new output:</p>
+<pre class="highlight__hljs___FzKxy index__p2___65FBl"><code>0
+
+thing-0thing-1
+</code></pre>
+<p>and every time <code>thing-0</code> or <code>thing-1</code> is clicked, the counter in <code>A</code>
+is updated.</p>
+</div></div></div></div></div></div></div><script charset="UTF-8">window.__APOLLO_STATE__={"apollo":{"data":{"$ROOT_QUERY.root.post({\"slug\":\"react-communicating-with-children\"})":{"body":"<p>How do custom React Components communicate with their children?</p>\n<h1 id=\"a-simple-case\">A Simple Case</h1>\n<p>Given two components, <code>A</code> and <code>B</code>, where <code>A</code> renders arbitrary\nchildren and <code>B</code> renders a <code>display</code> prop.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-keyword___som98\">import</span> React, { Component } <span class=\"highlight__hljs-keyword___som98\">from</span> <span class=\"highlight__hljs-string___1SffY\">'react'</span>;\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">class</span> <span class=\"highlight__hljs-title___1fl8Q\">A</span> <span class=\"highlight__hljs-keyword___som98\">extends</span> <span class=\"highlight__hljs-title___1fl8Q\">Component</span> </span>{\n  render() {\n    <span class=\"highlight__hljs-keyword___som98\">return</span> <span class=\"xml\"><span class=\"highlight__hljs-tag___2Bb-l\">&lt;<span class=\"hljs-name\">div</span>&gt;</span>\n      { this.props.children }\n    <span class=\"highlight__hljs-tag___2Bb-l\">&lt;/<span class=\"hljs-name\">div</span>&gt;</span></span>\n  }\n}\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">class</span> <span class=\"highlight__hljs-title___1fl8Q\">B</span> <span class=\"highlight__hljs-keyword___som98\">extends</span> <span class=\"highlight__hljs-title___1fl8Q\">Component</span> </span>{\n  render() {\n    <span class=\"highlight__hljs-keyword___som98\">return</span> <span class=\"xml\"><span class=\"highlight__hljs-tag___2Bb-l\">&lt;<span class=\"hljs-name\">span</span>&gt;</span>{this.props.display}<span class=\"highlight__hljs-tag___2Bb-l\">&lt;/<span class=\"hljs-name\">span</span>&gt;</span></span>\n  }\n}\n</code></pre>\n<p>They can be rendered with React DOM as such:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>ReactDOM.render(&lt;A&gt;\n  &lt;B display='thing-one'/&gt;\n  &lt;B display='thing-two'/&gt;\n  &lt;/A&gt;,\n  document.body)\n</code></pre>\n<p>which yields a simple <code>thing-onething-two</code> result.</p>\n<h1 id=\"controlling-props\">Controlling Props</h1>\n<p>So far, nothing special. Let’s say we want A to control the display\nproperty of all <code>B</code>s or wrap every child in an element with a specific\nCSS class. We can simply alter the <code>A</code> component to map over any\nchildren, replacing the display prop using <code>cloneElement</code>.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">class</span> <span class=\"highlight__hljs-title___1fl8Q\">A</span> <span class=\"highlight__hljs-keyword___som98\">extends</span> <span class=\"highlight__hljs-title___1fl8Q\">Component</span> </span>{\n  render() {\n    <span class=\"highlight__hljs-keyword___som98\">const</span> { children } = <span class=\"highlight__hljs-keyword___som98\">this</span>.props;\n    <span class=\"highlight__hljs-keyword___som98\">return</span> <span class=\"xml\"><span class=\"highlight__hljs-tag___2Bb-l\">&lt;<span class=\"hljs-name\">div</span>&gt;</span>\n      {\n        children &amp;&amp; React.Children.map(children, (child, i) =&gt; React.cloneElement(child, {\n          display: `thing-${i}`\n        }))\n      }\n    <span class=\"highlight__hljs-tag___2Bb-l\">&lt;/<span class=\"hljs-name\">div</span>&gt;</span></span>\n  }\n}\n</code></pre>\n<p>Note that the same render:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>ReactDOM.render(&lt;A&gt;\n  &lt;B display='thing-one'/&gt;\n  &lt;B display='thing-two'/&gt;\n  &lt;/A&gt;,\n  document.body)\n</code></pre>\n<p>returns a new result <code>thing-0thing-1</code>. This is because we have\nsuccessfully overridden the <code>display</code> prop of all children rendered by\n<code>A</code>.</p>\n<h1 id=\"handlers-and-state\">Handlers and State</h1>\n<p>Let’s say that every time the user clicks on <code>B</code>, we want to update\nthe state of <code>A</code> with a counter. We can simply add some inital state\nto <code>A</code> and pass in an additional handler prop which is defined on\n<code>A</code>. We use fat-arrow autobinding shorthand syntax so that <code>this</code> int\nhe <code>onChildClick</code> handler refers to <code>A</code>'s <code>this</code>. Then we make sure\nthat <code>B</code> can accept an <code>onClick</code> handler.</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code><span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">class</span> <span class=\"highlight__hljs-title___1fl8Q\">A</span> <span class=\"highlight__hljs-keyword___som98\">extends</span> <span class=\"highlight__hljs-title___1fl8Q\">Component</span> </span>{\n  state = {\n    counter: <span class=\"highlight__hljs-number___2gmaH\">0</span>\n  };\n  onChildClick = e =&gt; {\n    <span class=\"highlight__hljs-keyword___som98\">this</span>.setState({\n      counter: <span class=\"highlight__hljs-keyword___som98\">this</span>.state.counter + <span class=\"highlight__hljs-number___2gmaH\">1</span>\n    })\n  };\n  render() {\n    <span class=\"highlight__hljs-keyword___som98\">const</span> { children } = <span class=\"highlight__hljs-keyword___som98\">this</span>.props;\n    <span class=\"highlight__hljs-keyword___som98\">return</span> <span class=\"xml\"><span class=\"highlight__hljs-tag___2Bb-l\">&lt;<span class=\"hljs-name\">div</span>&gt;</span>\n      <span class=\"highlight__hljs-tag___2Bb-l\">&lt;<span class=\"hljs-name\">h1</span>&gt;</span>{this.state.counter}<span class=\"highlight__hljs-tag___2Bb-l\">&lt;/<span class=\"hljs-name\">h1</span>&gt;</span>\n      {\n        children &amp;&amp; React.Children.map(children, (child, i) =&gt; React.cloneElement(child, {\n          display: `thing-${i}`,\n          onClick: this.onChildClick\n        }))\n      }\n    <span class=\"highlight__hljs-tag___2Bb-l\">&lt;/<span class=\"hljs-name\">div</span>&gt;</span></span>\n  }\n}\n\n<span class=\"highlight__hljs-class___mOeOV\"><span class=\"highlight__hljs-keyword___som98\">class</span> <span class=\"highlight__hljs-title___1fl8Q\">B</span> <span class=\"highlight__hljs-keyword___som98\">extends</span> <span class=\"highlight__hljs-title___1fl8Q\">Component</span> </span>{\n  render() {\n    <span class=\"highlight__hljs-keyword___som98\">return</span> <span class=\"xml\"><span class=\"highlight__hljs-tag___2Bb-l\">&lt;<span class=\"hljs-name\">span</span> <span class=\"hljs-attr\">onClick</span>=<span class=\"highlight__hljs-string___1SffY\">{this.props.onClick}</span>&gt;</span>{this.props.display}<span class=\"highlight__hljs-tag___2Bb-l\">&lt;/<span class=\"hljs-name\">span</span>&gt;</span></span>\n  }\n}\n</code></pre>\n<p>Now, rendering the same way as before, we get a new output:</p>\n<pre class=\"highlight__hljs___FzKxy index__p2___65FBl\"><code>0\n\nthing-0thing-1\n</code></pre>\n<p>and every time <code>thing-0</code> or <code>thing-1</code> is clicked, the counter in <code>A</code>\nis updated.</p>\n","attributes":{"type":"id","id":"$ROOT_QUERY.root.post({\"slug\":\"react-communicating-with-children\"}).attributes","generated":true},"__typename":"BlogPost"},"$ROOT_QUERY.root.post({\"slug\":\"react-communicating-with-children\"}).attributes":{"title":"React: Communicating With Children","updatedAt":"Nov 22nd, 2016","publishedAt":"Nov 22nd, 2016","timeToRead":2,"headerImage":null,"url":"/react-communicating-with-children/","canonicalURL":null,"excerpt":"How do custom React Components communicate with their children?","__typename":"BlogPostAttributes"},"$ROOT_QUERY.root":{"post({\"slug\":\"react-communicating-with-children\"})":{"type":"id","id":"$ROOT_QUERY.root.post({\"slug\":\"react-communicating-with-children\"})","generated":true},"__typename":"Query"},"ROOT_QUERY":{"root":{"type":"id","id":"$ROOT_QUERY.root","generated":true}}}}};</script><script src="/js/client.js" charset="UTF-8"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-46878058-1', 'auto');
+          ga('send', 'pageview');</script></body></html>
