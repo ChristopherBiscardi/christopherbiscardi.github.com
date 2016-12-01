@@ -15,7 +15,13 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    justify-content: space-between;
+  justify-content: space-between;
+  /*
+   Below prevents words that are continuous and longer than the
+   container from overflowing
+  */
+  word-wrap: break-word;
+  min-width: 0;
 }
 
 @media only screen and (max-width: 480px) {
