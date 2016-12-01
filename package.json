@@ -54,6 +54,7 @@
     "markdown-it-footnote": "^2.0.0",
     "markdown-it-named-headers": "0.0.4",
     "markdown-it-video": "^0.2.1",
+    "midas": "^2.0.0",
     "postcss-debug": "^0.3.0",
     "react-ga": "^2.1.2",
     "sanitize.css": "^4.1.0"

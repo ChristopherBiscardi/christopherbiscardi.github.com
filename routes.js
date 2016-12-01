@@ -4,6 +4,7 @@
 import 'sanitize.css/sanitize.css';
 import 'normalize-opentype.css/normalize-opentype.css';
 import "./css/highlight.css";
+import "midas/dist/themes/apathy-light.css"
 import React, { Component } from 'react';
 import { Route, IndexRoute } from 'react-router';
 

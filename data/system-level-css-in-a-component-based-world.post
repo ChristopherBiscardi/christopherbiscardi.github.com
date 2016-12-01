@@ -23,7 +23,7 @@ Basscss, but this is incidental.
 We can compose classes from NPM modules such as `basscss-padding`
 using the following syntax.
 
-```css
+```
 .table-row {
 composes: p1 from 'basscss-padding';
 flex-grow: 0;
@@ -33,7 +33,7 @@ flex-grow: 0;
 This might compile to the following (depending on customization of the
 CSSModule mangling rules).
 
-```css
+```
 table-row__Table-__3hG_O
 p1__basscss-padding-__2lqGa
 ```
@@ -57,7 +57,7 @@ These adjustments can be made in the form of CSS variables. For those
 unfamiliar, CSS Variables can be declared in `:root` blocks and used
 in other places.
 
-```css
+```
 :root {
 --space-1: 1rem;
 }

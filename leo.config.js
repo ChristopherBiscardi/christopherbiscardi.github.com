@@ -1,6 +1,6 @@
 const hljs = require('hljs-modules');
 const hook = require('css-modules-require-hook');
-
+const Midas = require('midas');
 // CSS Modules Require Hook
 // This may cause issues one day due to overloaded require
 hook({
@@ -18,13 +18,22 @@ hook({
 const css = require('./css/highlight.css');
 
 hljs.configure({ classNames: css });
+const midas = new Midas({
+//  stringify: true,
+  wrap: false,
+});
 
 function highlight (str, lang) {
-  if (lang && hljs.getLanguage(lang)) {
-    try {
-      return `<pre class="${css['hljs']}"><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
-    } catch (__) {
-      console.log('failed to highlight');
+  if(lang) {
+    if (lang === 'css') {
+      const output = midas.process(str);
+      return `<pre class="${css['hljs']}">${output}</pre>`;
+    } else if (hljs.getLanguage(lang)) {
+      try {
+        return `<pre class="${css['hljs']}"><code>${hljs.highlight(lang, str, true).value}</code></pre>`;
+      } catch (__) {
+        console.log('failed to highlight');
+      }
     }
   }
 
