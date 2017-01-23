@@ -12,7 +12,7 @@ import styles from './Post.css';
 class PostComponent extends Component {
   static fragments = {
     post: new Fragment(gql`
-      fragment PostFragment on BlogPost {
+      fragment PostPageFragment on BlogPost {
         body
         attributes {
           title
@@ -142,7 +142,7 @@ class PostComponent extends Component {
 const Query = gql`query PostQuery($slug: String!) {
   root {
     post(slug: $slug) {
-      ...PostFragment
+      ...PostPageFragment
     }
   }
 }`
