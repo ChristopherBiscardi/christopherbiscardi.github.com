@@ -1,4 +1,4 @@
-import { rehydrate } from 'glamor';
+//import { rehydrate } from 'glamor';
 import React from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { print } from 'graphql';
 // Polyfill fetch
 import 'isomorphic-fetch';
 
-rehydrate(window._glam);
+//rehydrate(window._glam);
 const routes = require('@sa-labs/leo-core/build/load-routes').default;
 
 const gqlInterface = {

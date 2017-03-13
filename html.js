@@ -7,7 +7,6 @@ export default class HTML extends Component {
       helmet,
       data,
       body,
-      glamor
     } = this.props;
 
     return (
@@ -25,7 +24,6 @@ export default class HTML extends Component {
             type="text/css"
             href={`/${bundleAssets.static.css}`}
           />
-          <style>{glamor.css}</style>
         </head>
         <body className="landing-page">
           <div id="content" dangerouslySetInnerHTML={{ __html: body }} />
@@ -34,11 +32,6 @@ export default class HTML extends Component {
                 __html: `window.__APOLLO_STATE__=${JSON.stringify(data)};`
             }}
             charSet="UTF-8"
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window._glam = ${JSON.stringify(glamor.ids)}`
-            }}
           />
           <script src="/js/client.js" charSet="UTF-8" />
           <script

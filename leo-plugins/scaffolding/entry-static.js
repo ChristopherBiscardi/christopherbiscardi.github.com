@@ -10,7 +10,7 @@ import { print } from "graphql";
 const debug = require("debug")("leo-scaffolding-apollo:entry-static");
 import md5 from "md5";
 import Helmet from "react-helmet";
-import { renderStatic } from "glamor/server";
+import { inline } from "glamor-server";
 
 import routes from "@sa-labs/leo-core/build/load-routes";
 import Html from "@sa-labs/leo-core/build/load-html";
@@ -63,11 +63,7 @@ export default (locals, callback) => {
 
   getDataFromTree(component)
     .then(context => {
-      const {
-        html: body,
-        css,
-        ids
-      } = renderStatic(() => ReactDOM.renderToString(component));
+      const body = inline(ReactDOM.renderToString(component));
       const initialState = { [client.reduxRootKey]: client.getInitialState() };
       /**
        * https://github.com/nfl/react-helmet/tree/16b3d67492f047aea635cddfaeadcf2686a00883#server-usage
@@ -77,7 +73,6 @@ export default (locals, callback) => {
       const html = renderToStaticMarkup(
         <Html
           body={body}
-          glamor={{ css, ids }}
           helmet={head}
           assets={locals.assets}
           bundleAssets={locals.assetsPluginHash}
