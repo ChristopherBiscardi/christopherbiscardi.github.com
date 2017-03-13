@@ -25,7 +25,7 @@ export default class HTML extends Component {
             type="text/css"
             href={`/${bundleAssets.static.css}`}
           />
-          <style>{glamor.css}</style>
+          <style dangerouslySetInnerHTML={{ __html: glamor.css }} />
         </head>
         <body className="landing-page">
           <div id="content" dangerouslySetInnerHTML={{ __html: body }} />
