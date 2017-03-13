@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+const debug = require('debug')('html');
 
 export default class Html extends Component {
   static propTypes = {
@@ -10,8 +11,11 @@ export default class Html extends Component {
       bundleAssets,
       data,
       body,
+      // glamor css and ids
+      css,
+      ids,
     } = this.props;
-
+    console.log('glamor', glamor);
     return <html lang="en">
       <head>
         <meta charSet="utf-8" />
@@ -19,12 +23,7 @@ export default class Html extends Component {
         <link rel="stylesheet" type="text/css" href={`/${bundleAssets.static.css}`}/>
       </head>
       <body>
-        <div id="content" dangerouslySetInnerHTML={{ __html: body }} />
-        <script
-          dangerouslySetInnerHTML={{ __html: `window.__APOLLO_STATE__=${JSON.stringify({ apollo: { data }})};` }}
-          charSet="UTF-8"
-        />
-        <script src='/js/client.js' charSet="UTF-8" />
+        not used
       </body>
     </html>
   }

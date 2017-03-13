@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 const { bool, string } = PropTypes;
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import Fragment from 'graphql-fragments';
@@ -11,7 +11,7 @@ import styles from './Post.css';
 
 class PostComponent extends Component {
   static fragments = {
-    post: new Fragment(gql`
+    post: gql`
       fragment PostPageFragment on BlogPost {
         body
         attributes {
@@ -25,7 +25,7 @@ class PostComponent extends Component {
           excerpt
         }
       }
-      `)
+      `
   }
   renderLoading() {
     return (
@@ -145,13 +145,14 @@ const Query = gql`query PostQuery($slug: String!) {
       ...PostPageFragment
     }
   }
-}`
+}
+${PostComponent.fragments.post}
+`
 
 export default graphql(Query, {
-  options: ({ params }) => {
+  options: ({ match }) => {
     return {
-      fragments: PostComponent.fragments.post.fragments(),
-      variables: { slug: params.slug },
+      variables: { slug: match.params.slug },
     }
   },
 })(PostComponent);

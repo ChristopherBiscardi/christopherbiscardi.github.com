@@ -1,69 +1,74 @@
-import React from 'react';
-import ReactDOM, { renderToStaticMarkup } from 'react-dom/server';
-import ApolloClient, { createNetworkInterface } from 'apollo-client';
-import { ApolloProvider } from 'react-apollo';
-import { getDataFromTree } from 'react-apollo/server';
-import { match, RouterContext, createMemoryHistory } from 'react-router';
-import path from 'path';
-import 'isomorphic-fetch';
-import { execute } from 'graphql';
-import { print } from 'graphql';
-const debug = require('debug')('leo-scaffolding-apollo:entry-static');
-import md5 from 'md5';
-import Helmet from 'react-helmet';
+import React from "react";
+import ReactDOM, { renderToStaticMarkup } from "react-dom/server";
+import ApolloClient, { createNetworkInterface } from "apollo-client";
+import { ApolloProvider, getDataFromTree } from "react-apollo";
+import { StaticRouter as Router } from "react-router";
+import path from "path";
+import "isomorphic-fetch";
+import { execute } from "graphql";
+import { print } from "graphql";
+const debug = require("debug")("leo-scaffolding-apollo:entry-static");
+import md5 from "md5";
+import Helmet from "react-helmet";
+import { renderStatic } from "glamor/server";
 
-import routes from '@sa-labs/leo-core/build/load-routes';
-import Html from '@sa-labs/leo-core/build/load-html';
-import {
-  conf,
-  schema
-} from '@sa-labs/leo-core/build/inserted-files';
-
-const basePort = process.env.PORT || 3000;
-const apiHost = `http://localhost:${basePort + 10}`;
-const apiUrl = `${apiHost}/graphql`;
+import routes from "@sa-labs/leo-core/build/load-routes";
+import Html from "@sa-labs/leo-core/build/load-html";
+import { conf, schema } from "@sa-labs/leo-core/build/inserted-files";
 
 const gqlInterface = {
-  query({
-    query,
-    variables,
-    operationName,
-  }) {
+  query(
+    {
+      query,
+      variables,
+      operationName
+    }
+  ) {
     // TODO: static render is failing for some reason?!?!?
     const variablesString = Object.entries(variables)
-                                  .reduce((acc, [key, val]) => `${acc}:${key}:${val}`, '');
+      .reduce((acc, [key, val]) => `${acc}:${key}:${val}`, "");
     const queryHash = md5(print(query));
-    return execute(schema, query, undefined, undefined, variables, operationName).then(json => {
+    return execute(
+      schema,
+      query,
+      undefined,
+      undefined,
+      variables,
+      operationName
+    ).then(json => {
       _globalJSONAsset({
         name: `/api/${queryHash}--${md5(variablesString)}.json`,
         json: json
       });
-      debug(json.length);
       return json;
-    })
+    });
   }
-}
-
+};
 
 export default (locals, callback) => {
   debug(`${locals.path} rendering`);
-  const history = createMemoryHistory();
-  const location = history.createLocation(locals.path);
+  const client = new ApolloClient({
+    ssrMode: true,
+    networkInterface: gqlInterface
+  });
 
-  match({ routes, location }, (error, redirectLocation, renderProps) => {
-    const client = new ApolloClient({
-      ssrMode: true,
-      networkInterface: gqlInterface
-    });
+  let ctx = {};
+  const component = (
+    <ApolloProvider client={client}>
+      <Router location={locals.path} context={ctx}>
+        {routes}
+      </Router>
+    </ApolloProvider>
+  );
 
-    const component = (
-      <ApolloProvider client={client}>
-        <RouterContext {...renderProps} />
-      </ApolloProvider>
-    );
-
-    getDataFromTree(component).then(context => {
-      const body = ReactDOM.renderToString(component);
+  getDataFromTree(component)
+    .then(context => {
+      const {
+        html: body,
+        css,
+        ids
+      } = renderStatic(() => ReactDOM.renderToString(component));
+      const initialState = { [client.reduxRootKey]: client.getInitialState() };
       /**
        * https://github.com/nfl/react-helmet/tree/16b3d67492f047aea635cddfaeadcf2686a00883#server-usage
        * See above URL for reasoning behind `rewind()`
@@ -72,17 +77,17 @@ export default (locals, callback) => {
       const html = renderToStaticMarkup(
         <Html
           body={body}
+          glamor={{ css, ids }}
           helmet={head}
           assets={locals.assets}
           bundleAssets={locals.assetsPluginHash}
-          props={renderProps}
-          data={context.store.getState().apollo.data}
+          data={initialState}
         />
       );
       callback(null, html);
-    }).catch(e => {
+    })
+    .catch(e => {
       debug(`${locals.path} failed`);
       callback(e);
-    })
-  })
-}
+    });
+};

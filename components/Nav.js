@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
+import { NavLink as Link } from 'react-router-dom';
 import Headroom from 'react-headroom';
 import styles from './Nav.css';
 

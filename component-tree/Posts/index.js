@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import styles from './Posts.css';
 import PostCard from '../../components/PostCard';
 
@@ -43,11 +43,12 @@ const Query = gql`query PostsQuery {
           }
       }
     }
-}`
+}
+${PostCard.fragments.post}
+`
 
 export default graphql(Query, {
   options: ({ params }) => ({
-    fragments: PostCard.fragments.post.fragments(),
     variables: {}
   }),
 })(PostsPage)

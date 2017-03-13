@@ -2,13 +2,13 @@ import React, { Component, PropTypes } from 'react';
 const { bool, string } = PropTypes;
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import Fragment from 'graphql-fragments';
-import { Link } from 'react-router';
+import { propType } from 'graphql-anywhere';
+import { Link } from 'react-router-dom';
 import styles from './PostCard.css';
 
 class PostCard extends Component {
   static fragments = {
-    post: new Fragment(gql`
+    post: gql`
       fragment PostFragment on BlogPost {
         body
         attributes {
@@ -21,7 +21,7 @@ class PostCard extends Component {
           headerImage
         }
       }
-    `),
+    `,
   };
   render() {
     const {
@@ -57,7 +57,7 @@ class PostCard extends Component {
 }
 
 PostCard.propTypes = {
-  post: PostCard.fragments.post.propType
+  post: propType(PostCard.fragments.post).isRequired
 };
 
 export default PostCard;
