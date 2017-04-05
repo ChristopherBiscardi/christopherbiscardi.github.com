@@ -1,16 +1,3 @@
-@value lowlight-bg-color, link-color, grid-constrain-width from "../css/globals.css";
-
-/* #202B31 */
-
-.wrapper {
-    background: white;
-}
-
-.nav {
-  lost-center: grid-constrain-width;
-  min-height: 2rem;
-}
-
 .items {
   list-style: none;
   lost-column: 10/12;
