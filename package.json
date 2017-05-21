@@ -29,7 +29,7 @@
   "homepage": "https://github.com/superawesomelabs/leo-default-starter#readme",
   "dependencies": {
     "@sa-labs/graphql-directory-api": "0.7.0",
-    "@sa-labs/leo-core": "0.7.1",
+    "@sa-labs/leo-core": "0.7.2",
     "@sa-labs/leo-plugin-blogpost": "0.7.0",
     "@sa-labs/leo-plugin-fate": "^0.7.0",
     "@sa-labs/leo-plugin-images": "0.7.0",
@@ -49,7 +49,7 @@
     "compression-webpack-plugin": "^0.3.2",
     "css-modules-require-hook": "^4.0.1",
     "eslint": "^3.9.1",
-    "eslint-plugin-graphql": "^0.2.7",
+    "eslint-plugin-graphql": "^0.8.0",
     "graphql-fragments": "^0.1.0",
     "graphql-tag": "^1.1.2",
     "http-server": "^0.8.5",
