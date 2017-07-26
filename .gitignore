@@ -1,5 +1,0 @@
-dist
-node_modules
-.babelcache
-database.json
-output.txt
