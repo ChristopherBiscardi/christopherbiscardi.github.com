@@ -11,23 +11,28 @@ environment. This is a comparison.
 # Home
 
 **Computer**: Mac Pro (Late 2013 Trashcan style)
+
 * 12 cores at 2.7GHz (Intel Xeon E5)
 * 64GB RAM (4x16GB DDR3 ECC)
 * 500GB internal flash storage
 * 2TB external storage
 
 **Keyboard**: [CODE][code] with Cherry MX Clear keyswitches
+
 * (waiting on a [Das 5Q][das-5q])
 * Grifiti wrist pad
 
 **Mouse**: Wired [HandShoe][handshoe]
+
 * (Large size, because I have large hands)
 
 **Display**: SEIKI 38.5" 4k
+
 * Also have the option of using a 1080p projector elsewhere in my
   apartment
 
 **A/V**
+
 * webcam: Logitech C920 HD (1080p) (Thanks Erica!)
 * usb audio interface: [Scarlett 2i2][2i2]
 * mic: [RODE NT2A][nt2a] with Desk arm and Floor mount
@@ -35,6 +40,7 @@ environment. This is a comparison.
 **Desk**: [GeekDesk Max][geekdesk]
 
 **Seating**
+
 * [Embody][embody] (I choose embody over aeron, etc because it works
 better for taller people)
 * [Lovesac BigOne][bigone] for soft seating and a change of pace from
@@ -43,6 +49,7 @@ sit/stand.
 # Work
 
 **Computer**: Macbook Pro (Mid 2015)
+
 * 2.8GHz Intel Core i7
 * 16GB RAM DDR3
 * 1TB Flash Storage
@@ -58,6 +65,7 @@ sit/stand.
 **Desk**: generic sit/stand
 
 **Seating**: 
+
 * Aeron (usually too small for me)
 * Various open-office soft seating
 
