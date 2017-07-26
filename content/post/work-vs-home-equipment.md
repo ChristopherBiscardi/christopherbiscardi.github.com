@@ -1,7 +1,6 @@
 ---
 title: "Work vs Home Equipment"
-slug: "work-vs-home-equipment"
-publishedAt: "May 21st, 2017"
+date: 2017-05-21
 ---
 
 In the ongoing conversation about "work from home" and remote work

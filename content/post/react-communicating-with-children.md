@@ -1,7 +1,6 @@
 ---
 title: "React: Communicating With Children"
-slug: "react-communicating-with-children"
-publishedAt: "Nov 22nd, 2016"
+date: 2016-11-22
 ---
 
 How do custom React Components communicate with their children?
