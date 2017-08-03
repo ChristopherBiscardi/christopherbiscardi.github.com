@@ -15,8 +15,8 @@ and personal improvement.
 I have a few repeating events that change as little as possible. These
 events effectively scaffold the outer boundaries of my day. My day
 starts at 4am with about an hour to wake up, eat breakfast and start
-travelling to a gym, where I allocate a two hour block to working out
-and travelling back home. I then spend one hour writing (and not
+traveling to a gym, where I allocate a two hour block to working out
+and traveling back home. I then spend one hour writing (and not
 necessarily publishing) on any topic I feel like.
 
 The other end of my day is where I've allocated an hour to reading and
@@ -49,7 +49,7 @@ thing in my opinion.
 
 I meet up with friends to help them with their products, grab coffee,
 or just hang out. This all falls under a Social allocation for
-me. Sometimes repeating social engagements turne into work, which then
+me. Sometimes repeating social engagements turn into work, which then
 gets allocated under Client/Product work.
 
 ### Down Time
@@ -65,7 +65,7 @@ game.
 Professional development includes learning new languages (Rust, Go),
 new tools, reading blog posts (startups, building culture, etc), and
 more. Anything that sets me up to be successful 6-12 months from
-now in a variety of skillsets (Engineer, Entrepreanur, Author,
+now in a variety of skillsets (Engineer, Entrepreneur, Author,
 Designer, etc). This answers "What do I want to be" in the 6-12 month
 range.
 
