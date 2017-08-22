@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -22,8 +23,13 @@ body {
    letter-spacing: -.003em;
    } */
 
-body h1, body h2, h3, h4, h5, h6 {
-  font-weight: 700;
+body h1,
+body h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
 }
 
 main {
@@ -57,7 +63,8 @@ main {
 
 /*apply accent colour to links*/
 
-a:link, a:visited {
+a:link,
+a:visited {
   color: var(--accent);
 }
 
