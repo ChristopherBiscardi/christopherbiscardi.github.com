@@ -1,0 +1,76 @@
+Bold
+BoldItalic
+Medium
+MediumItalic
+Regular
+RegularItalic
+
+@font-face {
+  font-family: 'interface';
+  src: url('/fonts/interface/Interface-Bold.eot');
+  src: url('/fonts/interface/Interface-Bold.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/interface/Interface-Bold.svg#my-font-family') format('svg'),
+    url('/fonts/interface/Interface-Bold.woff') format('woff'),
+    url('/fonts/interface/Interface-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'interface';
+  src: url('/fonts/interface/Interface-BoldItalic.eot');
+  src: url('/fonts/interface/Interface-BoldItalic.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/interface/Interface-BoldItalic.svg#my-font-family')
+      format('svg'),
+    url('/fonts/interface/Interface-BoldItalic.woff') format('woff'),
+    url('/fonts/interface/Interface-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'interface';
+  src: url('/fonts/interface/Interface-Medium.eot');
+  src: url('/fonts/interface/Interface-Medium.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/interface/Interface-Medium.svg#my-font-family') format('svg'),
+    url('/fonts/interface/Interface-Medium.woff') format('woff'),
+    url('/fonts/interface/Interface-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'interface';
+  src: url('/fonts/interface/Interface-MediumItalic.eot');
+  src: url('/fonts/interface/Interface-MediumItalic.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/interface/Interface-MediumItalic.svg#my-font-family')
+      format('svg'),
+    url('/fonts/interface/Interface-MediumItalic.woff') format('woff'),
+    url('/fonts/interface/Interface-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'interface';
+  src: url('/fonts/interface/Interface-Regular.eot');
+  src: url('/fonts/interface/Interface-Regular.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/interface/Interface-Regular.svg#my-font-family') format('svg'),
+    url('/fonts/interface/Interface-Regular.woff') format('woff'),
+    url('/fonts/interface/Interface-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'interface';
+  src: url('/fonts/interface/Interface-RegularItalic.eot');
+  src: url('/fonts/interface/Interface-RegularItalic.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/interface/Interface-RegularItalic.svg#my-font-family')
+      format('svg'),
+    url('/fonts/interface/Interface-RegularItalic.woff') format('woff'),
+    url('/fonts/interface/Interface-RegularItalic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
