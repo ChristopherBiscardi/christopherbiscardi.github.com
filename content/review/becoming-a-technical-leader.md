@@ -1,7 +1,7 @@
 ---
 title: "Becoming A Technical Leader"
 date: 2017-08-23
-tags: [leadership]
+tags: [leadership, book]
 link: https://www.amazon.com/Becoming-Technical-Leader-Problem-Solving-Approach/dp/0932633021/
 ---
 
