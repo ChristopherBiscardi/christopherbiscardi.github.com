@@ -11,7 +11,32 @@ link: https://www.amazon.com/Becoming-Technical-Leader-Problem-Solving-Approach/
 
 **link** [Amazon](https://www.amazon.com/Attached-Science-Adult-Attachment-YouFind/dp/1585429139/)
 
-# Modeling the world: Linear vs Organic
+# Why
+
+##### Why did I read this book?
+
+As part of attempting to build my own company and the leadership
+positions I've had at companies like Docker and Dropbox, I have a
+vested interest in being a better leader. This book was suggested to
+me as a good book on the topic.
+
+#### Why should you read this book?
+
+Anyone who wants to (or does) work with teams of people and wants to
+increase leverage for those they work with.
+
+#### What did I get out of it
+
+The book ended up solidifying and expanding ideas that I've already
+had and put into practice. In this way it was useful to read a more
+concrete exposition of those ideas. It was fairly interesting to map
+the concepts presented in this book to my own life.
+
+Also an [amazon list][list] for further reading.
+
+# Review
+
+## Modeling the world: Linear vs Organic
 
 The book starts by exploring the definition of leadership in the
 context of different kinds of modeling. There is some light talk
@@ -29,7 +54,7 @@ the book to be useful and interesting.
 > *Leadership* is the process of creating an environment in which
 > people become empowered.
 
-# Organizing Life
+## Organizing Life
 
 The author tells stories about pinball players as a way to describe
 what it takes to achieve effects that require nontrivial
@@ -43,7 +68,7 @@ and Ideas or Innovation. I found this to be a useful model when
 reflecting on the problems I've seen and heard about at startups in
 the Bay Area (where I do most of my work).
 
-# Organizing Innovation
+## Organizing Innovation
 
 > *All* of the most consistently successful technical leaders empower 
 > people by the value they place on innovation, on doing things in a
@@ -57,7 +82,7 @@ O, and I based approaches.
 * managing the flow of ideas
 * maintaining quality
 
-# On Improving
+## On Improving
 
 The next section of the book went through what it takes to get to the
 next level of skill. The author describes a series of cliffs and
@@ -73,7 +98,7 @@ significantly better serve.
 > When you begin to feel you're really getting good, start looking for
 > some conceptual breakthrough
 
-# On Systems
+## On Systems
 
 This section goes into some detail about how leadership and
 management are not the same in the organic approach (as opposed to the
@@ -93,7 +118,7 @@ the relationship to the rest of the organization is poorly handled, it
 will destroy most of the value that could be created and you will lose
 the team to better opportunities.
 
-# Obstacles to Innovation
+## Obstacles to Innovation
 
 The author next describes three great obstacles to innovation in an
 effort to move from theory to practice. The obstacles are personal in
@@ -108,7 +133,7 @@ their own progress.
    alternative solutions, even ones you could generate without help
    from anyone else
 
-# Developing Idea Power
+## Developing Idea Power
 
 > Any real problem has one *more* solution, which nobody has
 > found--yet.
@@ -118,7 +143,7 @@ The idea of this chapter is that binding yourself to there being a
 if there is truly only one answer, it is useful to approach a problem
 with a specific mentality for potential solutions.
 
-# Vision
+## Vision
 
 How success can lead to failure (or how what got you here won't get
 you there). The solution that solved the problem yesterday isn't
@@ -130,7 +155,7 @@ required obsession over. I liked this framing of quality because I
 felt that earlier in the book quality was given a very subjective
 definition (or rather, not given a definition at all).
 
-# Obstacles to Motivation
+## Obstacles to Motivation
 
 One idea that really resonated with me in this chapter was the idea
 that sacrificing people's future possibilities to achieve something
@@ -156,7 +181,7 @@ Area). One quote really stuck with me:
 > If you can't do the task without exploiting people, perhaps you
 > shouldn't do it at all
 
-# Power Conversion
+## Power Conversion
 
 The chapter on gaining organizational power is interesting in that it
 describes power conversion vs point accumulation. Whenever someone
@@ -174,7 +199,7 @@ on such use.
 > understand the leader's role, to create an environment in which
 > *everyone* is empowered.
 
-# Making Time
+## Making Time
 
 The book continues on and eventually comes to the topic of "making
 time" in a day.
@@ -199,7 +224,7 @@ to which two are added
 * Listen to what other people have already learned
 * Let other people show you how smart they are
 
-# Bibliography
+## Bibliography
 
 The bibliography is large, consisting of at least 22 authors and their
 books. It does, however, have nice summaries of why you would want to

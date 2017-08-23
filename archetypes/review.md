@@ -12,12 +12,18 @@ draft: true
 
 **link** [Amazon]()
 
-## Why did I read this book?
+# Why
 
-## Why should you read it?
+#### Why did I read this book?
+
+#### Why should you read it?
 
 If you...
 
-## What did I get out of it?
+#### What did I get out of it?
 
 I learned...
+
+# Review
+
+## Topic A
