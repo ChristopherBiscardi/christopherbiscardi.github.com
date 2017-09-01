@@ -21,9 +21,9 @@ render() {
   const { color } = this.props;
 
   let component = null;
-  if(color === 'blue') { return <BlueComponent/>; }
-  if(color === 'red') { return <RedComponent/>; }
-  if(color === 'green') { return <GreenComponent/>; }
+  if(color === 'blue') { component = <BlueComponent/>; }
+  if(color === 'red') { component = <RedComponent/>; }
+  if(color === 'green') { component = <GreenComponent/>; }
 
   return <div>{component}</div>
 }
