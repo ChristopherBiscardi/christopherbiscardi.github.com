@@ -74,7 +74,7 @@ render() {
   const { color } =
     this.props.data &&
     this.props.data.viewer &&
-    this.props.data.preferences;
+    this.props.data.viewer.preferences;
 
   const component = do {
     if(color === 'blue') { <BlueComponent/>; }
