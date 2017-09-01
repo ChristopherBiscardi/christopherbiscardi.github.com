@@ -5,7 +5,7 @@ theme = "minimal"
 
 [params]
     author = "Chris Biscardi"
-    description = "Haskell, React, Products"
+    description = "Go, React, Products"
     githubUsername = "#christopherbiscardi"
     accent = "#1fa9f4"
     showBorder = true
