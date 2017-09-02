@@ -14,6 +14,7 @@ theme = "minimal"
     highlight = true
     highlightStyle = "solarized-dark"
     highlightLanguages = ["go", "haskell", "swift", "javascript", "rust"]
+    googleAnalytics = "UA-105803916-1"
 
 [[menu.main]]
     url = "/"
