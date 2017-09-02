@@ -111,7 +111,9 @@ const { color } = this.props.data?.viewer?.preferences;
 
 # Babel
 
-You'll need a babel config like this to run the above examples:
+You'll need a babel config like this to run the above examples, and a
+babel version of >= 7 which you can currently install as
+`babel-cli@next`, etc.
 
 ```js
 {
@@ -131,6 +133,11 @@ You'll need a babel config like this to run the above examples:
   ]
 }
 ```
+
+Also note that these plugins will be in stage-0, but it's still good
+practice to list them out if you're using them.
+
+{{< tweet 903956349696057344 >}}
 
 [do-babel]: https://babeljs.io/docs/plugins/transform-do-expressions/
 [optional-babel]: https://www.npmjs.com/package/babel-plugin-transform-optional-chaining
