@@ -5,9 +5,12 @@ tags: [javascript, babel]
 ---
 
 [Do Expressions][do-babel] and [Optional Chaining][optional-babel]
-([syntax](https://www.npmjs.com/package/babel-plugin-syntax-optional-chaining))
 are two extensions that I am particularly excited about in the ECMA
 pipeline.
+
+[update] I've removed the optional chaining syntax plugin as it is
+[required by the transform
+anyway](https://twitter.com/left_pad/status/903979780374188036).
 
 # Do Expressions
 
@@ -128,7 +131,6 @@ babel version of >= 7 which you can currently install as
   ],
   "plugins": [
     "transform-do-expressions",
-    "syntax-optional-chaining",
     "transform-optional-chaining"
   ]
 }
