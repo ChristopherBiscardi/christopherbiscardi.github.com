@@ -2,7 +2,6 @@
 title: "Cool Stuff You Can Do With fzf"
 date: 2017-11-05
 tags: [cli]
-draft: true
 ---
 
 [fzf][fzf] is an awesome tool for filtering and selecting lists of
