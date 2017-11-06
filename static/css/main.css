@@ -10,6 +10,9 @@ body {
   flex-direction: column;
 }
 
+img {
+  width: 100%;
+}
 /* main .text-justify :not(h1),
    main .text-justify :not(h2),
    main .text-justify :not(h3),
