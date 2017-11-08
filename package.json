@@ -1,0 +1,21 @@
+{
+  "name": "christopherbiscardi.github.com",
+  "version": "1.0.0",
+  "description": "Tools for formatting markdown",
+  "main": "index.js",
+  "repository":
+    "git@github.com:ChristopherBiscardi/christopherbiscardi.github.com.git",
+  "author": "ChristopherBiscardi <chris@christopherbiscardi.com>",
+  "license": "MIT",
+  "scripts": {
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.md": ["prettier --parser md --write", "git add"]
+  },
+  "dependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^4.3.0",
+    "prettier": "^1.8.1"
+  }
+}
