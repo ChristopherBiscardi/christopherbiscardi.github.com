@@ -11,7 +11,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.md": ["prettier --parser md --write", "git add"]
+    "*.md": ["prettier --parser markdown --write", "git add"]
   },
   "dependencies": {
     "husky": "^0.14.3",
