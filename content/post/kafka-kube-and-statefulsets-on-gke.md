@@ -228,7 +228,7 @@ spec:
 
 #### StatefulSet
 
-Ah yes, the central dish to our exploration, the [StatefulSet][statefulset].
+Ah yes, the central dish to our exploration, the [StatefulSet][statefulsets].
 
 We set the affinity for the Zookeeper pod to try to place itself on a node that
 doesn't already have a Zookeeper node.
