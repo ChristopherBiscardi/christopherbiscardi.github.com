@@ -1,8 +1,7 @@
 ---
 title: "Kafka, Kube, and Statefulsets on GKE"
-date: 2017-11-10
+date: 2017-11-17
 tags: [gke,kubernetes,kafka,zookeeper]
-draft: true
 ---
 
 # Kubernetes StatefulSets
@@ -21,9 +20,285 @@ even as we scale the service up.
 # Booting a GKE Cluster
 
 First we need the right Google Container Engine cluster. Since this is fairly
-basic and meant for development we'll use
+basic and meant for development we'll use a three node GKE cluster. This allows
+us to run a 3-node Zookeeper ensemble and 3 kafka brokers. There should be one
+Zookeeper and one Kafka Broker on each node. We'll modify the node type to
+`n1-standard-2` which will be able to handle everything's memory requirements,
+etc.
 
-# Zookeeper
+```shell
+gcloud container clusters create test-cluster \
+  --machine-type "n1-standard-2" \
+  --cluster-version "1.8.3-gke.0"
+```
+
+# Running Zookeeper on Kubernetes
+
+We'll use the [Zookeeper][zookeeper-statefulset] and [Kafka][kafka-statefulset]
+example configs to start. First, the Zookeeper config:
+
+```shell
+➜ kubectl apply -f 10-zookeeper.yml
+service "zk-svc" created
+configmap "zk-cm" created
+poddisruptionbudget "zk-pdb" created
+statefulset "zk" created
+```
+
+```shell
+➜ kubectl apply -f 20-kafka-brokers.yml
+service "kafka-svc" created
+poddisruptionbudget "kafka-pdb" created
+statefulset "kafka" created
+```
+
+Note that if you spin them up too fast sequentially, kafka will `Error`, then
+`CrashLoopBackOff` until it can connect to Zookeeper.
+
+```
+NAME      READY     STATUS              RESTARTS   AGE
+kafka-0   0/1       Error               1          46s
+zk-0      1/1       Running             0          1m
+zk-1      1/1       Running             0          1m
+zk-2      0/1       ContainerCreating   0          25s
+```
+
+A healthy cluster:
+
+```
+NAME      READY     STATUS    RESTARTS   AGE
+kafka-0   1/1       Running   3          2m
+kafka-1   1/1       Running   0          1m
+kafka-2   1/1       Running   0          47s
+zk-0      1/1       Running   0          3m
+zk-1      1/1       Running   0          3m
+zk-2      1/1       Running   0          2m
+```
+
+# Testing Kafka
+
+We can use the following command to interactively choose a kafka container to
+exec into.
+
+```
+kgp --no-headers | fzf | awk '{print $1}' | xargs -o -I % kubectl exec -it % bash
+```
+
+![](/img/fzf-kgp-zookeeper-kafka.png)
+
+and then `ls` to see that we're in.
+
+```
+kafka@kafka-0:/$ ls
+KEYS  boot  etc   lib	 media	opt   root  sbin  sys  usr
+bin   dev   home  lib64  mnt	proc  run   srv   tmp  var
+kafka@kafka-0:/$
+```
+
+We'll need to create a new topic (so run this in the container we just exec'd
+into). The most interesting piece of this is that we're pointing to the
+zookeeper nodes using the cluster addresses (such as
+`zk-0.zk-svc.default.svc.cluster.local:2181`). This breaks down into the
+stateful node identifier (`zk-0`), the service name (`zk-svc`), and the
+network/namespace defaults (as well as the port).
+
+```shell
+kafka-topics.sh --create \
+  --topic test \
+  --zookeeper zk-0.zk-svc.default.svc.cluster.local:2181,zk-1.zk-svc.default.svc.cluster.local:2181,zk-2.zk-svc.default.svc.cluster.local:2181 \
+  --partitions 3 \
+  --replication-factor 2
+```
+
+and run a simple console consumer using the `kafka-console-consumer.sh` script.
+
+```shell
+kafka-console-consumer.sh --topic test --bootstrap-server localhost:9093
+```
+
+then exec into the same container again and run the producer so we can send
+messages to the consumer.
+
+```shell
+> kafka-console-producer.sh --topic test --broker-list localhost:9093
+hello
+I like kafka
+goodbye
+```
+
+Now we can check out the ISRs and partitions
+
+```
+> kafka-topics.sh --describe --topic test \
+  --zookeeper zk-0.zk-svc.default.svc.cluster.local:2181,zk-1.zk-svc.default.svc.cluster.local:2181,zk-2.zk-svc.default.svc.cluster.local:2181
+Topic:test	PartitionCount:3	ReplicationFactor:2	Configs:
+	Topic: test	Partition: 0	Leader: 2	Replicas: 2,0	Isr: 2,0
+	Topic: test	Partition: 1	Leader: 0	Replicas: 0,1	Isr: 0,1
+	Topic: test	Partition: 2	Leader: 1	Replicas: 1,2	Isr: 1,2
+```
+
+## Kubernetes Objects
+
+For Zookeeper we created the following objects:
+
+* [Service][service]
+* [ConfigMap][configmap]
+* [PodDisruptionBudget][disruption-budget]
+* [StatefulSet][statefulsets]
+
+For Kafka Brokers we created very similar objects:
+
+* [Service][service]
+* [PodDisruptionBudget][disruption-budget]
+* [StatefulSet][statefulsets]
+
+Both of these look pretty similar. They each use a `StatefulSet`, `Service`, and
+`PodDisruptionBudget`. Zookeeper also uses a `ConfigMap` instead of a file, etc
+
+### Zookeeper
+
+#### Service
+
+The Zookeeper `Service` is the first object we see in the yaml file.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: zk-svc
+  labels:
+    app: zk-svc
+spec:
+  ports:
+  - port: 2888
+    name: server
+  - port: 3888
+    name: leader-election
+  clusterIP: None
+  selector:
+    app: zk
+```
+
+This block says we're creating a `Service` with a name of `zk-svc` (remember the
+URLs we had to use to access Zookeeper earlier). We've removed the `clusterIP`
+which makes this a [Headless Service][headless-service]. Since Zookeeper and
+Kafka handle their own load balancing, etc, using a headless service lets us opt
+out of Kubernetes' load balancing and service discovery, letting Zookeeper/Kafka
+handle it on their own. Also notice that we've exposed the appropriate ports for
+Zookeeper leader election and server access.
+
+#### ConfigMap
+
+Next we define a `ConfigMap`, which contains configuration options for
+Zookeeper.
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zk-cm
+data:
+  jvm.heap: "1G"
+  tick: "2000"
+  init: "10"
+  sync: "5"
+  client.cnxns: "60"
+  snap.retain: "3"
+  purge.interval: "0"
+```
+
+#### PodDisruptionBudget
+
+Next we create a `PodDisruptionBudget` that lets us ensure that a minimum of 2
+nodes will be available at any given time _due to voluntary disruptions like
+upgrades_. It's important to note that this does not cover nodes crashing on
+their own.
+
+```yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: zk-pdb
+spec:
+  selector:
+    matchLabels:
+      app: zk
+  minAvailable: 2
+```
+
+#### StatefulSet
+
+Ah yes, the central dish to our exploration, the [StatefulSet][statefulset].
+
+We set the affinity for the Zookeeper pod to try to place itself on a node that
+doesn't already have a Zookeeper node.
+
+```yaml
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: "app"
+              operator: In
+              values:
+              - zk
+        topologyKey: "kubernetes.io/hostname"
+```
+
+The container specification is fairly readable if you're familiar with running
+containers. There's the start command, env vars, and resourcing. We then get to
+the readiness and liveness probes, which use a custom shell script to ask the
+cluster if it's ok (using `ruok`).
+
+```yaml
+readinessProbe:
+  exec:
+    command:
+    - "zkOk.sh"
+  initialDelaySeconds: 10
+  timeoutSeconds: 5
+livenessProbe:
+  exec:
+    command:
+    - "zkOk.sh"
+  initialDelaySeconds: 10
+  timeoutSeconds: 5
+```
+
+The volume mounts allocate a volume named `datadir` and claim `10Gi` of storage.
+This is a generic way to "claim" storage and translates to a
+[`gcePersistentDisk`](https://kubernetes.io/docs/concepts/storage/volumes/#gcepersistentdisk)
+on GKE.
+
+````yaml
+  volumeMounts:
+  - name: datadir
+    mountPath: /var/lib/zookeeper
+```
+
+```yaml
+volumeClaimTemplates:
+- metadata:
+    name: datadir
+  spec:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 10Gi
+```
+
+The Kafka yaml file has basically the same components so I won't go
+over it here.
+
+Congrats, you're running Kafka on GKE. This should be good enough for
+any testing you'd want to run. In the next post in this series we'll
+go over how to use the Confluent Platform instead of the containers
+specified in these yaml files.
+
+# Extra Content (yaml files)
+
+## Zookeeper
 
 ```yaml
 ---
@@ -179,7 +454,7 @@ spec:
           storage: 10Gi
 ```
 
-# Kafka
+## Kafka
 
 ```yaml
 ---
@@ -375,3 +650,9 @@ spec:
 [gke]: https://cloud.google.com/container-engine/
 [zookeeper-statefulset]: https://github.com/kubernetes/contrib/tree/0c2c22990617bc5ddb696ae7171ecbe1ca208d17/statefulsets/zookeeper
 [kafka-statefulset]: https://github.com/kubernetes/contrib/tree/0c2c22990617bc5ddb696ae7171ecbe1ca208d17/statefulsets/kafka
+[statefulsets]: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+[service]: https://kubernetes.io/docs/concepts/services-networking/service/
+[configmap]: https://kubernetes.io/docs/tasks/configure-pod-container/configmap/
+[disruption-budget]: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+[headless-service]: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+````
