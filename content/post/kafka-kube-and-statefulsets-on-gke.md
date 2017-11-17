@@ -271,7 +271,7 @@ This is a generic way to "claim" storage and translates to a
 [`gcePersistentDisk`](https://kubernetes.io/docs/concepts/storage/volumes/#gcepersistentdisk)
 on GKE.
 
-````yaml
+```yaml
   volumeMounts:
   - name: datadir
     mountPath: /var/lib/zookeeper
@@ -288,13 +288,13 @@ volumeClaimTemplates:
         storage: 10Gi
 ```
 
-The Kafka yaml file has basically the same components so I won't go
-over it here.
+The Kafka yaml file has basically the same components so I won't go over it
+here.
 
-Congrats, you're running Kafka on GKE. This should be good enough for
-any testing you'd want to run. In the next post in this series we'll
-go over how to use the Confluent Platform instead of the containers
-specified in these yaml files.
+Congrats, you're running Kafka on GKE. This should be good enough for any
+testing you'd want to run. In the next post in this series we'll go over how to
+use the Confluent Platform instead of the containers specified in these yaml
+files.
 
 # Extra Content (yaml files)
 
@@ -655,4 +655,3 @@ spec:
 [configmap]: https://kubernetes.io/docs/tasks/configure-pod-container/configmap/
 [disruption-budget]: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
 [headless-service]: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
-````
