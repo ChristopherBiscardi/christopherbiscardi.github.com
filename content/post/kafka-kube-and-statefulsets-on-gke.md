@@ -81,7 +81,7 @@ We can use the following command to interactively choose a kafka container to
 exec into.
 
 ```
-kgp --no-headers | fzf | awk '{print $1}' | xargs -o -I % kubectl exec -it % bash
+kubectl get pods --no-headers | fzf | awk '{print $1}' | xargs -o -I % kubectl exec -it % bash
 ```
 
 ![](/img/fzf-kgp-zookeeper-kafka.png)
