@@ -13,7 +13,7 @@ theme = "minimal"
     font = "interface, system-ui"
     highlight = true
     highlightStyle = "solarized-dark"
-    highlightLanguages = ["go", "haskell", "swift", "javascript", "rust", "yaml"]
+    highlightLanguages = ["go", "haskell", "swift", "javascript", "rust", "yaml", "lisp"]
     googleAnalytics = "UA-105803916-1"
 
 [[menu.main]]
