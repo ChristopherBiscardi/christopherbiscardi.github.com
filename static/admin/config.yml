@@ -1,6 +1,6 @@
 backend:
   name: git-gateway
-  branch: master # Branch to update (optional; defaults to master)
+  branch: hugo # Branch to update (optional; defaults to master)
 publish_mode: editorial_workflow
 media_folder: "static/img/uploads"
 public_folder: "/img/uploads" # The src attribute for uploaded media will begin with /images/uploads
@@ -9,6 +9,8 @@ collections:
   - name: "post" # Used in routes, e.g., /admin/collections/blog
     label: "Post" # Used in the UI
     folder: "content/post" # The path to the folder where the documents are stored
+    format: 'frontmatter'
+    extension: 'md'
     create: true # Allow users to create new documents in this collection
     slug: "{{slug}}" # Filename template, e.g., title.md
     fields: # The fields for each document, usually in front matter
