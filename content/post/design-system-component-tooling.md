@@ -1,10 +1,10 @@
 ---
-title: "Design System Component Tooling"
-date: 2017-08-26
-tags: [design-systems, preact]
-draft: true
+title: Design System Component Tooling
+date: 2018-02-19T05:50:34.171Z
+tags:
+  - design-systems
+  - preact
 ---
-
 Not all new products need a design system. Most should use anything else whether
 that is browser/native built-ins or a preset system like Bootstrap. Eventually
 after using these systems for awhile you hit a point where the primitives no
