@@ -1,10 +1,10 @@
 ---
-title: "Towards Kubernetes"
-date: 2017-09-30
-tags: [kubernetes, docker]
-draft: true
+title: Towards Kubernetes
+date: 2018-02-19T05:48:39.145Z
+tags:
+  - kubernetes
+  - docker
 ---
-
 # Resources
 
 [TGI K8s][tgik8s] has been really useful for finding good jump off points. The
