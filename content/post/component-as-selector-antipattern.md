@@ -1,10 +1,10 @@
 ---
-title: "Component as Selector Antipattern"
-date: 2017-10-16
-tags: [emotion, css-in-js]
-draft: true
+title: Component as Selector Antipattern
+date: 2018-02-19T05:46:56.235Z
+tags:
+  - emotion
+  - css-in-js
 ---
-
 ```js
 const Box = styled.div`
   border: 1px dashed #ccc;
