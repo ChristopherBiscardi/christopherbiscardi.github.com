@@ -1,10 +1,11 @@
 ---
-title: "Speaking a Ui Language"
-date: 2017-08-10
-tags: [javascript, design-systems, css-in-js]
-draft: true
+title: Speaking a UI Language
+date: 2018-02-19T05:47:52.997Z
+tags:
+  - javascript
+  - design-systems
+  - css-in-js
 ---
-
 The Component paradigm allows a single UI vocabulary across an organization.
 React is probably the best-known example of this paradigm currently.
 
