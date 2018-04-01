@@ -87,3 +87,47 @@ Watching for changes...
 [getting-started] Hello world!
 [getting-started] Hello world!
 ```
+
+## Shipping Changes
+
+So next we'll modify main.go to change the output from `Hello world!` to `Hello chris!` (because... my name is chris. Use your own :P)
+
+```
+[getting-started] Hello world!
+Starting build...
+Found [docker-for-desktop] context, using local docker daemon.
+Sending build context to Docker daemon  6.144kB
+Step 1/5 : FROM golang:1.9.4-alpine3.7
+ ---> fb6e10bf973b
+Step 2/5 : WORKDIR /go/src/github.com/GoogleCloudPlatform/skaffold/examples/getting-started
+ ---> Using cache
+ ---> 122d44c3c5e6
+Step 3/5 : CMD ["./app"]
+ ---> Using cache
+ ---> 25fec8e3d0c1
+Step 4/5 : COPY main.go .
+ ---> 06798183b11a
+Step 5/5 : RUN go build -o app main.go
+ ---> Running in 2ed87b7554eb
+ ---> a302d8e3cfb2
+Successfully built a302d8e3cfb2
+Successfully tagged e67149814c3613256f066208371b0c21:latest
+Successfully tagged gcr.io/k8s-skaffold/skaffold-example:a302d8e3cfb2888d9e60cfd6c2e13b52d4f6557cfe50ce65ceb17b6855cf31b1
+Build complete in 2.163268206s
+Starting deploy...
+Deploying k8s-pod.yaml...
+Deploy complete in 434.098218ms
+Watching for changes...
+[getting-started] Hello chris!
+[getting-started] Hello chris!
+```
+
+This took a few seconds total to rebuild and redeploy locally. It's actually very promising for local development.
+
+Note that even after we kill skaffold, the pods are still running
+
+```shell
+➜ kubectl get pods
+NAME              READY     STATUS    RESTARTS   AGE
+getting-started   1/1       Running   1          11m
+```
