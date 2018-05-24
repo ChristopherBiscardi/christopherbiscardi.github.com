@@ -13,6 +13,8 @@ I don't want your code in the codebase.
 
 To be fair, I don't want my code in the codebase either. Let me explain.
 
+https://twitter.com/chrisbiscardi/status/999204113358323712
+
 Code is amazing for building new tools, new experiences, and increasing leverage for the people that use our products. This is true even though even line of code that gets merged [is a liability, not an asset](https://blogs.msdn.microsoft.com/elee/2009/03/11/source-code-is-a-liability-not-an-asset/). Startups, the area I spend most of my time in, are particularly prone to acquiring technical debt. In fact, if you haven't acquired any technical debt as a startup, you're probably not moving fast enough.
 
 If we accept the premises that
