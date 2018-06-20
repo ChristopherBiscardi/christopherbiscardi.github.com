@@ -7,7 +7,7 @@ tags:
 ---
 go is a nice language for a lot of things and there happens to be a very nice
 lib for builing CLI tools. Combined with static builds this makes it a very
-attractive tool.
+attractive tool for building and distributing binaries.
 
 # Bootstrapping a Project
 
