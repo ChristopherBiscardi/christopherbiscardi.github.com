@@ -1,0 +1,18 @@
+{
+  "pageContext": {
+    "jsonName":
+      "2014-4-8-snap-postgres-and-heist-displaying-data-from-queries-2d4",
+    "internalComponentName":
+      "Component201448SnapPostgresAndHeistDisplayingDataFromQueries",
+    "path": "/2014/4/8/snap-postgres-and-heist-displaying-data-from-queries/",
+    "component":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js",
+    "componentChunkName": "component---src-blog-post-js",
+    "context": {},
+    "updatedAt": 1530998801373,
+    "pluginCreator___NODE": "Plugin default-site-plugin",
+    "pluginCreatorId": "Plugin default-site-plugin",
+    "componentPath":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js"
+  }
+}

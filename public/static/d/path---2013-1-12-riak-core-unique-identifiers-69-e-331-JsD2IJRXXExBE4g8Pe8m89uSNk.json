@@ -1,0 +1,16 @@
+{
+  "pageContext": {
+    "jsonName": "2013-1-12-riak-core-unique-identifiers-69e",
+    "internalComponentName": "Component2013112RiakCoreUniqueIdentifiers",
+    "path": "/2013/1/12/riak-core-unique-identifiers/",
+    "component":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js",
+    "componentChunkName": "component---src-blog-post-js",
+    "context": {},
+    "updatedAt": 1531007673117,
+    "pluginCreator___NODE": "Plugin default-site-plugin",
+    "pluginCreatorId": "Plugin default-site-plugin",
+    "componentPath":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "pageContext": {
+    "jsonName": "post-response-headers-with-servant-4f5",
+    "internalComponentName": "ComponentPostResponseHeadersWithServant",
+    "path": "/post/Response-Headers-with-Servant",
+    "component":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js",
+    "componentChunkName": "component---src-blog-post-js",
+    "context": {},
+    "updatedAt": 1531007356405,
+    "pluginCreator___NODE": "Plugin default-site-plugin",
+    "pluginCreatorId": "Plugin default-site-plugin",
+    "componentPath":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js"
+  }
+}

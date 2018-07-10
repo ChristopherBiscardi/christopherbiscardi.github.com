@@ -1,0 +1,16 @@
+{
+  "pageContext": {
+    "jsonName": "post-emacs-command-frequency-2017-f0e",
+    "internalComponentName": "ComponentPostEmacsCommandFrequency2017",
+    "path": "/post/Emacs-Command-Frequency-2017",
+    "component":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js",
+    "componentChunkName": "component---src-blog-post-js",
+    "context": {},
+    "updatedAt": 1531002780933,
+    "pluginCreator___NODE": "Plugin default-site-plugin",
+    "pluginCreatorId": "Plugin default-site-plugin",
+    "componentPath":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js"
+  }
+}

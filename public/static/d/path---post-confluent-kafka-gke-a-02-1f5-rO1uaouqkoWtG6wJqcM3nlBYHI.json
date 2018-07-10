@@ -1,0 +1,16 @@
+{
+  "pageContext": {
+    "jsonName": "post-confluent-kafka-gke-a02",
+    "internalComponentName": "ComponentPostConfluentKafkaGke",
+    "path": "/post/Confluent-Kafka-GKE",
+    "component":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js",
+    "componentChunkName": "component---src-blog-post-js",
+    "context": {},
+    "updatedAt": 1530998801344,
+    "pluginCreator___NODE": "Plugin default-site-plugin",
+    "pluginCreatorId": "Plugin default-site-plugin",
+    "componentPath":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js"
+  }
+}

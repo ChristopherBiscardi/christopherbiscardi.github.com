@@ -1,0 +1,78 @@
+import React, { Fragment } from "react";
+import Helmet from "react-helmet";
+import { injectGlobal } from "emotion";
+import styled, { css } from "react-emotion";
+
+// Emotion supports different styling options, all of which are supported by gatsby-plugin-emotion out of the box
+
+injectGlobal`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+`;
+
+injectGlobal`
+  html, body {
+    font-family: -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      "Roboto",
+      "Roboto Light",
+      "Oxygen",
+      "Ubuntu",
+      "Cantarell",
+      "Fira Sans",
+      "Droid Sans",
+      "Helvetica Neue",
+      sans-serif,
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol";
+  }
+`;
+
+// Using styled (similar API as styled-components)
+const Wrapper = styled.section`
+  align-items: center;
+  background: #282a36;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+  width: 100vw;
+`;
+
+// Using css with template literal
+const title = css`
+  font-size: 1.5em;
+  color: #ff79c6;
+  margin-bottom: 0.5em;
+  a {
+    color: #8be9fd;
+  }
+`;
+
+// Using css with object
+const subtitle = css({
+  color: `#bd93f9`
+});
+
+const IndexPage = () => (
+  <Fragment>
+    <Helmet>
+      <title>Chris Biscardi</title>
+      <meta name="description" content="Christopher Biscardi's website" />
+      <meta name="referrer" content="origin" />
+    </Helmet>
+    <Wrapper>
+      <h1 className={title}>
+        Hello World, this is my first component styled with
+        <a href="https://emotion.sh/">emotion</a>!
+      </h1>
+    </Wrapper>
+  </Fragment>
+);
+
+export default IndexPage;

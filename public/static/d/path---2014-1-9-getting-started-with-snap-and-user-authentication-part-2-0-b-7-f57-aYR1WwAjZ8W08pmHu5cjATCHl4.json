@@ -1,0 +1,19 @@
+{
+  "pageContext": {
+    "jsonName":
+      "2014-1-9-getting-started-with-snap-and-user-authentication-part-2-0b7",
+    "internalComponentName":
+      "Component201419GettingStartedWithSnapAndUserAuthenticationPart2",
+    "path":
+      "/2014/1/9/getting-started-with-snap-and-user-authentication-part-2/",
+    "component":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js",
+    "componentChunkName": "component---src-blog-post-js",
+    "context": {},
+    "updatedAt": 1531007126147,
+    "pluginCreator___NODE": "Plugin default-site-plugin",
+    "pluginCreatorId": "Plugin default-site-plugin",
+    "componentPath":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js"
+  }
+}

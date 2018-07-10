@@ -1,0 +1,16 @@
+{
+  "pageContext": {
+    "jsonName": "post-emotion-configurable-imports-45f",
+    "internalComponentName": "ComponentPostEmotionConfigurableImports",
+    "path": "/post/Emotion-Configurable-Imports",
+    "component":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js",
+    "componentChunkName": "component---src-blog-post-js",
+    "context": {},
+    "updatedAt": 1531007126141,
+    "pluginCreator___NODE": "Plugin default-site-plugin",
+    "pluginCreatorId": "Plugin default-site-plugin",
+    "componentPath":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "pageContext": {
+    "jsonName": "post-reproducible-tutorials-with-stack-476",
+    "internalComponentName": "ComponentPostReproducibleTutorialsWithStack",
+    "path": "/post/Reproducible-Tutorials-with-Stack",
+    "component":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js",
+    "componentChunkName": "component---src-blog-post-js",
+    "context": {},
+    "updatedAt": 1530998801370,
+    "pluginCreator___NODE": "Plugin default-site-plugin",
+    "pluginCreatorId": "Plugin default-site-plugin",
+    "componentPath":
+      "/Users/biscarch/github/christopherbiscardi/christopherbiscardi.github.com/src/blog-post.js"
+  }
+}
