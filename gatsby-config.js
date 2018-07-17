@@ -3,7 +3,6 @@ module.exports = {
     title: `Chris Biscardi's website`
   },
   plugins: [
-    `gatsby-plugin-mdx`,
     {
       resolve: "gatsby-source-filesystem",
       options: {
@@ -11,6 +10,7 @@ module.exports = {
         path: `${__dirname}/content/post/`
       }
     },
+    `gatsby-transformer-remark`,
     `gatsby-plugin-emotion`,
     `gatsby-plugin-react-helmet`,
     {

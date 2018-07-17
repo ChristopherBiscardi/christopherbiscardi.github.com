@@ -1,0 +1,4 @@
+my-tmp
+public/static/d/*.json
+.cache
+public
