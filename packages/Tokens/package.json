@@ -1,0 +1,7 @@
+{
+  "name": "@sens8/tokens",
+  "version": "0.0.1",
+  "description": "Design Tokens for Sens8",
+  "main": "index.js",
+  "license": "MIT"
+}

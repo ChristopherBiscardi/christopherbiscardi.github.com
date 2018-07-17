@@ -1,0 +1,7 @@
+{
+  "name": "@sens8/component-button",
+  "version": "0.0.1",
+  "description": "A Button",
+  "main": "src/index.js",
+  "license": "MIT"
+}
