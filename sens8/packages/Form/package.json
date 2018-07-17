@@ -1,0 +1,7 @@
+{
+  "name": "@sens8/component-form",
+  "version": "0.0.1",
+  "description": "Form elements",
+  "main": "index.js",
+  "license": "MIT"
+}

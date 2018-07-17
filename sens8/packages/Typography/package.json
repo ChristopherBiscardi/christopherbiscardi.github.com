@@ -1,0 +1,10 @@
+{
+  "name": "@sens8/component-typography",
+  "version": "1.0.0",
+  "description": "Text and Heading components",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@mdx-js/mdx": "^0.9.0"
+  }
+}

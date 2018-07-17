@@ -1,0 +1,59 @@
+{
+  "name": "sens8",
+  "version": "0.0.1",
+  "description":
+    "Sens8 is my personal design system and exemplifying area for experimental designops workflows.",
+  "main": "index.js",
+  "repository": "git@github.com:ChristopherBiscardi/sens8.git",
+  "author": "ChristopherBiscardi <chris@christopherbiscardi.com>",
+  "license": "MIT",
+  "private": "true",
+  "bolt": {
+    "workspaces": ["packages/*"]
+  },
+  "scripts": {
+    "test": "jest",
+    "precommit": "lint-staged",
+    "storybook": "start-storybook -p 9001 -c .storybook"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": ["prettier --parser flow --write", "git add"],
+    "*.json": ["prettier --parser json --write", "git add"],
+    "*.{graphql,gql}": ["prettier --parser graphql --write", "git add"],
+    "*.{md,markdown}": ["prettier --parser markdown --write", "git add"],
+    "*.{css,scss}": ["prettier --parser css --write", "git add"]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.44",
+    "@babel/core": "^7.0.0-beta.44",
+    "@babel/plugin-proposal-do-expressions": "^7.0.0-beta.46",
+    "@babel/plugin-proposal-export-default-from": "^7.0.0-beta.46",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.46",
+    "@babel/preset-env": "^7.0.0-beta.44",
+    "@babel/preset-react": "^7.0.0-beta.44",
+    "@mdx-js/loader": "^0.9.0",
+    "@storybook/addon-actions": "^4.0.0-alpha.7",
+    "@storybook/addon-console": "^1.0.0",
+    "@storybook/addon-options": "^4.0.0-alpha.7",
+    "@storybook/react": "^4.0.0-alpha.1",
+    "babel-core": "^7.0.0-0",
+    "babel-jest": "^22.4.3",
+    "babel-loader": "^8.0.0-beta",
+    "emotion": "^9.1.0",
+    "emotion-theming": "^9.1.2",
+    "husky": "^0.14.3",
+    "jest": "^22.4.3",
+    "jest-in-case": "^1.0.2",
+    "kitimat": "^0.1.8",
+    "lint-staged": "^7.0.2",
+    "prettier": "^1.11.1",
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0",
+    "react-emotion": "^9.1.0",
+    "storybook-addon-jest": "^0.0.1",
+    "styled-system": "^2.2.1"
+  },
+  "dependencies": {
+    "@mdx-js/mdx": "^0.9.0"
+  }
+}

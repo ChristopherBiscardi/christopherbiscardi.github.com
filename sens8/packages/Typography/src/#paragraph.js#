@@ -1,0 +1,10 @@
+import React from "react";
+
+export function P(props) {
+  const Paragraph = BaseText.withComponent("p");
+  return (
+    <Paragraph maxWidth={33} {...props}>
+      {children}
+    </Paragraph>
+  );
+}
