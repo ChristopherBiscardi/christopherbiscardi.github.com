@@ -3,33 +3,17 @@ import Helmet from "react-helmet";
 import { injectGlobal } from "emotion";
 import styled, { css } from "react-emotion";
 import { Link } from "gatsby";
-// Emotion supports different styling options, all of which are supported by gatsby-plugin-emotion out of the box
+import Box from "superbox/emotion";
+import { ThemeProvider } from "emotion-theming";
+
+import { H1 } from "@sens8/component-typography/display";
+import Nav from "../navigation";
 
 injectGlobal`
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-  }
-`;
-
-injectGlobal`
-  html, body {
-    font-family: -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      "Roboto",
-      "Roboto Light",
-      "Oxygen",
-      "Ubuntu",
-      "Cantarell",
-      "Fira Sans",
-      "Droid Sans",
-      "Helvetica Neue",
-      sans-serif,
-      "Apple Color Emoji",
-      "Segoe UI Emoji",
-      "Segoe UI Symbol";
   }
 `;
 
@@ -61,29 +45,19 @@ const subtitle = css({
 export default class IndexPage extends Component {
   render() {
     return (
-      <div>
-        <Helmet>
-          <title>Chris Biscardi</title>
-          <meta name="description" content="Christopher Biscardi's website" />
-          <meta name="referrer" content="origin" />
-        </Helmet>
-        <nav>
-          <Link
-            to="/another-page/"
-            activeStyle={{
-              color: "red"
-            }}
-            innerRef={el => {
-              this.myLink = el;
-            }}
-          >
-            Another page
-          </Link>
-        </nav>
-        <Wrapper>
-          <h1 className={title}>Chris Biscardi</h1>
-        </Wrapper>
-      </div>
+      <ThemeProvider theme={{}}>
+        <Box>
+          <Helmet>
+            <title>Chris Biscardi</title>
+            <meta name="description" content="Christopher Biscardi's website" />
+            <meta name="referrer" content="origin" />
+          </Helmet>
+          <Nav />
+          <Wrapper>
+            <H1 className={title}>Chris Biscardi</H1>
+          </Wrapper>
+        </Box>
+      </ThemeProvider>
     );
   }
 }

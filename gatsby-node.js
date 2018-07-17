@@ -36,17 +36,15 @@ exports.createPages = ({ graphql, actions }) => {
         // Create blog posts pages.
         result.data.allFile.edges.forEach(edge => {
           const file = fs.readFileSync(edge.node.absolutePath, "utf-8");
-          const fm = frontmatter(file).attributes;
+          const { body, attributes: fm } = frontmatter(file);
           const newFileContents = `
+export default ({children}) => <Post>{children}</Post>
 
-export default ({children}) => <Post some='metadata' >{children}</Post>
-
-
-${file}`;
+${body}`;
           const code = transform(
             `import React from 'react';
             import {MDXTag} from '@mdx-js/tag';
-            import Post from '../src/blog-post'
+            import Post from '../src/blog-post';
 
             ${mdx.sync(newFileContents)}
             `,

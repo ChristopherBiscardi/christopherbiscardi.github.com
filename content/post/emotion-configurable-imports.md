@@ -18,7 +18,7 @@ The core conflict between the two plugins is that they both use the same import
 names to refer to different things. Take the following file which uses
 `styled-jsx` and `emotion` in the same file.
 
-```js
+```jsx
 import styled, { css } from "emotion";
 
 export default () => (

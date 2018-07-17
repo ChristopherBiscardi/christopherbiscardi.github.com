@@ -12,6 +12,8 @@
     "develop": "gatsby develop",
     "build": "gatsby build"
   },
+  "private": true,
+  "workspaces": ["./sens8/packages/*", "."],
   "lint-staged": {
     "*.{js,jsx}": ["prettier --parser flow --write", "git add"],
     "*.json": ["prettier --parser json --write", "git add"],
@@ -20,8 +22,10 @@
     "*.{css,scss}": ["prettier --parser css --write", "git add"]
   },
   "dependencies": {
+    "@sens8/component-typography": "*",
     "emotion": "^9.2.6",
     "emotion-server": "^9.2.6",
+    "emotion-theming": "^9.2.6",
     "eval": "^0.1.2",
     "gatsby": "next",
     "gatsby-plugin-emotion": "next",
@@ -39,7 +43,9 @@
     "react-dom": "^16.4.0",
     "react-emotion": "^9.2.6",
     "react-helmet": "^5.2.0",
-    "slugify": "^1.3.0"
+    "react-prism": "^4.3.2",
+    "slugify": "^1.3.0",
+    "superbox": "^1.0.6"
   },
   "devDependencies": {
     "@mdx-js/loader": "^0.14.0",
