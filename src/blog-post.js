@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { MDXProvider } from "@mdx-js/tag";
+import Nav from "./navigation";
 
 import PrismCode from "react-prism";
 import Text, {
@@ -13,7 +14,7 @@ import Text, {
 import { H1, H2, H3, H4, H5, H6 } from "@sens8/component-typography/display";
 
 require("prismjs");
-require("prismjs/themes/prism.css");
+require("prismjs/themes/prism-tomorrow.css");
 
 export default class BlogPost extends Component {
   render() {
@@ -36,6 +37,7 @@ export default class BlogPost extends Component {
           )
         }}
       >
+        <Nav />
         <div>{children}</div>
       </MDXProvider>
     );

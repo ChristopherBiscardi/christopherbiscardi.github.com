@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Link as GLink } from "gatsby";
 import styled, { css } from "react-emotion";
 
@@ -21,30 +21,40 @@ const activeNavLink = css`
 export default class Nav extends Component {
   render() {
     return (
-      <nav
-        css={`
-          background: #282a36;
-          display: flex;
-        `}
-      >
-        <ul
+      <Fragment>
+        <div
           css={`
+            height: 36px;
+          `}
+        />
+        <nav
+          css={`
+            background: #282a36;
             display: flex;
-            list-style-type: none;
+            position: fixed;
+            width: 100%;
+            margin-top: -36px;
           `}
         >
-          <li>
-            <Link to="/" exact activeClassName={activeNavLink}>
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link to="/posts" activeClassName={activeNavLink}>
-              Posts
-            </Link>
-          </li>
-        </ul>
-      </nav>
+          <ul
+            css={`
+              display: flex;
+              list-style-type: none;
+            `}
+          >
+            <li>
+              <Link to="/" exact activeClassName={activeNavLink}>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/posts" activeClassName={activeNavLink}>
+                Posts
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </Fragment>
     );
   }
 }
