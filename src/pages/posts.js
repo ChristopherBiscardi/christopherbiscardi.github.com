@@ -1,29 +1,16 @@
-import React, { Component, Fragment } from "react";
+import Box from "superbox/emotion";
 import Helmet from "react-helmet";
-import { injectGlobal } from "emotion";
+import React, { Component } from "react";
+import slugify from "slugify";
 import styled, { css } from "react-emotion";
 import { graphql, Link } from "gatsby";
-import Box from "superbox/emotion";
-import { ThemeProvider } from "emotion-theming";
-import slugify from "slugify";
 
 import { H1, H2 } from "@sens8/component-typography/display";
 import Text from "@sens8/component-typography/linear";
 
-import Nav from "../navigation";
+import SiteLayout from "../site-layout";
 
-injectGlobal`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  body {
-    background: #d5d6d7;
-  }
-`;
-
-const Wrapper = styled.section`
+const Hero = styled.section`
   align-items: center;
   background: #282a36;
   display: flex;
@@ -50,33 +37,29 @@ const Subtitle = styled.p`
 `;
 export default class PostsPage extends Component {
   render() {
-    console.log(this.props);
     return (
-      <ThemeProvider theme={{}}>
-        <Box>
-          <Helmet>
-            <title>Chris Biscardi</title>
-            <meta name="description" content="Christopher Biscardi's website" />
-            <meta name="referrer" content="origin" />
-          </Helmet>
-          <Nav />
-          <Wrapper>
-            <H1 className={title}>Chris Biscardi</H1>
-            <Subtitle>Posts</Subtitle>
-          </Wrapper>
-          {this.props.data.allMarkdownRemark.edges.map(({ node }) => {
-            const { excerpt, frontmatter = {}, id } = node;
-            return (
-              <PostBox
-                key={id}
-                excerpt={excerpt}
-                title={frontmatter.title}
-                date={frontmatter.date}
-              />
-            );
-          })}
-        </Box>
-      </ThemeProvider>
+      <SiteLayout>
+        <Helmet>
+          <title>Chris Biscardi</title>
+          <meta name="description" content="Christopher Biscardi's website" />
+          <meta name="referrer" content="origin" />
+        </Helmet>
+        <Hero>
+          <H1 className={title}>Chris Biscardi</H1>
+          <Subtitle>Posts</Subtitle>
+        </Hero>
+        {this.props.data.allMarkdownRemark.edges.map(({ node }) => {
+          const { excerpt, frontmatter = {}, id } = node;
+          return (
+            <PostBox
+              key={id}
+              excerpt={excerpt}
+              title={frontmatter.title}
+              date={frontmatter.date}
+            />
+          );
+        })}
+      </SiteLayout>
     );
   }
 }
@@ -93,7 +76,7 @@ class PostBox extends Component {
       >
         <H2>{title}</H2>
         <Text>
-          {excerpt}{" "}
+          {excerpt}&nbsp;
           <Link to={`/post/${slugify(title, { lower: true })}`}>
             Read more...
           </Link>

@@ -1,45 +1,20 @@
 import React, { Component } from "react";
-import { MDXProvider } from "@mdx-js/tag";
-import Nav from "./navigation";
+import styled from "react-emotion";
 
-import PrismCode from "react-prism";
-import Text, {
-  OL,
-  UL,
-  Sup,
-  Sub,
-  BlockQuote,
-  Link
-} from "@sens8/component-typography/linear";
-import { H1, H2, H3, H4, H5, H6 } from "@sens8/component-typography/display";
+import SiteLayout from "./site-layout";
 
-require("prismjs");
-require("prismjs/themes/prism-tomorrow.css");
+const Sidebar = styled.aside`
+  position: fixed;
+`;
 
 export default class BlogPost extends Component {
   render() {
     const { children } = this.props;
 
     return (
-      <MDXProvider
-        components={{
-          h1: H1,
-          h2: H2,
-          p: Text,
-          ol: OL,
-          ul: UL,
-          a: Link,
-          sub: Sub,
-          sup: Sup,
-          blockquote: BlockQuote,
-          code: ({ children, ...props }) => (
-            <PrismCode {...props}>{children}</PrismCode>
-          )
-        }}
-      >
-        <Nav />
-        <div>{children}</div>
-      </MDXProvider>
+      <SiteLayout sidebar={<Sidebar>some stuff</Sidebar>}>
+        {children}
+      </SiteLayout>
     );
   }
 }
