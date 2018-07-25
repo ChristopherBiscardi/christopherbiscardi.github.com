@@ -57,18 +57,20 @@ export default class SiteLayout extends Component {
             )
           }}
         >
-          <Nav />
-          <div
-            className={
-              sidebar &&
-              css`
-                display: grid;
-                grid-template-columns: 200px 1fr;
-              `
-            }
-          >
-            <div>{sidebar}</div>
-            <div>{children}</div>
+          <div>
+            <Nav />
+            <div
+              className={
+                sidebar &&
+                css`
+                  display: grid;
+                  grid-template-columns: 200px 1fr;
+                `
+              }
+            >
+              <div>{sidebar}</div>
+              <div>{children}</div>
+            </div>
           </div>
         </MDXProvider>
       </ThemeProvider>

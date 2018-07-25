@@ -10,15 +10,12 @@ module.exports = {
         path: `${__dirname}/content/post/`
       }
     },
-    `gatsby-transformer-remark`,
+    {
+      resolve: `gatsby-mdx`,
+      options: { defaultLayout: require.resolve("./src/blog-post.js") }
+    },
     `gatsby-plugin-emotion`,
     `gatsby-plugin-react-helmet`,
-    {
-      resolve: `gatsby-plugin-google-analytics`,
-      options: {
-        trackingId: `UA-105803916-1`
-      }
-    },
     `gatsby-plugin-offline`
   ]
 };

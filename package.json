@@ -30,9 +30,9 @@
     "emotion-theming": "^9.2.6",
     "eval": "^0.1.2",
     "gatsby": "next",
+    "gatsby-mdx": "*",
     "gatsby-plugin-emotion": "next",
     "gatsby-plugin-google-analytics": "next",
-    "gatsby-plugin-mdx": "^1.0.1",
     "gatsby-plugin-offline": "next",
     "gatsby-plugin-react-helmet": "next",
     "gatsby-remark-prismjs": "next",
@@ -56,5 +56,8 @@
     "@mdx-js/mdx": "^0.14.0",
     "gatsby-source-filesystem": "^2.0.1-beta.3",
     "loader-utils": "^1.1.0"
+  },
+  "resolutions": {
+    "gatsby": "2.0.0-beta.57"
   }
 }

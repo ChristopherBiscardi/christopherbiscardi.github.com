@@ -48,14 +48,19 @@ export default class PostsPage extends Component {
           <H1 className={title}>Chris Biscardi</H1>
           <Subtitle>Posts</Subtitle>
         </Hero>
-        {this.props.data.allMarkdownRemark.edges.map(({ node }) => {
-          const { excerpt, frontmatter = {}, id } = node;
+        {this.props.data.allMdx.edges.map(({ node }) => {
+          const { excerpt, frontmatter = {}, id, fileNode } = node;
           return (
             <PostBox
               key={id}
               excerpt={excerpt}
               title={frontmatter.title}
               date={frontmatter.date}
+              url={
+                frontmatter.url ||
+                `/post/${frontmatter.slug ||
+                  slugify(fileNode.name, { lower: true })}`
+              }
             />
           );
         })}
@@ -66,7 +71,7 @@ export default class PostsPage extends Component {
 
 class PostBox extends Component {
   render() {
-    const { title, excerpt } = this.props;
+    const { url, title, excerpt } = this.props;
     return (
       <Box
         m="auto"
@@ -77,24 +82,29 @@ class PostBox extends Component {
         <H2>{title}</H2>
         <Text>
           {excerpt}&nbsp;
-          <Link to={`/post/${slugify(title, { lower: true })}`}>
-            Read more...
-          </Link>
+          <Link to={url}>Read more...</Link>
         </Text>
       </Box>
     );
   }
 }
+
 export const pageQuery = graphql`
   query PostsQuery {
-    allMarkdownRemark(sort: { order: DESC, fields: [frontmatter___date] }) {
+    allMdx {
       edges {
         node {
           id
-          excerpt(pruneLength: 250)
+          relativePath
+          fileAbsolutePath
           frontmatter {
-            date(formatString: "MMMM DD, YYYY")
+            slug
+            url
             title
+            tags
+          }
+          fileNode {
+            name
           }
         }
       }
