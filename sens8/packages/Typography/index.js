@@ -68,9 +68,9 @@ const Span = styled.span`
   fontfamily: ${({ theme, fontFamily }) => theme[fontFamily] || "Comic Sans"};
 `;
 
-export { Heading } from "./src/heading";
-export { Text } from "./src/text";
-//export { P } from "./src/paragraph";
+export { default as Heading } from "./display";
+export { default as Text } from "./linear";
+export { default as Code } from "./code";
 
 /*
    <Cite>

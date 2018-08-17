@@ -6,7 +6,8 @@
   "license": "MIT",
   "dependencies": {
     "@sens8/component-button": "*",
+    "@sens8/component-form": "*",
     "@sens8/component-typography": "*",
-    "@sens8/component-form": "*"
+    "@sens8/tokens": "*"
   }
 }

@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { space, width, fontSize, color } from "styled-system";
+import React from "react";
+import { width, fontSize, color } from "styled-system";
 import styled, { css } from "react-emotion";
 
 const sizes = {
@@ -86,3 +86,16 @@ ${fontSize}
   ${color}
 ${sizeProp}
 `;
+
+/**
+   &::before {
+   position: absolute;
+   top: -2px;
+   left: -2px;
+   content: "";
+   width: calc(100%+4px);
+   height: calc(100%+4px);
+box-shadow: 0 0 0 2px black;
+border-radius: 3px;
+   }
+ */
