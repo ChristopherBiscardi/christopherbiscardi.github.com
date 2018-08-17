@@ -1,16 +1,20 @@
+//import palx from "palx";
+import rawColors from "./src/colors";
+
 // breakpoint values
 // any array length works with styled-system
 const breakpoints = ["40em", "52em", "64em"];
 
 const colors = {
-  text: "#024",
-  blue: "#07c",
-  // nested objects work as well
-  dark: {
-    blue: "#058"
-  },
-  // arrays can be used for scales of colors
-  gray: ["#333", "#666", "#999", "#ccc", "#eee", "#f6f6f6"]
+  text: rawColors.blue[0],
+  background: rawColors.blue[6],
+  backgroundLayers: [
+    rawColors.black,
+    rawColors.blue[9],
+    rawColors.blue[8],
+    rawColors.blue[7]
+  ],
+  raw: rawColors
 };
 
 // space is used for margin and padding scales

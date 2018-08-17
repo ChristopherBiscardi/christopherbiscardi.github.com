@@ -3,6 +3,13 @@ import { configure, addDecorator } from "@storybook/react";
 import { withConsole } from "@storybook/addon-console";
 import { setOptions } from "@storybook/addon-options";
 import { ThemeProvider } from "emotion-theming";
+import dark from "../packages/Tokens";
+import { injectGlobal } from "emotion";
+
+injectGlobal`
+body {
+  background: ${dark.colors.background}
+}`;
 
 setOptions({
   name: "Sens8",
@@ -14,9 +21,10 @@ setOptions({
 
 const Wrapper = storyFn => (
   <StrictMode>
-    <ThemeProvider theme={{}}>{storyFn()}</ThemeProvider>
+    <ThemeProvider theme={dark}>{storyFn()}</ThemeProvider>
   </StrictMode>
 );
+
 addDecorator(Wrapper);
 addDecorator((storyFn, context) => withConsole()(storyFn)(context));
 // automatically import all files ending in *.stories.js
