@@ -37,6 +37,9 @@ export default class BlogPost extends Component {
               margin-left: auto;
               margin-right: auto;
             }
+            & code {
+              max-width: 38rem;
+            }
           `}
         >
           <MDXRenderer scope={__mdxScope}>{data.mdx.code.body}</MDXRenderer>

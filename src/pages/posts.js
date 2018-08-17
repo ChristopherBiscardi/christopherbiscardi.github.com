@@ -12,7 +12,7 @@ import SiteLayout from "../site-layout";
 
 const Hero = styled.section`
   align-items: center;
-  background: #282a36;
+  background: ${({ theme }) => theme.colors.backgroundLayers[3]};
   display: flex;
   flex-direction: column;
   height: 40vh;
@@ -21,7 +21,6 @@ const Hero = styled.section`
   margin-bottom: 1.5rem;
 `;
 
-// Using css with template literal
 const title = css`
   font-size: 1.5em;
   color: #ff79c6;
@@ -31,10 +30,10 @@ const title = css`
   }
 `;
 
-// Using css with object
 const Subtitle = styled.p`
   color: #bd93f9;
 `;
+
 export default class PostsPage extends Component {
   render() {
     return (

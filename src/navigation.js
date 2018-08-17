@@ -31,6 +31,14 @@ const Link = ({ children, ...props }) => (
   </GLink>
 );
 
+const NavWrapper = styled.nav`
+  background: ${({ theme }) => theme.colors.backgroundLayers[3]};
+  display: flex;
+  position: fixed;
+  width: 100%;
+  margin-top: -36px;
+`;
+
 export default class Nav extends Component {
   render() {
     return (
@@ -40,15 +48,7 @@ export default class Nav extends Component {
             height: 36px;
           `}
         />
-        <nav
-          css={`
-            background: #282a36;
-            display: flex;
-            position: fixed;
-            width: 100%;
-            margin-top: -36px;
-          `}
-        >
+        <NavWrapper>
           <ul
             css={`
               display: flex;
@@ -62,7 +62,7 @@ export default class Nav extends Component {
               <Link to="/posts">Posts</Link>
             </li>
           </ul>
-        </nav>
+        </NavWrapper>
       </Fragment>
     );
   }

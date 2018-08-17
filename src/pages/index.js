@@ -5,21 +5,14 @@ import styled, { css } from "react-emotion";
 import { Link } from "gatsby";
 import Box from "superbox/emotion";
 import { ThemeProvider } from "emotion-theming";
+import theme from "@sens8/tokens";
 
 import { H1 } from "@sens8/component-typography/display";
 import Nav from "../navigation";
 
-injectGlobal`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-`;
-
 const Wrapper = styled.section`
   align-items: center;
-  background: #282a36;
+  background: ${({ theme }) => theme.colors.backgroundLayers[3]};
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -45,7 +38,7 @@ const subtitle = css({
 export default class IndexPage extends Component {
   render() {
     return (
-      <ThemeProvider theme={{}}>
+      <ThemeProvider theme={theme}>
         <Box>
           <Helmet>
             <title>Chris Biscardi</title>
