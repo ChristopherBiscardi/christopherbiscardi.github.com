@@ -13,8 +13,9 @@ exports.createPages = ({ graphql, actions }) => {
               edges {
                 node {
                   id
-                  codeScope
-                  codeBody
+                  code {
+                    scope
+                  }
                   frontmatter {
                     slug
                     url
@@ -45,7 +46,7 @@ exports.createPages = ({ graphql, actions }) => {
                 slugify(fileNode.name, { lower: true })}`,
             component: componentWithMDXScope(
               require.resolve("./src/blog-post"),
-              node.codeScope,
+              node.code.scope,
               __dirname
             ),
             context: { id: node.id }

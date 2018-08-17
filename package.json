@@ -27,7 +27,7 @@
     "emotion-server": "^9.2.6",
     "emotion-theming": "^9.2.6",
     "gatsby": "next",
-    "gatsby-mdx": "dev",
+    "gatsby-mdx": "0.0.11",
     "gatsby-plugin-emotion": "next",
     "gatsby-plugin-google-analytics": "next",
     "gatsby-plugin-offline": "next",

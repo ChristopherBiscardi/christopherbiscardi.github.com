@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import palx from "palx";
 import { ThemeProvider } from "emotion-theming";
 import { MDXProvider } from "@mdx-js/tag";
-import { css, injectGlobal } from "react-emotion";
+import styled, { css, injectGlobal } from "react-emotion";
+import theme from "@sens8/tokens";
+import { space } from "styled-system";
 
 import PrismCode from "react-prism";
 import Text, {
@@ -18,7 +20,8 @@ import { H1, H2, H3, H4, H5, H6 } from "@sens8/component-typography/display";
 import Nav from "./navigation";
 
 require("prismjs");
-require("prismjs/themes/prism-tomorrow.css");
+//require("prismjs/themes/prism-tomorrow.css");
+require("./prism");
 
 injectGlobal`
   * {
@@ -27,8 +30,18 @@ injectGlobal`
     box-sizing: border-box;
   }
   body {
-    background: #d5d6d7;
+    background: ${theme.colors.background};
   }
+`;
+
+const SidebarContainer = styled.div`
+  background: ${({ theme }) => theme.colors.backgroundLayers[3]};
+  height: 100%;
+  border-right: 1px solid ${({ theme }) => theme.colors.backgroundLayers[2]};
+`;
+
+const ContentContainer = styled.div`
+  ${space};
 `;
 
 export default class SiteLayout extends Component {
@@ -36,7 +49,7 @@ export default class SiteLayout extends Component {
     const { children, sidebar } = this.props;
 
     return (
-      <ThemeProvider theme={{ color: palx("#081d2b") }}>
+      <ThemeProvider theme={theme}>
         <MDXProvider
           components={{
             h1: H1,
@@ -68,8 +81,8 @@ export default class SiteLayout extends Component {
                 `
               }
             >
-              <div>{sidebar}</div>
-              <div>{children}</div>
+              <SidebarContainer>{sidebar}</SidebarContainer>
+              <ContentContainer>{children}</ContentContainer>
             </div>
           </div>
         </MDXProvider>
