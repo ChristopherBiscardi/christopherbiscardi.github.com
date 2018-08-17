@@ -1,5 +1,6 @@
 const path = require(`path`);
 const slugify = require("slugify");
+const componentWithMDXScope = require("gatsby-mdx/component-with-mdx-scope");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
@@ -11,8 +12,9 @@ exports.createPages = ({ graphql, actions }) => {
             allMdx {
               edges {
                 node {
-                  relativePath
-                  fileAbsolutePath
+                  id
+                  codeScope
+                  codeBody
                   frontmatter {
                     slug
                     url
@@ -41,8 +43,12 @@ exports.createPages = ({ graphql, actions }) => {
               frontmatter.url ||
               `/post/${frontmatter.slug ||
                 slugify(fileNode.name, { lower: true })}`,
-            component: node.fileAbsolutePath,
-            context: { absPath: node.absolutePath }
+            component: componentWithMDXScope(
+              require.resolve("./src/blog-post"),
+              node.codeScope,
+              __dirname
+            ),
+            context: { id: node.id }
           });
         });
       })

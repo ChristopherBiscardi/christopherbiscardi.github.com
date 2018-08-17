@@ -2,22 +2,35 @@ import React, { Component, Fragment } from "react";
 import { Link as GLink } from "gatsby";
 import styled, { css } from "react-emotion";
 
-const Link = styled(GLink)`
-  font-family: "Inter UI", sans-serif;
+const Link = ({ children, ...props }) => (
+  <GLink
+    {...props}
+    className={css`
+      font-family: "Inter UI", sans-serif;
 
-  text-decoration: none;
-  border-bottom: 1px solid #bbbebf;
+      text-decoration: none;
+      border-bottom: 1px solid #bbbebf;
 
-  padding: 0.5rem;
-  font-weight: 400;
-  font-size: 16px;
-  color: #bbbebf;
-  display: inline-block;
-`;
+      padding: 0.5rem;
+      font-weight: 400;
+      font-size: 16px;
+      color: #bbbebf;
+      display: inline-block;
+    `}
+    getProps={({ isCurrent }) =>
+      isCurrent
+        ? {
+            className: css`
+              color: #8be9fd;
+            `
+          }
+        : null
+    }
+  >
+    {children}
+  </GLink>
+);
 
-const activeNavLink = css`
-  color: #8be9fd;
-`;
 export default class Nav extends Component {
   render() {
     return (
@@ -43,14 +56,10 @@ export default class Nav extends Component {
             `}
           >
             <li>
-              <Link to="/" exact activeClassName={activeNavLink}>
-                Home
-              </Link>
+              <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/posts" activeClassName={activeNavLink}>
-                Posts
-              </Link>
+              <Link to="/posts">Posts</Link>
             </li>
           </ul>
         </nav>

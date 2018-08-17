@@ -15,9 +15,9 @@ const Hero = styled.section`
   background: #282a36;
   display: flex;
   flex-direction: column;
-  height: 60vh;
+  height: 40vh;
   justify-content: center;
-  width: 100vw;
+
   margin-bottom: 1.5rem;
 `;
 
@@ -81,7 +81,8 @@ class PostBox extends Component {
       >
         <H2>{title}</H2>
         <Text>
-          {excerpt}&nbsp;
+          {excerpt}
+          &nbsp;
           <Link to={url}>Read more...</Link>
         </Text>
       </Box>
@@ -103,6 +104,7 @@ export const pageQuery = graphql`
             title
             tags
           }
+          excerpt
           fileNode {
             name
           }

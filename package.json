@@ -3,16 +3,14 @@
   "version": "1.0.0",
   "description": "my website",
   "main": "index.js",
-  "repository":
-    "git@github.com:ChristopherBiscardi/christopherbiscardi.github.com.git",
+  "repository": "git@github.com:ChristopherBiscardi/christopherbiscardi.github.com.git",
   "author": "ChristopherBiscardi <chris@christopherbiscardi.com>",
   "license": "MIT",
   "scripts": {
     "precommit": "lint-staged",
     "develop": "gatsby develop",
     "build": "gatsby build",
-    "update-sens8":
-      "git subtree pull --prefix sens8 git@github.com:ChristopherBiscardi/sens8.git master --squash"
+    "update-sens8": "git subtree pull --prefix sens8 git@github.com:ChristopherBiscardi/sens8.git master --squash"
   },
   "private": true,
   "workspaces": ["./sens8/packages/*", "."],
@@ -28,36 +26,31 @@
     "emotion": "^9.2.6",
     "emotion-server": "^9.2.6",
     "emotion-theming": "^9.2.6",
-    "eval": "^0.1.2",
     "gatsby": "next",
-    "gatsby-mdx": "*",
+    "gatsby-mdx": "dev",
     "gatsby-plugin-emotion": "next",
     "gatsby-plugin-google-analytics": "next",
     "gatsby-plugin-offline": "next",
     "gatsby-plugin-react-helmet": "next",
     "gatsby-remark-prismjs": "next",
-    "gatsby-transformer-remark": "^1.7.44",
     "husky": "^0.14.3",
-    "lint-staged": "^7.2.0",
+    "lint-staged": "^7.2.2",
     "palx": "^1.0.3",
-    "prettier": "^1.13.5",
+    "prettier": "^1.14.2",
     "prismjs": "^1.14.0",
-    "react": "^16.4.0",
-    "react-dom": "^16.4.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
     "react-emotion": "^9.2.6",
     "react-helmet": "^5.2.0",
     "react-prism": "^4.3.2",
-    "slugify": "^1.3.0",
+    "slugify": "^1.3.1",
     "styled-system": "^3.0.1",
-    "superbox": "^1.0.6"
+    "superbox": "^2.1.0"
   },
   "devDependencies": {
-    "@mdx-js/loader": "^0.14.0",
-    "@mdx-js/mdx": "^0.14.0",
-    "gatsby-source-filesystem": "^2.0.1-beta.3",
+    "@mdx-js/loader": "^0.15.0",
+    "@mdx-js/mdx": "^0.15.0",
+    "gatsby-source-filesystem": "next",
     "loader-utils": "^1.1.0"
-  },
-  "resolutions": {
-    "gatsby": "2.0.0-beta.57"
   }
 }
