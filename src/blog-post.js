@@ -22,7 +22,7 @@ const Hero = styled.div`
 
 export default class BlogPost extends Component {
   render() {
-    const { data, __mdxScope } = this.props;
+    const { data } = this.props;
 
     return (
       <SiteLayout sidebar={<Sidebar>some stuff</Sidebar>}>
@@ -42,7 +42,7 @@ export default class BlogPost extends Component {
             }
           `}
         >
-          <MDXRenderer scope={__mdxScope}>{data.mdx.code.body}</MDXRenderer>
+          <MDXRenderer>{data.mdx.code.body}</MDXRenderer>
         </div>
       </SiteLayout>
     );

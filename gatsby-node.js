@@ -22,8 +22,10 @@ exports.createPages = ({ graphql, actions }) => {
                     title
                     tags
                   }
-                  fileNode {
-                    name
+                  parent {
+                    ... on File {
+                      name
+                    }
                   }
                 }
               }
@@ -38,12 +40,12 @@ exports.createPages = ({ graphql, actions }) => {
 
         // Create blog posts pages.
         result.data.allMdx.edges.forEach(({ node }) => {
-          const { frontmatter, fileNode } = node;
+          const { frontmatter, parent } = node;
           createPage({
             path:
               frontmatter.url ||
               `/post/${frontmatter.slug ||
-                slugify(fileNode.name, { lower: true })}`,
+                slugify(parent.name, { lower: true })}`,
             component: componentWithMDXScope(
               require.resolve("./src/blog-post"),
               node.code.scope,
