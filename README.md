@@ -3,6 +3,8 @@
 Sens8 is my personal design system and exemplifying area for
 experimental designops workflows.
 
+[Read the Docs](https://sens8.netlify.com/)
+
 # Installing
 
 Install the meta-package.
@@ -62,9 +64,9 @@ include anything you want even though you should try to follow the types.
 
 # Credits
 
-* [emotion][emotion-github]
-* [bolt][bolt]
-* [styled-system][styled-system]
+- [emotion][emotion-github]
+- [bolt][bolt]
+- [styled-system][styled-system]
 
 [emotion]: https://emotion.sh/
 [styled-system]: https://github.com/jxnblk/styled-system

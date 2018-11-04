@@ -108,7 +108,7 @@ class SiteLayout extends Component {
   mkTreeMap = data => {
     const treeMap = data.allMdx.edges.reduce((acc, cur) => {
       let curObj = acc;
-      cur.node.relativePath
+      cur.node.parent.relativePath
         .slice(0, -4)
         .split("/")
         .forEach((v, i, arr) => {
@@ -123,6 +123,7 @@ class SiteLayout extends Component {
         });
       return acc;
     }, {});
+
     return treeMap;
   };
 
@@ -135,8 +136,12 @@ class SiteLayout extends Component {
             allMdx(limit: 1000) {
               edges {
                 node {
-                  fileAbsolutePath
-                  relativePath
+                  parent {
+                    ... on File {
+                      absolutePath
+                      relativePath
+                    }
+                  }
                 }
               }
             }
@@ -186,7 +191,7 @@ class SiteLayout extends Component {
                     </ul>
                     {Object.entries(this.mkTreeMap(data)).map(([k, v]) => (
                       <div name={k} key={k}>
-                        <Heading level="5">{k}</Heading>
+                        <Heading level="5">{k.toUpperCase()}</Heading>
                         {Object.entries(v).map(([k2, v2]) => (
                           <ul
                             key={k2}
@@ -195,11 +200,11 @@ class SiteLayout extends Component {
                           >
                             {Object.entries(v2).map(([k3, v3]) => (
                               <NavElement
-                                to={"/" + v3.relativePath.slice(0, -4)}
+                                to={"/" + v3.parent.relativePath.slice(0, -4)}
                                 name={k3}
                                 key={k3}
                               >
-                                {k3.toUpperCase()}
+                                {k3}
                               </NavElement>
                             ))}
                           </ul>
