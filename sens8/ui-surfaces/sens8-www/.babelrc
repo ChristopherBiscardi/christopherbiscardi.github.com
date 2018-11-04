@@ -33,14 +33,11 @@
       "@babel/plugin-transform-runtime",
       {
         "helpers": true,
-        "regenerator": true,
-        "polyfill": false,
+        "regenerator": true
       },
     ],
-
     "@babel/plugin-proposal-export-default-from",
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-proposal-do-expressions"
-
   ],
 }

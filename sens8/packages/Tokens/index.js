@@ -25,6 +25,7 @@ const space = [0, 4, 8, 16, 32, 64, 128, 256, 512];
 
 // typographic scale
 const fontSizes = [12, 14, 16, 20, 24, 32, 48, 64, 96, 128];
+export const baseFontSize = fontSizes[2];
 
 // for any scale, either array or objects will work
 const lineHeights = [1, 1.125, 1.25, 1.5];
