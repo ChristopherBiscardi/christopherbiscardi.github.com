@@ -7,6 +7,7 @@ import { graphql, Link } from "gatsby";
 
 import { H1, H2 } from "@sens8/component-typography/display";
 import Text from "@sens8/component-typography/linear";
+import { Tag } from "sens8";
 
 import SiteLayout from "../site-layout";
 
@@ -80,25 +81,18 @@ class PostBox extends Component {
         `}
       >
         <H2>{title}</H2>
-        {tags && (
-          /*TODO: List component*/ <ul
-            css={`
-              list-style-type: none;
-              display: inline-block;
-            `}
-          >
-            {tags.map((v /* TODO: tags component */) => (
-              <li>
-                <Text inline>{v}</Text>
-              </li>
-            ))}
-          </ul>
-        )}
         <Text>
           {excerpt}
           &nbsp;
           <Link to={url}>Read more...</Link>
         </Text>
+        <div
+          css={`
+            padding-bottom: 2.5rem;
+          `}
+        >
+          {tags && tags.map((v /* TODO: tags component */) => <Tag>{v}</Tag>)}
+        </div>
       </Box>
     );
   }
