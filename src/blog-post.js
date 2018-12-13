@@ -3,7 +3,7 @@ import styled from "react-emotion";
 import { graphql } from "gatsby";
 import { Heading } from "@sens8/component-typography";
 import { withMDXComponents } from "@mdx-js/tag/dist/mdx-provider";
-import posed from "react-pose";
+import posed, { PoseGroup } from "react-pose";
 import { MDXProvider } from "@mdx-js/tag";
 import MDXRenderer from "gatsby-mdx/mdx-renderer";
 

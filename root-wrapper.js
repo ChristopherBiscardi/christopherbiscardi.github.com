@@ -37,7 +37,7 @@ injectGlobal`
 `;
 
 const Container = posed.div({
-  enter: { staggerChildren: 50 }
+  enter: { staggerChildren: 50, delayChildren: 200 }
 });
 
 export default ({ children, ...props }) => (
@@ -51,7 +51,9 @@ export default ({ children, ...props }) => (
         h5: H5,
         h6: H6,
         p: ({ children, ...props }) => (
-          <AnimatedText {...props}>{children}</AnimatedText>
+          <AnimatedText animateOnMount {...props}>
+            {children}
+          </AnimatedText>
         ),
         ol: OL,
         ul: UL,
