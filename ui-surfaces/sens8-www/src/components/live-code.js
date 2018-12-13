@@ -1,10 +1,23 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, useState } from "react";
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
-import styled, { css } from "react-emotion";
+import styled from "@emotion/styled";
+import isPropValid from "@emotion/is-prop-valid";
+import { css } from "@emotion/core";
+import prettier from "prettier/standalone";
+const debug = require("debug")("sens8-www:live-code");
 
 import * as sens8 from "sens8";
 
-const StyledLivePreview = styled(LivePreview)`
+const plugins = [
+  require("prettier/parser-babylon"),
+  require("prettier/parser-graphql")
+];
+
+const StyledLivePreview = styled(LivePreview, {
+  // prop forwarding blocklist
+  shouldForwardProp: prop =>
+    ["isEditorMode"].includes(prop) ? false : isPropValid(prop)
+})`
   border: 1px solid transparent;
   outline: 1px solid transparent;
   border-radius: 3px;
@@ -52,32 +65,47 @@ const StyledLivePreview = styled(LivePreview)`
         `};
 `;
 
-export default class LiveCode extends Component {
-  state = { isEditorMode: false };
-  onClick = () => {
-    this.setState({ isEditorMode: true });
-  };
-  render() {
-    console.log(this.props);
-    const { children, ...props } = this.props;
-    return (
-      <LiveProvider
-        code={`<Fragment>
-${children}</Fragment>`}
-        {...props}
-        scope={{ ...sens8, Fragment, Component }}
-      >
-        {this.state.isEditorMode && (
-          <Fragment>
-            <LiveEditor />
-            <LiveError />
-          </Fragment>
-        )}
-        <StyledLivePreview
-          isEditorMode={this.state.isEditorMode}
-          onClick={this.state.isEditorMode ? undefined : this.onClick}
-        />
-      </LiveProvider>
+const t = ({ children, metaString, ...props }) => {
+  const [isEditorMode, setIsEditorMode] = useState(false);
+  debug("isEditorMode", isEditorMode);
+
+  let code = children;
+
+  if (
+    props.className.includes("language-js") ||
+    props.className.includes("language-jsx") ||
+    props.className.includes("language-javascript")
+  ) {
+    debug("using JavaScript");
+    //apply prettier to input
+    code = prettier.format(
+      `<Fragment>
+${children}</Fragment>`,
+      { parser: "babylon", plugins }
     );
   }
-}
+
+  return (
+    <LiveProvider
+      code={code}
+      {...props}
+      scope={{ ...sens8, Fragment, Component }}
+    >
+      {isEditorMode && (
+        <Fragment>
+          <LiveEditor />
+          <LiveError />
+        </Fragment>
+      )}
+      <StyledLivePreview
+        isEditorMode={isEditorMode}
+        onClick={e => {
+          console.log(isEditorMode);
+          setIsEditorMode(true);
+          console.log(isEditorMode);
+        }}
+      />
+    </LiveProvider>
+  );
+};
+export default t;

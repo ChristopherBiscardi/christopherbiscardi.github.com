@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { css } from "react-emotion";
+import React from "react";
+import { css } from "@emotion/core";
 
 import { Heading } from "sens8";
 

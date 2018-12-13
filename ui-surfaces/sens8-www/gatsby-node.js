@@ -54,7 +54,21 @@ exports.onCreateWebpackConfig = ({
     plugins: [
       plugins.define({
         __DEVELOPMENT__: stage === `develop` || stage === `develop-html`
+      }),
+      plugins.provide({
+        Emotion: "@emotion/core"
       })
     ]
+  });
+};
+
+exports.onCreateBabelConfig = ({ actions }) => {
+  actions.setBabelPlugin({
+    name: `babel-plugin-emotion`,
+    options: {
+      sourceMap: process.env.NODE_ENV !== `production`,
+      autoLabel: process.env.NODE_ENV !== `production`,
+      hoist: process.env.NODE_ENV === `production`
+    }
   });
 };

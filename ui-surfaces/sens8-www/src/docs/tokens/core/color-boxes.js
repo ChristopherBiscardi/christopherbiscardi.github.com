@@ -1,39 +1,21 @@
 import React from "react";
-import theme from "@sens8/tokens";
 import { Heading, Text } from "sens8";
+import { css } from "@emotion/core";
+import { withTheme } from "emotion-theming";
 
-export default () => (
+export default withTheme(({ theme }) => (
   <div
-    css={`
+    css={css`
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      grid-gap: 2rem;
     `}
   >
-    {Object.entries(theme.colors.raw).map(
-      ([k, v]) =>
-        typeof v === "string" ? (
-          <SingleColorBox title={k} color={v} />
-        ) : (
-          <MultiColorBox title={k} colors={v} />
-        )
-    )}
+    {Object.entries(theme.colors.raw).map(([colorGroupName, v]) => (
+      <MultiColorBox key={colorGroupName} title={colorGroupName} colors={v} />
+    ))}
   </div>
-);
-
-const SingleColorBox = ({ title, color }) => (
-  <div>
-    <label>{title}</label>
-    <span
-      css={`
-        display: flex;
-        background: ${color};
-        height: 10rem;
-        width: 10rem;
-      `}
-    />
-  </div>
-);
+));
 
 const MultiColorBox = ({ title, colors }) => (
   <div>
@@ -41,7 +23,8 @@ const MultiColorBox = ({ title, colors }) => (
     <div>
       {Object.entries(colors).map(([name, color]) => (
         <div
-          css={`
+          key={`${name}-${color}`}
+          css={css`
             height: 3rem;
             background-color: ${color};
             display: flex;

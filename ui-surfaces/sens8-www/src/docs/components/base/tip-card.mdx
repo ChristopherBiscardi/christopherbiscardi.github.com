@@ -1,0 +1,23 @@
+import { TipCard, Code } from 'sens8';
+import { css } from '@emotion/core';
+
+# Tip Card
+
+<div css={css`
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 1rem;
+`}>
+  <TipCard>
+    <p css={css`padding: 1rem;`}>content</p>
+    <Code component="pre" className="language-javascript">const Thing = {}</Code>
+  </TipCard>
+  <TipCard>
+    <p css={css`padding: 1rem;`}>content</p>
+    <p css={css`padding: 1rem;`}>content</p>
+  </TipCard>
+  <TipCard>
+    <p css={css`padding: 1rem;`}>content</p>
+    <p css={css`padding: 1rem;`}>content</p>
+  </TipCard>
+</div>

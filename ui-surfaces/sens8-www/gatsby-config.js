@@ -3,7 +3,6 @@ module.exports = {
     title: `sens8 docs`
   },
   plugins: [
-    `gatsby-plugin-emotion`,
     `gatsby-plugin-react-helmet`,
     {
       resolve: `gatsby-source-filesystem`,
@@ -16,11 +15,11 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/src/docs`,
-        name: "mdx-pages"
+        name: "mdx-docs"
       }
     },
     {
-      resolve: require.resolve(`gatsby-mdx`),
+      resolve: `gatsby-mdx`,
       options: {
         defaultLayouts: {
           default: require.resolve("./src/components/site-layout.js")
