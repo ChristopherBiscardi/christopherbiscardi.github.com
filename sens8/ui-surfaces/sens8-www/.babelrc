@@ -16,7 +16,7 @@
       "@babel/preset-react",
       {
         "useBuiltIns": true,
-        "pragma": "React.createElement",
+        "pragma": "Emotion.jsx",
       },
     ],
     "@babel/preset-flow",

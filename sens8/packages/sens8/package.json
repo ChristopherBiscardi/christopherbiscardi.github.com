@@ -6,9 +6,10 @@
   "license": "MIT",
   "dependencies": {
     "@sens8/component-button": "*",
-    "@sens8/component-tags": "*",
+    "@sens8/component-tag": "*",
     "@sens8/component-form": "*",
     "@sens8/component-typography": "*",
+    "@sens8/component-tip-card": "*",
     "@sens8/tokens": "*"
   }
 }

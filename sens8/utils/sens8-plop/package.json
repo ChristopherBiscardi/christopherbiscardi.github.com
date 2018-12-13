@@ -1,0 +1,11 @@
+{
+  "name": "@sens8/plop",
+  "version": "1.0.0",
+  "private": "true",
+  "main": "index.js",
+  "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT",
+  "devDependencies": {
+    "plop": "^2.1.0"
+  }
+}

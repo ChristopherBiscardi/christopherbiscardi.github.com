@@ -1,0 +1,7 @@
+{
+  "name": "@sens8/component-{{dashCase name}}",
+  "version": "0.0.1",
+  "description": "{{description}}",
+  "main": "index.js",
+  "license": "MIT"
+}

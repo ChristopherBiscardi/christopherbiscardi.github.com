@@ -1,0 +1,13 @@
+{
+  "name": "@sens8/component-typography",
+  "version": "1.0.0",
+  "description": "Text and Heading components",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "prism-react-renderer": "^0.1.5"
+  },
+  "devDependencies": {
+    "@sens8/tokens": "*"
+  }
+}
