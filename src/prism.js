@@ -1,7 +1,7 @@
-import { injectGlobal } from "emotion";
 import theme from "@sens8/tokens";
 
-injectGlobal`
+//injectGlobal
+`
 code[class*="language-"] {
   font-size: 1rem;
 margin-left: calc(50% - 38em + 300px);

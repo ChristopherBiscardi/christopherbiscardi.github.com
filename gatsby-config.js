@@ -13,11 +13,9 @@ module.exports = {
     {
       resolve: `gatsby-mdx`,
       options: {
-        root: __dirname,
         defaultLayouts: { default: require.resolve("./src/blog-post.js") }
       }
     },
-    `gatsby-plugin-emotion`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-offline`
   ]

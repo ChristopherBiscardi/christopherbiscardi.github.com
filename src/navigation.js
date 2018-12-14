@@ -1,28 +1,24 @@
 import React, { Component, Fragment } from "react";
 import { Link as GLink } from "gatsby";
-import styled, { css } from "react-emotion";
 
 const Link = ({ children, ...props }) => (
   <GLink
     {...props}
-    className={css`
-      font-family: "Inter UI", sans-serif;
+    css={{
+      fontFamily: '"Inter UI", sans-serif',
 
-      text-decoration: none;
-      border-bottom: 1px solid #bbbebf;
-
-      padding: 0.5rem;
-      font-weight: 400;
-      font-size: 16px;
-      color: #bbbebf;
-      display: inline-block;
-    `}
+      textDecoration: "none",
+      borderBottom: "1px solid #bbbebf",
+      padding: "0.5rem",
+      fontWeight: "400",
+      fontSize: "16px",
+      color: "#bbbebf",
+      display: "inline-block"
+    }}
     getProps={({ isCurrent }) =>
       isCurrent
         ? {
-            className: css`
-              color: #8be9fd;
-            `
+            css: { color: "#8be9fd" }
           }
         : null
     }
@@ -31,29 +27,25 @@ const Link = ({ children, ...props }) => (
   </GLink>
 );
 
-const NavWrapper = styled.nav`
-  background: ${({ theme }) => theme.colors.backgroundLayers[3]};
-  display: flex;
-  position: fixed;
-  width: 100%;
-  margin-top: -36px;
-`;
-
 export default class Nav extends Component {
   render() {
     return (
       <Fragment>
-        <div
-          css={`
-            height: 36px;
-          `}
-        />
-        <NavWrapper>
+        <div css={{ height: "36px" }} />
+        <nav
+          css={theme => ({
+            background: theme.colors.backgroundLayers[3],
+            display: "flex",
+            position: "fixed",
+            width: "100%",
+            marginTop: "-36px"
+          })}
+        >
           <ul
-            css={`
-              display: flex;
-              list-style-type: none;
-            `}
+            css={{
+              display: "flex",
+              listStyleType: "none"
+            }}
           >
             <li>
               <Link to="/">Home</Link>
@@ -62,7 +54,7 @@ export default class Nav extends Component {
               <Link to="/posts">Posts</Link>
             </li>
           </ul>
-        </NavWrapper>
+        </nav>
       </Fragment>
     );
   }

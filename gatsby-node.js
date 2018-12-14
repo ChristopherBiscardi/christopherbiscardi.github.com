@@ -58,3 +58,30 @@ exports.createPages = ({ graphql, actions }) => {
     );
   });
 };
+
+exports.onCreateWebpackConfig = ({
+  stage,
+  rules,
+  loaders,
+  plugins,
+  actions
+}) => {
+  actions.setWebpackConfig({
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          include: /@sens8/,
+          use: [loaders.js()]
+        }
+      ]
+    }
+  });
+};
+
+exports.onCreateBabelConfig = ({ actions, stage }) => {
+  actions.setBabelPreset({
+    name: `@emotion/babel-preset-css-prop`,
+    stage
+  });
+};

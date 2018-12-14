@@ -1,40 +1,31 @@
 import React, { Component } from "react";
 import palx from "palx";
-import styled, { css } from "react-emotion";
 import { space } from "styled-system";
 
 import Nav from "./navigation";
-
-const SidebarContainer = styled.div`
-  background: ${({ theme }) => theme.colors.backgroundLayers[3]};
-  height: 100%;
-  border-right: 1px solid ${({ theme }) => theme.colors.backgroundLayers[2]};
-`;
-
-const ContentContainer = styled.div`
-  ${space};
-`;
 
 export default class SiteLayout extends Component {
   render() {
     const { children, sidebar } = this.props;
 
     return (
-      <div>
+      <section>
         <Nav />
         <div
-          className={
-            sidebar &&
-            css`
-              display: grid;
-              grid-template-columns: 200px 1fr;
-            `
-          }
+          css={sidebar && { display: "grid", gridTemplateColumns: "200px 1fr" }}
         >
-          <SidebarContainer>{sidebar}</SidebarContainer>
-          <ContentContainer>{children}</ContentContainer>
+          <aside
+            css={theme => ({
+              background: theme.colors.backgroundLayers[3],
+              height: "100%",
+              borderRight: `1px solid ${theme.colors.backgroundLayers[2]}`
+            })}
+          >
+            {sidebar}
+          </aside>
+          <main>{children}</main>
         </div>
-      </div>
+      </section>
     );
   }
 }
