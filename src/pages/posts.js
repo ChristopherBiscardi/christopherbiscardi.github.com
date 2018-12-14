@@ -34,7 +34,7 @@ export default class PostsPage extends Component {
           >
             Chris Biscardi
           </H1>
-          <p css={{ color: "#bd93f9" }}>Posts</p>
+          <Text css={{ color: "#bd93f9", textAlign: "center" }}>Posts</Text>
         </section>
         {this.props.data.allMdx.edges.map(({ node }) => {
           const { excerpt, frontmatter = {}, id, parent } = node;

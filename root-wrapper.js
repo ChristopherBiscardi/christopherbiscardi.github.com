@@ -53,7 +53,13 @@ export default ({ children, ...props }) => (
           }
         }}
       />
-      <div css={{ background: "#592000", padding: "1rem", color: "white" }}>
+      <div
+        css={{
+          background: "#592000",
+          padding: "1rem",
+          color: "white"
+        }}
+      >
         <Text css={{ marginBottom: 0, maxWidth: "100%" }}>
           Warning: Under Construction. I am using this site as my playground as
           I build&nbsp;
