@@ -13,7 +13,10 @@ module.exports = {
     {
       resolve: `gatsby-mdx`,
       options: {
-        defaultLayouts: { default: require.resolve("./src/blog-post.js") }
+        defaultLayouts: {
+          posts: require.resolve("./src/blog-post.js"),
+          default: require.resolve("./src/default-page-layout.js")
+        }
       }
     },
     `gatsby-plugin-react-helmet`,
