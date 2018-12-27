@@ -1,6 +1,6 @@
 export default colors => ({
   plain: {
-    backgroundColor: colors.backgroundLayers[3],
+    backgroundColor: colors.raw.neutral[90],
     color: colors.text
   },
   styles: [

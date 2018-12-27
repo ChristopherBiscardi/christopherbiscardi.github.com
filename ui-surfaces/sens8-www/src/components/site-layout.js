@@ -15,9 +15,9 @@ const Wrapper = styled.section`
 `;
 
 const Sidebar = styled.section`
-  background: ${({ theme }) => theme.colors.backgroundLayers[3]};
-  border-right: 1px solid ${({ theme }) => theme.colors.backgroundLayers[2]};
-  border-left: 3px solid ${({ theme }) => theme.colors.backgroundLayers[1]};
+  background: ${({ theme }) => theme.colors.background};
+  border-right: 1px solid ${({ theme }) => theme.colors.background};
+  border-left: 3px solid ${({ theme }) => theme.colors.background};
 `;
 
 class NavElement extends Component {

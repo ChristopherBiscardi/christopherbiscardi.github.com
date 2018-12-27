@@ -1,20 +1,15 @@
 //import palx from "palx";
 import rawColors from "./src/colors";
 import code from "./src/code";
+import utils from "./utils";
 
 // breakpoint values
 // any array length works with styled-system
 const breakpoints = ["40em", "52em", "64em"];
 
 const colors = {
-  text: rawColors.blue[0],
-  background: rawColors.blue[80],
-  backgroundLayers: [
-    rawColors.blue[100],
-    rawColors.blue[90],
-    rawColors.blue[80],
-    rawColors.blue[90]
-  ],
+  text: rawColors.neutral[0],
+  background: rawColors.neutral[80],
   raw: rawColors
 };
 
@@ -59,7 +54,8 @@ const theme = {
   letterSpacings,
   radii,
   borders,
-  shadows
+  shadows,
+  utils
 };
 
 export default theme;
