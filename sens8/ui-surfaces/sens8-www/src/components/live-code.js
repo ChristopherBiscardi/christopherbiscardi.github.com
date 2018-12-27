@@ -13,59 +13,7 @@ const plugins = [
   require("prettier/parser-graphql")
 ];
 
-const StyledLivePreview = styled(LivePreview, {
-  // prop forwarding blocklist
-  shouldForwardProp: prop =>
-    ["isEditorMode"].includes(prop) ? false : isPropValid(prop)
-})`
-  border: 1px solid transparent;
-  outline: 1px solid transparent;
-  border-radius: 3px;
-  padding: 1.5em;
-  ${({ isEditorMode }) =>
-    isEditorMode
-      ? css`
-          border-color: #343434;
-          outline: 1px solid #232323;
-        `
-      : css`
-          &:hover {
-            border-color: #343434;
-            outline: 1px solid #232323;
-            position: relative;
-            cursor: pointer;
-            user-select: none;
-            &:before {
-              content: "code";
-              position: absolute;
-              right: 0;
-              top: 0;
-              padding: 0.5em;
-              background: #ffffff34;
-            }
-            &:after {
-              position: absolute;
-              pointer-events: none;
-              content: "";
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              border-radius: 5px;
-              box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-              background-image: linear-gradient(
-                -45deg,
-                rgba(255, 255, 255, 0.4),
-                rgba(255, 255, 255, 0.2) 50%,
-                rgba(255, 255, 255, 0) 50%
-              );
-              -webkit-mask-image: linear-gradient(#000, transparent);
-            }
-          }
-        `};
-`;
-
-const t = ({ children, metaString, ...props }) => {
+const LiveCode = ({ children, metaString, ...props }) => {
   const [isEditorMode, setIsEditorMode] = useState(false);
   debug("isEditorMode", isEditorMode);
 
@@ -79,8 +27,8 @@ const t = ({ children, metaString, ...props }) => {
     debug("using JavaScript");
     //apply prettier to input
     code = prettier.format(
-      `<Fragment>
-${children}</Fragment>`,
+      `<>
+${children}</>`,
       { parser: "babylon", plugins }
     );
   }
@@ -97,15 +45,29 @@ ${children}</Fragment>`,
           <LiveError />
         </Fragment>
       )}
-      <StyledLivePreview
-        isEditorMode={isEditorMode}
-        onClick={e => {
-          console.log(isEditorMode);
-          setIsEditorMode(true);
-          console.log(isEditorMode);
-        }}
-      />
+      <div css={{ display: "flex", marginTop: "1rem" }}>
+        <div
+          css={{
+            display: "flex",
+            marginRight: "1rem"
+          }}
+          onClick={e => {
+            setIsEditorMode(true);
+          }}
+        >
+          <sens8.Button>edit</sens8.Button>
+        </div>
+        <LivePreview
+          css={{
+            border: "1px solid transparent",
+            outline: "1px solid transparent",
+            borderRadius: "3px",
+            flex: 1
+          }}
+        />
+      </div>
     </LiveProvider>
   );
 };
-export default t;
+
+export default LiveCode;

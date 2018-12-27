@@ -9,14 +9,13 @@ export default withTheme(({ theme, is, children, lang = "markup", ...etc }) => {
     ...etc,
     className: etc.className ? etc.className : `language-${lang}`
   };
-  console.log(lang, children);
   // inline code
   if (!is) {
     return (
       <Highlight
         {...defaultProps}
         theme={theme.code || defaultProps.theme}
-        code={children}
+        code={children.trim()}
         language={lang}
       >
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
@@ -32,7 +31,6 @@ export default withTheme(({ theme, is, children, lang = "markup", ...etc }) => {
     );
   }
 
-  console.log("code theme", lang);
   // default to Block
   return (
     <Highlight
