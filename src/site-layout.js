@@ -1,31 +1,27 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import palx from "palx";
 import { space } from "styled-system";
+import Sidebar from "react-sidebar";
+import { useMedia } from "react-use";
 
 import Nav from "./navigation";
 
-export default class SiteLayout extends Component {
-  render() {
-    const { children, sidebar } = this.props;
-
-    return (
-      <section>
+const SiteLayout = ({ children, sidebar }) => {
+  const [sidebarOpen, setSidebarOpenState] = useState(false);
+  const isDesktop = useMedia(`(min-width: 800px)`);
+  return (
+    <section>
+      <Sidebar
+        sidebar={sidebar}
+        open={sidebarOpen}
+        docked={isDesktop}
+        onSetOpen={setSidebarOpenState}
+      >
         <Nav />
-        <div
-          css={sidebar && { display: "grid", gridTemplateColumns: "200px 1fr" }}
-        >
-          <aside
-            css={theme => ({
-              position: "relative",
-              background: theme.colors.raw.neutral[80],
-              height: "100%"
-            })}
-          >
-            {sidebar}
-          </aside>
-          <main>{children}</main>
-        </div>
-      </section>
-    );
-  }
-}
+        <main>{children}</main>
+      </Sidebar>
+    </section>
+  );
+};
+
+export default SiteLayout;

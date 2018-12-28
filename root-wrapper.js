@@ -33,7 +33,24 @@ const components = {
   pre: ({ children: { props } }) => {
     // props is for MDXTag, props.props is for code element
     const lang = props.props.className && props.props.className.split("-")[1];
-    return <Code is="block" lang={lang} {...props} />;
+    return (
+      <div
+        css={({ colors }) => ({
+          display: "flex",
+          justifyContent: "center",
+          background: colors.raw.neutral[90],
+          width: "100% !important",
+          marginBottom: "1.5rem",
+          "& pre": {
+            maxWidth: "calc(38rem - 1.5rem)",
+            width: "100%",
+            padding: "1.5rem"
+          }
+        })}
+      >
+        <Code is="block" lang={lang} {...props} />
+      </div>
+    );
   },
   inlineCode: Code
 };

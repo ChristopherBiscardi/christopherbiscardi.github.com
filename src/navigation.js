@@ -50,21 +50,21 @@ export default props => {
             as I build&nbsp;
             <GLink
               css={{ color: "#ff5e99" }}
-              href="https://github.com/ChristopherBiscardi/gatsby-mdx"
+              to="https://github.com/ChristopherBiscardi/gatsby-mdx"
             >
               gatsby-mdx
             </GLink>
             <span> and </span>
             <GLink
               css={{ color: "#ff5e99" }}
-              href="https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/"
+              to="https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/"
             >
               gatsby themes
             </GLink>
             . During this time I will also repost new content&nbsp;
             <GLink
               css={{ color: "#ff5e99" }}
-              href="https://medium.com/@chrisbiscardi"
+              to="https://medium.com/@chrisbiscardi"
             >
               to Medium
             </GLink>

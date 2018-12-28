@@ -73,7 +73,11 @@ class PostBox extends Component {
         </Text>
         <div css={{ paddingBottom: "2.5rem" }}>
           {tags &&
-            tags.map(v => <Tag css={{ fontFamily: "Inter UI" }}>{v}</Tag>)}
+            tags.map(v => (
+              <Tag key={v} css={{ fontFamily: "Inter UI" }}>
+                {v}
+              </Tag>
+            ))}
         </div>
       </div>
     );

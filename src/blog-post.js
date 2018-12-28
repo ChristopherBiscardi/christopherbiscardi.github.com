@@ -25,7 +25,7 @@ export default withMDXComponents(
 
       return (
         <SiteLayout
-          sidebar={<aside css={{ position: "fixed" }}>some stuff</aside>}
+          sidebar={<aside css={{ minWidth: "200px" }}>some stuff</aside>}
         >
           <MDXProvider
             components={{
@@ -47,8 +47,9 @@ export default withMDXComponents(
             <div
               data-id="wrapper"
               css={{
-                "& > div > :not(pre)": {
-                  width: "38rem",
+                "& > div > :not(div)": {
+                  maxWidth: "38rem",
+                  width: "100%",
                   marginLeft: "auto",
                   marginRight: "auto"
                 },
