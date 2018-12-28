@@ -14,7 +14,7 @@ export default class BlogPost extends Component {
         <div
           css={theme => ({
             display: "flex",
-            background: theme.colors.backgroundLayers[3],
+            background: theme.colors.background,
             height: "30vh",
             alignItems: "center",
             justifyContent: "center",

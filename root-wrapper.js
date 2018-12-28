@@ -53,38 +53,6 @@ export default ({ children, ...props }) => (
           }
         }}
       />
-      <div
-        css={{
-          background: "#592000",
-          padding: "1rem",
-          color: "white"
-        }}
-      >
-        <Text css={{ marginBottom: 0, maxWidth: "100%" }}>
-          Warning: Under Construction. I am using this site as my playground as
-          I build&nbsp;
-          <Link
-            css={{ color: "#ff5e99" }}
-            href="https://github.com/ChristopherBiscardi/gatsby-mdx"
-          >
-            gatsby-mdx
-          </Link>
-          <span> and </span>
-          <Link
-            css={{ color: "#ff5e99" }}
-            href="https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/"
-          >
-            gatsby themes
-          </Link>
-          . During this time I will also repost new content&nbsp;
-          <Link
-            css={{ color: "#ff5e99" }}
-            href="https://medium.com/@chrisbiscardi"
-          >
-            to Medium
-          </Link>
-        </Text>
-      </div>
       <div>{children}</div>
     </MDXProvider>
   </ThemeProvider>

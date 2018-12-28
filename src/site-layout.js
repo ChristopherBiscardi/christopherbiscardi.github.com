@@ -16,9 +16,9 @@ export default class SiteLayout extends Component {
         >
           <aside
             css={theme => ({
-              background: theme.colors.backgroundLayers[3],
-              height: "100%",
-              borderRight: `1px solid ${theme.colors.backgroundLayers[2]}`
+              position: "relative",
+              background: theme.colors.raw.neutral[80],
+              height: "100%"
             })}
           >
             {sidebar}

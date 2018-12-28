@@ -1,3 +1,5 @@
+import "resize-observer-polyfill";
+
 import React from "react";
 import PageWrapper from "./page-wrapper";
 import RootWrapper from "./root-wrapper";

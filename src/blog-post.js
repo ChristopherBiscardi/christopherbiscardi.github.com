@@ -35,7 +35,7 @@ export default withMDXComponents(
             <div
               css={theme => ({
                 display: "flex",
-                background: theme.colors.backgroundLayers[3],
+                background: theme.colors.raw.neutral[90],
                 height: "30vh",
                 alignItems: "center",
                 justifyContent: "center",

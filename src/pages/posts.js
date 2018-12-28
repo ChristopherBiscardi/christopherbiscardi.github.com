@@ -21,7 +21,7 @@ export default class PostsPage extends Component {
         <section
           css={theme => ({
             alignItems: "center",
-            background: theme.colors.backgroundLayers[3],
+            background: theme.colors.raw.neutral[90],
             display: "flex",
             flexDirection: "column",
             height: "40vh",
@@ -62,7 +62,7 @@ class PostBox extends Component {
   render() {
     const { url, title, excerpt, tags, date } = this.props;
     return (
-      <div css={{ margin: "auto", maxWidth: "38rem" }}>
+      <div css={{ margin: "auto", padding: "0 1.5rem", maxWidth: "38rem" }}>
         <H2>{title}</H2>
         <Text>
           {excerpt}

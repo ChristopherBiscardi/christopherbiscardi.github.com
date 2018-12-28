@@ -18,7 +18,7 @@ export default class IndexPage extends Component {
         <div
           css={{
             alignItems: "center",
-            background: theme.colors.backgroundLayers[3],
+            background: theme.colors.background,
             display: "flex",
             flexDirection: "column",
             height: "100vh",
