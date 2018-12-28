@@ -1,0 +1,258 @@
+---
+title: Gatsby Themes Core Algorithm
+date: 2018-12-28T06:25:58.215Z
+tags:
+  - gatsby
+  - javascript
+---
+Today we're going to talk a bit about the core Gatsby themes algorithm. For background it may be good to read [Introducing Gatsby Themes](https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/). Shortly, what we're going to cover today are the internals responsible for how we combine multiple themes with the user's site when we run `gatsby develop` or `gatsby build`.
+
+## Loading and Merging
+
+There are two main pieces to how the core of theming works:
+
+1. We need to get the final `gatsby-config.js` for every theme specified in the user's `gatsby-config.js`
+2. We need to merge those configs together in a deterministic order (that is, however we merge them, it needs to be the same every time)
+
+In addition there are a couple characteristics that make this implementation of theming small (in terms of code size) and co-located (not spread out through the entire codebase).
+
+## Gatsby Config
+
+`gatsby-config.js` is the data structure at the core of a Gatsby site. Everything a site is capable of is pointed to from this file. A valid `gatsby-config.js` is defined as such:
+
+```js
+export const gatsbyConfigSchema = Joi.object().keys({
+  __experimentalThemes: Joi.array(),
+  polyfill: Joi.boolean(),
+  siteMetadata: Joi.object(),
+  pathPrefix: Joi.string(),
+  mapping: Joi.object(),
+  plugins: Joi.array(),
+  proxy: Joi.object().keys({
+    prefix: Joi.string().required(),
+    url: Joi.string().required(),
+  }),
+  developMiddleware: Joi.func(),
+})
+```
+
+The config keys we're most interested in today are `plugins`, `mapping`, and `__experimentalThemes`. 
+
+### Plugins
+
+[Plugins](https://www.gatsbyjs.org/docs/gatsby-config/#plugins) allow us to define functionality that hooks into Gatsby lifecycles from a set of gatsby-* files (`gatsby-ssr`, `gatsby-node`, etc). This logic can create pages, tell us how to render pages, define data transformations, and much more. If you took every other key away and just had `plugins` left, you could still build a fully functional Gatsby site.
+
+### Mapping
+
+[Mapping](https://www.gatsbyjs.org/docs/gatsby-config/#mapping-node-types) is an advanced feature that allows us to define mappings between Gatsby data nodes so that we can query them later.
+
+### __experimentalThemes
+
+`__experimentalThemes` is our field. It allows us to define which themes we want to use and the options we pass to them just like plugins. At this point it may be useful to define what a theme is in the context of Gatsby. A theme is a Gatsby site. When building a theme you have access to all of the plugin APIs, the ability to define portions of `gatsby-config.js`, and the ability to ship any other code that may help as part of your theme (react components, page templates, etc).
+
+## Multiple Gatsby Configs
+
+Because the Gatsby Config is so important already (it is the base of a Gatsby site) we chose to use it as the base of theming as well. As a result of that what we really want is a way to combine multiple `gatsby-config.js` files into a single `gatsby-config.js`. This yields a way to encode *anything* you can do with a Gatsby site, as part of a theme.
+
+## Loading Themes
+
+The first [section of code](https://github.com/gatsbyjs/gatsby/blob/672e2b3087f22f27a0f2763da328c8592e7d69c6/packages/gatsby/src/bootstrap/index.js#L85-L113
+) we're talking about today is responsible for loading the various configs and can easily be reproduced right here as it is not that long. Part of the reason it isn't that much code is that we have placed it *before* the Redux action that sets the final Gatsby config in the [bootstrap lifecycle](https://www.gatsbyjs.org/docs/gatsby-lifecycle-apis/#high-level-overview). By hooking into the bootstrap before any plugins are loaded, before any pages are created, and before any queries are run, we have the opportunity to modify the user's Gatsby config and let the effects flow through the system as they typically would. That is: using multiple themes has the same behavior as using a single `gatsby-config.js`.
+
+
+```js
+  if (config && config.__experimentalThemes) {
+    const themesConfig = await Promise.mapSeries(
+      config.__experimentalThemes,
+      async plugin => {
+        const themeName = plugin.resolve || plugin
+        const themeConfig = plugin.options || {}
+        const theme = await preferDefault(
+          getConfigFile(themeName, `gatsby-config`)
+        )
+        // if theme is a function, call it with the themeConfig
+        let themeConfigObj = theme
+        if (_.isFunction(theme)) {
+          themeConfigObj = theme(themeConfig)
+        }
+        // themes function as plugins too (gatsby-node, etc)
+        return {
+          ...themeConfigObj,
+          plugins: [
+            ...(themeConfigObj.plugins || []),
+            // theme plugin is last so it's gatsby-node, etc can override 
+            // its declared plugins, like a normal site.
+            { resolve: themeName, options: themeConfig },
+          ],
+        }
+      }
+    ).reduce(mergeGatsbyConfig, {})
+
+    config = mergeGatsbyConfig(themesConfig, config)
+  }
+```
+
+## Loading Walkthrough
+
+We can walk through the code line by line to understand what's happening. First we check to see if there is a config at all, and if there is, we also check to see if any themes have been defined.
+
+```js
+if (config && config.__experimentalThemes) {
+```
+
+This allows us to restrict any behavioral changes we might make to only people who have opted in to using themes. The result is that we can ship this (and have been shipping this code) for many releases now without bothering any existing sites.
+
+`themesConfig` is the result of iterating over every theme, loading the config, and merging it with the existing config so far. It is all of the themes' Gatsby configs combined.
+
+### Mapping over themes
+
+For each plugin, we transform the theme name and any options into a Gatsby config we can merge into the rest.
+
+```js
+async plugin => {
+  const themeName = plugin.resolve || plugin;
+  const themeConfig = plugin.options || {};
+  const theme = await preferDefault(getConfigFile(themeName, `gatsby-config`));
+  // if theme is a function, call it with the themeConfig
+  let themeConfigObj = theme;
+  if (_.isFunction(theme)) {
+    themeConfigObj = theme(themeConfig);
+  }
+  // themes function as plugins too (gatsby-node, etc)
+  return {
+    ...themeConfigObj,
+    plugins: [
+      ...(themeConfigObj.plugins || []),
+      // theme plugin is last so it's gatsby-node, etc can override it's declared plugins, like a normal site.
+      { resolve: themeName, options: themeConfig }
+    ]
+  };
+}
+```
+
+Themes can be declared in the same way plugins can, either as strings or as objects.
+
+```js
+__experimentalThemes: [
+  `gatsby-theme-blog`,
+  { resolve: `gatsby-theme-ecommerce`, options: {} }
+];
+```
+
+So we do some mechanical checking to see which version it is and then load the config file using the same utility functions the user's Gatsby config is loaded with
+
+```js
+const themeName = plugin.resolve || plugin;
+const themeConfig = plugin.options || {};
+const theme = await preferDefault(getConfigFile(themeName, `gatsby-config`));
+```
+
+Then, to enable themes to use a `gatsby-config.js` that can accept options, we let themes define their config as a function which takes those options.
+
+```js
+// sample gatsby-config taking options
+module.exports = opts => ({
+  plugins: [
+    opts.useMdx ? `gatsby-mdx` : `gatsby-transformer-remark`
+  ]
+})
+```
+
+```js
+// if theme is a function, call it with the themeConfig
+let themeConfigObj = theme;
+if (_.isFunction(theme)) {
+  themeConfigObj = theme(themeConfig);
+}
+```
+
+Finally, we take the resulting Gatsby config and return it. Because we want themes to also have access to plugin functionality like `gatsby-node`, `gatsby-ssr`, etc, we use the theme directly as it's own plugin *after* all of the other plugins it has defined. This gives themes the opportunity to override any functionality they may need to.
+
+```js
+// themes function as plugins too (gatsby-node, etc)
+return {
+  ...themeConfigObj,
+  plugins: [
+    ...(themeConfigObj.plugins || []),
+    // theme plugin is last so it's gatsby-node, etc can override
+    // its declared plugins, like a normal site.
+    { resolve: themeName, options: themeConfig }
+  ]
+}
+```
+
+After mapping over and generating all of the Gatsby configs, we merge them into a single config
+
+```js
+.reduce(mergeGatsbyConfig, {})
+```
+
+and finally, we add the user's config last and set the new "mega config" to be the Gatsby config that the rest of the Gatsby lifecycles use.
+
+```
+config = mergeGatsbyConfig(themesConfig, config)
+```
+
+## Merging
+
+Now we still haven't talked about how one config is merged with another. There's less to talk about here. We take config `a` and config `b` and we merge each key of the gatsby config for each of the configs with a process  specific to each key.
+
+```js
+const _ = require(`lodash`)
+/**
+ * Defines how a theme object is merged with the user's config
+ */
+module.exports = (a, b) => {
+  // a and b are gatsby configs, If they have keys, that means there are values to merge
+  const allGatsbyConfigKeysWithAValue = _.uniq(
+    Object.keys(a).concat(Object.keys(b))
+  )
+
+  // reduce the array of mergable keys into a single gatsby config object
+  const mergedConfig = allGatsbyConfigKeysWithAValue.reduce(
+    (config, gatsbyConfigKey) => {
+      // choose a merge function for the config key if there's one defined,
+      // otherwise use the default value merge function
+      const mergeFn = howToMerge[gatsbyConfigKey] || howToMerge.byDefault
+      return {
+        ...config,
+        [gatsbyConfigKey]: mergeFn(a[gatsbyConfigKey], b[gatsbyConfigKey]),
+      }
+    },
+    {}
+  )
+
+  // return the fully merged config
+  return mergedConfig
+}
+const howToMerge = {
+  /**
+   * pick a truthy value by default.
+   * This makes sure that if a single value is defined, that one it used.
+   * We prefer the "right" value, because the user's config will be "on the right"
+   */
+  byDefault: (a, b) => b || a,
+  siteMetadata: (objA, objB) => _.merge({}, objA, objB),
+  // plugins are concatenated and uniq'd, so we don't get two of the same plugin value
+  plugins: (a = [], b = []) => _.uniqWith(a.concat(b), _.isEqual),
+  mapping: (objA, objB) => _.merge({}, objA, objB),
+}
+```
+
+By default, we just take the user's value over any other. "last value wins". This is used for keys like `pathPrefix`.
+
+```js
+byDefault: (a, b) => b || a,
+```
+
+`siteMetadata` and `mapping` both do recursive merges using lodash
+
+```js
+(objA, objB) => _.merge({}, objA, objB)
+```
+
+and finally the most interesting merge is `plugins`. We concatenate all of the plugins together, and remove the plugins that are duplicates of each other.
+
+```js
+(a = [], b = []) => _.uniqWith(a.concat(b), _.isEqual)
+```
