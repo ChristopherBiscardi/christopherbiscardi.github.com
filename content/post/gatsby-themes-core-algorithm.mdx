@@ -80,7 +80,8 @@ The first [section of code](https://github.com/gatsbyjs/gatsby/blob/672e2b3087f2
           ...themeConfigObj,
           plugins: [
             ...(themeConfigObj.plugins || []),
-            // theme plugin is last so it's gatsby-node, etc can override it's declared plugins, like a normal site.
+            // theme plugin is last so it's gatsby-node, etc can override 
+            // its declared plugins, like a normal site.
             { resolve: themeName, options: themeConfig },
           ],
         }
@@ -173,7 +174,8 @@ return {
   ...themeConfigObj,
   plugins: [
     ...(themeConfigObj.plugins || []),
-    // theme plugin is last so it's gatsby-node, etc can override it's declared plugins, like a normal site.
+    // theme plugin is last so it's gatsby-node, etc can override
+    // its declared plugins, like a normal site.
     { resolve: themeName, options: themeConfig }
   ]
 }
