@@ -1,0 +1,239 @@
+---
+title: MDX Custom Elements
+date: 2018-12-29T22:13:51.066Z
+tags:
+  - mdx
+  - gatsby
+  - react
+---
+**Disclaimer:** This is an advanced topic that bends the internals of [MDX](https://github.com/mdx-js/mdx) to our will. It is *not* how you should be using MDX for everyday use. If you're interested in some internal trickery then read on, if you're looking to use MDX in a real project maybe check out the [gatsby-mdx](https://gatsby-mdx.netlify.com/) docs instead.
+
+# The problem with HTML
+
+Long story short, when using MDX you end up with code block output that looks like this:
+
+```html
+<pre>
+  <code>
+  const some = {}
+  </code>
+</pre>
+```
+
+This means that to do interesting or novel things with the code from markdown code blocks, you have to replace the `pre` element in MDXProvider, not the `code` element... but the `code` element has [all the interesting props](https://github.com/mdx-js/mdx/blob/b4ad28a5acdc7278473cddafdf8abb63cbc9debe/packages/mdx/mdx-ast-to-mdx-hast.js#L55). Also, if you plan to use `pre` without `code` you now have to check the children of the `pre` element to make sure it's not `code` and then return a regular `pre` element. It's all doable, but feels a bit messy.
+
+You can either cheat by just handling the `code` element and end up with an extra `pre` wrapping your code:
+
+```js
+<MDXProvider
+  components={{
+    code: ({ children, "react-live": useReactLive, ...props }) =>
+      useReactLive ? (
+        <LiveCode {...props}>{children}</LiveCode>
+      ) : (
+        <Code is="block" {...props}>
+          {children}
+        </Code>
+      )
+  }}
+/>;
+```
+
+or you can do some minor gymnastics to get the children's props, etc.
+
+```js
+const components = {
+  pre: ({ children: { props } }) => {
+    // props is for MDXTag, props.props is for code element
+    const lang = props.props.className && props.props.className.split("-")[1];
+    return (
+        <Code is="block" lang={lang} {...props} />
+    );
+  }
+};
+```
+
+# An Alternative Path
+
+SO this is where we start talking about patching MDX. The patch isn't terrible, but allows us to hook into the handlers during the [MDXAST-to-MDXHAST](https://github.com/mdx-js/mdx/blob/b4ad28a5acdc7278473cddafdf8abb63cbc9debe/packages/mdx/mdx-ast-to-mdx-hast.js) conversion process. With these handlers we have a larger probability to do more damage, but also get more control because it's where we determine props and how markdown gets converted into HAST (html ast).
+
+```diff
+const toHAST = require('mdast-util-to-hast')
+const detab = require('detab')
+const u = require('unist-builder')
+
++function mdxAstToMdxHast({ mdxAstHandlers }) {
+  return (tree, _file) => {
+    const handlers = {
+      // `inlineCode` gets passed as `code` by the HAST transform.
+      // This makes sure it ends up being `inlineCode`
+      inlineCode(h, node) {
+        return Object.assign({}, node, {
+          type: 'element',
+          tagName: 'inlineCode',
+          properties: {},
+          children: [
+            {
+              type: 'text',
+              value: node.value
+            }
+          ]
+        })
+      },
+      code(h, node) {
+        const value = node.value ? detab(node.value + '\n') : ''
+        const lang = node.lang
+        const props = {}
+
+        if (lang) {
+          props.className = ['language-' + lang]
+        }
+
+        // Mdast sets `node.meta` to `null` instead of `undefined` if
+        // not present, which React doesn't like.
+        props.metastring = node.meta || undefined
+
+        const meta =
+          node.meta &&
+          node.meta.split(' ').reduce((acc, cur) => {
+            if (cur.split('=').length > 1) {
+              const t = cur.split('=')
+              acc[t[0]] = t[1]
+              return acc
+            }
+            acc[cur] = true
+            return acc
+          }, {})
+
+        if (meta) {
+          Object.keys(meta).forEach(key => {
+            props[key] = meta[key]
+          })
+        }
+
+        return h(node.position, 'pre', [
+          h(node, 'code', props, [u('text', value)])
+        ])
+      },
+      import(h, node) {
+        return Object.assign({}, node, {
+          type: 'import'
+        })
+      },
+      export(h, node) {
+        return Object.assign({}, node, {
+          type: 'export'
+        })
+      },
+      comment(h, node) {
+        return Object.assign({}, node, {
+          type: 'comment'
+        })
+      },
+      jsx(h, node) {
+        return Object.assign({}, node, {
+          type: 'jsx'
+        })
+      },
++     ...mdxAstHandlers
+    }
+
+    const hast = toHAST(tree, {
+      handlers
+    })
+
+    return hast
+  }
+}
+
+module.exports = mdxAstToMdxHast
+```
+
+After using this patch, we can set up our own handlers for code blocks for markdown. Here's what it looks like for `gatsby-mdx` users
+
+```js
+{
+  resolve: `gatsby-mdx`,
+  options: {
+    mdxAstHandlers: {
+      code(h, node) {
+        const value = node.value ? detab(node.value + "\n") : "";
+        const lang = node.lang;
+        const props = {};
+
+        // Mdast sets `node.meta` to `null` instead of `undefined` if
+        // not present, which React doesn't like.
+        props.metastring = node.meta || undefined;
+
+        const meta =
+          node.meta &&
+          node.meta.split(" ").reduce((acc, cur) => {
+            if (cur.split("=").length > 1) {
+              const t = cur.split("=");
+              acc[t[0]] = t[1];
+              return acc;
+            }
+            acc[cur] = true;
+            return acc;
+          }, {});
+
+        if (meta) {
+          Object.keys(meta).forEach(key => {
+            props[key] = meta[key];
+          });
+        }
+
+        return h(node.position, "code-block", { lang, ...props }, [
+          u("text", value)
+        ]);
+      }
+    }
+  }
+};
+```
+
+This is mostly the same as the default `code` node handler, but we've changed the output to be a `code-block` element and merged all the props into a single object.
+
+This means we can now use `MDXProvider` to replace `code-block` elements... That is, we've resolved our `<pre><code>` issue at the conversion to MDXHAST level, way before the eventual conversion into JSX, etc.
+
+Here's how we can write an MDX `components` block to replace the `code-block` before it becomes HTML in the browser (or on SSR).
+
+```js
+import React from "react";
+import { MDXProvider } from "@mdx-js/tag";
+import Highlight, { defaultProps } from "prism-react-renderer";
+
+const components = {
+  "code-block": ({ children, lang, ...props }) => {
+    return (
+      <Highlight {...defaultProps} code={children.trim()} language={lang}>
+        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+          <pre className={className} style={style}>
+            {tokens.map((line, i) => (
+              <div {...getLineProps({ line, key: i })}>
+                {line.map((token, key) => (
+                  <span {...getTokenProps({ token, key })} />
+                ))}
+              </div>
+            ))}
+          </pre>
+        )}
+      </Highlight>
+    );
+  }
+};
+
+export const wrapRootElement = ({ element }) => {
+  return <MDXProvider components={components}>{element}</MDXProvider>;
+};
+```
+
+# Fin
+
+So, we've proved that hooking into the handlers is possible and also useful. We could expand on this to ship a set of handlers that makes working with markdown elements like code blocks, latex expressions, etc the responsibility of React components. If we shipped this by default with gatsby-mdx we could also ship a default set of components that handled the "custom elements" like `code-block` or `inline-math`, meaning that no one had to know but that also people who wanted to mess with internals have an easier time doing it.
+
+Is this a good idea? TBD. I haven't thought through the ramifications of this approach in a widespread context, but I'm fairly certain it's a better approach than advocating for AST manipulation across the board. That said, we do potentially lose the fact that html is sort of "standardized" in the sense that you can mash any `pre` element to see if it seems like it's a code block (not everyone uses `<pre><code>` though, so it's not foolproof anyway) in a document now but in this context you'd have to know about `code-block`.
+
+#### I made it!
+
+Here, have a [git repo](https://github.com/ChristopherBiscardi/mdx-custom-elements-example) that shows you how to do this.
