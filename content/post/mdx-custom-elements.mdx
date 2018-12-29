@@ -233,3 +233,7 @@ export const wrapRootElement = ({ element }) => {
 So, we've proved that hooking into the handlers is possible and also useful. We could expand on this to ship a set of handlers that makes working with markdown elements like code blocks, latex expressions, etc the responsibility of React components. If we shipped this by default with gatsby-mdx we could also ship a default set of components that handled the "custom elements" like `code-block` or `inline-math`, meaning that no one had to know but that also people who wanted to mess with internals have an easier time doing it.
 
 Is this a good idea? TBD. I haven't thought through the ramifications of this approach in a widespread context, but I'm fairly certain it's a better approach than advocating for AST manipulation across the board. That said, we do potentially lose the fact that html is sort of "standardized" in the sense that you can mash any `pre` element to see if it seems like it's a code block (not everyone uses `<pre><code>` though, so it's not foolproof anyway) in a document now but in this context you'd have to know about `code-block`.
+
+#### I made it!
+
+Here, have a [git repo](https://github.com/ChristopherBiscardi/mdx-custom-elements-example) that shows you how to do this.
