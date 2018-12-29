@@ -48,26 +48,26 @@ export default props => {
           <Text css={{ marginBottom: 0, maxWidth: "100%" }}>
             Warning: Under Construction. I am using this site as my playground
             as I build&nbsp;
-            <GLink
+            <a
               css={{ color: "#ff5e99" }}
               to="https://github.com/ChristopherBiscardi/gatsby-mdx"
             >
               gatsby-mdx
-            </GLink>
+            </a>
             <span> and </span>
-            <GLink
+            <a
               css={{ color: "#ff5e99" }}
               to="https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/"
             >
               gatsby themes
-            </GLink>
+            </a>
             . During this time I will also repost new content&nbsp;
-            <GLink
+            <a
               css={{ color: "#ff5e99" }}
               to="https://medium.com/@chrisbiscardi"
             >
               to Medium
-            </GLink>
+            </a>
           </Text>
         </div>
         <nav
