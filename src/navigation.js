@@ -50,21 +50,21 @@ export default props => {
             as I build&nbsp;
             <a
               css={{ color: "#ff5e99" }}
-              to="https://github.com/ChristopherBiscardi/gatsby-mdx"
+              href="https://github.com/ChristopherBiscardi/gatsby-mdx"
             >
               gatsby-mdx
             </a>
             <span> and </span>
             <a
               css={{ color: "#ff5e99" }}
-              to="https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/"
+              href="https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/"
             >
               gatsby themes
             </a>
             . During this time I will also repost new content&nbsp;
             <a
               css={{ color: "#ff5e99" }}
-              to="https://medium.com/@chrisbiscardi"
+              href="https://medium.com/@chrisbiscardi"
             >
               to Medium
             </a>
