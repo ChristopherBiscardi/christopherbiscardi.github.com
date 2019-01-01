@@ -45,6 +45,7 @@ exports.createPages = ({ graphql, actions }) => {
             path:
               frontmatter.url ||
               `/post/${frontmatter.slug ||
+                slugify(frontmatter.title, { lower: true }) ||
                 slugify(parent.name, { lower: true })}`,
             component: componentWithMDXScope(
               require.resolve("./src/blog-post"),
