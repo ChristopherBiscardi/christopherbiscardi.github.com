@@ -1,6 +1,5 @@
 const path = require(`path`);
 const slugify = require("slugify");
-const componentWithMDXScope = require("gatsby-mdx/component-with-mdx-scope");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
@@ -47,11 +46,7 @@ exports.createPages = ({ graphql, actions }) => {
               `/post/${frontmatter.slug ||
                 slugify(frontmatter.title, { lower: true }) ||
                 slugify(parent.name, { lower: true })}`,
-            component: componentWithMDXScope(
-              require.resolve("./src/blog-post"),
-              node.code.scope,
-              __dirname
-            ),
+            component: require.resolve("./src/blog-post"),
             context: { id: node.id }
           });
         });

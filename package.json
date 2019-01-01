@@ -29,7 +29,7 @@
     "@sens8/component-typography": "*",
     "emotion-theming": "^10.0.4",
     "gatsby": "2.0.67",
-    "gatsby-mdx": "0.3.1-ci.225",
+    "gatsby-mdx": "ci",
     "gatsby-plugin-emotion": "3.0.1",
     "gatsby-plugin-google-analytics": "2.0.8",
     "gatsby-plugin-offline": "2.0.19",
