@@ -1,0 +1,43 @@
+---
+title: 'Design Systems: People, Processes, and Emergent Behavior'
+date: 2019-01-02T03:04:02.144Z
+tags:
+  - design-systems
+---
+Many people think of Design Systems as a proper noun. This affects the way they map expectations onto terms like "theme", and whether or not a team should be formed to support The Design System. This is not uncommon, there are many places with prominent google rankings defining design systems as nouns.
+
+> [...a collection of reusable components...](https://www.invisionapp.com/inside-design/guide-to-design-systems/)
+
+"Design System" the noun is only well defined in a subjective sense. There are many outputs and artifacts that *can* be produced by a system: A common design language, A component library, Documentation, A StyleGuide. They way many of us talk about them today; It's easy to think of these artifacts as the embodiment of a system.
+
+This has resulted in newcomers thinking that a particular noun or group of nouns constitute the definition of what a Design System is. Framing it this way also results in people writing articles against having a Design System at all by referencing it as a specific noun or group of nouns that they consider to have a high cost.
+
+# Design systems as systems
+
+The truth is that maintaining a system has a cost, but **not** maintaining a system *also* has a cost. Not making a choice is still a choice and there are risks to standing still just as there are risks to moving. Make your decisions explicit.
+
+Let's take a moment to consider another path. Instead of talking about the artifacts of a system, let's talk about design systems as... systems. This produces a new set of questions to answer.
+
+What are the boundaries of our system? What is the primary output of the system? How do we make decisions? Is the current system divergent or convergent? What is the source of truth once a decision is made? How do we evolve the system over time? How can we construct sub-processes and secondary outputs that support the primary output?
+
+These types of questions yield answers that can apply to any level of system and as a discipline I believe we should move towards engineering these systems and away from focusing as much as we do on specific outputs.
+
+## Epilogue: Example Q&A
+
+### What are the boundaries of our system?
+
+For a small, single product company with no dedicated designers we may include the code in the current codebase in the system and exclude any non-code design artifacts, exclude processes for finding areas that can be refined into a component, exclude documentation beyond a JSDoc comment.
+
+A larger company may have more people supporting the system and more specialization as a result. This can result in a boundary that ends at "component library" but processes that extend into outreach and research with product teams.
+
+### What is the primary output of our system?
+
+A large company with a dedicated design systems team might define the primary output as a set of tools that make it easier to build new products.
+
+A small company might define the primary output as their first product.
+
+### How can we construct sub-processes and secondary outputs that support the primary output?
+
+You could define a sub-process for scanning the products your company builds for potential new patterns to pull into a standard library. You could later optimize discovering overrides on core components by automating the process through babel or other tools.
+
+or you could adopt an Open Source style contribution model to the primary output of your system (whether or not it is actually released as open source)

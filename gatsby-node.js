@@ -15,6 +15,9 @@ exports.createPages = ({ graphql, actions }) => {
                   code {
                     scope
                   }
+                  fields {
+                    slug
+                  }
                   frontmatter {
                     slug
                     url
@@ -39,13 +42,9 @@ exports.createPages = ({ graphql, actions }) => {
 
         // Create blog posts pages.
         result.data.allMdx.edges.forEach(({ node }) => {
-          const { frontmatter, parent } = node;
+          const { frontmatter, parent, fields } = node;
           createPage({
-            path:
-              frontmatter.url ||
-              `/post/${frontmatter.slug ||
-                slugify(frontmatter.title, { lower: true }) ||
-                slugify(parent.name, { lower: true })}`,
+            path: fields.slug,
             component: require.resolve("./src/blog-post"),
             context: { id: node.id }
           });
@@ -80,4 +79,25 @@ exports.onCreateBabelConfig = ({ actions, stage }) => {
     name: `@emotion/babel-preset-css-prop`,
     stage
   });
+};
+
+exports.onCreateNode = ({ node, actions, getNode }) => {
+  const { createNodeField } = actions;
+
+  if (node.internal.type === `Mdx`) {
+    const { frontmatter } = node;
+    const parent = getNode(node.parent);
+
+    const value =
+      frontmatter.url ||
+      `/post/${frontmatter.slug ||
+        slugify(frontmatter.title, { lower: true }) ||
+        slugify(parent.name, { lower: true })}`;
+
+    createNodeField({
+      name: `slug`,
+      node,
+      value
+    });
+  }
 };
