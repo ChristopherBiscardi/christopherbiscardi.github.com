@@ -1,0 +1,126 @@
+---
+title: 'Codeblocks, MDX, and mdx-utils'
+date: 2019-01-04T03:46:43.281Z
+tags:
+  - gatsby
+  - mdx
+---
+MDX, and [gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx) specifically, is quite often used by people who are building interactive experiences. Some are design system documentation, others are blogs, and this goes on into marketing sites and more. Until today, if you want to replace the way code renders you would have to replace the `pre` element using `MDXProvider` because code renders as `<pre><code>` blocks. The full code needed for this is tricky to remember. Let's say we're writing a custom code block component to replace `pre`.
+
+```js
+const components = {
+  pre: props => {/* your code here*/}
+}
+```
+
+`props` in the above component expands to a more complex version of this object.
+
+```js
+{
+  children: {
+    $$typeof: Symbol("react.element"),
+    props: {
+      name: "code",
+      components: {},
+      parentName: "pre",
+      props: {
+        className: "language-js"
+      },
+      children: "const some = {}\n"
+    }
+  }
+}
+```
+
+which means we have to remember how to write this logic any time we're implementing a code block component *in addition to* any custom rendering logic.
+
+```js
+  if (
+    // children is MDXTag
+    preProps.children &&
+    // MDXTag props
+    preProps.children.props &&
+    // if MDXTag is going to render a <code>
+    preProps.children.props.name === "code"
+  ) {
+    // we have a <pre><code> situation
+    const {
+      children: codeString,
+      props: { className, ...props }
+    } = preProps.children.props;
+
+    return {
+      codeString: codeString.trim(),
+      language: className && className.split("-")[1],
+      ...props
+    };
+```
+
+So I went ahead and published [`mdx-utils`](https://github.com/ChristopherBiscardi/gatsby-mdx/tree/00769a1b72455f40843cd2f09ee34fd63b009fb2/packages/mdx-utils). `mdx-utils` is a container package for useful functions relating to writing components intended to be used in an `MDXProvider`. Our new logic looks like this:
+
+```js
+import React from 'react'
+import { MDXProvider } from '@mdx-js/tag'
+import { Code } from './src/components/code'
+import { preToCodeBlock } from 'mdx-utils'
+
+// components is its own object outside of render so that the references to
+// components are stable
+const components = {
+  pre: preProps => {
+    const props = preToCodeBlock(preProps)
+    // if there's a codeString and some props, we passed the test
+    if (props) {
+      return <Code {...props} />
+    } else {
+      // it's possible to have a pre without a code in it
+      return <pre {...preProps} />
+    }
+  },
+}
+
+export const wrapRootElement = ({ element }) => (
+  <MDXProvider components={components}>{element}</MDXProvider>
+)
+```
+
+You can check out some of the changes [in this PR to hagnerd's gatsby-starter-blog-mdx](https://github.com/hagnerd/gatsby-starter-blog-mdx/pull/1). Here's the `Code` component used above
+
+```js
+import React from 'react'
+import { render } from 'react-dom'
+import Highlight, { defaultProps } from 'prism-react-renderer'
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live'
+
+export const Code = ({ codeString, language, ...props }) => {
+  if (props['react-live']) {
+    return (
+      <LiveProvider code={codeString} noInline={true}>
+        <LiveEditor />
+        <LiveError />
+        <LivePreview />
+      </LiveProvider>
+    )
+  } else {
+    return (
+      <Highlight {...defaultProps} code={codeString} language={language}>
+        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+          <pre className={className} style={style}>
+            {tokens.map((line, i) => (
+              <div {...getLineProps({ line, key: i })}>
+                {line.map((token, key) => (
+                  <span {...getTokenProps({ token, key })} />
+                ))}
+              </div>
+            ))}
+          </pre>
+        )}
+      </Highlight>
+    )
+  }
+}
+```
+
+and a gif of the new `Code` component in action rendering Prism highlighted code AND a live code sample!
+
+![code blocks gif](/img/precode.gif "code blocks showing features")
