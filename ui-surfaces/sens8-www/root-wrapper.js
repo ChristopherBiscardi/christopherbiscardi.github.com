@@ -2,7 +2,7 @@ import React from "react";
 import theme from "@sens8/tokens";
 import { Global, css } from "@emotion/core";
 import { MDXProvider } from "@mdx-js/tag";
-import { Heading, Text, Code } from "sens8";
+import { Heading, Text, Code, OrderedList } from "sens8";
 import { ThemeProvider } from "emotion-theming";
 import Helmet from "react-helmet";
 
@@ -37,6 +37,8 @@ export default ({ children }) => (
         h5: ({ children, ...props }) => <Heading level={5}>{children}</Heading>,
         h6: ({ children, ...props }) => <Heading level={6}>{children}</Heading>,
         p: Text,
+        ol: props => <OrderedList {...props} />,
+        "ol.li": props => <li {...props} css={{ marginTop: ".5em" }} />,
         code: ({ children, "react-live": useReactLive, ...props }) =>
           useReactLive ? (
             <LiveCode {...props}>{children}</LiveCode>
