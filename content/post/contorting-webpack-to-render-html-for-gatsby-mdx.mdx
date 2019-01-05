@@ -1,0 +1,142 @@
+---
+title: Contorting Webpack to Render HTML for Gatsby MDX
+date: 2019-01-05T06:30:27.781Z
+tags:
+  - gatsby
+  - webpack
+  - mdx
+---
+Here's the code I was just in the middle of writing when [I realized I should stop and try to use webpack](https://twitter.com/chrisbiscardi/status/1081412264085807105).
+
+```js
+const React = require("react");
+const babel = require("@babel/core");
+const fs = require("fs");
+const path = require("path");
+const { renderToStaticMarkup } = require("react-dom/server");
+const vm = require("vm");
+
+const { MDX_SCOPES_LOCATION } = require("../constants");
+const MDXRenderer = require("../mdx-renderer");
+
+module.exports = function renderHTML(mdxBody) {
+  const files = fs.readdirSync(MDX_SCOPES_LOCATION);
+  const abs = path.resolve(MDX_SCOPES_LOCATION);
+
+  const scope = files
+    .map(file => fs.readFileSync(path.join(abs, file), "utf-8"))
+    .map(
+      content =>
+        babel.transform(content, {
+          plugins: [require("@babel/plugin-transform-modules-commonjs")]
+        }).code
+    )
+    .map(codeString => {
+      const sandbox = { exports: {}, require };
+      vm.createContext(sandbox);
+      vm.runInContext(codeString, sandbox);
+      console.log(sandbox);
+    })
+    .reduce((allScope, nextScope) => ({ ...allScope, ...nextScope }), {});
+
+  return renderToStaticMarkup(
+    React.createElement(MDXRenderer, { scope }, mdxBody)
+  );
+};
+```
+
+First off, what is this code trying to do? There's a babel transform, a vm context passing code strings around, and a React server render. Basically, I was trying to achieve getting HTML output for MDX content in [gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx). If you're server-rendered React before, you'll see that this seems like very complicated code to simply render a component to an html representation.
+
+so... why is it so complicated?
+
+The short answer is that gatsby-mdx rips the imports out of every MDX node and stores the imports in separate files for each node in a special directory called `MDX_SCOPES_LOCATION`. So, since anyone could be using the [new `globalScope`](https://www.christopherbiscardi.com/post/towards-shortcodes-for-gatsby-sites) config for shortcodes, we have to go collect all of the possible scopes so that MDX content can be rendered with the React components they expect to have available.
+
+The scope files are written using ES2015 module syntax, and are usually just a set of imports and an export.
+
+```js
+import { SketchPicker } from 'react-color';
+
+export { Picker: SketchPicker }
+```
+
+This ES2015 syntax means that we can't require these files into a node process without compiling them (remember that although MDX users tend to be on the later releases, Gatsby currently supports all the way back to node 6). Once scooping up all of the files as strings, we need to compile them and combine them into a single scope object to pass to the `MDXScopeProvider`, just like we do for [normal operation in wrapRootElement](https://github.com/ChristopherBiscardi/gatsby-mdx/blob/00769a1b72455f40843cd2f09ee34fd63b009fb2/packages/gatsby-mdx/wrap-root-element.js).
+
+so... how did I know it was time for webpack?
+
+I was making only incremental progress (first `fs.read*`, then babel, then `vm`, etc) and while incremental progress is good, there are a few thoughts I had that told me there was a leap I could make.
+
+1. I knew gatsby (probably) stores the webpack config in redux
+2. I knew this vm and babel shenanigans felt like it "crossed the boundary" too many times. Dealing with meta-code as strings and environments is tricky and error prone compared to coding regular code in an editor
+3. I knew that webpack could handle the compilation and execution of all of the code I needed to run if I could tell it to use the resources I already had available
+4. I also had the benefit of [having done this type of thing before](https://github.com/superawesomelabs/leo/blob/80e7af6c01590e2dd53477956f8beb33f958c01f/packages/leo-core/src/webpack.config.build.js)
+
+## The Webpack Code
+
+As soon as I chose to switch to using Webpack for this, I made progress quickly. There are a couple of keys to understanding what this code is doing.
+
+1. `cloneDeep`. We take Gatsby's processed webpack config from the redux store so that the scopes and anything else we have to process are dealt with in a predictable way. By doing this, we could accidentally overwrite the webpack config and end up with the same HTML output for every `renderHTML` call
+2. `MemoryFS` is an extremely simple [in-memory filesystem](https://github.com/webpack/memory-fs) that we can use in place of the real filesystem. Using an in-memory filesystem means we don't have to worry about accidentally overwriting any files needed for the real Gatsby build.
+3. [`StaticSiteGeneratorPlugin`](https://github.com/markdalgleish/static-site-generator-webpack-plugin) is a Webpack plugin by [@markdalgleish](https://twitter.com/markdalgleish) that I've used in the past when building GraphQL based static site generators. It takes your bundles from Webpack when they are emitted and calls the JavaScript bundle as a function with a route to generate some HTML. It allows us to pass arguments to the bundle function with `locals` and define global variables easily with `globals`.
+4. There a ton of error-handling logic that deals with the many ways webpack can fail or warn. This can more or less be ignored, but is important for error messages if anything ever goes wrong.
+
+```js
+const webpack = require("webpack");
+const MemoryFS = require("memory-fs");
+const StaticSiteGeneratorPlugin = require("static-site-generator-webpack-plugin");
+const { cloneDeep } = require("lodash");
+
+module.exports = mdxBody => wConfig => {
+  const webpackConfig = cloneDeep(wConfig);
+  webpackConfig.entry = require.resolve("./wrap-root-render-html-entry.js");
+  webpackConfig.output = {
+    filename: "output.txt",
+    path: "/",
+    libraryTarget: "commonjs"
+  };
+  webpackConfig.plugins.push(
+    new StaticSiteGeneratorPlugin({
+      paths: ["/"],
+      locals: {
+        // Properties here are merged into `locals`
+        // passed to the exported render function
+        mdxBody
+      },
+      globals: {
+        window: {},
+        __MDX_CONTENT__: mdxBody
+      }
+    })
+  );
+  const fs = new MemoryFS();
+  const compiler = webpack(webpackConfig);
+  compiler.outputFileSystem = fs;
+  return new Promise(resolve => {
+    compiler.run((err, stats) => {
+      // error handling bonanza
+      if (err) {
+        console.error(err.stack || err);
+        if (err.details) {
+          console.error(err.details);
+        }
+        return;
+      }
+
+      const info = stats.toJson();
+
+      if (stats.hasErrors()) {
+        console.error(info.errors);
+      }
+
+      if (stats.hasWarnings()) {
+        console.warn(info.warnings);
+      }
+
+      // actual code
+      const content = fs.readFileSync("/index.html", "utf-8");
+      resolve(content);
+    });
+  });
+};
+```
+
+Now, this is a heavy key in the GraphQL API because of all the additional webpack work (a webpack process for every `html` field queried). The approach I'm taking here is: "Make it work, make it right, make it fast". We're still in the "Make it work" phase. We *will* need to speed this up or cache it heavily in the future.
