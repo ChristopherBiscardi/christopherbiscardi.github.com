@@ -124,20 +124,26 @@ export class BlockQuote extends Component {
   }
 }
 
-export const OL = styled.ol`
-  // numerals in line with other linear text
-  padding-left: 0;
-  margin-left: 0;
-  list-style: none;
-  counter-reset: sens8-list;
+export const OL = props => (
+  <ol
+    {...props}
+    css={({ colors }) => css`
+      color: ${colors.text};
+      // numerals in line with other linear text
+      padding-left: 0;
+      margin-left: 0;
+      list-style: none;
+      counter-reset: sens8-list;
 
-  & li:before {
-    counter-increment: sens8-list;
-    content: counter(sens8-list);
-    margin-left: -2em;
-    margin-right: 1em;
-  }
-`;
+      & li:before {
+        counter-increment: sens8-list;
+        content: counter(sens8-list);
+        margin-left: -2em;
+        margin-right: 1em;
+      }
+    `}
+  />
+);
 
 export const UL = styled.ul`
   padding-left: ${lineHeight}em;
