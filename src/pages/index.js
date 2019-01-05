@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import Helmet from "react-helmet";
 import { Link } from "gatsby";
 import theme from "@sens8/tokens";
-import { H1 } from "@sens8/component-typography/display";
+import { Heading } from "sens8";
 import Nav from "../navigation";
 
 export default class IndexPage extends Component {
@@ -26,15 +26,14 @@ export default class IndexPage extends Component {
             width: "100vw"
           }}
         >
-          <H1
+          <Heading
+            level={1}
             css={{
-              fontSize: "1.5em",
-              color: "#ff79c6",
-              marginBottom: "0.5em"
+              color: "#ff79c6"
             }}
           >
             Chris Biscardi
-          </H1>
+          </Heading>
         </div>
       </div>
     );

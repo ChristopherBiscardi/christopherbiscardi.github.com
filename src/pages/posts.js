@@ -1,12 +1,8 @@
 import Helmet from "react-helmet";
 import React, { Component } from "react";
-import slugify from "slugify";
 import { graphql, Link } from "gatsby";
 
-import { H1, H2 } from "@sens8/component-typography/display";
-import Text from "@sens8/component-typography/linear";
-import { Tag } from "sens8";
-
+import { Heading, Text, Tag } from "sens8";
 import SiteLayout from "../site-layout";
 
 export default class PostsPage extends Component {
@@ -29,11 +25,9 @@ export default class PostsPage extends Component {
             marginBottom: "1.5rem"
           })}
         >
-          <H1
-            css={{ fontSize: "1.5em", color: "#ff79c6", marginBottom: "0.5em" }}
-          >
+          <Heading level={1} css={{ color: "#ff79c6" }}>
             Chris Biscardi
-          </H1>
+          </Heading>
           <Text css={{ color: "#bd93f9", textAlign: "center" }}>Posts</Text>
         </section>
         {this.props.data.allMdx.edges.map(({ node }) => {
@@ -59,7 +53,7 @@ class PostBox extends Component {
     const { url, title, excerpt, tags, date } = this.props;
     return (
       <div css={{ margin: "auto", padding: "0 1.5rem", maxWidth: "38rem" }}>
-        <H2>{title}</H2>
+        <Heading>{title}</Heading>
         <Text>
           {excerpt}
           &nbsp;

@@ -12,19 +12,24 @@ import Text, {
   BlockQuote,
   Link
 } from "@sens8/component-typography/linear";
-import { H1, H2, H3, H4, H5, H6 } from "@sens8/component-typography/display";
-import { Code } from "sens8";
+import { Code, Heading } from "sens8";
 
 // ensure components are stable
 const components = {
-  h1: H1,
-  h2: H2,
-  h3: H3,
-  h4: H4,
-  h5: H5,
-  h6: H6,
+  h1: props => <Heading {...props} level={1} />,
+  h2: props => <Heading {...props} level={2} />,
+  h3: props => <Heading {...props} level={3} />,
+  h4: props => <Heading {...props} level={4} />,
+  h5: props => <Heading {...props} level={5} />,
+  h6: props => <Heading {...props} level={6} />,
   p: Text,
   ol: OL,
+  "ol.li": props => (
+    <li
+      {...props}
+      css={{ marginBottom: ".5em", lineHeight: 1.5, fontFamily: "Inter UI" }}
+    />
+  ),
   ul: UL,
   a: props => <Link {...props} css={{ color: "#ff5e99" }} />,
   sub: Sub,
