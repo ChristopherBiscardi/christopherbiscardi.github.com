@@ -1,0 +1,108 @@
+---
+title: Controlling the Gatsby Application Root
+date: 2019-01-06T05:25:22.448Z
+tags:
+  - gatsby
+---
+One of the features I really like about Gatsby is the ability to control the root of the application. In `gatsby-ssr.js` and `gatsby-browser.js` we have two APIs that we'll be talking about today.
+
+## wrapPageElement
+
+The first API is `wrapPageElement`, which takes an object argument that has an `element` to render and that's it. As long as you render this element you can do whatever you want here, like import CSS or anything else. The docs mention using this for providers, which is the most common use case.
+
+> This is useful to setup any Providers component that will wrap your application. For setting persistent UI elements around pages use wrapPageElement.
+
+```js
+import React from "react"
+import { Provider } from "react-redux"
+
+import createStore from "./src/state/createStore"
+const store = createStore()
+
+export const wrapRootElement = ({ element }) => {
+  return (
+    <Provider store={store}>
+      {element}
+    </Provider>
+  )
+}
+```
+
+In [gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx/blob/5c305c2afcb857e69e11dc011ccd0b8ef6fe0e4d/packages/gatsby-mdx/wrap-root-element.js) we use a [custom loader](https://github.com/ChristopherBiscardi/gatsby-mdx/blob/5c305c2afcb857e69e11dc011ccd0b8ef6fe0e4d/packages/gatsby-mdx/loaders/mdx-scopes.js) to run additional filesystem work and provide the result to the application through [React's context](https://reactjs.org/docs/context.html). This means as a plugin we can do some processing and store the result of that computation in a place the entire Gatsby application can access.
+
+This API is also used in CSS-in-JS solutions that need to initialized stylesheets for SSR. For example, gatsby-plugin-styled-components uses `wrapRootElement` to do setup that could be error-prone if users had to rewrite it in each application.
+
+```js
+import React from "react"
+import { ServerStyleSheet, StyleSheetManager } from "styled-components"
+
+const sheetByPathname = new Map()
+
+// eslint-disable-next-line react/prop-types,react/display-name
+exports.wrapRootElement = ({ element, pathname }) => {
+  const sheet = new ServerStyleSheet()
+  sheetByPathname.set(pathname, sheet)
+  return <StyleSheetManager sheet={sheet.instance}>{element}</StyleSheetManager>
+}
+
+exports.onRenderBody = ({ setHeadComponents, pathname }) => {
+  const sheet = sheetByPathname.get(pathname)
+  if (sheet) {
+    setHeadComponents([sheet.getStyleElement()])
+    sheetByPathname.delete(pathname)
+  }
+}
+```
+
+That doesn't mean this is necessary for all CSS-in-JS plugins though. For example, `gatsby-plugin-emotion` doesn't use this API because its SSR solution doesn't need configuration.
+
+## wrapPageAPI
+
+The alternative to `wrapRootElement` is `wrapPageElement`. This API enables you to wrap the application with a component that will not be unmounted when each page is rendered... but what is this useful for?
+
+> This is useful for setting wrapper component around pages that won’t get unmounted on page change. For setting Provider components use wrapRootElement.
+
+[TylerBarnes' gatsby-plugin-transition-link](https://github.com/TylerBarnes/gatsby-plugin-transition-link/blob/11336c6b3a5059bd5c428ca4dc5fa7377559a1aa/src/wrap-page.js) is one such application. It uses a number of components to enable *per-Link transitions*. 
+
+```js
+const React = require("react");
+const TransitionHandler = require("./components/TransitionHandler").default;
+const InternalProvider = require("./context/InternalProvider").default;
+const Consumer = require("./context/createTransitionContext").Consumer;
+
+// eslint-disable-next-line react/prop-types,react/display-name
+module.exports = ({ element, props }) => {
+  const sessionMinHeight =
+    typeof sessionStorage !== "undefined"
+      ? sessionStorage.getItem("wrapperMinHeight")
+      : false;
+  return (
+    <InternalProvider>
+      <Consumer>
+        {({ wrapperMinHeight, inTransition }) => {
+          const minHeight = wrapperMinHeight
+            ? `${wrapperMinHeight}px`
+            : `${!!sessionMinHeight ? sessionMinHeight + "px" : false}`;
+          return (
+            <div
+              style={{
+                position: "relative",
+                zIndex: 0,
+                minHeight: inTransition ? false : minHeight
+              }}
+            >
+              <TransitionHandler {...props}>{element}</TransitionHandler>
+            </div>
+          );
+        }}
+      </Consumer>
+    </InternalProvider>
+  );
+};
+```
+
+Another potential application of `wrapPageElement` for gatsby-mdx in the future is to use dynamic import statements that correspond to a page or group of pages instead of pre-compiling the scope and putting it all in the root.
+
+# Fin
+
+In any case, `wrapRootElement` and `wrapPageElement` are good APIs to know about if you're writing plugins, using any kind of `Provider`, or need to implement complex state management of pages like transitions.
