@@ -1,0 +1,88 @@
+---
+title: 'How and Why: Static Queries in Gatsby Themes'
+date: 2019-01-08T07:43:38.981Z
+tags:
+  - gatsby
+---
+[Static Queries](https://www.gatsbyjs.org/docs/static-query/) are [now supported](https://github.com/gatsbyjs/gatsby/pull/10786) in [Gatsby Themes](https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/) thanks to [Dustin](https://twitter.com/SchauDustin).
+
+Static Queries are useful in normal Gatsby applications to add data like the site's title, a link to a github repo, or any other site metadata defined in `gatsby-config.js` to the site.
+
+```js
+import React from "react"
+import { StaticQuery, graphql } from "gatsby"
+
+const Header = ({ data }) => (
+  <header>
+    <h1>{data.site.siteMetadata.title}</h1>
+  </header>
+)
+
+export default props => (
+  <StaticQuery
+    query={graphql`
+      query {
+        site {
+          siteMetadata {
+            title
+          }
+        }
+      }
+    `}
+    render={data => <Header data={data} {...props} />}
+  />
+)
+```
+
+## Enabling Users
+
+In themes, Static Queries can take advantage of Component Shadowing to build up a navigation data structure and let the user override the appearance of the navigation without having to worry about how to fetch and calculate a tree from a list of Markdown.
+
+```js
+import React from "react";
+import { StaticQuery, graphql } from "gatsby";
+import SideNav from "./src/components/side-nav";
+
+export default props => (
+  <StaticQuery
+    query={graphql`
+      query {
+        allMarkdownRemark {
+          edges {
+            node {
+              slug
+              frontmatter {
+                title
+              }
+            }
+          }
+        }
+      }
+    `}
+    render={data => {
+      const navItems = data.allMarkdownRemark.reduce((acc, cur) => {
+        // calculate nav item nested tree here
+      });
+      return <SideNav items={navItems} {...props} />;
+    }}
+  />
+);
+```
+
+Since we've put the `SideNav` in `gatsby-theme-my-theme/src/components` we've opted in to letting it be shadowed by a user of our theme. We've *also* enabled our user to not have to worry about figuring out what the proper algorithm is for creating the navigation elements in the proper data structure, which can be hard or time consuming depending on how complex it is. A user can create a file at `src/components/gatsby-theme-my-theme/side-nav.js` in their site and purely worry about rendering the object they are given as a prop in their new `SideNav` component.
+
+Since Static Queries are only run once we aren't adding any extra network calls on each page load to build up this navigation structure.
+
+## Site Metadata
+
+Static Queries in themes are also useful in the original example, to pull in site metadata. The difference is that since `siteMetadata` is merged between themes and the user's site (since `gatsby-config.js` is merged), a user can override the content returned in the query by setting a field in the `siteMetadata` object in their site. This can be their name in an author field, a GitHub URL to their project to construct an "edit this page on GitHub" `Link` component, or anything else you can think of.
+
+```js
+// uses Static Query internally for base URL from siteMetadata
+// and location.pathname for doc location per-page
+<GitHubEditLink />
+```
+
+## Fin
+
+Static Queries are useful in regular applications and they can also be used to empower users when built into themes and theme components.
