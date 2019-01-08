@@ -78,7 +78,9 @@ Since Static Queries are only run once we aren't adding any extra network calls 
 Static Queries in themes are also useful in the original example, to pull in site metadata. The difference is that since `siteMetadata` is merged between themes and the user's site (since `gatsby-config.js` is merged), a user can override the content returned in the query by setting a field in the `siteMetadata` object in their site. This can be their name in an author field, a GitHub URL to their project to construct an "edit this page on GitHub" `Link` component, or anything else you can think of.
 
 ```js
-<GitHubEditLink to='/docs/thing.md' />
+// uses Static Query internally for base URL from siteMetadata
+// and location.pathname for doc location per-page
+<GitHubEditLink />
 ```
 
 ## Fin
