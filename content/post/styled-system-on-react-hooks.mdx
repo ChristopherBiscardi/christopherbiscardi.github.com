@@ -191,7 +191,7 @@ Now it may not seem as clean as dropping a function in a styled component, but w
 ```js
 const MyThing = props => {
   const [cssProps, otherProps] = useBox(props);
-  return <section {...otherProps} css={boxProps} />
+  return <section {...otherProps} css={cssProps} />
 }
 ```
 
@@ -202,7 +202,7 @@ If we have `useBox` return a css object, we can also compose it with our existin
 ```js
 const MyThing = props => {
   const [cssProps, otherProps] = useBox(props);
-  return <section {...otherProps} css={{ ...boxProps, lineHeight: 1.5 }} />;
+  return <section {...otherProps} css={{ ...cssProps, lineHeight: 1.5 }} />;
 };
 ```
 
