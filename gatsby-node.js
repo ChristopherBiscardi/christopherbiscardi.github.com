@@ -91,8 +91,8 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     const value =
       frontmatter.url ||
       `/post/${frontmatter.slug ||
-        slugify(frontmatter.title, { lower: true }) ||
-        slugify(parent.name, { lower: true })}`;
+        slugify(frontmatter.title, { lower: true, remove: /[*+~.()'"!:@]/g }) ||
+        slugify(parent.name, { lower: true, remove: /[*+~.()'"!:@]/g })}`;
 
     createNodeField({
       name: `slug`,
