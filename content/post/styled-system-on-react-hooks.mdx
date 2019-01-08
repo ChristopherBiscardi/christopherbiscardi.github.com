@@ -1,0 +1,215 @@
+---
+title: Styled System on React Hooks
+date: 2019-01-08T04:13:36.684Z
+tags:
+  - css-in-js
+  - design-systems
+  - emotion
+  - gatsby
+  - react
+---
+I'm pretty confident that the next generation of design-system tools like styled-system will be built on React hooks. So let's take a look at the early stages of how that might happen. 
+
+First, we'll init a default [Gatsby](https://www.gatsbyjs.org/) site.
+
+```shell
+gatsby new emotion-css-prop-theme-hooks-example
+```
+
+# ThemeProvider
+
+Gatsby has a nice ecosystem for plugins and [some sweet APIs for adding providers to the root of the application](/post/controlling-the-gatsby-application-root) so we'll install `gatsby-plugin-emotion` to grab Emotion 10 and write a [`wrapRootElement`](https://www.gatsbyjs.org/docs/ssr-apis/#wrapRootElement) function to provide a theme to our application.
+
+```shell
+yarn add gatsby-plugin-emotion emotion-theming @emotion/core
+```
+
+We're using `emotion-theming` instead of a raw context for the memoization, theme merging, and [other features](https://github.com/emotion-js/emotion/blob/02ff1e2e8cacf760907a8c1bdbccdde48450ebe2/packages/emotion-theming/src/theme-provider.js) it provides. We'll build this theme object out as we go.
+
+```js
+import { ThemeProvider } from "emotion-theming";
+
+const theme = {};
+
+export const wrapRootElement = ({ element }) => (
+  <ThemeProvider theme={theme}>{element}</ThemeProvider>
+);
+```
+
+Because we're going to use hooks, we need the React alphas too.
+
+```shell
+yarn add react@16.7.0-alpha.2 react-dom@16.7.0-alpha.2
+```
+
+# The app
+
+So let's start taking out some of the app and moving values into our theme.
+
+```js
+const Header = ({ siteTitle }) => (
+  <div
+    style={{
+      background: `rebeccapurple`,
+      marginBottom: `1.45rem`,
+    }}
+  >
+    <div
+      style={{
+        margin: `0 auto`,
+        maxWidth: 960,
+        padding: `1.45rem 1.0875rem`,
+      }}
+    >
+      <h1 style={{ margin: 0 }}>
+        <Link
+          to="/"
+          style={{
+            color: `white`,
+            textDecoration: `none`,
+          }}
+        >
+          {siteTitle}
+        </Link>
+      </h1>
+    </div>
+  </div>
+)
+```
+
+Our first attempt is to consume the context raw using `useContext`. We simply replace the two colors in the file with their theme equivalents. We also replace `style` with emotion's [`css` prop](https://emotion.sh/docs/css-prop)
+
+```js
+const theme = {
+  colors: { black: "#000", white: "fff", brand: "rebeccapurple" }
+};
+```
+
+
+
+```js
+import { Link } from "gatsby";
+import PropTypes from "prop-types";
+import React, { useContext } from "react";
+import { ThemeContext } from "@emotion/core";
+
+const Header = ({ siteTitle }) => {
+  const { colors } = useContext(ThemeContext);
+  return (
+    <div
+      css={{
+        background: colors.brand,
+        marginBottom: `1.45rem`
+      }}
+    >
+      <div
+        css={{
+          margin: `0 auto`,
+          maxWidth: 960,
+          padding: `1.45rem 1.0875rem`
+        }}
+      >
+        <h1 css={{ margin: 0 }}>
+          <Link
+            to="/"
+            css={{
+              color: colors.white,
+              textDecoration: `none`
+            }}
+          >
+            {siteTitle}
+          </Link>
+        </h1>
+      </div>
+    </div>
+  );
+};
+```
+
+Now this works, but it's not quite styled-system. Styled-system allows us to use props to change colors and scales inside of our system. So let's write `useColor`.
+
+
+```js
+const useColor = color => {
+  const { colors } = useContext(ThemeContext);
+  if (colors[color]) {
+    return colors[color];
+  } else {
+    if (process.env.DEVELOPMENT) {
+      console.warn(
+        `${color} is not a theme color! You've extended the palette`
+      );
+    }
+    return color;
+  }
+};
+```
+
+`useColor` allows us to pull values out of the theme and fallback if not one by one. We can even associate them with props and default arguments. No more custom APIs for defaults! It's all React!
+
+```js
+const Header = ({
+  siteTitle,
+  color = "white",
+  backgroundColor = "brand"
+}) => {
+  const bgColor = useColor(backgroundColor);
+  const textColor = useColor(color);
+  return (
+    <div
+      css={{
+        background: bgColor,
+        marginBottom: `1.45rem`
+      }}
+    >
+      <div
+        css={{
+          margin: `0 auto`,
+          maxWidth: 960,
+          padding: `1.45rem 1.0875rem`
+        }}
+      >
+        <h1 css={{ margin: 0 }}>
+          <Link
+            to="/"
+            css={{
+              color: textColor,
+              textDecoration: `none`
+            }}
+          >
+            {siteTitle}
+          </Link>
+        </h1>
+      </div>
+    </div>
+  );
+};
+```
+
+Now it may not seem as clean as dropping a function in a styled component, but we gain more control over the props we use and it becomes easier to compose styled-system hooks into our own, more powerful hooks too. You could imagine a `useBox` that replaces the [`Box` component from superbox](https://github.com/jxnblk/superbox/blob/70be4c76ff2695e6d6c7c6a3bc6c98991c611577/src/index.js).
+
+```js
+const MyThing = props => {
+  const [cssProps, otherProps] = useBox(props);
+  return <section {...otherProps} css={cssProps} />
+}
+```
+
+Now `MyThing` supports the spacing scale, font scale, text colors and more. Applicable to any element you're creating and without a special `styled` API so it becomes "just React". This hypothetical example also takes care of removing the used props from the props object for you, so no need to destructure if you want more automatic control of which props are enabled.
+
+If we have `useBox` return a css object, we can also compose it with our existing styles.
+
+```js
+const MyThing = props => {
+  const [cssProps, otherProps] = useBox(props);
+  return <section {...otherProps} css={{ ...cssProps, lineHeight: 1.5 }} />;
+};
+```
+
+And we can even get more specific like `useTextColor`.
+
+# Fin
+
+What's the best hooks API for styled-system? Not a clue! We've only begun to explore the API design space, so I would be not surprised at all to see many different types of implementations arise over the next year as React hooks go stable release.
+
+h/t to [John](https://twitter.com/4lpine) and [Brent](https://twitter.com/jxnblk) for some discussions today that could prove very interesting in the future :)
