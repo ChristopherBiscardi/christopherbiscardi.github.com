@@ -148,7 +148,11 @@ const useColor = color => {
 `useColor` allows us to pull values out of the theme and fallback if not one by one. We can even associate them with props and default arguments. No more custom APIs for defaults! It's all React!
 
 ```js
-const Header = ({ siteTitle, color = "white", backgroundColor = "brand" }) => {
+const Header = ({
+  siteTitle,
+  color = "white",
+  backgroundColor = "brand"
+}) => {
   const bgColor = useColor(backgroundColor);
   const textColor = useColor(color);
   return (
@@ -202,9 +206,10 @@ const MyThing = props => {
 };
 ```
 
-So we can even get more specific like `useTextColor`.
+And we can even get more specific like `useTextColor`.
 
 # Fin
 
 What's the best hooks API for styled-system? Not a clue! We've only begun to explore the API design space, so I would be not surprised at all to see many different types of implementations arise over the next year as React hooks go stable release.
 
+h/t to [John](https://twitter.com/4lpine) and [Brent](https://twitter.com/jxnblk) for some discussions today that could prove very interesting in the future :)
