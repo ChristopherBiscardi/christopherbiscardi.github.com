@@ -193,6 +193,17 @@ const MyThing = props => {
 
 Now `MyThing` supports the spacing scale, font scale, text colors and more. Applicable to any element you're creating and without a special `styled` API so it becomes "just React". This hypothetical example also takes care of removing the used props from the props object for you, so no need to destructure if you want more automatic control of which props are enabled.
 
+If we have `useBox` return a css object, we can also compose it with our existing styles.
+
+```js
+const MyThing = props => {
+  const [cssProps, otherProps] = useBox(props);
+  return <section {...otherProps} css={{ ...boxProps, lineHeight: 1.5 }} />;
+};
+```
+
+So we can even get more specific like `useTextColor`.
+
 # Fin
 
 What's the best hooks API for styled-system? Not a clue! We've only begun to explore the API design space, so I would be not surprised at all to see many different types of implementations arise over the next year as React hooks go stable release.
