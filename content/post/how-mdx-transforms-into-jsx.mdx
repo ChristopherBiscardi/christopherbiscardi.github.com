@@ -16,15 +16,13 @@ Now that we've gotten our vocab out of the way let's take a look at some markdow
 
 This markdown is fairly standard. It has a header, some paragraph content and a code block.
 
-```markdown
-# a title
+    # a title
+    
+    some paragraph content
 
-some paragraph content
-
-\`\`\`js some-prop
-const some = 'code'
-\`\`\`
-```
+    ```js some-prop
+    const some = 'code'
+    ```
 
 If we run this markdown through mdx using `mdx.sync` (mdx is async by default but we're toning it down a bit for this blog post) we end up with the following JSX output.
 
