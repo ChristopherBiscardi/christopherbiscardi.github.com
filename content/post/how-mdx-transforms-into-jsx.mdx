@@ -1,0 +1,546 @@
+---
+title: How MDX transforms into JSX
+date: 2019-01-10T03:41:37.700Z
+tags:
+  - mdx
+---
+[MDX](https://github.com/mdx-js/mdx) is at the core of [gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx) and [unified](https://github.com/unifiedjs/unified) is at the core of MDX... but if you're not immersed in the tech it can be hard to understand what MDX is, how it transforms markdown into JSX, and thus also why it's powerful.
+
+# Vocabulary
+
+If we import `@mdx-js/mdx`, the core package for MDX, we can transform arbitrary markdown strings into JSX. MDX does this through a multi-step, [multi-AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree) process. During this process we'll touch [mdast](https://github.com/syntax-tree/mdast), [hast](https://github.com/syntax-tree/hast), and jsx. mdast is usually referred to as [remark](https://github.com/remarkjs/remark) while  hast is usually referred to as [rehype](https://github.com/rehypejs/rehype). 
+
+Now that we've gotten our vocab out of the way let's take a look at some markdown content
+
+# Markdown
+
+This markdown is fairly standard. It has a header, some paragraph content and a code block.
+
+    # a title
+    
+    some paragraph content
+
+    ```js some-prop
+    const some = 'code'
+    ```
+
+If we run this markdown through mdx using `mdx.sync` (mdx is async by default but we're toning it down a bit for this blog post) we end up with the following JSX output.
+
+```js
+export default class MDXContent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.layout = null;
+  }
+  render() {
+    const { components, ...props } = this.props;
+
+    return (
+      <MDXTag name="wrapper" components={components}>
+        <MDXTag name="h1" components={components}>{`a title`}</MDXTag>
+        <MDXTag
+          name="p"
+          components={components}
+        >{`some paragraph content`}</MDXTag>
+        <MDXTag name="pre" components={components}>
+          <MDXTag
+            name="code"
+            components={components}
+            parentName="pre"
+            props={{
+              className: "language-js",
+              metastring: "some-prop",
+              "some-prop": true
+            }}
+          >{`const some = 'code'
+`}</MDXTag>
+        </MDXTag>
+      </MDXTag>
+    );
+  }
+}
+```
+
+MDX outputs a React component authored as a class. The `layout` in the constructor is an MDX layout, which we'll go over another time. For now, know that it's in the constructor because we need a stable reference to the layout component if there is one.
+
+`MDXTag` is a special component that handles rendering any dom-level components. These are the ones that you typically write in lowercase when using React regularly. `MDXTag` is what lets us replace the rendering of any of these elements with out own React components. There are also a couple names with special handling that we can replace, `wrapper` and `inlineCode`.
+
+Each `MDXTag` takes the `components` prop as an argument. This is the same `components` prop you might have used to define your own React components to handle rendering a `pre`, `a`, or `p` tag.
+
+The `props` prop are the props that get passed to the underlying element when rendered. In this example, the `code` element gets these props. Notice how one of the props was parsed from the meta string of the code block. this is a standard markdown feature.
+
+```js
+{
+  className: "language-js",
+  metastring: "some-prop",
+  "some-prop": true
+}
+```
+
+# The other ASTs
+
+That doesn't tell us much about how we got here though. So let's create two plugins: one remark and one hast. These plugins do nothing but print out the AST they receive and return it. This allows us to see the `mdast` and `hast` output before it gets transformed into JSX.
+
+```js
+const mdPlugin = () => ast => console.log(ast) || ast;
+const hastPlugin = () => ast => console.log(ast) || ast;
+console.log(
+  mdx.sync(mdxContent, { mdPlugins: [mdPlugin], hastPlugins: [hastPlugin] })
+);
+```
+
+### mdast
+
+First the `mdast`. Since `mdast` is a markdown ast, we'll see very high level objects here such as `heading`, `text`, and `paragraph`. There are no HTML tags yet. There's also positional data that tells us where each node starts and ends.
+
+Nodes like `heading` can have additional metadata on them like `depth`, which indicates what level of heading it is.
+
+the mdast then gets transformed into `HAST` using a set of [custom handlers for code blocks, ES2015 imports, and some other nodes](https://github.com/mdx-js/mdx/blob/b4ad28a5acdc7278473cddafdf8abb63cbc9debe/packages/mdx/mdx-ast-to-mdx-hast.js).
+
+```js
+{
+  type: "root",
+  children: [
+    {
+      type: "heading",
+      depth: 1,
+      children: [
+        {
+          type: "text",
+          value: "a title",
+          position: {
+            start: {
+              line: 1,
+              column: 3,
+              offset: 2
+            },
+            end: {
+              line: 1,
+              column: 10,
+              offset: 9
+            },
+            indent: []
+          }
+        }
+      ],
+      position: {
+        start: {
+          line: 1,
+          column: 1,
+          offset: 0
+        },
+        end: {
+          line: 1,
+          column: 10,
+          offset: 9
+        },
+        indent: []
+      }
+    },
+    {
+      type: "paragraph",
+      children: [
+        {
+          type: "text",
+          value: "some paragraph content",
+          position: {
+            start: {
+              line: 3,
+              column: 1,
+              offset: 11
+            },
+            end: {
+              line: 3,
+              column: 23,
+              offset: 33
+            },
+            indent: []
+          }
+        }
+      ],
+      position: {
+        start: {
+          line: 3,
+          column: 1,
+          offset: 11
+        },
+        end: {
+          line: 3,
+          column: 23,
+          offset: 33
+        },
+        indent: []
+      }
+    },
+    {
+      type: "code",
+      lang: "js",
+      meta: "some-prop",
+      value: "const some = 'code'",
+      position: {
+        start: {
+          line: 5,
+          column: 1,
+          offset: 35
+        },
+        end: {
+          line: 7,
+          column: 4,
+          offset: 74
+        },
+        indent: [1, 1]
+      }
+    }
+  ],
+  position: {
+    start: {
+      line: 1,
+      column: 1,
+      offset: 0
+    },
+    end: {
+      line: 8,
+      column: 1,
+      offset: 75
+    }
+  }
+}
+```
+
+### HAST
+
+Next the `HAST`. Since `HAST` is an `HTML AST`, we'll see how the original `heading` in `mdast` translated to an `h1` tag in `HAST`. Notice how the `depth` property was used to translate the `heading` into an `h1` specifically. The `HAST` also gets transformed in a similar way to the mdast earlier using a [toJSX](https://github.com/mdx-js/mdx/blob/b4ad28a5acdc7278473cddafdf8abb63cbc9debe/packages/mdx/mdx-hast-to-jsx.js) function.
+
+```js
+{
+  type: "root",
+  children: [
+    {
+      type: "element",
+      tagName: "h1",
+      properties: {},
+      children: [
+        {
+          type: "text",
+          value: "a title",
+          position: {
+            start: {
+              line: 1,
+              column: 3,
+              offset: 2
+            },
+            end: {
+              line: 1,
+              column: 10,
+              offset: 9
+            }
+          }
+        }
+      ],
+      position: {
+        start: {
+          line: 1,
+          column: 1,
+          offset: 0
+        },
+        end: {
+          line: 1,
+          column: 10,
+          offset: 9
+        }
+      }
+    },
+    {
+      type: "text",
+      value: "\n"
+    },
+    {
+      type: "element",
+      tagName: "p",
+      properties: {},
+      children: [
+        {
+          type: "text",
+          value: "some paragraph content",
+          position: {
+            start: {
+              line: 3,
+              column: 1,
+              offset: 11
+            },
+            end: {
+              line: 3,
+              column: 23,
+              offset: 33
+            }
+          }
+        }
+      ],
+      position: {
+        start: {
+          line: 3,
+          column: 1,
+          offset: 11
+        },
+        end: {
+          line: 3,
+          column: 23,
+          offset: 33
+        }
+      }
+    },
+    {
+      type: "text",
+      value: "\n"
+    },
+    {
+      type: "element",
+      tagName: "pre",
+      properties: {},
+      children: [
+        {
+          type: "element",
+          tagName: "code",
+          properties: {
+            className: ["language-js"],
+            metastring: "some-prop",
+            "some-prop": true
+          },
+          children: [
+            {
+              type: "text",
+              value: "const some = 'code'\n"
+            }
+          ],
+          position: {
+            start: {
+              line: 5,
+              column: 1,
+              offset: 35
+            },
+            end: {
+              line: 7,
+              column: 4,
+              offset: 74
+            }
+          }
+        }
+      ],
+      position: {
+        start: {
+          line: 5,
+          column: 1,
+          offset: 35
+        },
+        end: {
+          line: 7,
+          column: 4,
+          offset: 74
+        }
+      }
+    }
+  ],
+  position: {
+    start: {
+      line: 1,
+      column: 1,
+      offset: 0
+    },
+    end: {
+      line: 8,
+      column: 1,
+      offset: 75
+    }
+  }
+}
+```
+
+# What about React Components?
+
+It's true that we can import and use React components directly in MDX too, so what does that do to the JSX output? Let's take a look at the following MDX as it goes through the process.
+
+```markdown
+# a title
+
+<SketchPicker />
+```
+
+Notice how the mdast keeps the React component as an `HTML` node, untouched.
+
+```js
+{
+  type: "root",
+  children: [
+    {
+      type: "heading",
+      depth: 1,
+      children: [
+        {
+          type: "text",
+          value: "a title",
+          position: {
+            start: {
+              line: 1,
+              column: 3,
+              offset: 2
+            },
+            end: {
+              line: 1,
+              column: 10,
+              offset: 9
+            },
+            indent: []
+          }
+        }
+      ],
+      position: {
+        start: {
+          line: 1,
+          column: 1,
+          offset: 0
+        },
+        end: {
+          line: 1,
+          column: 10,
+          offset: 9
+        },
+        indent: []
+      }
+    },
+    {
+      type: "html",
+      value: "<SketchPicker />",
+      position: {
+        start: {
+          line: 3,
+          column: 1,
+          offset: 11
+        },
+        end: {
+          line: 3,
+          column: 17,
+          offset: 27
+        },
+        indent: []
+      }
+    }
+  ],
+  position: {
+    start: {
+      line: 1,
+      column: 1,
+      offset: 0
+    },
+    end: {
+      line: 4,
+      column: 1,
+      offset: 28
+    }
+  }
+};
+```
+
+Check out how the `html` block was transformed into a `jsx` block.
+
+```js
+{
+  type: "root",
+  children: [
+    {
+      type: "element",
+      tagName: "h1",
+      properties: {},
+      children: [
+        {
+          type: "text",
+          value: "a title",
+          position: {
+            start: {
+              line: 1,
+              column: 3,
+              offset: 2
+            },
+            end: {
+              line: 1,
+              column: 10,
+              offset: 9
+            }
+          }
+        }
+      ],
+      position: {
+        start: {
+          line: 1,
+          column: 1,
+          offset: 0
+        },
+        end: {
+          line: 1,
+          column: 10,
+          offset: 9
+        }
+      }
+    },
+    {
+      type: "text",
+      value: "\n"
+    },
+    {
+      type: "jsx",
+      value: "<SketchPicker />",
+      position: {
+        start: {
+          line: 3,
+          column: 1,
+          offset: 11
+        },
+        end: {
+          line: 3,
+          column: 17,
+          offset: 27
+        },
+        indent: []
+      }
+    }
+  ],
+  position: {
+    start: {
+      line: 1,
+      column: 1,
+      offset: 0
+    },
+    end: {
+      line: 4,
+      column: 1,
+      offset: 28
+    }
+  }
+};
+```
+
+Notice how the React component was passed through unaltered.
+
+```js
+export default class MDXContent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.layout = null;
+  }
+  render() {
+    const { components, ...props } = this.props;
+
+    return (
+      <MDXTag name="wrapper" components={components}>
+        <MDXTag name="h1" components={components}>{`a title`}</MDXTag>
+        <SketchPicker />
+      </MDXTag>
+    );
+  }
+}
+```
+
+# Fin
+
+Hopefully you have a bit more of an understanding of how MDX content gets transformed into JSX and the steps involved. In a future post we'll cover how the `MDXProvider` and `MDXTag` components work together to enable replacing dom element rendering with custom React components.
+
+In the meantime, since you made it this far, have [a codesandbox](https://codesandbox.io/s/5x83629zl4) link you can play around with and check the logs for how different content affects the mdast, hast, and JSX. Maybe even try writing your own remark plugins!
