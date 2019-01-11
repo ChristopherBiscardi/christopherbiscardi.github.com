@@ -4,6 +4,12 @@ module.exports = {
   },
   plugins: [
     {
+      resolve: `gatsby-plugin-webmention`,
+      options: {
+        identity: { github: "christopherbiscardi", twitter: "chrisbiscardi" }
+      }
+    },
+    {
       resolve: "gatsby-source-filesystem",
       options: {
         name: "posts",
