@@ -46,6 +46,7 @@ const components = {
           background: colors.raw.neutral[90],
           width: "100% !important",
           marginBottom: "1.5rem",
+          overflowX: "scroll",
           "& pre": {
             maxWidth: "calc(38rem - 1.5rem)",
             width: "100%",

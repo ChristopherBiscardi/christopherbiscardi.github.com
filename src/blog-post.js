@@ -7,17 +7,6 @@ import MDXRenderer from "gatsby-mdx/mdx-renderer";
 
 import SiteLayout from "./site-layout";
 
-const animateMDXComponents = componentMap =>
-  Object.entries(componentMap)
-    .map(([name, component]) => [
-      name,
-      component
-      /*posed(component)({
-             enter: { y: 0, opacity: 1 },
-             exit: { y: 15, opacity: 0 }
-             })*/
-    ])
-    .reduce((acc, [k, v]) => ({ [k]: v, ...acc }), {});
 export default withMDXComponents(
   class BlogPost extends Component {
     render() {
@@ -51,7 +40,8 @@ export default withMDXComponents(
                   maxWidth: "38rem",
                   width: "100%",
                   marginLeft: "auto",
-                  marginRight: "auto"
+                  marginRight: "auto",
+                  padding: "0 1rem"
                 },
                 "& code": {
                   maxWidth: "38rem"

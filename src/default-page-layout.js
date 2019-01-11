@@ -1,8 +1,5 @@
 import React, { Component } from "react";
-import { graphql } from "gatsby";
 import { Heading } from "@sens8/component-typography";
-import { MDXProvider } from "@mdx-js/tag";
-
 import SiteLayout from "./site-layout";
 
 export default class BlogPost extends Component {

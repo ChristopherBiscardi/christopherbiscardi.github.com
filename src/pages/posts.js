@@ -31,7 +31,7 @@ export default class PostsPage extends Component {
           <Text css={{ color: "#bd93f9", textAlign: "center" }}>Posts</Text>
         </section>
         {this.props.data.allMdx.edges.map(({ node }) => {
-          const { excerpt, frontmatter = {}, id, fields, parent } = node;
+          const { excerpt, frontmatter = {}, id, fields } = node;
           return (
             <PostBox
               key={id}
@@ -50,7 +50,7 @@ export default class PostsPage extends Component {
 
 class PostBox extends Component {
   render() {
-    const { url, title, excerpt, tags, date } = this.props;
+    const { url, title, excerpt, tags /*, date*/ } = this.props;
     return (
       <div css={{ margin: "auto", padding: "0 1.5rem", maxWidth: "38rem" }}>
         <Heading>{title}</Heading>
@@ -90,11 +90,6 @@ export const pageQuery = graphql`
             tags
           }
           excerpt
-          parent {
-            ... on File {
-              name
-            }
-          }
         }
       }
     }

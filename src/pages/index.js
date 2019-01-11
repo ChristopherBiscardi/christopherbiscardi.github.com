@@ -1,6 +1,5 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import Helmet from "react-helmet";
-import { Link } from "gatsby";
 import theme from "@sens8/tokens";
 import { Heading } from "sens8";
 import Nav from "../navigation";

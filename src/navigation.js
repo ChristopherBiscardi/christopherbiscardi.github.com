@@ -1,7 +1,8 @@
-import React, { Component, Fragment, useRef } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { Link as GLink } from "gatsby";
 import { Text } from "sens8";
 import useComponentSize from "@rehooks/component-size";
+import useWindowScrollPosition from "./hooks/use-window-scroll-position.js";
 
 const Link = ({ children, ...props }) => (
   <li>
@@ -31,9 +32,23 @@ const Link = ({ children, ...props }) => (
   </li>
 );
 
+const useNotice = () => {
+  const [{ showNotice, triggerLine }, setNotice] = useState({
+    showNotice: true,
+    triggerLine: 50
+  });
+  const { y } = useWindowScrollPosition({});
+  if (y > triggerLine && showNotice === true) {
+    setNotice({ showNotice: false, triggerLine: 40 });
+  } else if (y < triggerLine && showNotice === false) {
+    setNotice({ showNotice: true, triggerLine: 50 });
+  }
+  return showNotice;
+};
 export default props => {
   const ref = useRef(null);
   const { height } = useComponentSize(ref);
+  const showNotice = useNotice();
 
   return (
     <Fragment>
@@ -42,7 +57,8 @@ export default props => {
           css={{
             background: "#592000",
             padding: "1rem",
-            color: "white"
+            color: "white",
+            display: showNotice ? "block" : "none"
           }}
         >
           <Text css={{ marginBottom: 0, maxWidth: "100%" }}>
