@@ -6,6 +6,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-webmention`,
       options: {
+        username: "www.christopherbiscardi.com",
         identity: { github: "christopherbiscardi", twitter: "chrisbiscardi" }
       }
     },
