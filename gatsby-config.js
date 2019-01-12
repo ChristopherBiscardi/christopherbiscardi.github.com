@@ -13,7 +13,9 @@ module.exports = {
       resolve: `gatsby-plugin-webmention`,
       options: {
         username: "www.christopherbiscardi.com",
-        identity: { github: "christopherbiscardi", twitter: "chrisbiscardi" }
+        identity: { github: "christopherbiscardi", twitter: "chrisbiscardi" },
+        domain: "www.christopherbiscardi.com",
+        token: process.env.WEBMENTIONS_TOKEN
       }
     },
     {
