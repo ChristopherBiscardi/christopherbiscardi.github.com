@@ -1,0 +1,122 @@
+---
+title: CSS-in-JS Theming on a Component Level
+date: 2019-01-15T05:12:40.169Z
+tags:
+  - css-in-js
+  - design-systems
+  - emotion
+---
+When I wrote [Styled System on React Hooks](/post/styled-system-on-react-hooks) I explored what it might look like in the near future to consume a theme context provided by the conventional `<ThemeProvider/>` through the pane of styled-system and React Hooks. In reality, we don't need `ThemeProvider` as part of our CSS-in-JS package either. Which means we can split it out, chop it up, and 
+
+note: This post was inspired by [a pull request](https://github.com/emotion-js/emotion/pull/973) and some conversation with [mitchellhamilton](https://twitter.com/mitchellhamiltn).
+
+# ThemeProvider
+
+So let's start at the beginning. For those who aren't already aware the typical theme process uses something like this:
+
+```js
+const theme = {
+  color: 'red',
+  padding: [],
+  ...etc
+}
+
+<ThemeProvider theme={theme}>
+  {children}
+</ThemeProvider>
+```
+
+Then `styled` components can access the theme through interpolation:
+
+```js
+const Headline = styled.h1`
+  color: ${props => props.theme.color};
+  font-family: sans-serif;
+`
+```
+
+and css prop can access through a function
+
+```js
+<p css={theme => ({ color: theme.color })}>I'm also red!</p>
+```
+
+This has a couple of different issues such as needing to wrap components in a `ThemeProvider` when testing, over-reliance on direct use of token values instead of building component-level APIs, etc
+
+# No more ThemeProvider?
+
+So if we're not locked in to using a single `ThemeProvider` package, what if we still want to use that approach, either because we like it and don't need much different or because we want to migrate to a more modular approach where themes come from multiple contexts. Well, that uses React's context support directly and hooks.
+
+```js
+import { createContext, useContext } from 'react'
+const defaultTheme = {
+  colors: {
+    primary: 'hotpink',
+    secondary: 'green'
+  }
+}
+let ThemeContext = createContext(defaultTheme)
+export const ThemeProvider = ThemeContext.Provider
+export const useTheme = () => useContext(ThemeContext)
+```
+
+We take a set of default values and create a new theme context. Then we export a provider and a hook that uses the context. This allows us to statically type the values our theme accepts (something that could be more troublesome in the old `ThemeProvider`) so when the defaults are replaced by a user, we keep our types.
+
+# Splitting it up
+
+One interesting facet of themes is that the theme object typically becomes a merging of component-level token API translations and generic design tokens. Sometimes this even goes so far as to create "JSON Specs" for the colors and sizing.
+
+An `OutlineButton`, for example, might expose knobs to change the color of the border and text at the same time. We could call this `color` and it could be associated with a variant like `primary`, `secondary`, etc.
+
+Our `OutlineButton` can now expose this via its own context and we can translate our theme tokens into buttons.
+
+```js
+import { ThemeProvider } from 'button';
+import theme from 'our-tokens';
+
+const buttons = {
+  variants: {
+    primary: {
+      color: theme.brand,
+    },
+    secondary: {
+      color: 'black'
+    }
+  }
+}
+
+export default ({children}) => <ThemeProvider value={buttons}>
+  {children}
+</ThemeProvider>
+```
+
+We've now allowed the `OutlineButton` to expose an API for changing values that we can map our generic tokens onto in an explicit way. If we need another `OutlineButton`, we can construct another using our design tokens and now we also have a list of all the `OutlineButton`s in wide use.
+
+We could also grab `our-theme` from context as well to do the translation in a slightly different place and allow any overrides that have been made to the core tokens to be used (such as a new products brand color).
+
+```js
+import { ThemeProvider } from "button";
+import { useTheme } from "our-tokens";
+
+export default ({ children }) => {
+  const theme = useTheme();
+  return (
+    <ThemeProvider
+      value={{
+        variants: {
+          primary: { color: theme.brand },
+          secondary: { color: "black" }
+        }
+      }}
+    >
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+# NPM Components
+
+By using native context APIs (through hooks) we can avoid property conflicts between different NPM packages. We can ship themes using the names that make the most sense, not prefixed with the component name because the context is our namespace.
+
+The point here isn't that we should immediately go off and split all of our themes up into a million little contexts. It is more that we've opened up some additional design space relating to how we build and distribute components. We can explore how to compose multiple disparate components into a usable, distributable collection that leverages our brand and our types.
