@@ -15,8 +15,8 @@ One aspect of setting everything up for webmentions that I wanted to abstract wa
 The plugin breaks down the webmention setup experience roughly into:
 
 1. Set a username from twitter or github
-1. Use domain name to log in to https://webmention.io/ using the aforementioned platform
-1. Set webmention username
+2. Use domain name to log in to https://webmention.io/ using the aforementioned platform
+3. Set webmention username
 
 ## Inserting the tags
 
@@ -54,7 +54,7 @@ module.exports = {
 
 ## A Source
 
-The other large piece of webmentions is... accessing them via some API. That means we need a source.
+The other large piece of webmentions is... accessing them via some API. That means we need a source. The source is really bare and just calls out to the API we need and fetches all the data.
 
 ```js
 const fetch = require("node-fetch");
@@ -111,3 +111,7 @@ exports.sourceNodes = async (
   //  createNode()
 };
 ```
+
+This gives us a nice graphiql interface to make some test queries. Since I set up webmentions with [brid.gy](https://brid.gy/) to pull in Tweets as mentions, I can filter likes out using `ne: 'like-of' and filter for only the page I'm currently showing using `wmTarget`.
+
+![graphiql](/img/image.png "GraphiQL showing Webmentions Data")
