@@ -115,3 +115,7 @@ exports.sourceNodes = async (
 This gives us a nice graphiql interface to make some test queries. Since I set up webmentions with [brid.gy](https://brid.gy/) to pull in Tweets as mentions, I can filter likes out using `ne: 'like-of' and filter for only the page I'm currently showing using `wmTarget`.
 
 ![graphiql](/img/image.png "GraphiQL showing Webmentions Data")
+
+# Fin
+
+So we end up with a basic source, some additional html tag functionality, and the ability to re-use this across any Gatsby site we set up. It's possible that we can define more schema for the mentions themselves, but this raw data inference is working pretty well for now :)
