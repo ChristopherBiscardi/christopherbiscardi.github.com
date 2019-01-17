@@ -27,10 +27,26 @@ const components = {
   "ol.li": props => (
     <li
       {...props}
-      css={{ marginBottom: ".5em", lineHeight: 1.5, fontFamily: "Inter UI" }}
+      css={{
+        marginBottom: ".5em",
+        paddingLeft: ".5rem",
+        lineHeight: 1.5,
+        fontFamily: "Inter UI"
+      }}
     />
   ),
   ul: UL,
+  "ul.li": props => (
+    <li
+      {...props}
+      css={{
+        marginBottom: ".5em",
+        paddingLeft: ".5rem",
+        lineHeight: 1.5,
+        fontFamily: "Inter UI"
+      }}
+    />
+  ),
   a: props => <Link {...props} css={{ color: "#ff5e99" }} />,
   sub: Sub,
   sup: Sup,
