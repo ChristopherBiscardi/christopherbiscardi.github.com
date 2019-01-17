@@ -145,13 +145,16 @@ export const OL = props => (
   />
 );
 
-export const UL = styled.ul`
-  padding-left: ${lineHeight}em;
-  /* Reading Width */
-  // width should be between 45 and 75 characters, 66 is preferred
-  max-width: 36.5em;
-  min-width: 23em;
-`;
+export const UL = props => (
+  <ul
+    {...props}
+    css={({ colors }) => ({
+      color: colors.text,
+      paddingLeft: `${lineHeight}em`
+    })}
+  />
+);
+
 class List extends Component {
   render() {
     const { indent } = this.props;
