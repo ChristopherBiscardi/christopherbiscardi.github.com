@@ -116,6 +116,8 @@ export default props => <div {...props}
 />
 ```
 
+If you're familiar with [styled-system](https://github.com/jxnblk/styled-system) this will look familiar because [that's how it works too](https://github.com/jxnblk/styled-system/blob/cc2a9cace59e564f755ea563b5d75a1bf9b22f56/src/index.js#L99-L133). If you're not familiar with styled-system, go read [Alan's](https://twitter.com/_alanbsmith) article ["Build Better Component Libraries with Styled System"](https://medium.com/styled-components/build-better-component-libraries-with-styled-system-4951653d54ee).
+
 # Modifying Keys
 
 If we continue this pattern we can take it beyond what is possible with CSS strings and into the manipulation of keys. This is what libraries like [facepaint](https://github.com/emotion-js/facepaint) do. To set up a series of media queries we'd define them once at a central location.
@@ -127,7 +129,7 @@ const mq = facepaint([
 ], { literal: true })
 ```
 
-We can then impor the `mq` function or pass it through context in our theme. The following example changes the color based on the media query using an array syntax for values.
+We can then import the `mq` function or pass it through context in our theme. The following example changes the color based on the media query using an array syntax for values.
 
 ```js
 const expandedStyles = mq({
