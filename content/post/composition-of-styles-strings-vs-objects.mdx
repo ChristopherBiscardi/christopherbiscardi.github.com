@@ -1,0 +1,117 @@
+---
+title: 'Composition of Styles: Strings vs Objects'
+date: 2019-01-18T03:26:21.129Z
+tags:
+  - css-in-js
+  - emotion
+---
+The most convenient way to write CSS-in-JS styles is with strings. This has multiple benefits such as
+
+* easier copy/paste from existing code and examples
+* familiarity: most code we've written in the history of CSS is string-based
+
+It also has some drawbacks. The one we're focusing on today is that CSS rulesets can only be composed "in chunks" or with specialized functions.
+
+
+# Strings
+
+First, lets take a look at what it looks like to compose CSS written with strings in a CSS-in-JS world. 
+
+```js
+import { css } from '@emotion/core';
+
+const colorStyles = css`
+  color: red;
+`;
+
+const spacingStyles = css`
+  padding: 1rem;
+  margin-top: 1rem;
+`
+
+export default props => <div {...props}
+  css={[colorStyles, spacingStyles]}
+/>
+```
+
+This isn't horrible. We can use similar naming conventions to BEM if we want, we can deterministically order the CSS rules, and we can combine chunks of CSS just fine. It's a perfectly acceptable way to write CSS... So lets take a look at what objects can give us on top of that.
+
+# Objects
+
+Objects present a greater opportunity to compose and modify styles. Take our last example for instance. Using objects allows us to shed the import at the top (which may seem minor, but removing steps between the user and the end result is almost always useful) and we can switch to obj/rest spread, a JS language feature, to compose two sets of styles together. (note that if we want to use classic CSS approaches like setting multiple backgrounds as fallbacks, we'll likely still want to use the array syntax). 
+
+```js
+const colorStyles = {
+  color: 'red'
+};
+
+const spacingStyles = {
+  padding: '1rem',
+  marginTop: '1rem',
+}
+
+export default props => <div {...props}
+  css={{ ...colorStyles, ...spacingStyles }}
+/>
+```
+
+# Functions
+
+One example in which strings and objects are fairly similar is the manipulation of *values*. We could, for example, set our spacing with a modular scale.
+
+```js
+import { modularScale } from 'polished';
+
+const spacingStyles = css`
+  padding: ${modularScale(1)};
+  margin-top: ${modularScale(1)};
+`
+```
+
+```js
+import { modularScale } from 'polished';
+
+const spacingStyles = {
+  padding: modularScale(1),
+  marginTop: modularScale(1),
+}
+```
+
+You can see how using strings with function manipulation is a little bit noisier, but it's not a huge problem. One benefit of objects is that it means we're using a data structure to deal with our CSS instead of a string. For manipulation of rulesets, this is a win in itself as it lets us use JS language features to manipulate our CSS output. 
+
+If we take our example, and we want to specify only scale values instead of pixel, rem, etc values. We can do that with base objects. To keep it simple, we'll test to see if the value passed in is a number; if it is, we'll convert that number to a modular scale value.
+
+
+```
+import { modularScale } from 'polished';
+
+// maybe defined somewhere else
+const spacingBaseStyles = {
+  padding: 1,
+  marginTop: 1,
+}
+
+// our usage
+const spacingStyles = Object
+  .entries(spacingBaseStyles)
+  .map([key, value] => {
+    if (typeof value === 'number') {
+      return [key, modularScale(value)]
+    }
+  })
+
+export default props => <div {...props}
+  css={[ colorStyles, ...spacingStyles ]}
+/>
+```
+
+Note that we're doing this manually here, but we could also implement this as a stylis plugin like the more complex [stylis-rtl](https://github.com/FindHotel/stylis-rtl) which uses [cssjanus](https://github.com/cssjanus/cssjanus). Or we could implement it as a theme function so people can opt-in.
+
+```js
+export default props => <div {...props}
+  css={({withScale}) => [
+    colorStyles,
+    ...withScale(spacingBaseStyles)
+  ]}
+/>
+```
