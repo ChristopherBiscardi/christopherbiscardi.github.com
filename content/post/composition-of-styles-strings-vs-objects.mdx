@@ -115,3 +115,37 @@ export default props => <div {...props}
   ]}
 />
 ```
+
+# Modifying Keys
+
+If we continue this pattern we can take it beyond what is possible with CSS strings and into the manipulation of keys. This is what libraries like [facepaint](https://github.com/emotion-js/facepaint) do. To set up a series of media queries we'd define them once at a central location.
+
+```js
+const mq = facepaint([
+  '@media(min-width: 420px)'
+  '@media(min-width: 920px)'
+], { literal: true })
+```
+
+We can then impor the `mq` function or pass it through context in our theme. The following example changes the color based on the media query using an array syntax for values.
+
+```js
+const expandedStyles = mq({
+  color: ['red', 'green']
+})
+```
+
+There's a decent amount going on here, so to break it down the output will look like:
+
+```js
+{ 
+  '@media(min-width: 420px)': {
+    color: 'red'
+  },
+  '@media(min-width: 920px)': {
+    color: 'green'
+  }
+}
+```
+
+notice that the array structure we used for color has expanded into multiple media queries. This is a powerful pattern for complex style creation. In our declarations we get to use an array, but in our output our arrays are processed into full-fledged CSS rulesets.
