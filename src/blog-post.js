@@ -12,7 +12,11 @@ export default withMDXComponents(
   class BlogPost extends Component {
     render() {
       const { data, components } = this.props;
-
+      const imageRoot = data.mdx.frontmatter.featuredImage;
+      let src = undefined;
+      if (imageRoot) {
+        src = imageRoot.childImageSharp.fixed.src;
+      }
       return (
         <SiteLayout
           sidebar={<aside css={{ minWidth: "200px" }}>some stuff</aside>}
@@ -20,6 +24,7 @@ export default withMDXComponents(
           <SEO
             description={data.mdx.excerpt}
             title={data.mdx.frontmatter.title}
+            image={src}
           />
           <MDXProvider
             components={{
@@ -72,6 +77,13 @@ export const pageQuery = graphql`
       excerpt
       frontmatter {
         title
+        featuredImage {
+          childImageSharp {
+            fixed {
+              src
+            }
+          }
+        }
       }
     }
   }

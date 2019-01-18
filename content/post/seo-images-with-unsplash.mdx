@@ -1,3 +1,29 @@
+---
+title: SEO Images with Unsplash
+date:  2019-01-17T10:36:36.684Z
+featuredImage: 'seo-images-with-unsplash.png'
+---
+
+I added an [SEO
+component](https://www.gatsbyjs.org/docs/add-seo-component/) to my
+blog recently and on top of that I decided to set up infrastructure to
+pull in images for Twitter, etc. The SEO component already handled
+titles and descriptions for cards on Twitter, but I wanted something a
+bit more... interesting. I like large images and I eventually want to
+start drawing images for my blog posts. So I dove into
+[gatsby-transformer-sharp](https://www.npmjs.com/package/gatsby-transformer-sharp).
+
+The sharp transformer makes it absolutely trivial to handle an image
+described in frontmatter and post it as a Twitter meta card.
+
+
+First I jacked the [SEO
+component](https://www.gatsbyjs.org/docs/add-seo-component/) from the
+Gatsby starters. Then I added a couple key components. Notably
+`twitter:image` and the switch that enabled the `summary_large_image`
+card type.
+
+```js
 import React from "react";
 import PropTypes from "prop-types";
 import Helmet from "react-helmet";
@@ -107,3 +133,59 @@ const detailsQuery = graphql`
     }
   }
 `;
+```
+
+
+Then I stuck an image in my frontmatter for a blog post. The addition
+of
+[gatsby-transformer-sharp](https://www.gatsbyjs.org/packages/gatsby-transformer-sharp/)
+enabled the following query to get the processed image.
+
+```js
+export const pageQuery = graphql`
+  query($id: String!) {
+    mdx(id: { eq: $id }) {
+      id
+      code {
+        body
+      }
+      excerpt
+      frontmatter {
+        title
+        featuredImage {
+          childImageSharp {
+            fixed {
+              src
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+```
+
+Then it's a matter of using that query and passing it into the SEO
+component.
+
+```js
+const imageRoot = data.mdx.frontmatter.featuredImage;
+let src = undefined;
+if (imageRoot) {
+  src = imageRoot.childImageSharp.fixed.src;
+}
+return (
+  <SiteLayout
+    sidebar={<aside css={{ minWidth: "200px" }}>some stuff</aside>}
+  >
+    <SEO
+      description={data.mdx.excerpt}
+      title={data.mdx.frontmatter.title}
+      image={src}
+    />
+```
+
+Now to add a new "featured image" that shows up on Twitter, we only
+need to add a pointer to the image in our frontmatter.
+
+
