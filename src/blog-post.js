@@ -72,6 +72,7 @@ export const pageQuery = graphql`
       excerpt
       frontmatter {
         title
+        featuredImage
       }
     }
   }
