@@ -47,7 +47,7 @@ function SEO({
               },
               {
                 name: `twitter:card`,
-                content: image ? `summary` : `summary_large_image`
+                content: !!image ? `summary` : `summary_large_image`
               },
               {
                 name: `twitter:creator`,
@@ -60,10 +60,6 @@ function SEO({
               {
                 name: `twitter:description`,
                 content: metaDescription
-              },
-              image && {
-                name: `twitter:image`,
-                content: image
               }
             ]
               .concat(
@@ -71,6 +67,14 @@ function SEO({
                   ? {
                       name: `keywords`,
                       content: keywords.join(`, `)
+                    }
+                  : []
+              )
+              .concat(
+                image
+                  ? {
+                      name: `twitter:image`,
+                      content: image
                     }
                   : []
               )
