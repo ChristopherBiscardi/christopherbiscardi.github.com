@@ -4,6 +4,7 @@ import { Heading } from "@sens8/component-typography";
 import { withMDXComponents } from "@mdx-js/tag/dist/mdx-provider";
 import { MDXProvider } from "@mdx-js/tag";
 import MDXRenderer from "gatsby-mdx/mdx-renderer";
+import SEO from "./seo";
 
 import SiteLayout from "./site-layout";
 
@@ -16,6 +17,10 @@ export default withMDXComponents(
         <SiteLayout
           sidebar={<aside css={{ minWidth: "200px" }}>some stuff</aside>}
         >
+          <SEO
+            description={data.mdx.excerpt}
+            title={data.mdx.frontmatter.title}
+          />
           <MDXProvider
             components={{
               ...components
@@ -64,6 +69,7 @@ export const pageQuery = graphql`
       code {
         body
       }
+      excerpt
       frontmatter {
         title
       }
