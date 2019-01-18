@@ -149,3 +149,100 @@ There's a decent amount going on here, so to break it down the output will look 
 ```
 
 notice that the array structure we used for color has expanded into multiple media queries. This is a powerful pattern for complex style creation. In our declarations we get to use an array, but in our output our arrays are processed into full-fledged CSS rulesets.
+
+
+Lets take a look at a more complicated example.
+
+```js
+import facepaint from 'facepaint'
+
+const mq = facepaint([
+  '@media(min-width: 420px)',
+  '@media(min-width: 920px)',
+  '@media(min-width: 1120px)'
+])
+
+const myClassName = mq({
+  backgroundColor: 'hotpink',
+  textAlign: 'center',
+  width: ['25%', '50%', '75%', '100%'],
+  '& .foo': {
+    color: ['red', 'green', 'blue', 'darkorchid'],
+    '& img': {
+      height: [10, 15, 20, 25]
+    }
+  }
+})
+```
+
+```css
+.css-rbuh8g {
+  background-color: hotpink;
+  text-align: center;
+  width: 25%;
+}
+
+@media (min-width:420px) {
+  .css-rbuh8g {
+    width: 50%;
+  }
+}
+
+@media (min-width:920px) {
+  .css-rbuh8g {
+    width: 75%;
+  }
+}
+
+@media (min-width:1120px) {
+  .css-rbuh8g {
+    width: 100%;
+  }
+}
+
+.css-rbuh8g .foo {
+  color: red;
+}
+
+@media (min-width:420px) {
+  .css-rbuh8g .foo {
+    color: green;
+  }
+}
+
+@media (min-width:920px) {
+  .css-rbuh8g .foo {
+    color: blue;
+  }
+}
+
+@media (min-width:1120px) {
+  .css-rbuh8g .foo {
+    color: darkorchid;
+  }
+}
+
+.css-rbuh8g .foo img {
+  height: 10px;
+}
+
+@media (min-width:420px) {
+  .css-rbuh8g .foo img {
+    height: 15px;
+  }
+}
+
+@media (min-width:920px) {
+  .css-rbuh8g .foo img {
+    height: 20px;
+  }
+}
+
+@media (min-width:1120px) {
+  .css-rbuh8g .foo img {
+    height: 25px;
+  }
+}
+```
+
+This approach expands from class selectors to "self" (&) selectors to pseudo-selectors and anything CSS can support.
