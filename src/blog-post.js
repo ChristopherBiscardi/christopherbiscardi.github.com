@@ -13,10 +13,9 @@ export default withMDXComponents(
     render() {
       const { data, components } = this.props;
       const imageRoot = data.mdx.frontmatter.featuredImage;
-      console.log(data.mdx);
       let src = undefined;
       if (imageRoot) {
-        src = imageRoot.childImageSharp.src;
+        src = imageRoot.childImageSharp.fixed.src;
       }
       return (
         <SiteLayout
