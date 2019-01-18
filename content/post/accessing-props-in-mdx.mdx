@@ -1,0 +1,75 @@
+---
+title: Accessing Props in MDX
+date: 2019-01-18T19:11:23.948Z
+featuredImage: accessing-props-in-mdx.png
+tags:
+  - gatsby
+  - mdx
+---
+When writing MDX, sometimes you want to display more dynamic content than you otherwise would be able to. An MDX file that can be templated for different content or to help render a `<RelatedPosts/>` component. Since MDX is "just a React component" we can leverage the props that get passed in for this.
+
+Lets say we have some reasonably complex MDX file that uses a variety of components for SEO, displaying images, and linking to other pages. Note: this example MDX content assumes you've built a site with [gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx), but the props access works for any MDX implementation.
+
+```mdx
+---
+some: value
+---
+
+import { Link } from 'gatsby'
+
+import Layout from '../components/layout'
+import Image from '../components/image'
+import SEO from '../components/seo'
+
+<SEO title="Home" keywords={['gatsby', 'application', 'react']} />
+
+# Hi people
+
+Welcome to your new Gatsby site.
+
+Now go build something great.
+
+<div style={{ maxWidth: '300px', marginBottom: '1.45rem' }}>
+  <Image />
+</div>
+
+<Link to="/page-2/">Go to page 2</Link>
+```
+
+Since we've assumed that this is a Gatsby site, the frontmatter is passed in via the page context as a prop to our MDX component. We can then use the props global to access any prop we want. We could use the frontmatter props to display a new heading using
+
+```js
+<h2>{props.pageContext.frontmatter.some}</h2>
+```
+
+In context this looks like:
+
+```mdx
+---
+some: value
+---
+
+import { Link } from 'gatsby'
+
+import Layout from '../components/layout'
+import Image from '../components/image'
+import SEO from '../components/seo'
+
+<SEO title="Home" keywords={['gatsby', 'application', 'react']} />
+
+# Hi people
+
+Welcome to your new Gatsby site.
+
+Now go build something great.
+
+<div style={{ maxWidth: '300px', marginBottom: '1.45rem' }}>
+  <Image />
+</div>
+
+<Link to="/page-2/">Go to page 2</Link>
+
+<h2>{props.pageContext.frontmatter.some}</h2>
+```
+
+And that's it. You can access any prop from any MDX related library you're using because this is supported in the core functionality. Write your props access like you would normally for any other React component and you can pass in the result of Gatsby page queries from templates, custom props, or anything else you can think of.
