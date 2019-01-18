@@ -74,7 +74,7 @@ function SEO({
                 image
                   ? {
                       name: `twitter:image`,
-                      content: image
+                      content: `https://www.christopherbiscardi.com${image}`
                     }
                   : []
               )
