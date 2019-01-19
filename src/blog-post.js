@@ -54,13 +54,11 @@ export default class BlogPost extends Component {
           <MDXRenderer>{data.mdx.code.body}</MDXRenderer>
         </div>
         <hr
-          css={({ colors }) =>
-            console.log(colors) || {
-              borderColor: colors.raw.neutral[90],
-              borderTop: `1px solid ${colors.raw.neutral[100]}`,
-              paddingTop: "1px"
-            }
-          }
+          css={({ colors }) => ({
+            borderColor: colors.raw.neutral[90],
+            borderTop: `1px solid ${colors.raw.neutral[100]}`,
+            paddingTop: "1px"
+          })}
         />
         {data.webmentions && (
           <div
@@ -73,7 +71,6 @@ export default class BlogPost extends Component {
             <Heading>Web Mentions</Heading>
             {data.webmentions.edges.map(({ node }) => {
               const { content, author } = node;
-              console.log(content);
               return (
                 <div
                   css={({ colors }) => ({
