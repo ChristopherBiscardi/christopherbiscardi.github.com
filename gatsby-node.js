@@ -12,11 +12,9 @@ exports.createPages = ({ graphql, actions }) => {
               edges {
                 node {
                   id
-                  code {
-                    scope
-                  }
                   fields {
                     slug
+                    webmentionMatchURL
                   }
                   frontmatter {
                     slug
@@ -46,7 +44,10 @@ exports.createPages = ({ graphql, actions }) => {
           createPage({
             path: fields.slug,
             component: require.resolve("./src/blog-post"),
-            context: { id: node.id }
+            context: {
+              id: node.id,
+              webmentionMatchURL: node.fields.webmentionMatchURL
+            }
           });
         });
       })
@@ -88,7 +89,7 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     const { frontmatter } = node;
     const parent = getNode(node.parent);
 
-    const value =
+    const slug =
       frontmatter.url ||
       `/post/${frontmatter.slug ||
         slugify(frontmatter.title, { lower: true, remove: /[*+~.()'"!:@]/g }) ||
@@ -97,7 +98,13 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     createNodeField({
       name: `slug`,
       node,
-      value
+      value: slug
+    });
+
+    createNodeField({
+      name: `webmentionMatchURL`,
+      node,
+      value: `https://www.christopherbiscardi.com${slug}/`
     });
   }
 };
