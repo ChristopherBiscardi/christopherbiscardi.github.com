@@ -1,0 +1,72 @@
+---
+title: Multi-Package Repos with Yarn
+date: 2019-01-20T06:42:26.517Z
+tags:
+  - javascript
+  - yarn
+---
+[Yarn workspaces](https://yarnpkg.com/blog/2017/08/02/introducing-workspaces/) are a great option for working on multiple packages at the same time. They replaces `npm link`, gives you the ability to run a command in all packages (or a specific package), and lets you install all dependencies for all packages at the same time. Popular projects like [Jest](https://github.com/facebook/jest/blob/647b2ad2371cc1d659bc08820be022c198c897fd/lerna.json#L5), [Babel](https://github.com/babel/babel/blob/a2e6d8e96807b15908ef3640239b5421457807f7/lerna.json#L32), and [Gatsby](https://github.com/gatsbyjs/gatsby/blob/fc2ff3503ac1ed32a4b7677b12edf4c4ea4fd050/lerna.json#L21) all use the yarn client or yarn workspaces fronted by [Lerna](https://github.com/lerna/lerna) to ease the pain of developing large sets of packages (even if they're not interdependent).
+
+## Multi-Package Repos
+
+For the purpose of this post, we'll define a multi-package repo as a monorepo with a focus on package-based development instead of allowing importing code as with relative paths. This difference means we focus on NPM packages as our unit of abstraction and when we use one package from another, we use it just as we would use any other package from NPM.
+
+Yarn workspaces and Lerna are two approaches to developing multi-package repos. Lerna can be used with or without Yarn, but is usually much more performant if you use Yarn Workspaces as the underlying implementation for Lerna's interface. We'll dive into Lerna in another post and focus on using Yarn Workspaces standalone for this post.
+
+## An NPM Package
+
+An NPM package is defined by a `package.json`. There are a few fields that are required, such as the `name` and `version`. Here's a sample `package.json` from gatsby-mdx.
+
+```js
+{
+  "name": "gatsby-mdx",
+  "version": "0.3.4",
+  "description": "mdx integration for gatsby",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "@mdx-js/mdx": "^0.16.5",
+    "@mdx-js/tag": "^0.16.5"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "debug": "^4.0.1",
+    "escape-string-regexp": "^1.0.5",
+    "fs-extra": "^7.0.0",
+    "gray-matter": "^4.0.1",
+    "lodash": "^4.17.10",
+    "mdast-util-to-string": "^1.0.4",
+    "mdast-util-toc": "^2.0.1",
+    "mime": "^2.3.1",
+    "pretty-bytes": "^5.1.0",
+    "remark": "^9.0.0",
+    "retext": "^5.0.0",
+    "slash": "^2.0.0",
+    "static-site-generator-webpack-plugin": "^3.4.2",
+    "strip-markdown": "^3.0.1",
+    "underscore.string": "^3.3.4",
+    "unist-util-map": "^1.0.4",
+    "unist-util-remove": "^1.0.1",
+    "unist-util-visit": "^1.4.0"
+  },
+  "devDependencies": {
+    "jest": "^23.4.2",
+    "js-combinatorics": "^0.5.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "keywords": [
+    "gatsby",
+    "gatsby-plugin",
+    "gatsby-transformer-plugin",
+    "mdx",
+    "markdown",
+    "remark",
+    "rehype"
+  ]
+}
+```
