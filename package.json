@@ -37,7 +37,7 @@
     "gatsby-plugin-react-helmet": "3.0.4",
     "gatsby-plugin-remove-serviceworker": "^1.0.0",
     "gatsby-plugin-sharp": "^2.0.17",
-    "gatsby-plugin-webmention": "^0.0.8",
+    "gatsby-plugin-webmention": "^0.0.9",
     "gatsby-remark-prismjs": "3.1.4",
     "gatsby-transformer-sharp": "^2.1.10",
     "husky": "^1.2.0",

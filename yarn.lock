@@ -5519,10 +5519,10 @@ gatsby-plugin-sharp@^2.0.17:
     sharp "^0.21.0"
     svgo "^0.7.2"
 
-gatsby-plugin-webmention@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-webmention/-/gatsby-plugin-webmention-0.0.8.tgz#28839fbc2e5e2af9312affc1df61878e7211a6e7"
-  integrity sha512-uIiva0iQKS15NzR7+6wVCK3UpyaZzTSZLf3iOzCzw7uGMymNedgQlxCafSll+8q0lnYHN5XY5igHeBxwmNCETw==
+gatsby-plugin-webmention@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-webmention/-/gatsby-plugin-webmention-0.0.9.tgz#fec298569c75a73708a2056fd3f162a4a89ee782"
+  integrity sha512-trFbHp22uoYpc78TC9SImaUZld+38PVtd6YUm50bSsH6rppif28tPaw4ZQY8sKUQZNsM6Qbv3yFwVfjMeqJHCA==
   dependencies:
     camelcase-keys "^5.0.0"
     gatsby-node-helpers "^0.3.0"
