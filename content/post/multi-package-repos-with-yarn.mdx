@@ -15,7 +15,7 @@ Yarn workspaces and Lerna are two approaches to developing multi-package repos. 
 
 ## An NPM Package
 
-An NPM package is defined by a `package.json`. There are a few fields that are required, such as the `name` and `version`. Here's a sample `package.json` from gatsby-mdx.
+An NPM package is defined by a `package.json`. There are a few fields that are required, such as the `name` and `version`. Here's a sample `package.json` from [gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx).
 
 ```js
 {
@@ -69,4 +69,86 @@ An NPM package is defined by a `package.json`. There are a few fields that are r
     "rehype"
   ]
 }
+```
+
+The file structure for a small NPM package with no build process might look like this. That is, an `index.js` file containing the functionality of the module and a `package.json` defining dependencies, etc.
+
+```
+➜ tree .
+.
+├── index.js
+└── package.json
+```
+
+## Multiple Packages
+
+To handle multiple packages we'll put each of our packages in a `packages` directory in their own folder. We'll have `package-a` and `package-b` with their own `package.json`s and their own `index.js`. We haven't added a build process at all so the code in `index.js` will have to be manually written for the runtime we expect to use it in (ex: the browser or a specific node version).
+
+```
+➜ tree .
+.
+├── package.json
+└── packages
+    ├── package-a
+    │   ├── index.js
+    │   └── package.json
+    └── package-b
+        ├── index.js
+        └── package.json
+```
+
+Finally, we also create a `package.json` at the root of our workspaces. This defines where our workspaces live. We've defined our workspaces as any package inside of the `packages` folder, so `package-a` and `package.b` both count. Note that our root `package.json` is also private, which is required to use workspaces. We don't want to publish the entire repo as an NPM package anyway.
+
+```js
+{
+  "name": "workspaces",
+  "version": "0.0.1",
+  "main": "index.js",
+  "private": true,
+  "author": "Chris Biscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT",
+  "workspaces": ["packages/*"]
+}
+```
+
+## Working with Workspaces
+
+So now that we have everything set up, we'll install all dependencies in all of our packages.
+
+```shell
+yarn
+```
+
+Running `yarn` not only installs all dependencies for all packages, but it also handles linking the packages between each other if they depend on one another. For example, if `package-a` had `package-b` in it's `dependencies` in it's `package.json`, running yarn would link `package-b` into `package-a`. 
+
+This linking means that we can, for example, continue to develop `package-b` and running tests in `package-a`. Whenever we make a change to `package-b`, `package-a` already knows about it so the tests will use it. Using this linking is very powerful for developing sets of interdependent packages because we can run tests for the entire repo against the entire set of changes. Speaking of, we can run the `test` script in every workspace with
+
+```shell
+yarn workspaces run test
+```
+
+This requires that we have a script named `test` in each of our packages. If we set each of our packages `test` script to echo the package name like:
+
+```js
+{
+  "scripts": {
+    "test": "echo package-a"
+  }
+}
+```
+
+Then the output for `yarn workspaces run test` would look like:
+
+```
+➜ yarn workspaces run test
+yarn workspaces v1.12.3
+yarn run v1.12.3
+$ echo package-a
+package-a
+✨  Done in 0.08s.
+yarn run v1.12.3
+$ echo package-b
+package-b
+✨  Done in 0.08s.
+✨  Done in 0.92s.
 ```
