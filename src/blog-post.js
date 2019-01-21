@@ -59,7 +59,8 @@ export default class BlogPost extends Component {
             display: "flex",
             justifyContent: "center",
             "& > form": {
-              flex: 1
+              flex: 1,
+              border: "none"
             }
           }}
         >
