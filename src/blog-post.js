@@ -53,6 +53,12 @@ export default class BlogPost extends Component {
         >
           <MDXRenderer>{data.mdx.code.body}</MDXRenderer>
         </div>
+        <script
+          async
+          data-uid="a4c7df1847"
+          src="https://f.convertkit.com/a4c7df1847/0207b2beea.js"
+        />
+
         <hr
           css={({ colors }) => ({
             borderColor: colors.raw.neutral[90],
@@ -73,6 +79,7 @@ export default class BlogPost extends Component {
               const { content, author } = node;
               return (
                 <div
+                  key={node.id}
                   css={({ colors }) => ({
                     display: "flex",
                     maxWidth: "500px",
