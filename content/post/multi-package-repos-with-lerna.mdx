@@ -1,0 +1,52 @@
+---
+title: Multi-Package Repos with Lerna
+date: 2019-01-21T00:36:14.537Z
+tags:
+  - javascript
+---
+[Lerna](https://github.com/lerna/lerna) is a multi-package repo tool similar to Yarn Workspaces. Many projects choose to use Lerna as the UI for interacting with their multi-package repo while Yarn Workspaces is used under the hood to handle linking packages together.
+
+> We've previously covered [Yarn Workspaces](https://www.christopherbiscardi.com/post/multi-package-repos-with-yarn) for multi-package repo management on it's own.
+
+## Repo Setup
+
+If we take a look at our previous Yarn Workspaces setup, we can see that our packages got hoisted and linked into a root `node_modules`. The `->` represents a [symlink](https://en.wikipedia.org/wiki/Symbolic_link) which means that when we try to access `package-a` through the `node_modules` directory, we get re-directed to `../packages/package-a`, where all of our files actually live.
+
+```
+➜ tree .
+.
+├── node_modules
+│   ├── package-a -> ../packages/package-a
+│   └── package-b -> ../packages/package-b
+├── package.json
+├── packages
+│   ├── package-a
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   └── yarn-error.log
+│   └── package-b
+│       ├── index.js
+│       └── package.json
+└── yarn.lock
+```
+
+lets install `lerna` into our root package to prepare to transfer from Yarn Workspaces to exclusively Lerna. (note: we need `-W` because we've already defined workspaces and Yarn tries to warn us that we're installing into the root.
+
+```sh
+yarn add lerna -W
+```
+
+Then we can
+
+```sh
+➜ yarn lerna init
+yarn run v1.12.3
+$ /workspaces/node_modules/.bin/lerna init
+lerna notice cli v3.10.6
+lerna info Initializing Git repository
+lerna info Updating package.json
+lerna info Creating lerna.json
+lerna info Creating packages directory
+lerna success Initialized Lerna files
+✨  Done in 0.86s.
+```
