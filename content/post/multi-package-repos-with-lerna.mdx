@@ -30,13 +30,13 @@ If we take a look at our previous Yarn Workspaces setup, we can see that our pac
 └── yarn.lock
 ```
 
-lets install `lerna` into our root package to prepare to transfer from Yarn Workspaces to exclusively Lerna. (note: we need `-W` because we've already defined workspaces and Yarn tries to warn us that we're installing into the root.
+Lets install `lerna` into our root package to prepare to transfer from Yarn Workspaces to exclusively Lerna. (note: we need `-W` because we've already defined workspaces and Yarn tries to warn us that we're installing into the root.
 
 ```sh
 yarn add lerna -W
 ```
 
-Then we can
+Then we can initialize lerna's config.
 
 ```sh
 ➜ yarn lerna init
@@ -50,3 +50,83 @@ lerna info Creating packages directory
 lerna success Initialized Lerna files
 ✨  Done in 0.86s.
 ```
+
+With no arguments, the `lerna.json` config file that gets spit out defaults to pointing at `packages/*`, just like our Yarn Workspaces but in a dedicated file.
+
+```js
+{
+  "packages": [
+    "packages/*"
+  ],
+  "version": "0.0.0"
+}
+```
+
+If we run `yarn lerna bootstrap` now... nothing interesting will happen because we haven't added a dependency between our packages. Add a dependency on `package-b` in `package-a`. We haven't published `package-b` so we'll use the "any version" version `*`.
+
+```js
+{
+  "name": "package-a",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Chris Biscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo package-a"
+  },
+  "dependencies": {
+    "package-b": "*"
+  }
+}
+```
+
+Now when we bootstrap our multi-package repo, we'll see the packages linked in a slightly different way than our past Yarn Workspaces attempt. The packages are linked into each other rather than hoisted to the root `node_modules` by default. This is one critical difference in the default behavior of Yarn Workspaces vs Lerna.
+
+```
+.
+├── lerna.json
+├── package.json
+├── packages
+│   ├── package-a
+│   │   ├── index.js
+│   │   ├── node_modules
+│   │   │   └── package-b -> ../../package-b
+│   │   └── package.json
+│   └── package-b
+│       ├── index.js
+│       └── package.json
+└── yarn.lock
+```
+
+Unfortunately, for very large repos, doing this per-package installation and linking is *really slow*. Luckily, we can speed everything up by using Yarn Workspaces as the underlying package dependency resolution approach. We'll add two new keys to `lerna.json`: `npmClient` and `useWorkspaces`. We can also *remove* the `packages` key because Lerna will now look at our `package.json` `workspaces` key instead.
+
+```js
+{
+  "version": "0.0.0",
+  "npmClient": "yarn",
+  "useWorkspaces": true
+}
+```
+
+Now running `yarn lerna bootstrap` will use Yarn Workspaces and we'll end up with a very similar layout to our original Yarn Workspaces based approach.
+
+```
+.
+├── lerna.json
+├── node_modules
+│   ├── package-a -> ../packages/package-a
+│   └── package-b -> ../packages/package-b
+├── package.json
+├── packages
+│   ├── package-a
+│   │   ├── index.js
+│   │   └── package.json
+│   └── package-b
+│       ├── index.js
+│       └── package.json
+└── yarn.lock
+```
+
+## But Why?
+
+So that's great, but why would we go through all this effort to use Lerna if we're just going to end up back where we were with Yarn Workspaces on their own? The answer lies in the way Yarn deals with versioning and handles the publishing of packages.
