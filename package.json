@@ -7,7 +7,6 @@
   "author": "ChristopherBiscardi <chris@christopherbiscardi.com>",
   "license": "MIT",
   "scripts": {
-    "precommit": "lint-staged",
     "develop": "gatsby develop",
     "build": "gatsby build",
     "update-sens8": "git subtree pull --prefix sens8 git@github.com:ChristopherBiscardi/sens8.git master --squash"
@@ -66,5 +65,10 @@
     "@mdx-js/mdx": "^0.16.6",
     "gatsby-source-filesystem": "2.0.12",
     "loader-utils": "^1.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
