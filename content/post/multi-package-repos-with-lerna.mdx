@@ -130,3 +130,44 @@ Now running `yarn lerna bootstrap` will use Yarn Workspaces and we'll end up wit
 ## But Why?
 
 So that's great, but why would we go through all this effort to use Lerna if we're just going to end up back where we were with Yarn Workspaces on their own? The answer lies in the way Yarn deals with versioning and handles the publishing of packages.
+
+Lets say, for example, that you wanted to publish a new version of all of your changed packages on every merge to master, but also didn't want that release to be the mainline stable release. You can do this with Lerna by specifying a canary release and using a special NPM tag (here we choose `ci`, but this could be `alpha` or whatever you want).
+
+```
+lerna publish -y --canary --preid ci --npm-tag=ci
+```
+
+This command gets us versions that look like `0.3.5-ci.263` published to a `ci` tag on NPM. We can run this on every merge to master, removing a dependency on maintainers to do a release immediately after merging code. Any user of your packages can now pull down the relevant `ci` version and test it before it moves on to a stable release.
+
+Lerna includes a set of features build on the concept of figuring out what's changed since the last release such as `lerna changed`. If we run it on our project with no releases we see:
+
+```
+➜ yarn lerna changed
+yarn run v1.12.3
+$ /workspaces/node_modules/.bin/lerna changed
+lerna notice cli v3.10.6
+lerna info Looking for changed packages since initial commit.
+package-a
+package-b
+lerna success found 2 packages ready to publish
+✨  Done in 0.93s.
+```
+
+The full list of commands is found below, along with what they do.
+
+```
+  lerna add <pkg> [globs..]  Add a single dependency to matched packages
+  lerna bootstrap            Link local packages together and install remaining package dependencies
+  lerna changed              List local packages that have changed since the last tagged release                                                                                          [aliases: updated]
+  lerna clean                Remove the node_modules directory from all packages
+  lerna create <name> [loc]  Create a new lerna-managed package
+  lerna diff [pkgName]       Diff all packages or a single package since the last release
+  lerna exec [cmd] [args..]  Execute an arbitrary command in each package
+  lerna import <dir>         Import a package into the monorepo with commit history
+  lerna init                 Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.
+  lerna link                 Symlink together all packages that are dependencies of each other
+  lerna list                 List local packages                                                                                                                                       [aliases: ls, la, ll]
+  lerna publish [bump]       Publish packages in the current project.
+  lerna run <script>         Run an npm script in each package that contains that script
+  lerna version [bump]       Bump version of packages changed since the last release.
+```
