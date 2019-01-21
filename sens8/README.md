@@ -29,7 +29,7 @@ any additional sass/css/postcss files.
 ```js
 import React from 'react';
 import { render } from 'react-dom';
-import { ThemeProvider, themeDefault, Avatar } from @sens8/react'
+import { ThemeProvider, themeDefault, Avatar } from '@sens8/react'
 
 render(
 	<ThemeProvider theme={themeDefault}>
