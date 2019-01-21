@@ -53,11 +53,22 @@ export default class BlogPost extends Component {
         >
           <MDXRenderer>{data.mdx.code.body}</MDXRenderer>
         </div>
-        <script
-          async
-          data-uid="a4c7df1847"
-          src="https://f.convertkit.com/a4c7df1847/0207b2beea.js"
-        />
+        <div
+          css={{
+            marginBottom: "1.5rem",
+            display: "flex",
+            justifyContent: "center",
+            "& > form": {
+              flex: 1
+            }
+          }}
+        >
+          <script
+            async
+            data-uid="a4c7df1847"
+            src="https://f.convertkit.com/a4c7df1847/0207b2beea.js"
+          />
+        </div>
 
         <hr
           css={({ colors }) => ({
