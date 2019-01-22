@@ -5,8 +5,58 @@ tags:
   - javascript
   - yarn
 ---
-This week we've been going over multi-package repo tools. 
-How to git clone additional multi-package repos for easier development.
+This week we've been going over multi-package repo tools. Today I want to share a workflow that is enabled by those tools, even across different tooling.
+
+Some of the work I do on [Gatsby](https://www.gatsbyjs.org/) requires me to work on the core `gatsby` package or a small number of other packages. I don't need to bootstrap the entire repo, but I do need specific packages.
+
+## The Workflow
+
+When I work on [Gatsby Themes](https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/), I usually use a repo called [gatsby-theme-examples](https://github.com/ChristopherBiscardi/gatsby-theme-examples). This repo is set up as a multi-package repo using Yarn Workspaces. `gatsby-theme-examples` includes a couple of themes and a couple of usages of said themes, so when I work on new functionality like [child theming](https://github.com/gatsbyjs/gatsby/pull/10787), there's a [PR on gatsby-theme-examples](https://github.com/ChristopherBiscardi/gatsby-theme-examples/pull/13) that uses that functionality.
+
+I handle both of these PRs to separate repos in the same multi-package repo that spans two git repos. The setup looks like this
+
+```
+git clone git@github.com:ChristopherBiscardi/gatsby-theme-examples.git
+cd gatsby-theme-examples
+mkdir vendored-gatsby
+cd vendored-gatsby
+git clone git@github.com:gatsbyjs/gatsby.git
+```
+
+I clone the gatsby repo into a sub-directory of the examples repo, then point the Yarn Workspaces config in the theme examples `package.json` to include the packages I need. By default the workspaces config looks like
+
+```js
+{
+  "name": "gatsby-theme-examples",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "themes/*",
+    "ui-surfaces/*"
+  ]
+}
+```
+
+When working with a forked Gatsby repo I add the packages I need, so if all I need is `gatsby`, it looks like
+
+```js
+{
+  "name": "gatsby-theme-examples",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "themes/*",
+    "ui-surfaces/*",
+    "vendored-gatsby/packages/gatsby"
+  ]
+}
+```
 
 Show gatsby-theme-examples workflow pulling in gatsby itself.
 
