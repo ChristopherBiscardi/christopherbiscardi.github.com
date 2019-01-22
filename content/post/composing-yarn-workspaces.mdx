@@ -58,6 +58,8 @@ When working with a forked Gatsby repo I add the packages I need, so if all I ne
 }
 ```
 
-Show gatsby-theme-examples workflow pulling in gatsby itself.
+Then I run `yarn` to install all dependencies in the examples repo *and* `gatsby`. Since `gatsby` requires a build, I then run `yarn workspace gatsby build` to build the package and it's already linked into my themes repo for experimentation.
 
-Argue for starting all NPM based projects as yarn workspaces for easier extension later.
+## Fin
+
+This is a really powerful workflow that allows me to reduce the expensiveness of working with multi-package repos I don't necessarily control. It is so useful to be able to mount repos into each other when developing that I've started starting all my new repositories as multi-package repos using Yarn Workspaces. I've been doing this workflow for awhile now and it makes the cost of migrating packages across repos, working on multiple repos, and modifying forked packages much simpler. If you plan on starting a new project this year, I'd suggest trying to start it using Yarn Workspaces as it doesn't require much overhead at all and it enables a lot of flexibility.
