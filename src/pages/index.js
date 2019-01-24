@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Helmet from "react-helmet";
+import { graphql } from "gatsby";
 import theme from "@sens8/tokens";
 import { Heading } from "sens8";
 import Nav from "../navigation";
@@ -20,9 +21,8 @@ export default class IndexPage extends Component {
             background: theme.colors.background,
             display: "flex",
             flexDirection: "column",
-            height: "100vh",
-            justifyContent: "center",
-            width: "100vw"
+            height: "30vh",
+            justifyContent: "center"
           }}
         >
           <Heading
@@ -34,7 +34,34 @@ export default class IndexPage extends Component {
             Chris Biscardi
           </Heading>
         </div>
+        <div>{featuredPosts.edges.map(({node}) => <Image src="" {node.fixed}/>)}</div>
       </div>
     );
   }
 }
+
+export const query = graphql`
+  query {
+    featuredPosts: allMdx(
+      limit: 10
+      sort: { fields: frontmatter___date, order: DESC }
+    ) {
+      edges {
+        node {
+          id
+          excerpt
+          frontmatter {
+            title
+            featuredImage {
+              childImageSharp {
+                fixed {
+                  src
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
