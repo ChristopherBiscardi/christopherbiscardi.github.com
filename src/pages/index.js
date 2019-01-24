@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Helmet from "react-helmet";
 import { graphql, Link } from "gatsby";
 import theme from "@sens8/tokens";
-import { Heading } from "sens8";
+import { Heading, Text } from "sens8";
 import Img from "gatsby-image";
 
 import Nav from "../navigation";
@@ -61,9 +61,9 @@ export default class IndexPage extends Component {
 const FeaturedPost = ({ id, frontmatter, excerpt }) => {
   if (!frontmatter.featuredImage) {
     return (
-      <div css={{ background: "white" }}>
-        <h2>{frontmatter.title}</h2>
-        <p>{excerpt}</p>
+      <div css={({ colors }) => ({ background: colors.raw.neutral[70] })}>
+        <Heading>{frontmatter.title}</Heading>
+        <Text>{excerpt}</Text>
       </div>
     );
   }
