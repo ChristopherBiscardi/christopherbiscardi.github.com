@@ -6,7 +6,7 @@ tags:
   - gatsby
   - mdx
 ---
-First lets take a look at the [gatsby-remark-prismjs](https://www.gatsbyjs.org/packages/gatsby-remark-prismjs/) config options, because we'll need to mirror them.
+On our quest to build a powerful set of defaults for gatsby-mdx, we need to have a stock answer for people converting from Remark and using [gatsby-remark-prismjs](https://www.gatsbyjs.org/packages/gatsby-remark-prismjs/). First lets take a look at the [gatsby-remark-prismjs](https://www.gatsbyjs.org/packages/gatsby-remark-prismjs/) config options, because we'll need to mirror them in our new component.
 
 ```js
 {
@@ -45,4 +45,45 @@ First lets take a look at the [gatsby-remark-prismjs](https://www.gatsbyjs.org/p
     noInlineHighlight: false
   }
 }
+```
+
+## The first implementation
+
+To start dealing with any of the config, we need an implementation of something that works for highlighting code. For this we're going to use [prism-react-renderer](https://github.com/FormidableLabs/prism-react-renderer). Our first implementation of the component looks like this:
+
+```js
+import React from "react";
+import { render } from "react-dom";
+import Highlight, { defaultProps } from "prism-react-renderer";
+
+const Code = ({ codeString, language, ...props }) => {
+  return (
+    <Highlight {...defaultProps} code={codeString} language={language}>
+      {({ className, style, tokens, getLineProps, getTokenProps }) => (
+        <pre className={className} style={style}>
+          {tokens.map((line, i) => (
+            <div {...getLineProps({ line, key: i })}>
+              {line.map((token, key) => (
+                <span {...getTokenProps({ token, key })} />
+              ))}
+            </div>
+          ))}
+        </pre>
+      )}
+    </Highlight>
+  );
+};
+
+const GatsbyComponentPrismjsReplacement = preProps => {
+  const props = preToCodeBlock(preProps);
+  // if there's a codeString and some props, we passed the test
+  if (props) {
+    return <Code {...props} />;
+  } else {
+    // it's possible to have a pre without a code in it
+    return <pre {...preProps} />;
+  }
+};
+
+export default GatsbyComponentPrismjsReplacement;
 ```
