@@ -10,12 +10,10 @@ import SiteLayout from "./site-layout";
 export default class BlogPost extends Component {
   render() {
     const { data } = this.props;
-    const imageRoot = data.mdx.frontmatter.featuredImage;
-    const imageFieldRoot = data.file;
+    const imageRoot =
+      data.mdx.frontmatter.featuredImage || data.mdx.fields.featuredImage;
     let src = undefined;
-    if (imageFieldRoot) {
-      src = imageFieldRoot.childImageSharp.fixed.src;
-    } else if (imageRoot) {
+    if (imageRoot) {
       src = imageRoot.childImageSharp.fixed.src;
     }
     return (
@@ -141,20 +139,22 @@ export default class BlogPost extends Component {
 }
 
 export const pageQuery = graphql`
-  query($id: String!, $webmentionMatchURL: String!, $featuredImage: String) {
-    file(absolutePath: { eq: $featuredImage }) {
-      childImageSharp {
-        fixed {
-          src
-        }
-      }
-    }
+  query($id: String!, $webmentionMatchURL: String!) {
     mdx(id: { eq: $id }) {
       id
       code {
         body
       }
       excerpt
+      fields {
+        featuredImage {
+          childImageSharp {
+            fixed {
+              src
+            }
+          }
+        }
+      }
       frontmatter {
         title
         featuredImage {

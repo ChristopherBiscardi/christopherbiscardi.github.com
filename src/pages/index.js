@@ -58,8 +58,8 @@ export default class IndexPage extends Component {
   }
 }
 
-const FeaturedPost = ({ id, frontmatter, excerpt }) => {
-  if (!frontmatter.featuredImage) {
+const FeaturedPost = ({ id, frontmatter, fields, excerpt }) => {
+  if (!frontmatter.featuredImage && !fields.featuredImage) {
     return (
       <div css={({ colors }) => ({ background: colors.raw.neutral[70] })}>
         <Heading>{frontmatter.title}</Heading>
@@ -67,11 +67,12 @@ const FeaturedPost = ({ id, frontmatter, excerpt }) => {
       </div>
     );
   }
+  const featuredImage = frontmatter.featuredImage || fields.featuredImage;
   return (
     <Img
       alt={frontmatter.title}
       key={id}
-      fluid={frontmatter.featuredImage.childImageSharp.fluid}
+      fluid={featuredImage.childImageSharp.fluid}
     />
   );
 };
@@ -88,6 +89,14 @@ export const query = graphql`
           excerpt
           fields {
             slug
+            featuredImage {
+              id
+              childImageSharp {
+                fluid(maxWidth: 700) {
+                  ...GatsbyImageSharpFluid
+                }
+              }
+            }
           }
           frontmatter {
             title

@@ -16,7 +16,6 @@ exports.createPages = ({ graphql, actions }) => {
                   fields {
                     slug
                     webmentionMatchURL
-                    featuredImage
                   }
                   frontmatter {
                     slug
@@ -48,8 +47,7 @@ exports.createPages = ({ graphql, actions }) => {
             component: require.resolve("./src/blog-post"),
             context: {
               id: node.id,
-              webmentionMatchURL: node.fields.webmentionMatchURL,
-              featuredImage: node.fields.featuredImage
+              webmentionMatchURL: node.fields.webmentionMatchURL
             }
           });
         });
