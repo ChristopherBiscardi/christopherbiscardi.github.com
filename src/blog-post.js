@@ -11,7 +11,7 @@ export default class BlogPost extends Component {
   render() {
     const { data } = this.props;
     const imageRoot = data.mdx.frontmatter.featuredImage;
-    const imageFieldRoot = data.mdx.fields.featuredImage;
+    const imageFieldRoot = data.file;
     let src = undefined;
     if (imageFieldRoot) {
       src = imageFieldRoot.childImageSharp.fixed.src;
