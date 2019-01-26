@@ -207,3 +207,66 @@ const IndexPage = () => (
 
 export default IndexPage
 ```
+
+Yeah, that's it. Let's take a look at how it renders again.
+
+```html
+<div class="css-ehkvu9-IndexPage">
+  <div
+    class=" gatsby-image-wrapper"
+    style="position: relative; overflow: hidden;"
+  >
+    <div style="width: 100%; padding-bottom: 100%;"></div>
+    <img
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAACXBIWXMAAAsSAAALEgHS3X78AAACYklEQVQ4y42Uy28SQRjA+dM8efDmwYN6qF6qiSY+Y/WgQRMibY00TaWNBSRSCraYQtHl/bR0KyxQWCgWWAqU8izl/Sq7rLNsRHlVJpvJtzPfb77nDIOcZHSoqZSrp4+KtXIziubaLRysMCZiCYqOoVnhjNEi8RcztdxxeTzc6VBfT+5O2Vhpb+vw4wMdZ0ppWvP9xzLeJoDNThf2W+Nz1+XzNxQubSToSKKW+BDc+WOnkshhSVgeCiGpViZMEg1oxc26Knt+ae3bEtJTZwzE1kXLccG0+sOOlrcvZXvsczPkITfsa20vwIKnhsh+BnjUarT74Gb13CY7KBVJMv3z4N1NszQYsMWM62HNrCis/GxXn0iYls23uz5LPBcv0bH8hUH2XRoM85ySXv7JBtO87jMIvWq+H5GoYIHCLA1ZxD6Qap3Ak8IKfW7TJ50lK6uP9E6RgndHaODtCJ6Z5RyHfnE7j6gRbcKlCYNSt+rtETHTpUGgEP8FYmdNqd/Mo7aiVWTfuH2L9xASvfxxlqr01EYkrJszvNkgW9bH0OuFr+99m+y9IOeyU6zIp/Hubp/yMEztlzFPwOhdvq+nIoS1JNn4t2sugCmVsDvPe2KKolnZLCxhOcAKQRDDXTQaVi46lqYhIBwHTrl3oWqhMRDtaJge37lOBMKo4tfbqhVX0J7snTsWps8uZWuoOQY6CcjpSIF55UvmqNgr5wUwtV1IVdnXtnSfPEB2qjDNqnvczRl0m+j6Jn5lXb6nAQJqinmN0ZEBj03YLzghY8PnTRz80o/GRJZpOLCb0PM9BN7pvUEjx28V00WUg9jIVwAAAABJRU5ErkJggg=="
+      alt=""
+      style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center; opacity: 0; transition: opacity 0.5s ease 0.5s;"
+    /><picture
+      ><source
+        srcset="
+          /static/6d91c86c0fde632ba4cd01062fd9ccfa/0552a/gatsby-astronaut.png  75w,
+          /static/6d91c86c0fde632ba4cd01062fd9ccfa/fc3be/gatsby-astronaut.png 150w,
+          /static/6d91c86c0fde632ba4cd01062fd9ccfa/045aa/gatsby-astronaut.png 300w,
+          /static/6d91c86c0fde632ba4cd01062fd9ccfa/24f49/gatsby-astronaut.png 450w,
+          /static/6d91c86c0fde632ba4cd01062fd9ccfa/5497d/gatsby-astronaut.png 600w,
+          /static/6d91c86c0fde632ba4cd01062fd9ccfa/483e1/gatsby-astronaut.png 800w
+        "
+        sizes="(max-width: 300px) 100vw, 300px"/>
+      <img
+        alt=""
+        src="/static/6d91c86c0fde632ba4cd01062fd9ccfa/045aa/gatsby-astronaut.png"
+        naptha_cursor="text"
+        style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center; opacity: 1; transition: opacity 0.5s ease 0s;"/></picture
+
+    ><noscript
+      ><picture
+        ><source
+          srcset="
+            /static/6d91c86c0fde632ba4cd01062fd9ccfa/0552a/gatsby-astronaut.png  75w,
+            /static/6d91c86c0fde632ba4cd01062fd9ccfa/fc3be/gatsby-astronaut.png 150w,
+            /static/6d91c86c0fde632ba4cd01062fd9ccfa/045aa/gatsby-astronaut.png 300w,
+            /static/6d91c86c0fde632ba4cd01062fd9ccfa/24f49/gatsby-astronaut.png 450w,
+            /static/6d91c86c0fde632ba4cd01062fd9ccfa/5497d/gatsby-astronaut.png 600w,
+            /static/6d91c86c0fde632ba4cd01062fd9ccfa/483e1/gatsby-astronaut.png 800w
+          "
+          sizes="(max-width: 300px) 100vw, 300px"/>
+        <img
+          src="/static/6d91c86c0fde632ba4cd01062fd9ccfa/045aa/gatsby-astronaut.png"
+          alt=""
+          style="position:absolute;top:0;left:0;transition:opacity 0.5s;transition-delay:0.5s;opacity:1;width:100%;height:100%;object-fit:cover;object-position:center"/></picture
+    ></noscript>
+  </div>
+</div>
+```
+
+This time we can see that the containing div has a classname on it instead of inline styles... but where are the styles? Well in `<head>` there's a new `<style>` tag that includes our styles and a source map (this is development after all).
+
+```html
+<style data-emotion="css">
+  .css-ehkvu9-IndexPage {
+    max-width: 300px;
+    margin-bottom: 1.45rem;
+  } /*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9wYWdlcy9pbmRleC5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFhUyIsImZpbGUiOiJzcmMvcGFnZXMvaW5kZXguanMiLCJzb3VyY2VSb290IjoiL1VzZXJzL2NocmlzL3RtcC9teS1lbW90aW9uLXNpdGUiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgUmVhY3QgZnJvbSAncmVhY3QnXG5pbXBvcnQgeyBMaW5rIH0gZnJvbSAnZ2F0c2J5J1xuXG5pbXBvcnQgTGF5b3V0IGZyb20gJy4uL2NvbXBvbmVudHMvbGF5b3V0J1xuaW1wb3J0IEltYWdlIGZyb20gJy4uL2NvbXBvbmVudHMvaW1hZ2UnXG5pbXBvcnQgU0VPIGZyb20gJy4uL2NvbXBvbmVudHMvc2VvJ1xuXG5jb25zdCBJbmRleFBhZ2UgPSAoKSA9PiAoXG4gIDxMYXlvdXQ+XG4gICAgPFNFTyB0aXRsZT1cIkhvbWVcIiBrZXl3b3Jkcz17W2BnYXRzYnlgLCBgYXBwbGljYXRpb25gLCBgcmVhY3RgXX0gLz5cbiAgICA8aDE+SGkgcGVvcGxlPC9oMT5cbiAgICA8cD5XZWxjb21lIHRvIHlvdXIgbmV3IEdhdHNieSBzaXRlLjwvcD5cbiAgICA8cD5Ob3cgZ28gYnVpbGQgc29tZXRoaW5nIGdyZWF0LjwvcD5cbiAgICA8ZGl2IGNzcz17eyBtYXhXaWR0aDogYDMwMHB4YCwgbWFyZ2luQm90dG9tOiBgMS40NXJlbWAgfX0+XG4gICAgICA8SW1hZ2UgLz5cbiAgICA8L2Rpdj5cbiAgICA8TGluayB0bz1cIi9wYWdlLTIvXCI+R28gdG8gcGFnZSAyPC9MaW5rPlxuICA8L0xheW91dD5cbilcblxuZXhwb3J0IGRlZmF1bHQgSW5kZXhQYWdlXG4iXX0= */
+</style>
+```
+
