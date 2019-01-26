@@ -8,6 +8,7 @@ module.exports = {
       twitter: `chrisbiscardi`
     }
   },
+  mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,

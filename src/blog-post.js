@@ -10,7 +10,8 @@ import SiteLayout from "./site-layout";
 export default class BlogPost extends Component {
   render() {
     const { data } = this.props;
-    const imageRoot = data.mdx.frontmatter.featuredImage;
+    const imageRoot =
+      data.mdx.frontmatter.featuredImage || data.mdx.fields.featuredImage;
     let src = undefined;
     if (imageRoot) {
       src = imageRoot.childImageSharp.fixed.src;
@@ -145,6 +146,15 @@ export const pageQuery = graphql`
         body
       }
       excerpt
+      fields {
+        featuredImage {
+          childImageSharp {
+            fixed {
+              src
+            }
+          }
+        }
+      }
       frontmatter {
         title
         featuredImage {

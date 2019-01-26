@@ -1,5 +1,6 @@
 const path = require(`path`);
 const slugify = require("slugify");
+const fs = require("fs");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
@@ -106,5 +107,17 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
       node,
       value: `https://www.christopherbiscardi.com${slug}/`
     });
+
+    if (parent.internal.type === "File") {
+      const ext = path.extname(parent.absolutePath);
+      const featuredImage = parent.absolutePath.replace(ext, ".png");
+      if (fs.existsSync(featuredImage)) {
+        createNodeField({
+          name: `featuredImage`,
+          node,
+          value: featuredImage
+        });
+      }
+    }
   }
 };
