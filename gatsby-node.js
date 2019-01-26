@@ -1,5 +1,6 @@
 const path = require(`path`);
 const slugify = require("slugify");
+const fs = require("fs");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
@@ -15,6 +16,7 @@ exports.createPages = ({ graphql, actions }) => {
                   fields {
                     slug
                     webmentionMatchURL
+                    featuredImage
                   }
                   frontmatter {
                     slug
@@ -46,7 +48,8 @@ exports.createPages = ({ graphql, actions }) => {
             component: require.resolve("./src/blog-post"),
             context: {
               id: node.id,
-              webmentionMatchURL: node.fields.webmentionMatchURL
+              webmentionMatchURL: node.fields.webmentionMatchURL,
+              featuredImage: node.fields.featuredImage
             }
           });
         });
@@ -106,5 +109,17 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
       node,
       value: `https://www.christopherbiscardi.com${slug}/`
     });
+
+    if (parent.internal.type === "File") {
+      const ext = path.extname(parent.absolutePath);
+      const featuredImage = parent.absolutePath.replace(ext, ".png");
+      if (fs.existsSync(featuredImage)) {
+        createNodeField({
+          name: `featuredImage`,
+          node,
+          value: featuredImage
+        });
+      }
+    }
   }
 };

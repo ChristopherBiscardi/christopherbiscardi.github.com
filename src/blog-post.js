@@ -11,8 +11,11 @@ export default class BlogPost extends Component {
   render() {
     const { data } = this.props;
     const imageRoot = data.mdx.frontmatter.featuredImage;
+    const imageFieldRoot = data.mdx.fields.featuredImage;
     let src = undefined;
-    if (imageRoot) {
+    if (imageFieldRoot) {
+      src = imageFieldRoot.childImageSharp.fixed.src;
+    } else if (imageRoot) {
       src = imageRoot.childImageSharp.fixed.src;
     }
     return (
@@ -138,7 +141,14 @@ export default class BlogPost extends Component {
 }
 
 export const pageQuery = graphql`
-  query($id: String!, $webmentionMatchURL: String!) {
+  query($id: String!, $webmentionMatchURL: String!, $featuredImage: String) {
+    file(absolutePath: { eq: $featuredImage }) {
+      childImageSharp {
+        fixed {
+          src
+        }
+      }
+    }
     mdx(id: { eq: $id }) {
       id
       code {
