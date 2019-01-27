@@ -7,6 +7,33 @@ import { Heading, Text } from "sens8";
 
 import SiteLayout from "./site-layout";
 
+class ConvertKitForm extends Component {
+  shouldComponentUpdate() {
+    return false;
+  }
+  render() {
+    return (
+      <div
+        css={{
+          marginBottom: "1.5rem",
+          display: "flex",
+          justifyContent: "center",
+          "& > form": {
+            flex: 1,
+            border: "none"
+          }
+        }}
+      >
+        <script
+          async
+          data-uid="a4c7df1847"
+          src="https://f.convertkit.com/a4c7df1847/0207b2beea.js"
+        />
+      </div>
+    );
+  }
+}
+
 export default class BlogPost extends Component {
   render() {
     const { data } = this.props;
@@ -54,23 +81,7 @@ export default class BlogPost extends Component {
         >
           <MDXRenderer>{data.mdx.code.body}</MDXRenderer>
         </div>
-        <div
-          css={{
-            marginBottom: "1.5rem",
-            display: "flex",
-            justifyContent: "center",
-            "& > form": {
-              flex: 1,
-              border: "none"
-            }
-          }}
-        >
-          <script
-            async
-            data-uid="a4c7df1847"
-            src="https://f.convertkit.com/a4c7df1847/0207b2beea.js"
-          />
-        </div>
+        <ConvertKitForm />
 
         <hr
           css={({ colors }) => ({

@@ -4,21 +4,23 @@ import { Text } from "sens8";
 import useComponentSize from "@rehooks/component-size";
 import useWindowScrollPosition from "./hooks/use-window-scroll-position.js";
 
+const linkStyles = theme => ({
+  fontFamily: '"Inter UI", sans-serif',
+
+  textDecoration: "none",
+  borderBottom: `1px solid ${theme.colors.text}`,
+  padding: "0.5rem",
+  fontWeight: "400",
+  fontSize: "16px",
+  color: theme.colors.text,
+  display: "inline-block"
+});
+
 const Link = ({ children, ...props }) => (
   <li>
     <GLink
       {...props}
-      css={theme => ({
-        fontFamily: '"Inter UI", sans-serif',
-
-        textDecoration: "none",
-        borderBottom: `1px solid ${theme.colors.text}`,
-        padding: "0.5rem",
-        fontWeight: "400",
-        fontSize: "16px",
-        color: theme.colors.text,
-        display: "inline-block"
-      })}
+      css={linkStyles}
       getProps={({ isCurrent }) =>
         isCurrent
           ? {
@@ -100,6 +102,12 @@ export default props => {
           >
             <Link to="/">Home</Link>
             <Link to="/posts">Posts</Link>
+            <a
+              href="https://pages.convertkit.com/04c24646a3/c136f814fc"
+              css={linkStyles}
+            >
+              Newsletter
+            </a>
           </ul>
         </nav>
       </div>
