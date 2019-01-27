@@ -79,13 +79,7 @@ export default props => {
             >
               gatsby themes
             </a>
-            . During this time I will also repost new content&nbsp;
-            <a
-              css={{ color: "#ff5e99" }}
-              href="https://medium.com/@chrisbiscardi"
-            >
-              to Medium
-            </a>
+            .
           </Text>
         </div>
         <nav
