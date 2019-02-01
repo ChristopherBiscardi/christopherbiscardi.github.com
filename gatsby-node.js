@@ -10,6 +10,9 @@ exports.createPages = ({ graphql, actions }) => {
         `
           {
             allMdx {
+              byTag: group(field: frontmatter___tags) {
+                fieldValue
+              }
               edges {
                 node {
                   id
