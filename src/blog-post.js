@@ -7,6 +7,8 @@ import { Heading, Text } from "sens8";
 
 import SiteLayout from "./site-layout";
 
+// TODO: Use a custom form and lambdas on netlify to handle convertkit
+// form submissions
 class ConvertKitForm extends Component {
   shouldComponentUpdate() {
     return false;
@@ -37,11 +39,9 @@ class ConvertKitForm extends Component {
 export default class BlogPost extends Component {
   render() {
     const { data } = this.props;
-    const imageRoot =
-      data.mdx.frontmatter.featuredImage || data.mdx.fields.featuredImage;
     let src = undefined;
-    if (imageRoot) {
-      src = imageRoot.childImageSharp.fixed.src;
+    if (data.mdx.frontmatter.featuredImage) {
+      src = data.mdx.frontmatter.featuredImage.childImageSharp.fixed.src;
     }
     return (
       <SiteLayout

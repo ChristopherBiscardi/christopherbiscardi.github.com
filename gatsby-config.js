@@ -29,6 +29,13 @@ module.exports = {
       }
     },
     {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "images",
+        path: `${__dirname}/src/images/`
+      }
+    },
+    {
       resolve: `gatsby-mdx`,
       options: {
         globalScope: `import Player from 'react-player';
