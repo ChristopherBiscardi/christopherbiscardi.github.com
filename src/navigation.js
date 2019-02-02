@@ -55,33 +55,6 @@ export default props => {
   return (
     <Fragment>
       <div ref={ref} css={{ position: "fixed", width: "100%" }}>
-        <div
-          css={{
-            background: "#592000",
-            padding: "1rem",
-            color: "white",
-            display: showNotice ? "block" : "none"
-          }}
-        >
-          <Text css={{ marginBottom: 0, maxWidth: "100%" }}>
-            Warning: Under Construction. I am using this site as my playground
-            as I build&nbsp;
-            <a
-              css={{ color: "#ff5e99" }}
-              href="https://github.com/ChristopherBiscardi/gatsby-mdx"
-            >
-              gatsby-mdx
-            </a>
-            <span> and </span>
-            <a
-              css={{ color: "#ff5e99" }}
-              href="https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/"
-            >
-              gatsby themes
-            </a>
-            .
-          </Text>
-        </div>
         <nav
           css={theme => ({
             background: theme.colors.background,
