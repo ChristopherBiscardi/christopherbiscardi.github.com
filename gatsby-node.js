@@ -1,5 +1,5 @@
 const path = require(`path`);
-const slugify = require("slugify");
+const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
 
 exports.createPages = ({ graphql, actions }) => {
@@ -96,8 +96,8 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     const slug =
       frontmatter.url ||
       `/post/${frontmatter.slug ||
-        slugify(frontmatter.title, { lower: true, remove: /[*+~.()'"!:@]/g }) ||
-        slugify(parent.name, { lower: true, remove: /[*+~.()'"!:@]/g })}`;
+        slugify(frontmatter.title) ||
+        slugify(parent.name)}`;
 
     createNodeField({
       name: `slug`,
