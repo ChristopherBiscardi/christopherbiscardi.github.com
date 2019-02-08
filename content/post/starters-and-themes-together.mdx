@@ -1,0 +1,42 @@
+---
+title: Starters and Themes Together
+date: 2019-02-01T01:02:34.199Z
+tags:
+  - gatsby
+---
+In the [last post](/posts/running-a-gatsby-starter-as-a-theme) in this series, we converted the [gatsby-starter-blog](https://github.com/gatsbyjs/gatsby-starter-blog) repo into a theme. We only made changes that were absolutely necessary so in this post we'll take a look at how starters and themes can play well together as we move the content in the theme out into a starter.
+
+# Moving the Content
+
+Our content is still locked in our theme, which isn't super useful to theme consumers unless they want to display the same content everywhere. Notably, in `gatsby-config.js` we have a filesystem source pointed at our theme's `content/blog` directory.
+
+```js
+{
+  resolve: `gatsby-source-filesystem`,
+  options: {
+    path: `${__dirname}/content/blog`,
+    name: `blog`,
+  },
+}
+```
+
+Removing the `__dirname` prefix causes the filesystem source to look in the user's site for the `content/blog` directory.
+
+```js
+{
+  resolve: `gatsby-source-filesystem`,
+  options: {
+    path: `content/blog`,
+    name: `blog`,
+  },
+},
+```
+
+We'll move the `content/blog` directory from the theme into our starter `my-blog`.
+
+```sh
+mkdir my-blog/content
+mv gatsby-theme-awesome-blog/content/blog my-blog/content
+```
+
+Now, if we use our `my-blog` starter we can see that the content a user is going to modify is included int he starter, while all of the configuration is in the theme.
