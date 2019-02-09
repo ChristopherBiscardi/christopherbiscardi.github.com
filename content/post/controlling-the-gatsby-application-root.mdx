@@ -6,9 +6,9 @@ tags:
 ---
 One of the features I really like about Gatsby is the ability to control the root of the application. In `gatsby-ssr.js` and `gatsby-browser.js` we have two APIs that we'll be talking about today.
 
-## wrapPageElement
+## wrapRootElement
 
-The first API is `wrapPageElement`, which takes an object argument that has an `element` to render and that's it. As long as you render this element you can do whatever you want here, like import CSS or anything else. The docs mention using this for providers, which is the most common use case.
+The first API is `wrapRootElement`, which takes an object argument that has an `element` to render and that's it. As long as you render this element you can do whatever you want here, like import CSS or anything else. The docs mention using this for providers, which is the most common use case.
 
 > This is useful to setup any Providers component that will wrap your application. For setting persistent UI elements around pages use wrapPageElement.
 
