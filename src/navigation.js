@@ -1,14 +1,12 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useRef } from "react";
 import { Link as GLink } from "gatsby";
-import { Text } from "sens8";
+import { Heading } from "sens8";
 import useComponentSize from "@rehooks/component-size";
-import useWindowScrollPosition from "./hooks/use-window-scroll-position.js";
+import CBLogo from "./logo";
 
 const linkStyles = theme => ({
   fontFamily: '"Inter UI", sans-serif',
-
   textDecoration: "none",
-  borderBottom: `1px solid ${theme.colors.text}`,
   padding: "0.5rem",
   fontWeight: "400",
   fontSize: "16px",
@@ -34,33 +32,25 @@ const Link = ({ children, ...props }) => (
   </li>
 );
 
-const useNotice = () => {
-  const [{ showNotice, triggerLine }, setNotice] = useState({
-    showNotice: true,
-    triggerLine: 50
-  });
-  const { y } = useWindowScrollPosition({});
-  if (y > triggerLine && showNotice === true) {
-    setNotice({ showNotice: false, triggerLine: 40 });
-  } else if (y < triggerLine && showNotice === false) {
-    setNotice({ showNotice: true, triggerLine: 50 });
-  }
-  return showNotice;
-};
 export default props => {
   const ref = useRef(null);
   const { height } = useComponentSize(ref);
-  const showNotice = useNotice();
 
   return (
     <Fragment>
-      <div ref={ref} css={{ position: "fixed", width: "100%" }}>
+      <div ref={ref} css={{ position: "fixed", width: "100%", zIndex: 1 }}>
         <nav
           css={theme => ({
             background: theme.colors.background,
-            display: "flex"
+            display: "flex",
+            padding: "1rem"
           })}
         >
+          <CBLogo height={30} css={{ margin: "auto 0" }} />
+          <Heading as="h1" css={{ margin: "auto .3rem" }}>
+            <span css={{ color: "#5ca1d6" }}>Chris</span>{" "}
+            <span css={{ color: "#bedef5" }}>Biscardi</span>
+          </Heading>
           <ul
             css={{
               display: "flex",

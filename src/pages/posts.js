@@ -1,8 +1,8 @@
 import Helmet from "react-helmet";
 import React, { Component } from "react";
-import { graphql, Link } from "gatsby";
+import { graphql } from "gatsby";
 
-import { Heading, Text, Tag } from "sens8";
+import { Heading } from "sens8";
 import SiteLayout from "../site-layout";
 import PostList from "../post-list";
 import Img from "gatsby-image";

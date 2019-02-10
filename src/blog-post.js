@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { graphql } from "gatsby";
-import { MDXProvider } from "@mdx-js/tag";
 import MDXRenderer from "gatsby-mdx/mdx-renderer";
 import SEO from "./seo";
 import { Heading, Text } from "sens8";

@@ -50,7 +50,6 @@ class PostListItem extends Component {
         css={{
           margin: "auto",
           padding: "1rem",
-          maxWidth: "400px",
           background: "#1f2933",
           maxWidth: "38rem",
           marginTop: "1.5rem"
