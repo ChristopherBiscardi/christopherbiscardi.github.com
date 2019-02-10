@@ -4,7 +4,7 @@ date: 2019-02-01T01:02:34.199Z
 tags:
   - gatsby
 ---
-In the [last post](/posts/running-a-gatsby-starter-as-a-theme) in this series, we converted the [gatsby-starter-blog](https://github.com/gatsbyjs/gatsby-starter-blog) repo into a theme. We only made changes that were absolutely necessary so in this post we'll take a look at how starters and themes can play well together as we move the content in the theme out into a starter.
+In the [last post](/post/running-a-gatsby-starter-as-a-theme) in this series, we converted the [gatsby-starter-blog](https://github.com/gatsbyjs/gatsby-starter-blog) repo into a theme. We only made changes that were absolutely necessary so in this post we'll take a look at how starters and themes can play well together as we move the content in the theme out into a starter.
 
 Our content is still locked in our theme, which isn't super useful to theme consumers unless they want to display the same content everywhere. Notably, in `gatsby-config.js` we have a filesystem source pointed at our theme's `content/blog` directory.
 
