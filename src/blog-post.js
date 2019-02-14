@@ -39,8 +39,8 @@ export default class BlogPost extends Component {
   render() {
     const { data } = this.props;
     let src = undefined;
-    if (data.mdx.frontmatter.featuredImage) {
-      src = data.mdx.frontmatter.featuredImage.childImageSharp.fixed.src;
+    if (data.mdx.fields.featuredImage) {
+      src = data.mdx.fields.featuredImage.childImageSharp.fixed.src;
     }
     return (
       <SiteLayout
@@ -167,13 +167,6 @@ export const pageQuery = graphql`
       }
       frontmatter {
         title
-        featuredImage {
-          childImageSharp {
-            fixed {
-              src
-            }
-          }
-        }
       }
     }
     webmentions: allWebMentionEntry(
