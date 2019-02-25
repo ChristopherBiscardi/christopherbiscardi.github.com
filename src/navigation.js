@@ -59,6 +59,7 @@ export default props => {
           >
             <Link to="/">Home</Link>
             <Link to="/posts">Posts</Link>
+            <Link to="/tags">Tags</Link>
             <a
               href="https://pages.convertkit.com/04c24646a3/c136f814fc"
               css={linkStyles}

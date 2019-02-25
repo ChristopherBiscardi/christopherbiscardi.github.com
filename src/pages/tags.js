@@ -4,16 +4,18 @@ import { graphql } from "gatsby";
 
 import { Heading } from "sens8";
 import SiteLayout from "../site-layout";
-import PostList from "../post-list";
 import Img from "gatsby-image";
 
-export default class PostsPage extends Component {
+export default class TagsPage extends Component {
   render() {
     return (
       <SiteLayout>
         <Helmet>
-          <title>Chris Biscardi</title>
-          <meta name="description" content="Christopher Biscardi's website" />
+          <title>Chris' Content Tags</title>
+          <meta
+            name="description"
+            content="Posts and other content, organized by Tag"
+          />
           <meta name="referrer" content="origin" />
         </Helmet>
         <div>
@@ -44,23 +46,34 @@ export default class PostsPage extends Component {
               }}
               level={1}
             >
-              Blog Posts
+              Content Tags
             </Heading>
           </section>
         </div>
-        <PostList posts={this.props.data.allMdx.edges} />
+        <ul>
+          {this.props.data.allMdx.byTag.map(({ tag }) => (
+            <li>
+              <a
+                href={`/tags/${tag}`}
+                css={({ colors }) => ({
+                  color: colors.text
+                })}
+              >
+                {tag}
+              </a>
+            </li>
+          ))}
+        </ul>
       </SiteLayout>
     );
   }
 }
 
 export const pageQuery = graphql`
-  query PostsQuery {
-    allMdx(sort: { fields: frontmatter___date, order: DESC }) {
-      edges {
-        node {
-          ...PostListItemFragment
-        }
+  query TagsPageQuery {
+    allMdx {
+      byTag: group(field: frontmatter___tags) {
+        tag: fieldValue
       }
     }
     headingImage: file(

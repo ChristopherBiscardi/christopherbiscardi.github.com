@@ -3,17 +3,22 @@ import React, { Component } from "react";
 import { graphql } from "gatsby";
 
 import { Heading } from "sens8";
-import SiteLayout from "../site-layout";
-import PostList from "../post-list";
+import SiteLayout from "./site-layout";
+import PostList from "./post-list";
 import Img from "gatsby-image";
 
-export default class PostsPage extends Component {
+export default class ContentByTagTemplate extends Component {
   render() {
+    const { tag } = this.props.pageContext;
+
     return (
       <SiteLayout>
         <Helmet>
-          <title>Chris Biscardi</title>
-          <meta name="description" content="Christopher Biscardi's website" />
+          <title>{tag}</title>
+          <meta
+            name="description"
+            content={`Content on the topic: ${tag} by Chris Biscardi`}
+          />
           <meta name="referrer" content="origin" />
         </Helmet>
         <div>
@@ -44,7 +49,7 @@ export default class PostsPage extends Component {
               }}
               level={1}
             >
-              Blog Posts
+              Content in {tag}
             </Heading>
           </section>
         </div>
@@ -55,8 +60,11 @@ export default class PostsPage extends Component {
 }
 
 export const pageQuery = graphql`
-  query PostsQuery {
-    allMdx(sort: { fields: frontmatter___date, order: DESC }) {
+  query ContentByTagQuery($tag: String!) {
+    allMdx(
+      sort: { fields: frontmatter___date, order: DESC }
+      filter: { frontmatter: { tags: { in: [$tag] } } }
+    ) {
       edges {
         node {
           ...PostListItemFragment

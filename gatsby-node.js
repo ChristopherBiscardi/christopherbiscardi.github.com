@@ -41,7 +41,16 @@ exports.createPages = ({ graphql, actions }) => {
           console.log(result.errors);
           reject(result.errors);
         }
-
+        console.log(result.data.allMdx.byTag);
+        result.data.allMdx.byTag.forEach(({ fieldValue }) => {
+          createPage({
+            path: `/tags/${fieldValue}`,
+            component: require.resolve("./src/content-by-tag"),
+            context: {
+              tag: fieldValue
+            }
+          });
+        });
         // Create blog posts pages.
         result.data.allMdx.edges.forEach(({ node }) => {
           const { frontmatter, parent, fields } = node;
