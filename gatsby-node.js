@@ -41,7 +41,7 @@ exports.createPages = ({ graphql, actions }) => {
           console.log(result.errors);
           reject(result.errors);
         }
-        console.log(result.data.allMdx.byTag);
+
         result.data.allMdx.byTag.forEach(({ fieldValue }) => {
           createPage({
             path: `/tags/${fieldValue}`,

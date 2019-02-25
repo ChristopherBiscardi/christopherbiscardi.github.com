@@ -84,7 +84,12 @@ class PostListItem extends Component {
           {tags &&
             tags.map(v => (
               <Tag key={v} css={{ fontFamily: "Inter UI" }}>
-                {v}
+                <Link
+                  to={`/tags/${v}`}
+                  css={({ colors }) => ({ color: colors.text })}
+                >
+                  {v}
+                </Link>
               </Tag>
             ))}
         </div>

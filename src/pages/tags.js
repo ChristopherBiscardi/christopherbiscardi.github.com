@@ -1,6 +1,6 @@
 import Helmet from "react-helmet";
 import React, { Component } from "react";
-import { graphql } from "gatsby";
+import { graphql, Link } from "gatsby";
 
 import { Heading } from "sens8";
 import SiteLayout from "../site-layout";
@@ -53,14 +53,14 @@ export default class TagsPage extends Component {
         <ul>
           {this.props.data.allMdx.byTag.map(({ tag }) => (
             <li>
-              <a
-                href={`/tags/${tag}`}
+              <Link
+                to={`/tags/${tag}`}
                 css={({ colors }) => ({
                   color: colors.text
                 })}
               >
                 {tag}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
