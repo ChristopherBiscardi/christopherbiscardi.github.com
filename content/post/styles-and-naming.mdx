@@ -8,7 +8,7 @@ tags:
 ---
 > There are only two hard things in Computer Science: cache invalidation and naming things.
 >
-> -- Phil Karlton
+> \-- Phil Karlton
 
 Phil Karlton (and many people after) said that one of the hardest problems
 in computer science is naming things. This is unfortunate for us because it means that
@@ -24,6 +24,8 @@ we want and leave parts that don't need names, nameless. "Untitled
 Path 4" is arguably a great name for something that doesn't come up in
 conversation often while "Button" is a great name for the conventional
 `Button` component being shipped as part of a symbol library.
+
+![](/img/screen-shot-2019-03-04-at-7.41.44-pm.png)
 
 Using component driven models for the technical implementations of our
 components allows us to take a similar approach. On the web we can use
@@ -43,14 +45,14 @@ Especially when it comes to CSS, we run into problems
 quickly because classnames are the base primitive of CSS APIs. This means
 that that historically CSS has forced us to over-index on creating
 names for everything, even those objects that we shouldn't name. We've
-tried to solve these problems through manual approaches like [Block
-Element Modifier (BEM)][bem], mirroring the hand-crafted approach our
+tried to solve these problems through manual approaches like \[Block
+Element Modifier (BEM)], mirroring the hand-crafted approach our
 design tools use. The problem with approaches like BEM is that we have
 no way to leave objects unnamed. BEM, and approaches like it,
 represent a local maximum for how we use CSS. Until we get away from
 the requirement to name everything we will be stuck with the problems
 naming everything leaves us with. Consider the following real-world
-example from [Bootstrap][bootstrap], a popular library that offers a
+example from \[Bootstrap], a popular library that offers a
 CSS API.
 
 ```html
@@ -104,7 +106,7 @@ whether your platform's styling primitives are CSS or something else.
 A CSS style sheet (yes, you read that correctly. A Cascading Style
 Sheets style sheet) is an abstract concept that represents a style
 sheet as defined by the CSS specification. The CSS Object Model
-([CSSOM][cssom]) defines a set of parsing and serialization rules for
+(\[CSSOM]) defines a set of parsing and serialization rules for
 Media Queries, Selectors, and CSS itself (CSS itself is a spec
 composed of multiple specs). Using these built-in platform APIs we can
 build a higher level abstraction that allows us to solve the naming
@@ -117,18 +119,18 @@ higher in the chain, the component is more re-usable but also takes
 more effort to maintain. The list, from lowest to highest is:
 
 1. divs, one-off styles, inline overrides, etc
-1. (private) sub-components
-1. (public) sub-components (components that get too complex for a
+2. (private) sub-components
+3. (public) sub-components (components that get too complex for a
    single file, thus are nested under in a directory. routes.)
-1. A project's components/ folder ("Named objects local to this project")
-1. Design system component library
-   - Can have it's own stages of acceptance, support, and usage suggestions.
-   - is accompanied by additional requirements (documentation, design
+4. A project's components/ folder ("Named objects local to this project")
+5. Design system component library
+   * Can have it's own stages of acceptance, support, and usage suggestions.
+   * is accompanied by additional requirements (documentation, design
      artifacts, tests, etc)
 
 ## Introducing Emotion
 
-[Emotion][emotion] is a library that introduces a new set of
+\[Emotion] is a library that introduces a new set of
 APIs for the creation, composition, and naming of styles on top of the
 platform's CSS APIs. We'll explore the usage of these APIs from a
 component oriented perspective from the least nameable objects to the
@@ -155,13 +157,13 @@ messes of code and because soup is often the glue between
 abstractions, bad abstractions cause compoundingly worse soup. Some of
 the reasons people extend indefinitely are
 
-- The code behaves non-deterministically so making the smallest
+* The code behaves non-deterministically so making the smallest
   possible change is desired so as to not upset the balance
-- Copy/pasted code has been removed from it's original context and the
+* Copy/pasted code has been removed from it's original context and the
   product is complicated enough to work with that not all code paths
   can be tested (so we don't want to delete the code in question so as
   to not accidentally break something)
-- It's hard to delete code that isn't co-located. Often CSS is written
+* It's hard to delete code that isn't co-located. Often CSS is written
   in separate files, processed by a compiler, and mangled to the point
   where it can be hard to locate which CSS in which files and what
   combinations can affect the rendering behavior of the part of the
@@ -851,21 +853,21 @@ without fear.
 From the html output we've been looking at and the SASS code, we can
 consolidate the list of variations we're going to need to support.
 
-- First item
-- Last item
-- Disabled
-- Active
-- hover
-- focus
+* First item
+* Last item
+* Disabled
+* Active
+* hover
+* focus
 
 Notably:
 
-- `disabled` and `active` can not happen at the same time. `disabled`
+* `disabled` and `active` can not happen at the same time. `disabled`
   always wins if both are applied.
-- `hover` applies differently based on whether `active` or `disabled`
+* `hover` applies differently based on whether `active` or `disabled`
   are applied.
-- focus is independent of anything
-- There are styles that apply only to the first or last `Item`
+* focus is independent of anything
+* There are styles that apply only to the first or last `Item`
 
 The bootstrap classnames API is well coded in that is makes
 overlapping states apply consistently (`.disabled` always takes
