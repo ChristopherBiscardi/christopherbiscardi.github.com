@@ -1,0 +1,1059 @@
+---
+title: Styles and Naming
+date: 2019-03-05T02:56:18.830Z
+tags:
+  - api
+  - css-in-js
+  - design-systems
+---
+> There are only two hard things in Computer Science: cache invalidation and naming things.
+>
+> -- Phil Karlton
+
+Phil Karlton (and many people after) said that one of the hardest problems
+in computer science is naming things. This is unfortunate for us because it means that
+building a design system is a hard problem before we even get to any
+of the underlying design and technology issues. This is because design
+systems define the language we use to communicate across boundaries
+(organizational or otherwise).
+
+Design tools make it easy to refer to specific pieces of our visual
+user interfaces because they are typically manual-labor driven. Each
+layer, symbol, or object is given a handcrafted name. We can name what
+we want and leave parts that don't need names, nameless. "Untitled
+Path 4" is arguably a great name for something that doesn't come up in
+conversation often while "Button" is a great name for the conventional
+`Button` component being shipped as part of a symbol library.
+
+Using component driven models for the technical implementations of our
+components allows us to take a similar approach. On the web we can use
+the primitives given to us by the platform (`div`, `span`, `section`, etc)
+when we have no use for a system-level name
+and we can give names to more complex components, such as "Tooltip",
+"Pagination", or "DangerZone". This ability to name (and importantly,
+not name) components is built into component driven libraries such as
+React.
+
+```js
+export default class Tooltip extends React.Component { ... }
+export const Pagination = props => (...)
+```
+
+Especially when it comes to CSS, we run into problems
+quickly because classnames are the base primitive of CSS APIs. This means
+that that historically CSS has forced us to over-index on creating
+names for everything, even those objects that we shouldn't name. We've
+tried to solve these problems through manual approaches like [Block
+Element Modifier (BEM)][bem], mirroring the hand-crafted approach our
+design tools use. The problem with approaches like BEM is that we have
+no way to leave objects unnamed. BEM, and approaches like it,
+represent a local maximum for how we use CSS. Until we get away from
+the requirement to name everything we will be stuck with the problems
+naming everything leaves us with. Consider the following real-world
+example from [Bootstrap][bootstrap], a popular library that offers a
+CSS API.
+
+```html
+<nav aria-label="Pagination Example">
+  <ul class="pagination pagination-lg">
+    <li class="page-item disabled">
+      <a class="page-link" href="#" aria-label="previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item active">
+      <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+```
+
+As it turns out, CSS is too low level to accurately reflect the
+language we use to talk about the components of our system. When given
+a pure CSS API we have to compose the various pieces together
+ourselves. There is no way to check (besides reading the
+documentation) that the way we've used the classes and written the
+markup is supported. There's also confusion caused by the fact that we
+name every element. Do we really need a name for `page-link`? We
+already reference the object using `page-item` and we know it's a link
+because we're using an anchor tag. We're also manually specifying
+accessibility concerns which opens up the potential to break
+accessibility accidentally if you don't know when to use aria
+labels. What does it mean for a page item to be disabled? Can the
+entire pagination component be disabled? How do we evolve our CSS API
+if we can't make guarantees about how consumers are using it?
+
+## A higher level of abstraction
+
+At this point we've touched on a few of the naming issues relating to
+how we build and implement our language's styles. Now we'll look to
+what different abstractions can bring us to solve some of
+them. Remember that we're using specific technologies to talk about
+general problems so the same approach to abstracting can be useful
+whether your platform's styling primitives are CSS or something else.
+
+A CSS style sheet (yes, you read that correctly. A Cascading Style
+Sheets style sheet) is an abstract concept that represents a style
+sheet as defined by the CSS specification. The CSS Object Model
+([CSSOM][cssom]) defines a set of parsing and serialization rules for
+Media Queries, Selectors, and CSS itself (CSS itself is a spec
+composed of multiple specs). Using these built-in platform APIs we can
+build a higher level abstraction that allows us to solve the naming
+issues we've discussed previously.
+
+## When to name components
+
+Components can be though of in levels of sophistication. As you ascend
+higher in the chain, the component is more re-usable but also takes
+more effort to maintain. The list, from lowest to highest is:
+
+1. divs, one-off styles, inline overrides, etc
+1. (private) sub-components
+1. (public) sub-components (components that get too complex for a
+   single file, thus are nested under in a directory. routes.)
+1. A project's components/ folder ("Named objects local to this project")
+1. Design system component library
+   - Can have it's own stages of acceptance, support, and usage suggestions.
+   - is accompanied by additional requirements (documentation, design
+     artifacts, tests, etc)
+
+## Introducing Emotion
+
+[Emotion][emotion] is a library that introduces a new set of
+APIs for the creation, composition, and naming of styles on top of the
+platform's CSS APIs. We'll explore the usage of these APIs from a
+component oriented perspective from the least nameable objects to the
+most depended on components of our language. Although we'll be talking
+about emotion in the context of React, the library can be used without
+React and integrating with other component abstractions as well.
+
+### The div who shall not be named
+
+Every product has a need for soup. Soup is a shorthand for the one off
+styles, that extra div you need to work around a platform issue, or
+glue that binds two slightly-incompatible abstractions together. Soup,
+perhaps more than any other level, needs to be written in a way that
+is easy to delete because there are two basic evolutionary paths for
+soup.
+
+1. To be extended indefinitely
+2. To be continuously deleted and rewritten many times as requirements evolve
+
+The option we want to enable people to choose is option 2. Option 1 is
+the state of much CSS (and other code) in the world. The styles
+written for soup are often bad offenders of being hard to understand
+messes of code and because soup is often the glue between
+abstractions, bad abstractions cause compoundingly worse soup. Some of
+the reasons people extend indefinitely are
+
+- The code behaves non-deterministically so making the smallest
+  possible change is desired so as to not upset the balance
+- Copy/pasted code has been removed from it's original context and the
+  product is complicated enough to work with that not all code paths
+  can be tested (so we don't want to delete the code in question so as
+  to not accidentally break something)
+- It's hard to delete code that isn't co-located. Often CSS is written
+  in separate files, processed by a compiler, and mangled to the point
+  where it can be hard to locate which CSS in which files and what
+  combinations can affect the rendering behavior of the part of the
+  page you're interested in.
+
+All of these reasons have something in common: They have large
+components of fear driving behavior (often the fear of breaking
+production). To be successful at taking Option 2, we need to remove
+the fear that deleting a line of code might break something completely
+unrelated.
+
+Deleting and rewriting code also allows you to come at it with fresh
+perspective for potential new abstractions, so we want to be able to
+easily take the soup and bring it up into the next level on the
+component hierarchy as a sub-component.
+
+### The CSS prop
+
+Emotion provides an API for creating soup that co-locates the styles
+with the rendering path and allows access to theming (more on theming
+later). This API is called the CSS prop and we can use it in
+combination with another core feature, the css tagged template
+literal. Let's start with a small example: Overriding the color of a
+paragraph to give it more emphasis on the page. We really like pink,
+so we'll use `hotpink` to highlight this section of text.
+
+```js
+const MyContent = () => (
+  <div>
+    <p>Some blog post where I am writing about things!</p>
+    <p
+      css={css`
+        color: hotpink;
+      `}
+    >
+      Making this paragraph stand out with color
+    </p>
+    <p>Some more content after the callout</p>
+  </div>
+);
+```
+
+Notice how we've co-located one-off styles in a way that allows us to
+easily delete the styles _with_ the paragraph that uses them. It's
+very clear that none of the other paragraphs use this styling, so we
+don't need to worry about tracking down other usage of it. Using the
+CSS Prop API, we don't need to give a name to this one paragraph that
+happens to have a different color but is otherwise exactly the same as
+every other paragraph.
+
+Looking at a larger example, we can take the pagination code from
+earlier and use the CSS Prop to remove names from objects that don't
+need them. Our first abstraction is going to be at the `page-item`
+level, so we'll create a `PageItem` component for our markup to live
+in.
+
+```js
+cont PageItem = ({ children }) => (
+    <li className="page-item">
+      <a className="page-link" href="#">{children}</a>
+    </li>
+)
+```
+
+Converting this to use the CSS Prop allows us to remove the global
+nature of `page-link`. It no longer references a classname that could
+exist anywhere in our codebase and thus we've removed the ability for
+unexpected results when we render this component.
+
+note: `&` is the "self" selector, so `&:hover` is saying "when this
+component is hovered".
+
+```js
+import { css } from "@emotion/core";
+
+const PageItem = ({ children }) => (
+  <li className="page-item">
+    <a
+      css={css`
+        position: relative;
+        display: block;
+
+        &:hover {
+          z-index: 2;
+        }
+      `}
+      href="#"
+    >
+      {children}
+    </a>
+  </li>
+);
+```
+
+## Unnamed by default
+
+The default options are perhaps one of the strongest levers we
+have when building new products, tools, and even interacting with
+people day to day. Most people end up taking the default path with few
+opting out. Knowing that we have an incredible amount of power to
+determine what the majority of people will do means that we have a
+responsibility to make the best option, the easy option.
+
+When applying that to CSS, that means we need to change the default
+from naming everything to making naming opt-in. _By default_, objects
+in our system should be unnamed. When the abstractions we use rise to
+the level of reusable components we should have an easy path from soup
+to a more structured approach with named objects. Emotion's `css`
+tagged template literal is unnamed by default, you can not get a
+classname from it without additional effort (admittedly the effort is
+small, but once again defaults are overwhelmingly followed). Being
+unnamed by default means we can use the `css` prop and tagged template
+literal to elevate to named object only that which has been reused
+multiple times.
+
+## Working with sub-components
+
+Now that we've seen how to create soup let's take a look at how we can
+move one level up the chain and start creating
+sub-components. Sub-components are named components that compose
+together to create a larger component or system of components.
+
+Let's say we wanted to lay out application out in a classic
+sidebar/content area structure like this:
+
+```
+--------------------
+| s |              |
+| i |              |
+| d |              |
+| e |   content    |
+| b |              |
+| a |              |
+| r |              |
+--------------------
+```
+
+We could set up our app's layout in a component using the css prop as such:
+
+```js
+import { css } from "@emotion/core";
+
+const AppLayout = ({ sidebar, children }) => (
+  <div
+    css={css`
+      max-width: 960px;
+      margin: auto;
+      display: flex;
+    `}
+  >
+    <aside
+      css={css`
+        flex: 1;
+      `}
+    >
+      {sidebar}
+    </aside>
+    <section
+      css={css`
+        flex: 3;
+      `}
+    >
+      {children}
+    </section>
+  </div>
+);
+```
+
+This can be fine in the case that we have a single app and a single
+layout (for example, we could use this component to build a Gatsby
+page layout using `wrapPageElement` APIs). In this case, it can still
+be beneficial to name the components in our layout for clarity. We
+could call them `SidebarArea` and `ContentArea` to denote that we've
+allocated this space to the sidebar navigation and the content
+respectively.
+
+```js
+import { css } from "@emotion/core";
+
+const SidebarArea = ({ children, ...props }) => (
+  <aside
+    css={css`
+      flex: 1;
+    `}
+    {...props}
+  >
+    {children}
+  </aside>
+);
+
+const ContentArea = ({ children, ...props }) => (
+  <section
+    css={css`
+      flex: 3;
+    `}
+    {...props}
+  >
+    {children}
+  </section>
+);
+
+const AppLayout = ({ sidebar, children }) => (
+  <div
+    css={css`
+      max-width: 960px;
+      margin: auto;
+      display: flex;
+    `}
+  >
+    <SidebarArea>{sidebar}</SidebarArea>
+    <ContentArea>{children}</ContentArea>
+  </div>
+);
+```
+
+This approach documents that we have some infrastructure
+dedicated to providing an area for each section of the page. It also
+allows us to not name the containing `div`, which would likely have an
+equally generic name such as `Container` right now. Renaming `div` as
+`Container` may or may not yield benefits depending on how we evolve
+over time. We could, for example, have a `MarketingSiteContainer` and
+an `ApplicationContainer` in the future and in the interest of
+avoiding premature abstraction, we've chosen to not name it yet.
+
+### Pagination
+
+In our pagination example, let's say we wanted to mirror Bootstrap's
+API specifically because we weren't just building a pagination
+component, but we were trying to build a "bootstrap in React" library
+that stayed as true to the original as possible. We could create two
+components to mirror the `page-item` and `page-link` nomenclature.
+
+```js
+import { css } from "@emotion/core";
+
+const PageItem = ({ children, ...props }) => (
+  <li
+    css={css`
+      &:first-child {
+        ...;
+      }
+    `}
+    {...props}
+  >
+    {children}
+  </li>
+);
+
+const PageLink = ({ children, ...props }) => (
+  <a
+    css={css`
+      position: relative;
+      display: block;
+
+      &:hover {
+        z-index: 2;
+      }
+    `}
+    {...props}
+  >
+    {children}
+  </a>
+);
+```
+
+We would then use these in place of the original elements
+
+```js
+import React from "react";
+import { render } from "react-dom";
+
+render(
+  <nav aria-label="Pagination Example">
+    <ul className="pagination pagination-lg">
+      <PageItem disabled>
+        <PageLink href="#" aria-label="previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span className="sr-only">Previous</span>
+        </PageLink>
+      </PageItem>
+      <PageItem>
+        <PageLink href="#">1</PageLink>
+      </PageItem>
+      <PageItem active>
+        <PageLink href="#">
+          2 <span className="sr-only">(current)</span>
+        </PageLink>
+      </PageItem>
+      <PageItem>
+        <PageLink href="#">3</PageLink>
+      </PageItem>
+      <PageItem>
+        <PageLink href="#" aria-label="next">
+          <span aria-hidden="true">&raquo;</span>
+          <span className="sr-only">Next</span>
+        </PageLink>
+      </PageItem>
+    </ul>
+  </nav>,
+  document.getElementById("root")
+);
+```
+
+Something interesting we've done here is that we have a few props
+being passed in to our `PageItem` component (specifically `active` and
+`disabled`). If we go back to our component definition, we can use
+these props to change the way we style the component. In this example
+we're choosing to show a different style of cursor based on whether
+the pagination item is disabled or not.
+
+```js
+const PageItem = ({ children, disabled, ...props }) => (
+  <li
+    css={css`
+      cursor: ${disabled ? "auto" : "pointer"};
+      &:first-child {
+        ...;
+      }
+    `}
+    {...props}
+  >
+    {children}
+  </li>
+);
+```
+
+We are now progressively evolving our system into one that we can talk
+about at a high level. We'll talk more about creating component APIs
+and composing styles later. For now just know that it's possible to
+access props and change how a component styles itself based on those
+props.
+
+## Public and Private Sub-components
+
+The biggest difference between public and private sub-components is
+where they're located relative to the components that use them. A
+private sub-component is a styled-component in the same file as the
+component that uses it. This sub-component is not exported, but is
+named and abstracted out of the core component. This is useful to do
+when components start to get more complicated but aren't ready to be
+fully abstracted into their own files.
+
+For our pagination example, it's likely that `PageItem`, `PageLink`
+and `Pagination` are all going to be used by the consumer, so we'd
+want them to be public. Imagine a directory structure that has the
+component name as the folder name, with each sub-component broken out
+into its own file.
+
+```shell
+➜ tree pagination
+pagination
+├── index.js
+├── page-item.js
+└── page-link.js
+
+0 directories, 3 files
+```
+
+We can use this structure to indicate that `Pagination` uses
+`page-item` and `page-link` as sub-components in the rendering
+tree. We've structured our filesystem in the same way the React
+DevTools will show them in the DOM, making them easier to find.
+
+The `index.js` file could look like this.
+
+```js
+export { default as PageItem } from "./page-item";
+export { default as PageLink } from "./page-link";
+
+export default styled.ul`
+  display: flex;
+`;
+```
+
+and be used in the same way as before:
+
+```js
+import Pagination, { PageItem, PageLink } from "./pagination";
+
+const MyThing = () => (
+  <Pagination size="large">
+    <PageItem disabled>
+      <PageLink href="#" aria-label="previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span className="sr-only">Previous</span>
+      </PageLink>
+    </PageItem>
+  </Pagination>
+);
+```
+
+## A Project's Component's Folder
+
+Our `Pagination` components have been in the codebase a bit now and
+are starting to see some usage outside of the original file we built
+them for. It's time to pull it out into our local components folder. A
+local components folder is like a staging ground for the design
+system. Many components won't make it to this level, and even less
+will make it out of the components folder into the design system.
+
+Our sub-components are likely officially public at this point and we
+have to start thinking about how people are going to use the
+components together. If we've followed Option 2, (deleting and
+rewriting code), it's likely that we can simply move the pagination
+folder to our components folder, rename some imports and call it a
+day. We may also want to take this opportunity to rethink some of the
+easier API changes if we're noticed friction as the component gets
+wider use outside of the original context.
+
+## Bringing it all together: A Design System Component
+
+Now our `Pagination` component doesn't just have wide usage in our
+application, but other products and sites need pagination as well. We
+have to move it out of our project into a more globally accessible
+place.
+
+Assuming that we already have a multi-package repo set up so that we
+have a place to put our design system components we now start thinking
+harder about the way this component will impact the language (and
+thus, every product it touches). It's time to do a rethink of the core
+`Pagination` API.
+
+### Thinking in components
+
+When building components to be reusable we can take roughly two
+approaches
+
+1. Extensible
+2. Locked Down
+
+Extensible components often come in groups that can be replaced
+without additional core API changes. An `Icon` component, for example,
+can be written to take an svg as an argument, allowing a very light
+weight process for adding an icon that may be only useful in a single
+location.
+
+```js
+import { House } from "../house.svg";
+import Icon from "our-icon";
+
+<Icon svg={House} />;
+```
+
+Alternatively, we could lock down the `Icon` API by making it possible
+to only specify the name of a pre-allocated set of icons. This
+provides a conceptually simpler API and also means that the users of
+this component have to engage in a heavier weight process to introduce
+new icons.
+
+```js
+import Icon from "our-icon";
+
+<Icon name="house" />;
+```
+
+The tradeoffs in these approaches are in how many people you need to
+maintain the core libraries and in the failure modes you choose
+(When the user of my component finds themselves in a situation the
+component doesn't work for, do they _override_ the component or do
+they _fork_ the component).
+
+#### Pagination Components
+
+With some API focus in mind let's take a look at the output of our
+pagination. It has looked something like this from the beginning:
+
+```html
+<nav aria-label="Pagination Example">
+  <ul class="pagination pagination-lg">
+    <li class="page-item disabled">
+      <a class="page-link" href="#" aria-label="previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item active">
+      <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+```
+
+One of the first abstractions we can start to notice are blocks of
+elements behaving as a single unit, such as the `<li>` always wrapping
+an `<a>` tag while the `<a>` tag can have a variety of content. The
+`<li>` and the `<a>` are acting as a single unit in this case, so
+let's call that unit `Item`.
+
+The `<nav>` and `<ul>` tags are also used as a single unit. Our
+pagination is _always_ going to be considered a naviation element, so
+we can bundle them together too. We'll use `Pagination` for this.
+
+Finally, we have the option of encapsulating the previous and next
+buttons as logic in our pagination component itself, which leads us to
+another interesting question. Do we need to expose the `Item` component
+at all?
+
+#### Pagination
+
+We'll start with the `Pagination` component. It's two elements
+combined so we'll avoid using a styled component here and because
+neither of the sub-elements need to be named (because we're naming the
+block), we'll use the css Prop.
+
+```js
+export default ({ label, ...props }) => (
+  <nav aria-label={label}>
+    <ul
+      css={css`
+        display: flex;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      `}
+      {...props}
+    >
+      {children}
+    </ul>
+  </nav>
+);
+```
+
+Notice that since we still have the open question of whether we need
+the `Item` component exposed to the user or not, we use `children` to
+pass through anything the user decides they need.
+
+##### Size
+
+The other variation we need to account for is the `size`. When looking
+at the bootstrap code for different sizes, there's a mixin used to
+define larger and smaller sizes, while the default size is left
+implicit.
+
+```scss
+.pagination-lg {
+  @include pagination-size(
+    $pagination-padding-y-lg,
+    $pagination-padding-x-lg,
+    $font-size-lg,
+    $line-height-lg,
+    $border-radius-lg
+  );
+}
+
+.pagination-sm {
+  @include pagination-size(
+    $pagination-padding-y-sm,
+    $pagination-padding-x-sm,
+    $font-size-sm,
+    $line-height-sm,
+    $border-radius-sm
+  );
+}
+```
+
+The mixin is defined as a collection of other mixins and some variables.
+
+```scss
+@mixin pagination-size(
+  $padding-y,
+  $padding-x,
+  $font-size,
+  $line-height,
+  $border-radius
+) {
+  .page-link {
+    padding: $padding-y $padding-x;
+    font-size: $font-size;
+    line-height: $line-height;
+  }
+
+  .page-item {
+    &:first-child {
+      .page-link {
+        @include border-left-radius($border-radius);
+      }
+    }
+    &:last-child {
+      .page-link {
+        @include border-right-radius($border-radius);
+      }
+    }
+  }
+}
+```
+
+It is interesting to note that the mixin applies no styles to the
+`Pagination` elements, but rather overrides the sub-elements
+`page-link` and `page-item`. To make use of these styles, we'll
+co-locate them with their respective components. This has the
+additional benefit that the individual sub-components contain all the
+logic needed to render themselves in every variation they need to be
+rendered in, which makes it easier to test, modify, and use.
+
+We still need to allow users to specify the size on the `Pagination`
+component though, since it's a global API that applies to all
+direct sub-components. We can modify the `children` prop we're using
+to inject our `size` prop by mapping over the `children` and cloning
+the elements. (note: We use `React.Children.map` because it has some
+special handling for React children types).
+
+```js
+export default ({ label, size, ...props }) => (
+  <nav aria-label={label}>
+    <ul
+      css={css`
+        display: flex;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      `}
+      {...props}
+    >
+      {React.Children.map(children, child =>
+        React.cloneElement(child, { size, ...child.props })
+      )}
+    </ul>
+  </nav>
+);
+```
+
+The positioning of `size` that we've chosen is interesting because it
+establishes an order of precedence for how the `size` prop will apply.
+In this case, it means that children can override the `Pagination`
+component's `size` prop. This is another example of choosing
+extensibility vs locking down APIs. Passing the prop down to children
+also allows us to define an explicit contract that others (or
+ourselves, if we don't expose the individual pieces) could implement
+to extend the API and create different types of pagination
+sub-components.
+
+#### Item
+
+`Item` is our next component. It's also a combination of two elements
+so we'll take the same approach and use the CSS Prop.
+
+If we look at the CSS for `page-item`, we see that it's really only
+applying styles conditionally to the `page-link`. Since we aren't
+relying on a pure CSS API anymore, we don't need to use approaches
+that reach into other objects as often and can move the styles into
+the anchor itself. This co-location of the variants of a particular
+element means that we have fewer places to look when trying to figure
+out why a particular element is rendering a particular way. This means
+we can work faster, with more confidence, and most importantly delete
+without fear.
+
+```scss
+.page-item {
+  &:first-child {
+    .page-link {
+      margin-left: 0;
+      @include border-left-radius($border-radius);
+    }
+  }
+  &:last-child {
+    .page-link {
+      @include border-right-radius($border-radius);
+    }
+  }
+
+  &.active .page-link {
+    z-index: 1;
+    color: $pagination-active-color;
+    background-color: $pagination-active-bg;
+    border-color: $pagination-active-border-color;
+  }
+
+  &.disabled .page-link {
+    color: $pagination-disabled-color;
+    pointer-events: none;
+    // Opinionated: remove the "hand" cursor set previously for .page-link
+    cursor: auto;
+    background-color: $pagination-disabled-bg;
+    border-color: $pagination-disabled-border-color;
+  }
+}
+```
+
+From the html output we've been looking at and the SASS code, we can
+consolidate the list of variations we're going to need to support.
+
+- First item
+- Last item
+- Disabled
+- Active
+- hover
+- focus
+
+Notably:
+
+- `disabled` and `active` can not happen at the same time. `disabled`
+  always wins if both are applied.
+- `hover` applies differently based on whether `active` or `disabled`
+  are applied.
+- focus is independent of anything
+- There are styles that apply only to the first or last `Item`
+
+The bootstrap classnames API is well coded in that is makes
+overlapping states apply consistently (`.disabled` always takes
+precedence over `.active` regardless of the classname application
+order). We can do better in our component API because we have richer
+data structures to work with, so let's focus on making illegal states
+_unrepresentable_.
+
+We can represent the possible options for props with a pseudocode object like
+this:
+
+```js
+type Props = {
+  is: IsVariants,
+  position: PosVariants
+};
+
+type IsVariants = DISABLED | ACTIVE;
+
+type PosVariants = FIRST | MIDDLE | LAST;
+```
+
+`focus` and `hover` states _could_ be included in the prop API for
+documentation reasons (to force the rendering of the `Item` component
+in a specific state), but we'll leave them to just CSS for now.
+
+A basic abstraction could look like this:
+
+```js
+const Item = ({ children, is, position, href = "#" }) => (
+  <li>
+    <a href={href}>{children}</a>
+  </li>
+);
+```
+
+##### Theming
+
+The SASS code from Bootstrap uses a bunch of variables to define the
+visual aspects of the pagination component and some interaction
+behaviors (hover, focus, etc).
+
+```scss
+.page-link {
+  position: relative;
+  display: block;
+  padding: $pagination-padding-y $pagination-padding-x;
+  margin-left: -$pagination-border-width;
+  line-height: $pagination-line-height;
+  color: $pagination-color;
+  background-color: $pagination-bg;
+  border: $pagination-border-width solid $pagination-border-color;
+
+  &:hover {
+    z-index: 2;
+    color: $pagination-hover-color;
+    text-decoration: none;
+    background-color: $pagination-hover-bg;
+    border-color: $pagination-hover-border-color;
+  }
+
+  &:focus {
+    z-index: 2;
+    outline: $pagination-focus-outline;
+    box-shadow: $pagination-focus-box-shadow;
+  }
+
+  // Opinionated: add "hand" cursor to non-disabled .page-link elements
+  &:not(:disabled):not(.disabled) {
+    cursor: pointer;
+  }
+}
+```
+
+To avoid losing this ability to define different sizes and colors,
+we'll take a simple pass as using theming to preserve the variables.
+
+```js
+const Item = ({ children, is, position, href = "#" }) => (
+  <li>
+    <a
+      href={href}
+      css={({ pagination }) => css`
+        position: relative;
+        display: block;
+        padding: ${pagination.paddingY} ${pagination.paddingX};
+        margin-left: ${-pagination.borderWidth};
+        line-height: ${pagination.lineHeight};
+        color: ${pagination.color};
+        background-color: ${pagination.bg};
+        border: ${pagination.borderWidth} solid ${pagination.borderColor};
+
+        &:hover {
+          z-index: 2;
+          color: ${pagination.hoverColor};
+          text-decoration: none;
+          background-color: ${pagination.hoverBg};
+          border-color: ${pagination.hoverBorderColor};
+        }
+
+        &:focus {
+          z-index: 2;
+          outline: ${pagination.focusOutline};
+          box-shadow: ${pagination.focusBoxShadow};
+        }
+
+        // Opinionated: add "hand" cursor to non-disabled .page-link elements
+        &:not(:disabled):not(.disabled) {
+          cursor: pointer;
+        }
+      `}
+    >
+      {children}
+    </a>
+  </li>
+);
+```
+
+The full list of theming variables from all of the SASS looks
+something like this. note: these have been calculated by following the
+trail of SASS variables through multiple layers. If we were building
+an entire library based on Bootstrap we could include those extra
+variables here as well.
+
+```js
+const theme = {
+  pagination: {
+    activeBg: "#007bff",
+    activeBorderColor: "#007bff",
+    activeColor: "#fff",
+    bg: "#fff",
+    borderColor: "#dee2e6",
+    borderRadius: ".25rem",
+    borderRadiusLg: ".3rem",
+    borderRadiusSm: ".2rem",
+    borderWidth: TODO,
+    color: "#007bff ",
+    disabledBg: "#fff",
+    disabledBorderColor: "#dee2e6",
+    disabledColor: "#6c757d",
+    focusBoxShadow: "0 0 0 0.2rem ",
+    focusOutline: 0,
+    fontSize: "1rem",
+    fontSizeLg: "1.25rem",
+    fontSizeSm: "0.875rem",
+    hoverBg: "#e9ecef",
+    hoverBorderColor: "#dee2e6",
+    hoverColor: "rgba(0,123,255, 0.25)",
+    lineHeight: "1.25",
+    lineHeightLg: "1.5",
+    lineHeightSm: "1.5",
+    paddingX: ".75rem",
+    paddingXLg: "1.5rem",
+    paddingXSm: ".5rem",
+    paddingY: "5rem",
+    paddingYLg: ".75rem",
+    paddingYSm: ".25rem"
+  }
+};
+```
+
+```js
+const positionStyles = ({ position }) => {
+  switch (position) {
+    case "first":
+      return css``;
+    case "last":
+      return css``;
+    default:
+      return css``;
+  }
+};
+
+const isStyles = ({ is }) => {
+  switch (is) {
+    case "disabled":
+      return css``;
+    case "active":
+      return css``;
+    default:
+      return css``;
+  }
+};
+
+
+// TODO: full pagination implementation and API rethink
+
+[bootstrap]: TODO
+[cssom-spec]: TODO
+[emotion]: TODO
+```
