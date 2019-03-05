@@ -25,7 +25,7 @@ Path 4" is arguably a great name for something that doesn't come up in
 conversation often while "Button" is a great name for the conventional
 `Button` component being shipped as part of a symbol library.
 
-![figma](/img/screen-shot-2019-03-04-at-7.41.44-pm.png "figma")
+![figma](/img/screen-shot-2019-03-04-at-7.41.44-pm.png)
 
 Using component driven models for the technical implementations of our
 components allows us to take a similar approach. On the web we can use
@@ -52,7 +52,7 @@ no way to leave objects unnamed. BEM, and approaches like it,
 represent a local maximum for how we use CSS. Until we get away from
 the requirement to name everything we will be stuck with the problems
 naming everything leaves us with. Consider the following real-world
-example from \[Bootstrap], a popular library that offers a
+example from [Bootstrap](https://getbootstrap.com/), a popular library that offers a
 CSS API.
 
 ```html
@@ -106,7 +106,7 @@ whether your platform's styling primitives are CSS or something else.
 A CSS style sheet (yes, you read that correctly. A Cascading Style
 Sheets style sheet) is an abstract concept that represents a style
 sheet as defined by the CSS specification. The CSS Object Model
-(\[CSSOM]) defines a set of parsing and serialization rules for
+([CSSOM](https://www.w3.org/TR/cssom-1/)) defines a set of parsing and serialization rules for
 Media Queries, Selectors, and CSS itself (CSS itself is a spec
 composed of multiple specs). Using these built-in platform APIs we can
 build a higher level abstraction that allows us to solve the naming
@@ -130,7 +130,7 @@ more effort to maintain. The list, from lowest to highest is:
 
 ## Introducing Emotion
 
-\[Emotion] is a library that introduces a new set of
+[Emotion](https://emotion.sh/docs/introduction) is a library that introduces a new set of
 APIs for the creation, composition, and naming of styles on top of the
 platform's CSS APIs. We'll explore the usage of these APIs from a
 component oriented perspective from the least nameable objects to the
@@ -1029,6 +1029,10 @@ const theme = {
 };
 ```
 
+# Not Really the End
+
+From here on out we can take our `Pagination` components and continue to generalize them until we get to a tested, documented, re-usable component. We can use abstractions that return different styles for sizes, position in a list, and more:
+
 ```js
 const positionStyles = ({ position }) => {
   switch (position) {
@@ -1051,11 +1055,6 @@ const isStyles = ({ is }) => {
       return css``;
   }
 };
-
-
-// TODO: full pagination implementation and API rethink
-
-[bootstrap]: https://getbootstrap.com/
-[cssom-spec]: https://www.w3.org/TR/cssom-1/
-[emotion]: https://emotion.sh/docs/introduction
 ```
+
+The point of this post is to rethink the defaults that we use to construct UI. We should not name everything by default, choosing only to give names when there is meaning to communicate. I also want to introduce you to the idea that the `css` prop allows us to execute on all of the levels of our design system components, from scratchy one-offs up to fully re-usable components that are part of a public library. We can even give names to styles that matter with the css template literal or by using composable objects.
