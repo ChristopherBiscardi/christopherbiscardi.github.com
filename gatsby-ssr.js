@@ -1,6 +1,5 @@
 import React from "react";
 import { ThemeProvider } from "emotion-theming";
-import { MDXProvider } from "@mdx-js/tag";
 
 import PageWrapper from "./page-wrapper";
 import RootWrapper from "./root-wrapper";

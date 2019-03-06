@@ -53,7 +53,7 @@ const components = {
   blockquote: BlockQuote,
   pre: ({ children: { props } }) => {
     // props is for MDXTag, props.props is for code element
-    const lang = props.props.className && props.props.className.split("-")[1];
+    const lang = props.className && props.className.split("-")[1];
     return (
       <div
         css={({ colors }) => ({
