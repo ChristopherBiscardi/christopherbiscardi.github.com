@@ -5265,10 +5265,10 @@ gatsby-link@^2.0.10:
     "@types/reach__router" "^1.0.0"
     prop-types "^15.6.1"
 
-gatsby-mdx@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/gatsby-mdx/-/gatsby-mdx-0.5.0.tgz#1039699fc1233b01bf4b60034ed4a36017d89d68"
-  integrity sha512-jsRkd1khy7xcMrcAwdrBsxz7G5qMHpfJxKGtJlIHU4VsWyE1YeUgg7IuKhokLv8231N7XOLq6hxN5FG+WWtxTg==
+gatsby-mdx@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/gatsby-mdx/-/gatsby-mdx-0.5.1.tgz#9a9ce6d055a67adeaea3f3be3880b0ca21e94796"
+  integrity sha512-CHXtSs+l+hhNFxOCQW00/gkNK3qKHqSFxGVpSRq7wfcKGiwUb9oRJzkQbqQISMJ8WFFwdgEObx6opWVURdpmfA==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.0.0"
     debug "^4.0.1"
@@ -5291,10 +5291,10 @@ gatsby-mdx@^0.5.0:
     unist-util-remove "^1.0.1"
     unist-util-visit "^1.4.0"
 
-gatsby-mdx@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/gatsby-mdx/-/gatsby-mdx-0.5.1.tgz#9a9ce6d055a67adeaea3f3be3880b0ca21e94796"
-  integrity sha512-CHXtSs+l+hhNFxOCQW00/gkNK3qKHqSFxGVpSRq7wfcKGiwUb9oRJzkQbqQISMJ8WFFwdgEObx6opWVURdpmfA==
+gatsby-mdx@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/gatsby-mdx/-/gatsby-mdx-0.5.2.tgz#e0c8493cd5ac061d492b501dfea6260bdb0c8524"
+  integrity sha512-a0e9/DA3WIwuPcSMw1/0jUJwZjvPrprIrCw2kratmAtcqfRRGvrywDa0AWtlES+fTofHx4FusyX0imWGNPWwfg==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.0.0"
     debug "^4.0.1"
@@ -5414,10 +5414,10 @@ gatsby-plugin-sharp@^2.0.17:
     sharp "^0.21.0"
     svgo "^0.7.2"
 
-gatsby-plugin-webmention@^0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-webmention/-/gatsby-plugin-webmention-0.0.9.tgz#fec298569c75a73708a2056fd3f162a4a89ee782"
-  integrity sha512-trFbHp22uoYpc78TC9SImaUZld+38PVtd6YUm50bSsH6rppif28tPaw4ZQY8sKUQZNsM6Qbv3yFwVfjMeqJHCA==
+gatsby-plugin-webmention@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-webmention/-/gatsby-plugin-webmention-0.1.0.tgz#bf657fd2ec315377afd30c77186cfaaecc262274"
+  integrity sha512-gOYsmhHCNkkm5c0/GrojiSM84BI4sNcP3O23H4qIWcSf2bsFy1+rKdwknkLOwjBrAx8uamUEtujmjY6jknyN9A==
   dependencies:
     camelcase-keys "^5.0.0"
     gatsby-node-helpers "^0.3.0"

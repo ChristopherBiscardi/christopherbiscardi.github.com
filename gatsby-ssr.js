@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeProvider } from "emotion-theming";
+//import { ThemeProvider } from "emotion-theming";
 
 import PageWrapper from "./page-wrapper";
 import RootWrapper from "./root-wrapper";
