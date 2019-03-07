@@ -51,6 +51,7 @@ const components = {
   sub: Sub,
   sup: Sup,
   blockquote: BlockQuote,
+  img: props => <img {...props} css={{ maxWidth: "100%" }} />,
   pre: ({ children: { props } }) => {
     // props is for MDXTag, props.props is for code element
     const lang = props.className && props.className.split("-")[1];
