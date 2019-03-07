@@ -88,13 +88,6 @@ exports.onCreateWebpackConfig = ({
   });
 };
 
-exports.onCreateBabelConfig = ({ actions, stage }) => {
-  actions.setBabelPreset({
-    name: `@emotion/babel-preset-css-prop`,
-    stage
-  });
-};
-
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions;
 
