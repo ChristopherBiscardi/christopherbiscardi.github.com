@@ -3,6 +3,7 @@ import { graphql } from "gatsby";
 import MDXRenderer from "gatsby-mdx/mdx-renderer";
 import SEO from "./seo";
 import { Heading, Text } from "sens8";
+import ResponsiveEmbed from "react-responsive-embed";
 
 import SiteLayout from "./site-layout";
 
@@ -63,6 +64,14 @@ export default class BlogPost extends Component {
         >
           <Heading level={1}>{data.mdx.frontmatter.title}</Heading>
         </div>
+        {data.mdx.frontmatter.egghead && (
+          <ResponsiveEmbed
+            css={{ maxWidth: "38rem" }}
+            allowFullScreen
+            src={data.mdx.frontmatter.egghead}
+          />
+        )}
+
         <div
           data-id="wrapper"
           css={{
@@ -167,6 +176,7 @@ export const pageQuery = graphql`
       }
       frontmatter {
         title
+        egghead
       }
     }
     webmentions: allWebMentionEntry(
