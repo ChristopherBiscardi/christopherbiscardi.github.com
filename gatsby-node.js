@@ -59,6 +59,7 @@ exports.createPages = ({ graphql, actions }) => {
             component: require.resolve("./src/blog-post"),
             context: {
               id: node.id,
+              title: frontmatter.title,
               webmentionMatchURL: node.fields.webmentionMatchURL
             }
           });

@@ -43,6 +43,7 @@
     "gatsby-remark-prismjs": "3.1.4",
     "gatsby-transformer-sharp": "^2.1.10",
     "husky": "^1.2.0",
+    "jimp": "^0.6.0",
     "lint-staged": "^8.1.0",
     "lodash.throttle": "^4.1.1",
     "palx": "^1.0.3",
@@ -58,6 +59,8 @@
     "react-sidebar": "^3.0.2",
     "react-use": "^5.1.1",
     "resize-observer-polyfill": "^1.5.1",
+    "rev-hash": "^2.0.0",
+    "stopword": "^0.1.15",
     "styled-system": "^3.1.11"
   },
   "devDependencies": {

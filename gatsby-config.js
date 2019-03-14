@@ -11,6 +11,7 @@ module.exports = {
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
     `gatsby-plugin-emotion`,
+    `gatsby-plugin-og-image`,
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,
     {

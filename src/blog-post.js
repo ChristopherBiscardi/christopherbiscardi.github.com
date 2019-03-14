@@ -42,6 +42,8 @@ export default class BlogPost extends Component {
     let src = undefined;
     if (data.mdx.fields.featuredImage) {
       src = data.mdx.fields.featuredImage.childImageSharp.fixed.src;
+    } else {
+      src = data.ogImage.src;
     }
     return (
       <SiteLayout
@@ -158,7 +160,7 @@ export default class BlogPost extends Component {
 }
 
 export const pageQuery = graphql`
-  query($id: String!, $webmentionMatchURL: String!) {
+  query($id: String!, $webmentionMatchURL: String!, $title: String) {
     mdx(id: { eq: $id }) {
       id
       code {
@@ -178,6 +180,9 @@ export const pageQuery = graphql`
         title
         egghead
       }
+    }
+    ogImage {
+      src(text: $title)
     }
     webmentions: allWebMentionEntry(
       filter: {
