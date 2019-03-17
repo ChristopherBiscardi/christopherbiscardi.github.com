@@ -48,7 +48,7 @@ const components = {
       }}
     />
   ),
-  a: props => <Link {...props} css={{ color: "#ff5e99" }} />,
+  a: Link,
   sub: Sub,
   sup: Sup,
   blockquote: BlockQuote,
