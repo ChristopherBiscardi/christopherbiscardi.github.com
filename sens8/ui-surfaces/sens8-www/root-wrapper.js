@@ -2,14 +2,14 @@ import React from "react";
 import theme from "@sens8/tokens";
 import { Global, css } from "@emotion/core";
 import { MDXProvider } from "@mdx-js/tag";
-import { Heading, Text, Code, OrderedList } from "sens8";
-import { ThemeProvider } from "emotion-theming";
+import { Heading, Text, Code, OrderedList, UnorderedList } from "sens8";
+import { Sens8Context } from "@sens8/tokens";
 import Helmet from "react-helmet";
 
 import LiveCode from "./src/components/live-code";
 
 export default ({ children }) => (
-  <ThemeProvider theme={theme}>
+  <Sens8Context.Provider value={theme}>
     <Global
       styles={css`
         * {
@@ -39,6 +39,7 @@ export default ({ children }) => (
         p: Text,
         ol: props => <OrderedList {...props} />,
         "ol.li": props => <li {...props} css={{ marginTop: ".5em" }} />,
+        ul: props => <UnorderedList {...props} />,
         code: ({ children, "react-live": useReactLive, ...props }) =>
           useReactLive ? (
             <LiveCode {...props}>{children}</LiveCode>
@@ -61,5 +62,5 @@ export default ({ children }) => (
         {children}
       </>
     </MDXProvider>
-  </ThemeProvider>
+  </Sens8Context.Provider>
 );

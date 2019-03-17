@@ -1,10 +1,11 @@
 /** @jsx jsx */
 import React from "react";
-import { Global, css, jsx } from "@emotion/core";
+import { jsx } from "@emotion/core";
 import Highlight, { defaultProps } from "prism-react-renderer";
-import { withTheme } from "emotion-theming";
+import { useCodeTheme } from "@sens8/tokens";
 
-export default withTheme(({ theme, is, children, lang = "markup", ...etc }) => {
+export default ({ is, children, lang = "markup", ...etc }) => {
+  const theme = useCodeTheme();
   const props = {
     ...etc,
     className: etc.className ? etc.className : `language-${lang}`
@@ -52,4 +53,4 @@ export default withTheme(({ theme, is, children, lang = "markup", ...etc }) => {
       )}
     </Highlight>
   );
-});
+};

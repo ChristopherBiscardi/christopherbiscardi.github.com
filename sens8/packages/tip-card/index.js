@@ -1,16 +1,22 @@
 /** @jsx jsx */
 import React from "react";
-import styled from "@emotion/styled";
 import { jsx } from "@emotion/core";
-import { width, color } from "styled-system";
-import { opacify } from "polished";
+import { transparentize } from "polished";
+import { useLayers, useLinkColor } from "@sens8/tokens";
 
-export default styled.div`
-  background: ${({ theme }) => theme.colors.raw.blue["70"]};
-  box-shadow: 0 6px 8px
-      ${({ theme }) => opacify(0.97, theme.colors.raw.blue["80"])},
-    0 1px 2px ${({ theme }) => opacify(0.7, theme.colors.raw.blue["80"])};
-  color: ${({ theme }) => theme.colors.text} ${width};
-`;
-//rgba(102, 119, 136, 0.03)
-//rgba(102, 119, 136, 0.3)
+const TipCard = props => {
+  const backgroundColor = useLayers(1);
+  const shadowColor = useLinkColor(1);
+  return (
+    <div
+      {...props}
+      css={{
+        backgroundColor,
+        boxShadow: `0 6px 8px ${transparentize(0.97, shadowColor)},
+ 0 1px 2px ${transparentize(0.7, shadowColor)}`
+      }}
+    />
+  );
+};
+
+export default TipCard;
