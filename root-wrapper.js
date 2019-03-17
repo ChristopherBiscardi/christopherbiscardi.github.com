@@ -3,6 +3,7 @@ import { ThemeProvider } from "emotion-theming";
 import { MDXProvider } from "@mdx-js/tag";
 import theme from "@sens8/tokens";
 import { Global } from "@emotion/core";
+import { Sens8Context } from "@sens8/tokens";
 
 import Text, {
   OL,
@@ -80,20 +81,22 @@ const components = {
 
 export default ({ children, ...props }) => (
   <ThemeProvider theme={theme}>
-    <MDXProvider components={components}>
-      <Global
-        styles={{
-          "*": {
-            margin: 0,
-            padding: 0,
-            boxSizing: "border-box"
-          },
-          body: {
-            background: theme.colors.background
-          }
-        }}
-      />
-      <div>{children}</div>
-    </MDXProvider>
+    <Sens8Context.Provider value={theme}>
+      <MDXProvider components={components}>
+        <Global
+          styles={{
+            "*": {
+              margin: 0,
+              padding: 0,
+              boxSizing: "border-box"
+            },
+            body: {
+              background: theme.colors.background
+            }
+          }}
+        />
+        <div>{children}</div>
+      </MDXProvider>
+    </Sens8Context.Provider>
   </ThemeProvider>
 );
