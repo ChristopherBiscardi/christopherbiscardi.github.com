@@ -38,3 +38,8 @@ export const useCodeTheme = () => {
   const { code } = useTheme();
   return code;
 };
+
+export const useFont = name => {
+  const { fontFamilyStyle } = useTheme();
+  return name ? fontFamilyStyle[name] : fontFamilyStyle;
+};
