@@ -3,10 +3,28 @@ import { graphql } from "gatsby";
 import MDXRenderer from "gatsby-mdx/mdx-renderer";
 import SEO from "./seo";
 import { Heading, Text } from "sens8";
+import { useLayers, useTextColor } from "@sens8/tokens";
 import ResponsiveEmbed from "react-responsive-embed";
 
 import SiteLayout from "./site-layout";
 
+const Hero = props => {
+  const backgroundColor = useLayers(1);
+  return (
+    <div
+      css={{
+        display: "flex",
+        background: backgroundColor,
+        height: "30vh",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "1.5rem"
+      }}
+    >
+      <Heading level={1}>{props.title}</Heading>
+    </div>
+  );
+};
 // TODO: Use a custom form and lambdas on netlify to handle convertkit
 // form submissions
 class ConvertKitForm extends Component {
@@ -54,18 +72,8 @@ export default class BlogPost extends Component {
           title={data.mdx.frontmatter.title}
           image={src}
         />
-        <div
-          css={theme => ({
-            display: "flex",
-            background: theme.colors.raw.neutral[90],
-            height: "30vh",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: "1.5rem"
-          })}
-        >
-          <Heading level={1}>{data.mdx.frontmatter.title}</Heading>
-        </div>
+        <Hero title={data.mdx.frontmatter.title} />
+
         {data.mdx.frontmatter.egghead && (
           <ResponsiveEmbed
             css={{ maxWidth: "38rem" }}
@@ -94,70 +102,76 @@ export default class BlogPost extends Component {
         <ConvertKitForm />
 
         <hr
-          css={({ colors }) => ({
-            borderColor: colors.raw.neutral[90],
-            borderTop: `1px solid ${colors.raw.neutral[100]}`,
+          css={{
+            borderColor: "white",
+            borderTop: `1px solid black`,
             paddingTop: "1px"
-          })}
+          }}
         />
-        {data.webmentions && (
-          <div
-            css={({ colors }) => ({
-              margin: "auto",
-              marginTop: "1.5rem",
-              maxWidth: "400px"
-            })}
-          >
-            <Heading>Web Mentions</Heading>
-            {data.webmentions.edges.map(({ node }) => {
-              const { content, author } = node;
-              return (
-                <div
-                  key={node.id}
-                  css={({ colors }) => ({
-                    display: "flex",
-                    maxWidth: "500px",
-                    padding: ".5rem",
-                    borderBottom: `1px solid ${colors.raw.neutral[80]}`,
-                    borderRadius: `3px`,
-                    background: colors.raw.neutral[70]
-                  })}
-                >
-                  <img
-                    css={{
-                      borderRadius: "100%",
-                      width: "4rem",
-                      height: "4rem"
-                    }}
-                    src={author.photo}
-                  />
-                  <div css={{ flex: 1, marginLeft: ".5rem" }}>
-                    <a href={author.url} css={{ textDecoration: "none" }}>
-                      <Heading level={4}>{author.name}</Heading>
-                    </a>
-                    {content.html ? (
-                      <div
-                        css={({ colors }) => ({
-                          color: colors.text,
-                          "& a": {
-                            color: "#ff5e99"
-                          }
-                        })}
-                        dangerouslySetInnerHTML={{ __html: content.html }}
-                      />
-                    ) : (
-                      <Text css={{ minWidth: 0 }}>{content.text}</Text>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        {data.webmentions && <WebMentions mentions={data.webmentions} />}
       </SiteLayout>
     );
   }
 }
+
+const WebMentions = props => {
+  const layers = useLayers();
+  const textColor = useTextColor();
+  return (
+    <div
+      css={{
+        margin: "auto",
+        marginTop: "1.5rem",
+        maxWidth: "400px"
+      }}
+    >
+      <Heading>Web Mentions</Heading>
+      {props.mentions.edges.map(({ node }) => {
+        const { content, author } = node;
+        return (
+          <div
+            key={node.id}
+            css={{
+              display: "flex",
+              maxWidth: "500px",
+              padding: ".5rem",
+              borderBottom: `1px solid ${layers[2]}`,
+              borderRadius: `3px`,
+              background: layers[1]
+            }}
+          >
+            <img
+              css={{
+                borderRadius: "100%",
+                width: "4rem",
+                height: "4rem"
+              }}
+              src={author.photo}
+            />
+            <div css={{ flex: 1, marginLeft: ".5rem" }}>
+              <a href={author.url} css={{ textDecoration: "none" }}>
+                <Heading level={4}>{author.name}</Heading>
+              </a>
+              {content.html ? (
+                <div
+                  css={{
+                    color: textColor,
+                    "& a": {
+                      color: "#ff5e99"
+                    }
+                  }}
+                  dangerouslySetInnerHTML={{ __html: content.html }}
+                />
+              ) : (
+                <Text css={{ minWidth: 0 }}>{content.text}</Text>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export const pageQuery = graphql`
   query($id: String!, $webmentionMatchURL: String!, $title: String) {

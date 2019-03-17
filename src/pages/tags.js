@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { graphql, Link } from "gatsby";
 
 import { Heading } from "sens8";
+import { useTextColor } from "@sens8/tokens";
 import SiteLayout from "../site-layout";
 import Img from "gatsby-image";
 
@@ -52,16 +53,7 @@ export default class TagsPage extends Component {
         </div>
         <ul>
           {this.props.data.allMdx.byTag.map(({ tag }) => (
-            <li>
-              <Link
-                to={`/tags/${tag}`}
-                css={({ colors }) => ({
-                  color: colors.text
-                })}
-              >
-                {tag}
-              </Link>
-            </li>
+            <TagItem tag={tag} />
           ))}
         </ul>
       </SiteLayout>
@@ -69,6 +61,21 @@ export default class TagsPage extends Component {
   }
 }
 
+const TagItem = ({ tag }) => {
+  const textColor = useTextColor();
+  return (
+    <li>
+      <Link
+        to={`/tags/${tag}`}
+        css={{
+          color: textColor
+        }}
+      >
+        {tag}
+      </Link>
+    </li>
+  );
+};
 export const pageQuery = graphql`
   query TagsPageQuery {
     allMdx {

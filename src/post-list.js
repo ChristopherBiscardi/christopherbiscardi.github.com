@@ -4,6 +4,7 @@ import Img from "gatsby-image";
 import { graphql, Link } from "gatsby";
 
 import { Heading, Text, Tag } from "sens8";
+import { useTextColor, useLayers } from "@sens8/tokens";
 
 export default class PostList extends Component {
   render() {
@@ -42,61 +43,57 @@ export default class PostList extends Component {
   }
 }
 
-class PostListItem extends Component {
-  render() {
-    const { url, title, excerpt, tags, featuredImage /*, date*/ } = this.props;
-    return (
-      <div
+const PostListItem = ({ url, title, excerpt, tags, featuredImage }) => {
+  const textColor = useTextColor();
+  const backgroundColor = useLayers(1);
+  return (
+    <div
+      css={{
+        margin: "auto",
+        padding: "1rem",
+        background: backgroundColor,
+        maxWidth: "38rem",
+        marginTop: "1.5rem"
+      }}
+    >
+      {featuredImage && (
+        <Img
+          css={{ marginBottom: "1rem" }}
+          alt={title}
+          fluid={featuredImage.childImageSharp.fluid}
+        />
+      )}
+      <Heading
         css={{
-          margin: "auto",
-          padding: "1rem",
-          background: "#1f2933",
-          maxWidth: "38rem",
-          marginTop: "1.5rem"
+          borderLeft: "3px solid #ff5e99",
+          paddingLeft: "1rem"
         }}
       >
-        {featuredImage && (
-          <Img
-            css={{ marginBottom: "1rem" }}
-            alt={title}
-            fluid={featuredImage.childImageSharp.fluid}
-          />
-        )}
-        <Heading
-          css={{
-            borderLeft: "3px solid #ff5e99",
-            paddingLeft: "1rem"
-          }}
-        >
-          {title}
-        </Heading>
-        <Text css={{ minWidth: "inherit" }}>
-          {excerpt}
-          &nbsp;
-        </Text>
-        <Text css={{ minWidth: "inherit" }}>
-          <Link to={url} css={{ color: "#ff5e99" }}>
-            Read more...
-          </Link>
-        </Text>
+        {title}
+      </Heading>
+      <Text css={{ minWidth: "inherit" }}>
+        {excerpt}
+        &nbsp;
+      </Text>
+      <Text css={{ minWidth: "inherit" }}>
+        <Link to={url} css={{ color: "#ff5e99" }}>
+          Read more...
+        </Link>
+      </Text>
 
-        <div>
-          {tags &&
-            tags.map(v => (
-              <Tag key={v} css={{ fontFamily: "Inter UI" }}>
-                <Link
-                  to={`/tags/${v}`}
-                  css={({ colors }) => ({ color: colors.text })}
-                >
-                  {v}
-                </Link>
-              </Tag>
-            ))}
-        </div>
+      <div>
+        {tags &&
+          tags.map(v => (
+            <Tag key={v}>
+              <Link to={`/tags/${v}`} css={{ color: textColor }}>
+                {v}
+              </Link>
+            </Tag>
+          ))}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export const PostListItemFragment = graphql`
   fragment PostListItemFragment on Mdx {

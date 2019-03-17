@@ -27,7 +27,7 @@ export default class ContentByTagTemplate extends Component {
             fluid={this.props.data.headingImage.childImageSharp.fluid}
           />
           <section
-            css={theme => ({
+            css={{
               position: "absolute",
               top: 0,
               width: "100%",
@@ -39,7 +39,7 @@ export default class ContentByTagTemplate extends Component {
               height: "40vh",
               justifyContent: "center",
               marginBottom: "1.5rem"
-            })}
+            }}
           >
             <Heading
               css={{

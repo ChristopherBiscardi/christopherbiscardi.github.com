@@ -3,9 +3,35 @@ import Helmet from "react-helmet";
 import { graphql, Link } from "gatsby";
 import theme from "@sens8/tokens";
 import { Heading, Text } from "sens8";
+import { useLayers } from "@sens8/tokens";
 import Img from "gatsby-image";
 
 import Nav from "../navigation";
+
+const Hero = props => {
+  const backgroundColor = useLayers(0);
+  return (
+    <div
+      css={{
+        alignItems: "center",
+        background: backgroundColor,
+        display: "flex",
+        flexDirection: "column",
+        height: "30vh",
+        justifyContent: "center"
+      }}
+    >
+      <Heading
+        level={1}
+        css={{
+          color: "#ff79c6"
+        }}
+      >
+        Chris Biscardi
+      </Heading>
+    </div>
+  );
+};
 
 export default class IndexPage extends Component {
   render() {
@@ -18,25 +44,7 @@ export default class IndexPage extends Component {
           <meta name="referrer" content="origin" />
         </Helmet>
         <Nav />
-        <div
-          css={{
-            alignItems: "center",
-            background: theme.colors.background,
-            display: "flex",
-            flexDirection: "column",
-            height: "30vh",
-            justifyContent: "center"
-          }}
-        >
-          <Heading
-            level={1}
-            css={{
-              color: "#ff79c6"
-            }}
-          >
-            Chris Biscardi
-          </Heading>
-        </div>
+        <Hero />
         <div
           css={{
             "@media only screen and (min-width : 700px)": {
@@ -48,7 +56,7 @@ export default class IndexPage extends Component {
           }}
         >
           {featuredPosts.edges.map(({ node }) => (
-            <Link to={node.fields.slug}>
+            <Link to={node.fields.slug} css={{ textDecoration: "none" }}>
               <FeaturedPost {...node} />
             </Link>
           ))}
@@ -59,9 +67,15 @@ export default class IndexPage extends Component {
 }
 
 const FeaturedPost = ({ id, frontmatter, fields, excerpt }) => {
+  const backgroundColor = useLayers(1);
   if (!frontmatter.featuredImage && !fields.featuredImage) {
     return (
-      <div css={({ colors }) => ({ background: colors.raw.neutral[70] })}>
+      <div
+        css={{
+          background: backgroundColor,
+          padding: ".5rem"
+        }}
+      >
         <Heading>{frontmatter.title}</Heading>
         <Text>{excerpt}</Text>
       </div>
