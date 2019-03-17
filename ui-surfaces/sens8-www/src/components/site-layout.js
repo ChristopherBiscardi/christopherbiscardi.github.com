@@ -2,66 +2,80 @@ import React, { Component } from "react";
 import styled from "@emotion/styled";
 import { css, ClassNames } from "@emotion/core";
 import { Link, StaticQuery, graphql } from "gatsby";
+const { useLayers, useTextColor } = require("@sens8/tokens");
 
 import { Heading } from "sens8";
 
-const Wrapper = styled.section`
-  background: ${({ theme }) => theme.colors.background};
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  width: 100%;
-  padding: 1.5em;
-`;
+const Wrapper = props => {
+  const backgroundColor = useLayers(0);
+  return (
+    <section
+      {...props}
+      css={css`
+        background: ${backgroundColor};
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        width: 100%;
+        padding: 1.5em;
+      `}
+    />
+  );
+};
 
-const Sidebar = styled.section`
-  background: ${({ theme }) => theme.colors.background};
-  border-right: 1px solid ${({ theme }) => theme.colors.background};
-  border-left: 3px solid ${({ theme }) => theme.colors.background};
-`;
+const Sidebar = props => {
+  const backgroundColor = useLayers(0);
+  const borderColor = useLayers(1);
+  return (
+    <section
+      {...props}
+      css={{
+        background: backgroundColor,
+        borderRight: `1px solid ${borderColor}`,
+        borderRight: `3px solid ${borderColor}`
+      }}
+    />
+  );
+};
 
-class NavElement extends Component {
-  render() {
-    const { to, children } = this.props;
-    return (
-      <ClassNames>
-        {({ css: classNameCSS, cx }) => {
-          const active = classNameCSS`
+const NavElement = ({ to, children }) => {
+  const textColor = useTextColor();
+  return (
+    <ClassNames>
+      {({ css: classNameCSS, cx }) => {
+        const active = classNameCSS`
             border-left: 5px solid #fff;
             padding-left: 0;
-        `;
+         `;
 
-          return (
-            <li>
-              <Link
-                to={to}
-                css={({ colors }) =>
-                  css`
-                    display: flex;
-                    flex: 1;
-                    padding: 0.5em;
-                    text-decoration: none;
-                    color: ${colors.text};
-                    margin-left: -3px;
-                    padding-left: calc(3px+0.5em);
-                    &:active {
-                      border-left: 5px solid #fff;
-                    }
-                  `
+        return (
+          <li>
+            <Link
+              to={to}
+              css={css`
+                display: flex;
+                flex: 1;
+                padding: 0.5em;
+                text-decoration: none;
+                color: ${textColor};
+                margin-left: -3px;
+                padding-left: calc(3px+0.5em);
+                &:active {
+                  border-left: 5px solid ${textColor};
                 }
-                getProps={({ isCurrent }) =>
-                  isCurrent ? { className: active } : null
-                }
-              >
-                {children}
-              </Link>
-            </li>
-          );
-        }}
-      </ClassNames>
-    );
-  }
-}
+              `}
+              getProps={({ isCurrent }) =>
+                isCurrent ? { className: active } : null
+              }
+            >
+              {children}
+            </Link>
+          </li>
+        );
+      }}
+    </ClassNames>
+  );
+};
 
 class SiteLayout extends Component {
   mkTreeMap = data => {

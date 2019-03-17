@@ -1,4 +1,3 @@
-//import palx from "palx";
 import rawColors from "./src/colors";
 import code from "./src/code";
 import utils from "./utils";
@@ -8,8 +7,10 @@ import utils from "./utils";
 const breakpoints = ["40em", "52em", "64em"];
 
 const colors = {
-  text: rawColors.neutral[0],
-  background: rawColors.neutral[80],
+  text: "#ECEFF4",
+  background: "#2E3440",
+  link: "#fb25a4",
+  layers: ["#2E3440", "#3B4252", "#434C5E", "#4C566A"],
   raw: rawColors
 };
 
@@ -59,3 +60,5 @@ const theme = {
 };
 
 export default theme;
+
+export * from "./context";

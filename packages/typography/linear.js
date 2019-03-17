@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import styled from "@emotion/styled";
 import { css, jsx } from "@emotion/core";
 import { fontSize, color } from "styled-system";
+import { useTextColor, useLinkColor } from "@sens8/tokens";
 import "./font";
 
 export default class Text extends Component {
@@ -13,71 +14,100 @@ export default class Text extends Component {
 }
 
 const lineHeight = 1.5;
-export const P = styled("p")`
-  ${color};
+export const P = props => {
+  const textColor = useTextColor();
+  return (
+    <p
+      {...props}
+      css={theme => [
+        textTransform(props),
+        css`
+          color: ${textColor};
 
-  font-family: "Inter UI", sans-serif;
-  /* Reading Width */
-  // width should be between 45 and 75 characters, 66 is preferred
-  max-width: 38em;
-  min-width: 23em;
+          font-family: "Inter", sans-serif;
+          @supports (font-variation-settings: normal) {
+            & {
+              font-family: "Inter var", sans-serif;
+            }
+          }
+          /* Reading Width */
+          // width should be between 45 and 75 characters, 66 is preferred
+          max-width: 38em;
+          //  min-width: 23em;
 
-  /* Typographic Color */
-  line-height: ${lineHeight};
+          /* Typographic Color */
+          line-height: ${lineHeight};
 
-  /* Hyphenation */
-  hyphenate-limit-lines: 2;
-  hyphenate-limit-char: 6 3 2;
-  // legacy hyphenate-limit-char support
-  hyphenate-limit-before: 3;
-  hyphenate-limit-after: 2;
-  hyphenate-limit-zone: 8%;
-  hyphenate-limit-last: always;
+          /* Hyphenation */
+          hyphenate-limit-lines: 2;
+          hyphenate-limit-char: 6 3 2;
+          // legacy hyphenate-limit-char support
+          hyphenate-limit-before: 3;
+          hyphenate-limit-after: 2;
+          hyphenate-limit-zone: 8%;
+          hyphenate-limit-last: always;
 
-  /* Ligatures */
-  font-feature-settings: "liga" 1;
-  @supports (font-variant-ligatures: common-ligatures) {
-    font-feature-settings: normal;
-    font-variant-ligatures: common-ligatures;
-  }
+          /* Ligatures */
+          font-feature-settings: "liga" 1;
+          @supports (font-variant-ligatures: common-ligatures) {
+            font-feature-settings: normal;
+            font-variant-ligatures: common-ligatures;
+          }
 
-  /* Small Caps */
-  // TODO: investigate how necessary \`font-feature-settings: "smcp" 1, "c2sc" 1\` is
-  font-variant-caps: ${({ smallCaps }) =>
-    smallCaps ? "all-small-caps" : undefined};
-  ${textTransform};
+          /* Small Caps */
+          // TODO: investigate how necessary \`font-feature-settings: "smcp" 1, "c2sc" 1\` is
+          font-variant-caps: ${props.smallCaps ? "all-small-caps" : undefined};
 
-  margin-bottom: 1.5em;
-  & + & {
-    text-indent: ${lineHeight}em;
-    margin-top: 0;
-  }
+          margin-bottom: 1.5em;
+          & + & {
+            text-indent: ${lineHeight}em;
+            margin-top: 0;
+          }
 
-  // oldstyle numbs
-  font-variant-numeric: oldstyle-nums;
-`;
-
-export const Sup = styled.sup`
-  font-variant-position: super;
-  @supports (font-variant-position: super) {
-    & {
-      vertical-align: inherit;
-      font-size: inherit;
-    }
-  }
-`;
-P.defaultProps = {
-  color: "text"
+          // oldstyle numbs
+          font-variant-numeric: oldstyle-nums;
+        `
+      ]}
+    />
+  );
 };
-export const Sub = styled.sub`
-  font-variant-position: sub;
-  @supports (font-variant-position: sub) {
-    & {
-      vertical-align: inherit;
-      font-size: inherit;
-    }
-  }
-`;
+
+export const Sup = props => {
+  const textColor = useTextColor();
+  return (
+    <sup
+      {...props}
+      css={`
+        color: ${textColor};
+        font-variant-position: super;
+        @supports (font-variant-position: super) {
+          & {
+            vertical-align: inherit;
+            font-size: inherit;
+          }
+        }
+      `}
+    />
+  );
+};
+
+export const Sub = props => {
+  const textColor = useTextColor();
+  return (
+    <sub
+      css={`
+        color: ${textColor};
+        font-variant-position: sub;
+        @supports (font-variant-position: sub) {
+          & {
+            vertical-align: inherit;
+            font-size: inherit;
+          }
+        }
+      `}
+    />
+  );
+};
 
 // function buildFontFeatureSettings({smallCaps})
 
@@ -90,70 +120,85 @@ function textTransform({ smallCaps, textTransform, theme }) {
   }
 }
 
-function isQuoted({ quoted }) {
-  if (quoted) {
-    return css`
-      quotes: "“","”","‘","’"
+const Quote = ({ quoted, ...props }) => {
+  return (
+    <blockquote
+      {...props}
+      css={
+        quoted
+          ? css`
+              quotes: "“","”","‘","’"
                 &:before {
-        content: open-quote;
-        margin-left: -0.83ch;
+                content: open-quote;
+                margin-left: -0.83ch;
+              }
+              &:after {
+                content: close-quote;
+              }
+            `
+          : {}
       }
-      &:after {
-        content: close-quote;
-      }
-    `;
-  }
-}
-const Quote = styled(P.withComponent("blockquote"))`
-  ${isQuoted};
-`;
-export class BlockQuote extends Component {
-  render() {
-    // is= [pull, inline]
-    const { is, quoted, children, citation: Citation } = this.props;
-    return (
-      <Quote>
-        <Quote className={quoted}>{children}</Quote>
-        {Citation && (
-          <footer>
-            <Citation />
-          </footer>
-        )}
-      </Quote>
-    );
-  }
-}
+    />
+  );
+};
 
-export const OL = props => (
-  <ol
-    {...props}
-    css={({ colors }) => css`
-      color: ${colors.text};
-      // numerals in line with other linear text
-      padding-left: 0;
-      margin-left: 0;
-      list-style: none;
-      counter-reset: sens8-list;
+// is= [pull, inline]
+export const BlockQuote = ({ is, quoted, children, citation }) => {
+  const textColor = useTextColor();
+  return (
+    <Quote
+      quoted
+      css={{
+        color: textColor,
+        borderLeft: `2px solid ${textColor}`,
+        paddingLeft: "1rem"
+      }}
+    >
+      {children}
+      {citation && <footer>{citation}</footer>}
+    </Quote>
+  );
+};
 
-      & li:before {
-        counter-increment: sens8-list;
-        content: counter(sens8-list);
-        margin-left: -2em;
-        margin-right: 1em;
-      }
-    `}
-  />
-);
+export const OL = props => {
+  const textColor = useTextColor();
+  return (
+    <ol
+      {...props}
+      css={css`
+        color: ${textColor};
+        // numerals in line with other linear text
+        padding-left: 0;
+        margin-left: 0;
+        list-style: none;
+        counter-reset: sens8-list;
 
-export const UL = props => (
-  <ul
-    {...props}
-    css={({ colors }) => ({
-      color: colors.text,
-      paddingLeft: `${lineHeight}em`
-    })}
-  />
-);
+        & li:before {
+          counter-increment: sens8-list;
+          content: counter(sens8-list);
+          margin-left: -${lineHeight}em;
+          margin-right: 1em;
+        }
+      `}
+    />
+  );
+};
+
+export const UL = props => {
+  const textColor = useTextColor();
+  return (
+    <ul
+      {...props}
+      css={{
+        color: textColor,
+        paddingLeft: `${lineHeight}em`,
+        // numerals in line with other linear text
+        paddingLeft: 0,
+        marginLeft: 0
+      }}
+    />
+  );
+};
 
 class List extends Component {
   render() {
@@ -163,12 +208,21 @@ class List extends Component {
   }
 }
 
-export const Link = styled.a`
-  text-decoration: none;
-  border-bottom: 1px solid #ccc;
-  @supports (text-decoration-skip: ink) {
-    text-decoration: underline 1px solid #ccc;
-    text-decoration-skip: ink;
-    border-bottom: 0;
-  }
-`;
+export const Link = ({ as: Component = "a", ...props }) => {
+  const linkColor = useLinkColor();
+  return (
+    <Component
+      {...props}
+      css={css`
+        color: ${linkColor};
+        text-decoration: none;
+        border-bottom: 1px solid ${linkColor};
+        @supports (text-decoration-skip: ink) {
+          text-decoration: underline 1px solid ${linkColor};
+          text-decoration-skip: ink;
+          border-bottom: 0;
+        }
+      `}
+    />
+  );
+};

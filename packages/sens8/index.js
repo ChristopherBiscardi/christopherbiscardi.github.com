@@ -5,7 +5,10 @@ export {
   Heading,
   Code,
   InterUI,
-  OrderedList
+  OrderedList,
+  UnorderedList,
+  BlockQuote,
+  Link
 } from "@sens8/component-typography";
 export { default as Tag } from "@sens8/component-tag";
 export { default as TipCard } from "@sens8/component-tip-card";

@@ -1,4 +1,4 @@
-import { Text } from 'sens8';
+import { Text, BlockQuote, Link } from 'sens8';
 
 # Text
 
@@ -6,7 +6,7 @@ Some textual content
 
 <div>
 <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-tellus augue, laoreet a purus sed, semper cursus massa. Phasellus
+tellus augue, <Link href="/thing">laoreet a purus</Link> sed, semper cursus massa. Phasellus
 dapibus, ex at euismod interdum, enim lectus tincidunt nisi, ac
 dapibus lorem diam a elit. Quisque pulvinar elit ac velit pulvinar
 sodales. Vestibulum arcu magna, condimentum at maximus eget, faucibus
@@ -16,7 +16,8 @@ conubia nostra, per inceptos himenaeos. Duis rhoncus leo ipsum, sed
 hendrerit augue dapibus quis. Vestibulum ultrices, nisi sit amet
 tincidunt rutrum, urna turpis mattis quam, id hendrerit mi enim quis
 diam. Nulla erat mi, accumsan non vestibulum a, laoreet at
-nisi. Phasellus faucibus mi id auctor tempus.</Text> 
+nisi. Phasellus faucibus mi id auctor tempus.</Text>
+<BlockQuote quoted citation={<div>something</div>}>testing</BlockQuote>
 <Text>Phasellus lorem dolor, bibendum a turpis a, ultrices porta
 massa. Morbi ullamcorper risus ac tincidunt semper. Donec bibendum
 mauris sit amet lacus accumsan, id ultricies nulla

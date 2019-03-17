@@ -1,21 +1,24 @@
 import React from "react";
 import { Heading, Text } from "sens8";
 import { css } from "@emotion/core";
-import { withTheme } from "emotion-theming";
+import { useTheme } from "@sens8/tokens";
 
-export default withTheme(({ theme }) => (
-  <div
-    css={css`
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      grid-gap: 2rem;
-    `}
-  >
-    {Object.entries(theme.colors.raw).map(([colorGroupName, v]) => (
-      <MultiColorBox key={colorGroupName} title={colorGroupName} colors={v} />
-    ))}
-  </div>
-));
+export default () => {
+  const theme = useTheme();
+  return (
+    <div
+      css={css`
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        grid-gap: 2rem;
+      `}
+    >
+      {Object.entries(theme.colors.raw).map(([colorGroupName, v]) => (
+        <MultiColorBox key={colorGroupName} title={colorGroupName} colors={v} />
+      ))}
+    </div>
+  );
+};
 
 const MultiColorBox = ({ title, colors }) => (
   <div>

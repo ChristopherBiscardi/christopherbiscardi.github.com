@@ -6,6 +6,6 @@
   "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
   "license": "MIT",
   "devDependencies": {
-    "plop": "^2.2.0"
+    "plop": "^2.3.0"
   }
 }

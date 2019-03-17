@@ -9,7 +9,13 @@ const Span = styled.span`
 `;
 
 export { default as Heading } from "./display";
-export { default as Text, OL as OrderedList } from "./linear";
+export {
+  default as Text,
+  OL as OrderedList,
+  UL as UnorderedList,
+  BlockQuote,
+  Link
+} from "./linear";
 export { default as Code } from "./code";
 export { default as InterUI } from "./font";
 

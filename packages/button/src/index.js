@@ -64,25 +64,28 @@ export default ({ size, is, to, as, children, ...props }) => {
     </Base>
   );
 };
-const BaseButton = styled("button", {
-  // don't forward the is prop
-  shouldForwardProp: prop => (["is"].includes(prop) ? false : isPropValid(prop))
-})`
-line-height: 1.5;
-display: inline-block;
-font-weight: 400;
-text-align: center;
-touch-action: manipulation;
-cursor: pointer;
-background-image: none;
-white-space: nowrap;
+const BaseButton = ({ is, size, color, fontSize }) => (
+  <button
+    css={[
+      isProp({ is }),
+      sizeProp({ size }),
+      css`
+        color: ${color};
+        font-size: ${fontSize};
+        line-height: 1.5;
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        touch-action: manipulation;
+        cursor: pointer;
+        background-image: none;
+        white-space: nowrap;
 
-user-select: none;
-transition: all .3s cubic-bezier(.645,.045,.355,1);
-position: relative;
-    box-shadow: 0 2px 0 rgba(0,0,0,.015);
-    ${fontSize}
-    ${color}
-${sizeProp}
-${isProp}
-`;
+        user-select: none;
+        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        position: relative;
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+      `
+    ]}
+  />
+);
