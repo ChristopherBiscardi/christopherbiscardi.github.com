@@ -10,8 +10,6 @@ Now, having done that, it may seem prudent to put layouts in `wrapRootElement` o
 
 Any given site or other theme can define a application-level layout by wrapping the site using the `wrap*Element` APIs. This means we need to be more defensive about how we build up our theme because multiple themes wrapping the entire application can result in nested layouts!
 
-TODO: digital-garden/blog layout clash
-
 ![](/img/gatsby-theme-nested-layouts.png "Gatsby Themes Nested Layouts")
 
 So if we aren't going to apply our layouts globally, where do they go? The answer is that we can put our layout into each of the templates that use it individually in our theme. After doing this, the layouts will only apply to pages our theme controls, reducing the possibility of clashing with existing code. An added benefit is that with component shadowing, the entire layout for a given page can be overridden by the user with their own layout.
