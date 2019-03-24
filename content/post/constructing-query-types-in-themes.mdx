@@ -1,0 +1,38 @@
+---
+title: Constructing Query Types in Themes
+date: 2019-03-24T02:25:00.462Z
+tags:
+  - gatsby
+  - gatsby-themes
+  - graphql
+---
+Previously, [we covered](/posts/authoring-queries-in-themes) how seemingly innocuous queries can prevent your themes from being composable when used with other themes and even sites you didn't plan for. In this post, we'll cover the core issue a bit more directly.
+
+# Querying Formats and Sources
+
+To refresh your memory, we explored a query for `Mdx` nodes and a similar query for `File` nodes, shown here.
+
+```graphql
+{
+  allMdx(
+    sort: { fields: [frontmatter___date], order: DESC }
+    filter: { frontmatter: { draft: { ne: true } } }
+  ) { ... }
+}
+```
+
+```graphql
+allFile(filter: { sourceInstanceName: { eq: "posts" } }) {
+  edges {
+    node {
+      childMdx {
+        ...
+      }
+    }
+  }
+}
+```
+
+The core problem with both of these queries is that we have a conceptual content type that these represent (`BlogPost`, `Note`, `AuthorBio`, etc) and we're querying a *format* (`Mdx`) or a *source* (`File`) and not a *content type* (`BlogPost`). `Mdx` is how our files are written while `File` is where our files come from. Neither accurately represents a conceptual content type accurately, ie: what the content means to us.
+
+## Creating new types
