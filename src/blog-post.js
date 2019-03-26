@@ -3,10 +3,63 @@ import { graphql } from "gatsby";
 import MDXRenderer from "gatsby-mdx/mdx-renderer";
 import SEO from "./seo";
 import { Heading, Text } from "sens8";
-import { useLayers, useTextColor } from "@sens8/tokens";
+import { useLayers, useTextColor, useLinkColor } from "@sens8/tokens";
+import { useMedia } from "react-use";
+
 import ResponsiveEmbed from "react-responsive-embed";
+import ConvertKitForm from "./components/convertkit-form";
 
 import SiteLayout from "./site-layout";
+
+const ConvertKitFooterish = ({ children, ...props }) => {
+  const layers = useLayers();
+  const borderColor = useLinkColor();
+  return (
+    <div
+      css={{
+        background: layers[1],
+        marginTop: "50px",
+        padding: "1rem",
+        display: "flex",
+        justifyContent: "center",
+        marginBottom: "1.5rem"
+      }}
+    >
+      <div
+        css={{
+          maxWidth: "36em",
+          display: "flex",
+          width: "100%",
+          display: "grid",
+          gridTemplateColumns: "200px 1fr",
+          gridGap: "1rem"
+        }}
+      >
+        <div
+          css={{
+            maxWidth: "200px",
+            background: layers[2],
+            padding: "1rem",
+            borderRadius: "3px",
+            border: `1px solid ${borderColor}`,
+            transform: "translateY(-50px)"
+          }}
+        >
+          <ConvertKitForm />
+        </div>
+        {children ? (
+          children
+        ) : (
+          <Text>
+            My newsletter is where you'll find exclusive content from me. I
+            write about technology, startups, and why you shouldn't call
+            yourself a junior engineer
+          </Text>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const Hero = props => {
   const backgroundColor = useLayers(1);
@@ -25,34 +78,6 @@ const Hero = props => {
     </div>
   );
 };
-// TODO: Use a custom form and lambdas on netlify to handle convertkit
-// form submissions
-class ConvertKitForm extends Component {
-  shouldComponentUpdate() {
-    return false;
-  }
-  render() {
-    return (
-      <div
-        css={{
-          marginBottom: "1.5rem",
-          display: "flex",
-          justifyContent: "center",
-          "& > form": {
-            flex: 1,
-            border: "none"
-          }
-        }}
-      >
-        <script
-          async
-          data-uid="a4c7df1847"
-          src="https://f.convertkit.com/a4c7df1847/0207b2beea.js"
-        />
-      </div>
-    );
-  }
-}
 
 export default class BlogPost extends Component {
   render() {
@@ -73,13 +98,17 @@ export default class BlogPost extends Component {
           image={src}
         />
         <Hero title={data.mdx.frontmatter.title} />
-
+        {data.mdx.frontmatter.isNewsletter && (
+          <ConvertKitFooterish>
+            <Text>
+              This post is an archive from my newsletter. Sign up to receive
+              content like this first, before I edit and release it to the
+              public.
+            </Text>
+          </ConvertKitFooterish>
+        )}
         {data.mdx.frontmatter.egghead && (
-          <ResponsiveEmbed
-            css={{ maxWidth: "38rem" }}
-            allowFullScreen
-            src={data.mdx.frontmatter.egghead}
-          />
+          <ResponsiveEmbed allowFullScreen src={data.mdx.frontmatter.egghead} />
         )}
 
         <div
@@ -99,15 +128,8 @@ export default class BlogPost extends Component {
         >
           <MDXRenderer>{data.mdx.code.body}</MDXRenderer>
         </div>
-        <ConvertKitForm />
+        <ConvertKitFooterish />
 
-        <hr
-          css={{
-            borderColor: "white",
-            borderTop: `1px solid black`,
-            paddingTop: "1px"
-          }}
-        />
         {data.webmentions && <WebMentions mentions={data.webmentions} />}
       </SiteLayout>
     );
@@ -117,12 +139,16 @@ export default class BlogPost extends Component {
 const WebMentions = props => {
   const layers = useLayers();
   const textColor = useTextColor();
+  const isWide = useMedia("(min-width: 480px)");
   return (
     <div
       css={{
         margin: "auto",
         marginTop: "1.5rem",
-        maxWidth: "400px"
+        padding: "0 1rem",
+        gridGap: "1rem",
+        display: "grid",
+        gridTemplateColumns: isWide ? "1fr 1fr 1fr" : "1fr"
       }}
     >
       <Heading>Web Mentions</Heading>
@@ -133,9 +159,9 @@ const WebMentions = props => {
             key={node.id}
             css={{
               display: "flex",
-              maxWidth: "500px",
+
               padding: ".5rem",
-              borderBottom: `1px solid ${layers[2]}`,
+              border: `1px solid ${layers[2]}`,
               borderRadius: `3px`,
               background: layers[1]
             }}
@@ -143,8 +169,8 @@ const WebMentions = props => {
             <img
               css={{
                 borderRadius: "100%",
-                width: "4rem",
-                height: "4rem"
+                width: "49px",
+                height: "49px"
               }}
               src={author.photo}
             />
@@ -193,6 +219,7 @@ export const pageQuery = graphql`
       frontmatter {
         title
         egghead
+        isNewsletter
       }
     }
     ogImage {

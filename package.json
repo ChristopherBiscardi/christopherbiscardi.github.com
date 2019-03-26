@@ -29,6 +29,7 @@
     "@sens8/component-typography": "*",
     "@sindresorhus/slugify": "^0.8.0",
     "emotion-theming": "^10.0.4",
+    "formik": "^1.5.1",
     "gatsby": "2.0.111",
     "gatsby-image": "^2.0.29",
     "gatsby-mdx": "^0.5.2",
@@ -61,7 +62,8 @@
     "resize-observer-polyfill": "^1.5.1",
     "rev-hash": "^2.0.0",
     "stopword": "^0.1.15",
-    "styled-system": "^3.1.11"
+    "styled-system": "^3.1.11",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.2.1",
