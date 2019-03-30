@@ -14,7 +14,7 @@ module.exports = {
       resolve: "gatsby-theme-digital-garden",
       options: {
         notes: "content/note",
-        mdx: undefined // use my own gatsby-mdx
+        mdx: false // use my own gatsby-mdx
       }
     }
   ],

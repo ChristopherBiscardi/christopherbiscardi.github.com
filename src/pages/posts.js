@@ -56,7 +56,10 @@ export default class PostsPage extends Component {
 
 export const pageQuery = graphql`
   query PostsQuery {
-    allMdx(sort: { fields: frontmatter___date, order: DESC }) {
+    allMdx(
+      filter: { fields: { sourceInstanceName: { eq: "posts" } } }
+      sort: { fields: frontmatter___date, order: DESC }
+    ) {
       edges {
         node {
           ...PostListItemFragment

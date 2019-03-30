@@ -94,6 +94,7 @@ const FeaturedPost = ({ id, frontmatter, fields, excerpt }) => {
 export const query = graphql`
   query {
     featuredPosts: allMdx(
+      filter: { fields: { sourceInstanceName: { eq: "posts" } } }
       limit: 10
       sort: { fields: frontmatter___date, order: DESC }
     ) {

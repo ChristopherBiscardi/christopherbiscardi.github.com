@@ -6195,10 +6195,10 @@ gatsby-telemetry@^1.0.4:
     stack-utils "1.0.2"
     uuid "3.3.2"
 
-gatsby-theme-digital-garden@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/gatsby-theme-digital-garden/-/gatsby-theme-digital-garden-0.0.11.tgz#e44805211628ebc9db0faa7c2797636ce484a6f9"
-  integrity sha512-HHZYkdwxyd3g/UWLLE+jtu/PkbjJbSJfO9iY+IkMAyx/U6lsuMC9jqqGVT+QHHRcdvQZk4iDZkLTEQETX2gqoA==
+gatsby-theme-digital-garden@^0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/gatsby-theme-digital-garden/-/gatsby-theme-digital-garden-0.0.12.tgz#38119a2aa0126c2f04af9b00f0dcc426c22a28d0"
+  integrity sha512-h1rZpiW3caM8qJ0mPvhNXpalmW8Iq9fRlnLxClnC5pbhJ1xDnNIrYCFM5w/nnlmZ/x708cbYkf4hHbNs2rYoLQ==
   dependencies:
     gatsby-plugin-meta-redirect "^1.1.1"
     gatsby-plugin-og-image "0.0.1"

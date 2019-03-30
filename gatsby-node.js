@@ -9,7 +9,9 @@ exports.createPages = ({ graphql, actions }) => {
       graphql(
         `
           {
-            allMdx {
+            allMdx(
+              filter: { fields: { sourceInstanceName: { eq: "posts" } } }
+            ) {
               byTag: group(field: frontmatter___tags) {
                 fieldValue
               }
@@ -124,6 +126,12 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
           value: featuredImage
         });
       }
+
+      createNodeField({
+        name: `sourceInstanceName`,
+        node,
+        value: parent.sourceInstanceName
+      });
     }
   }
 };
