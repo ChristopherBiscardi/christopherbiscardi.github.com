@@ -1,6 +1,6 @@
 import React from "react";
 import { ThemeProvider } from "emotion-theming";
-import { MDXProvider } from "@mdx-js/tag";
+import { MDXProvider } from "@mdx-js/react";
 import theme from "@sens8/tokens";
 import { Global } from "@emotion/core";
 import { Sens8Context, useLayers } from "@sens8/tokens";
