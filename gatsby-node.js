@@ -2,6 +2,65 @@ const path = require(`path`);
 const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
 
+exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
+  createTypes(`
+    interface BlogPost @NodeInterface {
+      title: String!
+      body: String!
+      url: String
+      date: Date!
+      egghead: String
+      isNewsletter: Boolean
+    }
+  `);
+
+  /* createTypes(
+   *   schema.buildObjectType({
+   *     name: `MdxBlogPost`,
+   *     fields: {
+   *       title: {
+   *         type: "String!",
+   *         resolve(source, args, context, info) {
+   *           console.log(source, args, context, info);
+   *           return "testing";
+   *         }
+   *       }
+   *     },
+   *     interfaces: [`Node`, `BlogPost`]
+   *   })
+   * ); */
+};
+
+exports.createResolvers = ({ createResolvers }) => {
+  createResolvers({
+    Query: {
+      // Create a new root query field.
+      allBlogPost: {
+        type: [`[[BlogPost]!]`],
+        resolve: async (source, args, context, info) => {
+          /* context.nodeModel.runQuery({
+           *   query: { filter: { tags: { eq: `baz` } } },
+           *   type: `BlogJson`,
+           *   firstOnly: false
+           * }) */
+          const posts = await context.nodeModel.runQuery({
+            query: {
+              filter: {
+                fields: {
+                  sourceInstanceName: { eq: "posts" }
+                }
+              }
+            },
+            type: "Mdx"
+          });
+          console.log(info);
+          return posts;
+        }
+      }
+    }
+  });
+};
+
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
   return new Promise((resolve, reject) => {
