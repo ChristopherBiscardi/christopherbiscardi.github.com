@@ -103,3 +103,31 @@ Replaces `setFieldsOnGraphQLNodeType()` (but the API isn't deprecated yet).
 
 ---
 
+```
+const { paginate } = require('gatsby/dist/schema/resolvers')
+
+allBlogPost: {
+   // type should go automatically because blog post is a node 
+   resolve:  async (source, args, context, info) => {
+      const result = context.nodeModel.runQuery(
+         {
+           query: args,
+           firstOnly: false,
+           type: info.schema.getType('YourBackingType'),
+         },
+         { path: context.path, connectionType: typeName }
+      )
+      return paginate(result, { skip: args.skip, limit: args.limit })
+    }
+},
+```
+
+
+---
+
+https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby/src/schema/types/pagination.js
+
+import schemacomposer
+
+create interface type as the typecomposer
+

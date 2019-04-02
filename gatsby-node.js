@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const path = require(`path`);
 const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
+const { paginate } = require("gatsby/dist/schema/resolvers");
 
 exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
   createTypes(`
@@ -14,6 +15,12 @@ exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
       egghead: String
       isNewsletter: Boolean
     }
+type BlogPostConnection {
+edges: [BlogPostEdge]
+}
+type BlogPostEdge {
+node: BlogPost
+}
   `);
 
   createTypes(
@@ -59,14 +66,23 @@ exports.createResolvers = ({ createResolvers }) => {
     Query: {
       // Create a new root query field.
       allBlogPost: {
-        type: [`BlogPost`],
+        type: `BlogPostConnection`,
         resolve: async (source, args, context, info) => {
-          const posts = await context.nodeModel.runQuery({
-            query: {},
-            type: "MdxBlogPost"
+          const posts = await context.nodeModel.runQuery(
+            {
+              query: args,
+              firstOnly: false,
+              type: "MdxBlogPost"
+            },
+            { path: context.path }
+          );
+          //          console.log(posts);
+          const result = paginate(posts, {
+            skip: args.skip,
+            limit: args.limit
           });
-          console.log(posts);
-          return posts;
+          console.log(result);
+          return result;
         }
       }
     }
