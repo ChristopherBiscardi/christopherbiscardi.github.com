@@ -24,8 +24,8 @@
     "@emotion/babel-preset-css-prop": "^10.0.5",
     "@emotion/core": "^10.0.4",
     "@emotion/styled": "^10.0.4",
-    "@mdx-js/mdx": "1.0.0-alpha.16",
-    "@mdx-js/react": "1.0.0-alpha.16",
+    "@mdx-js/mdx": "1.0.0-alpha.17",
+    "@mdx-js/react": "1.0.0-alpha.17",
     "@rehooks/component-size": "^1.0.2",
     "@sens8/component-typography": "*",
     "@sindresorhus/slugify": "^0.8.0",
@@ -33,7 +33,7 @@
     "formik": "^1.5.1",
     "gatsby": "2.3.4",
     "gatsby-image": "^2.0.29",
-    "gatsby-mdx": "^0.5.5-ci.354",
+    "gatsby-mdx": "0.5.6",
     "gatsby-plugin-emotion": "4.0.4",
     "gatsby-plugin-feed": "^2.0.11",
     "gatsby-plugin-google-analytics": "2.0.8",
@@ -78,8 +78,8 @@
     }
   },
   "resolutions": {
-    "@mdx-js/mdx": "1.0.0-alpha.16",
-    "@mdx-js/react": "1.0.0-alpha.16",
-    "gatsby-mdx": "0.5.5-ci.354"
+    "@mdx-js/mdx": "1.0.0-alpha.17",
+    "@mdx-js/react": "1.0.0-alpha.17",
+    "gatsby-mdx": "0.5.6"
   }
 }

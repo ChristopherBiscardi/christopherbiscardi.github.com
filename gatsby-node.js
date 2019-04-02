@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const path = require(`path`);
 const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
@@ -8,27 +9,49 @@ exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
       title: String!
       body: String!
       url: String
+      tags: [String]
       date: Date!
       egghead: String
       isNewsletter: Boolean
     }
   `);
 
-  /* createTypes(
-   *   schema.buildObjectType({
-   *     name: `MdxBlogPost`,
-   *     fields: {
-   *       title: {
-   *         type: "String!",
-   *         resolve(source, args, context, info) {
-   *           console.log(source, args, context, info);
-   *           return "testing";
-   *         }
-   *       }
-   *     },
-   *     interfaces: [`Node`, `BlogPost`]
-   *   })
-   * ); */
+  createTypes(
+    schema.buildObjectType({
+      name: `MdxBlogPost`,
+      fields: {
+        title: {
+          type: "String!"
+        },
+        body: {
+          type: "String!",
+          resolve(source, args, context, info) {
+            const type = info.schema.getType(`MDXCodeMdx`);
+            const mdxNode = context.nodeModel.getNodeById({
+              id: source.parent
+            });
+            const resolver = type.getFields()["body"].resolve;
+            return resolver(mdxNode, {}, context, {
+              fieldName: "body"
+            });
+          }
+        },
+        url: {
+          type: "String!"
+        },
+        date: {
+          type: "Date!"
+        },
+        egghead: {
+          type: "String"
+        },
+        isNewsletter: {
+          type: "Boolean!"
+        }
+      },
+      interfaces: [`Node`, `BlogPost`]
+    })
+  );
 };
 
 exports.createResolvers = ({ createResolvers }) => {
@@ -36,24 +59,13 @@ exports.createResolvers = ({ createResolvers }) => {
     Query: {
       // Create a new root query field.
       allBlogPost: {
-        type: [`[[BlogPost]!]`],
+        type: [`BlogPost`],
         resolve: async (source, args, context, info) => {
-          /* context.nodeModel.runQuery({
-           *   query: { filter: { tags: { eq: `baz` } } },
-           *   type: `BlogJson`,
-           *   firstOnly: false
-           * }) */
           const posts = await context.nodeModel.runQuery({
-            query: {
-              filter: {
-                fields: {
-                  sourceInstanceName: { eq: "posts" }
-                }
-              }
-            },
-            type: "Mdx"
+            query: {},
+            type: "MdxBlogPost"
           });
-          console.log(info);
+          console.log(posts);
           return posts;
         }
       }
@@ -151,7 +163,7 @@ exports.onCreateWebpackConfig = ({
 };
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
-  const { createNodeField } = actions;
+  const { createNodeField, createNode, createParentChildLink } = actions;
 
   if (node.internal.type === `Mdx`) {
     const { frontmatter } = node;
@@ -191,6 +203,37 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
         node,
         value: parent.sourceInstanceName
       });
+    }
+
+    // create MdxBlogPost
+
+    if (parent.sourceInstanceName === "posts") {
+      const fieldData = {
+        title: node.frontmatter.title,
+        url: node.frontmatter.url || slug,
+        date: node.frontmatter.date,
+        tags: node.frontmatter.tags,
+        egghead: node.frontmatter.egghead,
+        isNewsletter: !!node.frontmatter.isNewsletter
+      };
+
+      createNode({
+        ...fieldData,
+        // Required fields.
+        id: `${node.id} >>> MdxBlogPost`,
+        parent: node.id,
+        children: [],
+        internal: {
+          type: `MdxBlogPost`,
+          contentDigest: crypto
+            .createHash(`md5`)
+            .update(JSON.stringify(fieldData))
+            .digest(`hex`),
+          content: JSON.stringify(fieldData),
+          description: `Satisfies the BlogPost interface for Mdx`
+        }
+      });
+      createParentChildLink({ parent: parent, child: node });
     }
   }
 };
