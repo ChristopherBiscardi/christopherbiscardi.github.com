@@ -2,10 +2,19 @@ const crypto = require("crypto");
 const path = require(`path`);
 const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
-const { paginate } = require("gatsby/dist/schema/resolvers");
+const { findManyPaginated } = require("gatsby/dist/schema/resolvers");
+const { GraphQLDate } = require("gatsby/dist/schema/types/date");
+const { getPagination } = require(`gatsby/dist/schema/types/pagination`);
+const { getSortInput } = require(`gatsby/dist/schema/types/sort`);
+const { getFilterInput } = require(`gatsby/dist/schema/types/filter`);
+
+const { SchemaComposer, InterfaceTypeComposer } = require("graphql-compose");
 
 exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
-  createTypes(`
+  const schemaComposer = new SchemaComposer();
+  schemaComposer.addAsComposer(GraphQLDate);
+  const blogPostIFTC = InterfaceTypeComposer.createTemp(
+    `
     interface BlogPost @NodeInterface {
       title: String!
       body: String!
@@ -15,13 +24,36 @@ exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
       egghead: String
       isNewsletter: Boolean
     }
-type BlogPostConnection {
-edges: [BlogPostEdge]
-}
-type BlogPostEdge {
-node: BlogPost
-}
-  `);
+  `,
+    schemaComposer
+  );
+
+  const sortInputTC = getSortInput({
+    schemaComposer,
+    typeComposer: blogPostIFTC
+  });
+  sortInputTC.setTypeName("BlogPostReallyNotSort");
+  const filterInputTC = getFilterInput({
+    schemaComposer,
+    typeComposer: blogPostIFTC
+  });
+  filterInputTC.setTypeName(`BlogPostReallyNotFilter`);
+  const paginationTC = getPagination({
+    schemaComposer,
+    typeComposer: blogPostIFTC
+  });
+
+  createTypes([
+    schemaComposer.getAnyTC("SortOrderEnum").getType(),
+    schemaComposer.getAnyTC("StringQueryOperatorInput").getType(),
+    schemaComposer.getAnyTC("DateQueryOperatorInput").getType(),
+    schemaComposer.getAnyTC("BooleanQueryOperatorInput").getType(),
+    schemaComposer.getAnyTC("PageInfo").getType(),
+    blogPostIFTC.getType(),
+    sortInputTC.getType(),
+    filterInputTC.getType(),
+    paginationTC.getType()
+  ]);
 
   createTypes(
     schema.buildObjectType({
@@ -67,23 +99,14 @@ exports.createResolvers = ({ createResolvers }) => {
       // Create a new root query field.
       allBlogPost: {
         type: `BlogPostConnection`,
-        resolve: async (source, args, context, info) => {
-          const posts = await context.nodeModel.runQuery(
-            {
-              query: args,
-              firstOnly: false,
-              type: "MdxBlogPost"
-            },
-            { path: context.path }
-          );
-          //          console.log(posts);
-          const result = paginate(posts, {
-            skip: args.skip,
-            limit: args.limit
-          });
-          console.log(result);
-          return result;
-        }
+        args: {
+          filter: "BlogPostReallyNotFilter",
+          sort: "BlogPostReallyNotSort",
+          skip: `Int`,
+          limit: `Int`
+        },
+        resolve: (source, args, context, info) =>
+          findManyPaginated("MdxBlogPost")({ source, args, context, info })
       }
     }
   });
