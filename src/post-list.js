@@ -25,16 +25,16 @@ export default class PostList extends Component {
         }}
       >
         {posts.map(({ node }) => {
-          const { excerpt, frontmatter = {}, id, fields } = node;
+          const { excerpt, title, date, tags, id, url, parent } = node;
           return (
             <PostListItem
               key={id}
               excerpt={excerpt}
-              title={frontmatter.title}
-              date={frontmatter.date}
-              tags={frontmatter.tags}
-              url={fields.slug}
-              featuredImage={fields.featuredImage}
+              title={title}
+              date={date}
+              tags={tags}
+              url={url}
+              featuredImage={parent.fields.featuredImage}
             />
           );
         })}
@@ -96,24 +96,27 @@ const PostListItem = ({ url, title, excerpt, tags, featuredImage }) => {
 };
 
 export const PostListItemFragment = graphql`
-  fragment PostListItemFragment on Mdx {
+  fragment PostListItemFragment on BlogPost {
     id
-    fields {
-      slug
-      featuredImage {
-        childImageSharp {
-          fluid(maxWidth: 700) {
-            ...GatsbyImageSharpFluid
+    date
+    url
+    title
+    tags
+    excerpt
+    ... on MdxBlogPost {
+      parent {
+        ... on Mdx {
+          fields {
+            featuredImage {
+              childImageSharp {
+                fluid(maxWidth: 700) {
+                  ...GatsbyImageSharpFluid
+                }
+              }
+            }
           }
         }
       }
     }
-    frontmatter {
-      date
-      url
-      title
-      tags
-    }
-    excerpt
   }
 `;

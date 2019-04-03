@@ -52,7 +52,7 @@ export default class TagsPage extends Component {
           </section>
         </div>
         <ul>
-          {this.props.data.allMdx.byTag.map(({ tag }) => (
+          {this.props.data.allBlogPost.byTag.map(({ tag }) => (
             <TagItem tag={tag} />
           ))}
         </ul>
@@ -78,8 +78,8 @@ const TagItem = ({ tag }) => {
 };
 export const pageQuery = graphql`
   query TagsPageQuery {
-    allMdx {
-      byTag: group(field: frontmatter___tags) {
+    allBlogPost {
+      byTag: group(field: tags) {
         tag: fieldValue
       }
     }

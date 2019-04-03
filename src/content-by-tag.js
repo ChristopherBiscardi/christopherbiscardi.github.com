@@ -53,7 +53,7 @@ export default class ContentByTagTemplate extends Component {
             </Heading>
           </section>
         </div>
-        <PostList posts={this.props.data.allMdx.edges} />
+        <PostList posts={this.props.data.allBlogPost.edges} />
       </SiteLayout>
     );
   }
@@ -61,9 +61,9 @@ export default class ContentByTagTemplate extends Component {
 
 export const pageQuery = graphql`
   query ContentByTagQuery($tag: String!) {
-    allMdx(
-      sort: { fields: frontmatter___date, order: DESC }
-      filter: { frontmatter: { tags: { in: [$tag] } } }
+    allBlogPost(
+      filter: { tags: { in: [$tag] } }
+      sort: { fields: date, order: DESC }
     ) {
       edges {
         node {

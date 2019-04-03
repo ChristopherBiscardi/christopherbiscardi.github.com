@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Helmet from "react-helmet";
 import { graphql, Link } from "gatsby";
-import theme from "@sens8/tokens";
 import { Heading, Text } from "sens8";
 import { useLayers } from "@sens8/tokens";
 import Img from "gatsby-image";
@@ -56,7 +55,7 @@ export default class IndexPage extends Component {
           }}
         >
           {featuredPosts.edges.map(({ node }) => (
-            <Link to={node.fields.slug} css={{ textDecoration: "none" }}>
+            <Link to={node.url} css={{ textDecoration: "none" }}>
               <FeaturedPost {...node} />
             </Link>
           ))}
@@ -66,9 +65,9 @@ export default class IndexPage extends Component {
   }
 }
 
-const FeaturedPost = ({ id, frontmatter, fields, excerpt }) => {
+const FeaturedPost = ({ id, parent, excerpt, title }) => {
   const backgroundColor = useLayers(1);
-  if (!frontmatter.featuredImage && !fields.featuredImage) {
+  if (!parent.fields.featuredImage) {
     return (
       <div
         css={{
@@ -76,49 +75,40 @@ const FeaturedPost = ({ id, frontmatter, fields, excerpt }) => {
           padding: ".5rem"
         }}
       >
-        <Heading>{frontmatter.title}</Heading>
+        <Heading>{title}</Heading>
         <Text>{excerpt}</Text>
       </div>
     );
   }
-  const featuredImage = frontmatter.featuredImage || fields.featuredImage;
   return (
     <Img
-      alt={frontmatter.title}
+      alt={title}
       key={id}
-      fluid={featuredImage.childImageSharp.fluid}
+      fluid={parent.fields.featuredImage.childImageSharp.fluid}
     />
   );
 };
 
 export const query = graphql`
   query {
-    featuredPosts: allMdx(
-      filter: { fields: { sourceInstanceName: { eq: "posts" } } }
-      limit: 10
-      sort: { fields: frontmatter___date, order: DESC }
-    ) {
+    featuredPosts: allBlogPost(limit: 10, sort: { fields: date, order: DESC }) {
       edges {
         node {
           id
+          title
           excerpt
-          fields {
-            slug
-            featuredImage {
-              id
-              childImageSharp {
-                fluid(maxWidth: 700) {
-                  ...GatsbyImageSharpFluid
-                }
-              }
-            }
-          }
-          frontmatter {
-            title
-            featuredImage {
-              childImageSharp {
-                fluid(maxWidth: 700) {
-                  ...GatsbyImageSharpFluid
+          url
+          ... on MdxBlogPost {
+            parent {
+              ... on Mdx {
+                fields {
+                  featuredImage {
+                    childImageSharp {
+                      fluid(maxWidth: 700) {
+                        ...GatsbyImageSharpFluid
+                      }
+                    }
+                  }
                 }
               }
             }

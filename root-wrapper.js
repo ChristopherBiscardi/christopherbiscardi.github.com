@@ -1,5 +1,4 @@
 import React from "react";
-import { ThemeProvider } from "emotion-theming";
 import { MDXProvider } from "@mdx-js/react";
 import theme from "@sens8/tokens";
 import { Global } from "@emotion/core";
@@ -52,7 +51,7 @@ const components = {
   sub: Sub,
   sup: Sup,
   blockquote: BlockQuote,
-  img: props => <img {...props} css={{ maxWidth: "100%" }} />,
+  img: props => <img {...props} css={{ maxWidth: "100%" }} />, // eslint-disable-line jsx-a11y/alt-text
   pre: ({ children: { props } }) => {
     const backgroundColor = useLayers(0);
     // props is for MDXTag, props.props is for code element

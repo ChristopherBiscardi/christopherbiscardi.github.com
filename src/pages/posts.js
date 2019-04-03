@@ -48,7 +48,7 @@ export default class PostsPage extends Component {
             </Heading>
           </section>
         </div>
-        <PostList posts={this.props.data.allMdx.edges} />
+        <PostList posts={this.props.data.allBlogPost.edges} />
       </SiteLayout>
     );
   }
@@ -56,10 +56,7 @@ export default class PostsPage extends Component {
 
 export const pageQuery = graphql`
   query PostsQuery {
-    allMdx(
-      filter: { fields: { sourceInstanceName: { eq: "posts" } } }
-      sort: { fields: frontmatter___date, order: DESC }
-    ) {
+    allBlogPost(sort: { fields: date, order: DESC }) {
       edges {
         node {
           ...PostListItemFragment
