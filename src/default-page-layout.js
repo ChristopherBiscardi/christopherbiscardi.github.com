@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Heading } from "@sens8/component-typography";
 import SiteLayout from "./site-layout";
 import { useLayers } from "@sens8/tokens";

@@ -28,7 +28,6 @@ const ConvertKitFooterish = ({ children, ...props }) => {
       <div
         css={{
           maxWidth: "36em",
-          display: "flex",
           width: "100%",
           display: "grid",
           gridTemplateColumns: "200px 1fr",
@@ -83,8 +82,8 @@ export default class BlogPost extends Component {
   render() {
     const { data } = this.props;
     let src = undefined;
-    if (data.mdx.fields.featuredImage) {
-      src = data.mdx.fields.featuredImage.childImageSharp.fixed.src;
+    if (data.blogPost.parent.fields.featuredImage) {
+      src = data.blogPost.parent.fields.featuredImage.childImageSharp.fixed.src;
     } else {
       src = data.ogImage.src;
     }
@@ -93,12 +92,12 @@ export default class BlogPost extends Component {
         sidebar={<aside css={{ minWidth: "200px" }}>some stuff</aside>}
       >
         <SEO
-          description={data.mdx.excerpt}
-          title={data.mdx.frontmatter.title}
+          description={data.blogPost.excerpt}
+          title={data.blogPost.title}
           image={src}
         />
-        <Hero title={data.mdx.frontmatter.title} />
-        {data.mdx.frontmatter.isNewsletter && (
+        <Hero title={data.blogPost.title} />
+        {data.blogPost.isNewsletter && (
           <ConvertKitFooterish>
             <Text>
               This post is an archive from my newsletter. Sign up to receive
@@ -107,8 +106,8 @@ export default class BlogPost extends Component {
             </Text>
           </ConvertKitFooterish>
         )}
-        {data.mdx.frontmatter.egghead && (
-          <ResponsiveEmbed allowFullScreen src={data.mdx.frontmatter.egghead} />
+        {data.blogPost.egghead && (
+          <ResponsiveEmbed allowFullScreen src={data.blogPost.egghead} />
         )}
 
         <div
@@ -126,7 +125,7 @@ export default class BlogPost extends Component {
             }
           }}
         >
-          <MDXRenderer>{data.mdx.code.body}</MDXRenderer>
+          <MDXRenderer>{data.blogPost.body}</MDXRenderer>
         </div>
         <ConvertKitFooterish />
 
@@ -167,6 +166,7 @@ const WebMentions = props => {
             }}
           >
             <img
+              alt="Author"
               css={{
                 borderRadius: "100%",
                 width: "49px",
@@ -201,25 +201,27 @@ const WebMentions = props => {
 
 export const pageQuery = graphql`
   query($id: String!, $webmentionMatchURL: String!, $title: String) {
-    mdx(id: { eq: $id }) {
+    blogPost(id: { eq: $id }) {
       id
-      code {
-        body
-      }
+      title
+      egghead
+      isNewsletter
+      body
       excerpt
-      fields {
-        featuredImage {
-          childImageSharp {
-            fixed {
-              src
+      ... on MdxBlogPost {
+        parent {
+          ... on Mdx {
+            fields {
+              featuredImage {
+                childImageSharp {
+                  fixed {
+                    src
+                  }
+                }
+              }
             }
           }
         }
-      }
-      frontmatter {
-        title
-        egghead
-        isNewsletter
       }
     }
     ogImage {

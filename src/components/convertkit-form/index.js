@@ -66,7 +66,6 @@ export default class SignUp extends React.Component {
   render() {
     const { submitted, response, errorMessage } = this.state;
     const successful = response && response.status === "success";
-    const textColor = "#ECEFF4";
     return (
       <>
         {!successful && <Heading>Join the Newsletter</Heading>}
