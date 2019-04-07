@@ -5,7 +5,6 @@ import { graphql } from "gatsby";
 import { Heading } from "sens8";
 import SiteLayout from "../site-layout";
 import PostList from "../post-list";
-import Img from "gatsby-image";
 
 export default class PostsPage extends Component {
   render() {
@@ -17,15 +16,8 @@ export default class PostsPage extends Component {
           <meta name="referrer" content="origin" />
         </Helmet>
         <div>
-          <Img
-            css={{ minHeight: "300px", zIndex: -1 }}
-            fluid={this.props.data.headingImage.childImageSharp.fluid}
-          />
           <section
             css={theme => ({
-              position: "absolute",
-              top: 0,
-              width: "100%",
               alignItems: "center",
               //            background: theme.colors.raw.neutral[90],
               background: "none",
@@ -60,16 +52,6 @@ export const pageQuery = graphql`
       edges {
         node {
           ...PostListItemFragment
-        }
-      }
-    }
-    headingImage: file(
-      sourceInstanceName: { eq: "images" }
-      relativePath: { eq: "luca-zanon-26595-unsplash.jpg" }
-    ) {
-      childImageSharp {
-        fluid {
-          ...GatsbyImageSharpFluid
         }
       }
     }
