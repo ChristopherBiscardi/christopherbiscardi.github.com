@@ -77,10 +77,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "resolutions": {
-    "@mdx-js/mdx": "1.0.0-alpha.17",
-    "@mdx-js/react": "1.0.0-alpha.17",
-    "gatsby-mdx": "0.5.6"
   }
 }

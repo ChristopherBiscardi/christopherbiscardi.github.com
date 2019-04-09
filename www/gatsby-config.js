@@ -63,6 +63,65 @@ export default {
       }
     },
     `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-remove-serviceworker`
+    `gatsby-plugin-remove-serviceworker`,
+    {
+      resolve: `gatsby-plugin-feed`,
+      options: {
+        query: `
+        {
+          site {
+            siteMetadata {
+              title
+              description
+              siteUrl
+              site_url: siteUrl
+            }
+          }
+        }
+      `,
+        feeds: [
+          {
+            serialize: ({ query: { site, allBlogPost } }) => {
+              return allBlogPost.nodes.map(node => {
+                return Object.assign(
+                  {},
+                  {
+                    description: node.excerpt,
+                    date: node.date,
+                    url: site.siteMetadata.siteUrl + node.url,
+                    guid: site.siteMetadata.siteUrl + node.url,
+                    custom_elements: [{ "content:encoded": node.parent.html }]
+                  }
+                );
+              });
+            },
+            query: `
+            {
+              allBlogPost(
+                limit: 1000,
+                sort: { order: DESC, fields: [date] }
+              ) {
+                nodes {
+                  excerpt
+                  url
+                  title
+                  date
+                  ... on MdxBlogPost {
+        parent {
+          ... on Mdx {
+            html
+          }
+        }
+      }
+                }
+              }
+            }
+          `,
+            output: "/rss.xml",
+            title: "Chris Biscardi RSS Feed"
+          }
+        ]
+      }
+    }
   ]
 };

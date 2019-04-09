@@ -21,57 +21,9 @@
     "*.{css,scss}": ["prettier --parser css --write", "git add"]
   },
   "dependencies": {
-    "@emotion/babel-preset-css-prop": "^10.0.5",
-    "@emotion/core": "^10.0.4",
-    "@emotion/styled": "^10.0.4",
-    "@mdx-js/mdx": "^1.0.0-rc.0",
-    "@mdx-js/react": "^1.0.0-rc.0",
-    "@rehooks/component-size": "^1.0.2",
-    "@sens8/component-typography": "*",
-    "@sindresorhus/slugify": "^0.8.0",
-    "emotion-theming": "^10.0.4",
-    "formik": "^1.5.1",
-    "gatsby": "2.3.4",
-    "gatsby-image": "^2.0.29",
-    "gatsby-mdx": "^0.5.8-ci.367",
-    "gatsby-plugin-emotion": "4.0.4",
-    "gatsby-plugin-feed": "^2.0.11",
-    "gatsby-plugin-google-analytics": "2.0.8",
-    "gatsby-plugin-offline": "2.0.19",
-    "gatsby-plugin-react-helmet": "3.0.4",
-    "gatsby-plugin-remove-serviceworker": "^1.0.0",
-    "gatsby-plugin-sharp": "^2.0.17",
-    "gatsby-plugin-webmention": "^0.1.0",
-    "gatsby-remark-prismjs": "3.1.4",
-    "gatsby-theme-digital-garden": "^0.0.12",
-    "gatsby-transformer-sharp": "^2.1.10",
-    "graphql-compose": "^6.1.1",
     "husky": "^1.2.0",
-    "jimp": "^0.6.0",
     "lint-staged": "^8.1.0",
-    "lodash.throttle": "^4.1.1",
-    "palx": "^1.0.3",
-    "prettier": "^1.15.3",
-    "prismjs": "^1.14.0",
-    "react": "16.8.4",
-    "react-dom": "16.8.4",
-    "react-emotion": "^10.0.0",
-    "react-helmet": "^5.2.0",
-    "react-player": "^1.8.0",
-    "react-pose": "^4.0.4",
-    "react-responsive-embed": "^2.1.0",
-    "react-sidebar": "^3.0.2",
-    "react-use": "^5.1.1",
-    "resize-observer-polyfill": "^1.5.1",
-    "rev-hash": "^2.0.0",
-    "stopword": "^0.1.15",
-    "styled-system": "^3.1.11",
-    "yup": "^0.27.0"
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.2.1",
-    "gatsby-source-filesystem": "2.0.12",
-    "loader-utils": "^1.1.0"
+    "prettier": "^1.15.3"
   },
   "husky": {
     "hooks": {
@@ -79,8 +31,8 @@
     }
   },
   "resolutions": {
-    "@mdx-js/mdx": "1.0.0-alpha.17",
-    "@mdx-js/react": "1.0.0-alpha.17",
-    "gatsby-mdx": "0.5.6"
+    "@mdx-js/mdx": "^1.0.0-rc.0",
+    "@mdx-js/react": "^1.0.0-rc.0",
+    "gatsby-mdx": "^0.5.8-ci.367"
   }
 }
