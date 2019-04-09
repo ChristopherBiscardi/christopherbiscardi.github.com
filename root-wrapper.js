@@ -16,6 +16,8 @@ import { Code, Heading } from "sens8";
 
 // ensure components are stable
 const components = {
+  wrapper: ({ children, className, ...props }) =>
+    console.log("props", props) || <div className={className}>{children}</div>,
   h1: props => <Heading {...props} level={1} />,
   h2: props => <Heading {...props} level={2} />,
   h3: props => <Heading {...props} level={3} />,
