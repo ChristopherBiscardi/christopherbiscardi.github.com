@@ -1,5 +1,5 @@
 {
-  "name": "christopherbiscardi.github.com",
+  "name": "www",
   "version": "1.0.0",
   "description": "my website",
   "main": "index.js",
@@ -12,7 +12,7 @@
     "update-sens8": "git subtree pull --prefix sens8 git@github.com:ChristopherBiscardi/sens8.git master --squash"
   },
   "private": true,
-  "workspaces": ["sens8/packages/*", "packages/*", "www"],
+  "workspaces": ["./sens8/packages/*", "."],
   "lint-staged": {
     "*.{js,jsx}": ["prettier --parser flow --write", "git add"],
     "*.json": ["prettier --parser json --write", "git add"],

@@ -6,7 +6,7 @@ import { Heading } from "sens8";
 import Message from "./message";
 import { PleaseConfirmIllustration } from "./illustrations";
 
-const FORM_ID = process.env.CONVERTKIT_SIGNUP_FORM;
+const FORM_ID = process.env.GATSBY_CONVERTKIT_SIGNUP_FORM;
 
 const SubscribeSchema = Yup.object().shape({
   email_address: Yup.string()

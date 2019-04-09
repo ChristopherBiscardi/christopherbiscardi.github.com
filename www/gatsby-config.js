@@ -13,7 +13,7 @@ module.exports = {
     {
       resolve: "gatsby-theme-digital-garden",
       options: {
-        notes: "content/note",
+        notes: "../content/note",
         mdx: false // use my own gatsby-mdx
       }
     }
@@ -36,7 +36,7 @@ module.exports = {
       resolve: "gatsby-source-filesystem",
       options: {
         name: "posts",
-        path: `${__dirname}/content/post/`
+        path: `../content/post/`
       }
     },
     {
