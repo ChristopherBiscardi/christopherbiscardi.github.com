@@ -49,13 +49,6 @@ module.exports = {
     {
       resolve: `gatsby-mdx`,
       options: {
-        globalScope: `import Player from 'react-player';
-export default {
-  Video: props => <Player {...props} css={{
-    margin: 'auto',
-    paddingBottom: '1.5rem'
-  }}/>
-}`,
         defaultLayouts: {
           posts: require.resolve("./src/blog-post.js"),
           default: require.resolve("./src/default-page-layout.js")

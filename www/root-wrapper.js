@@ -13,9 +13,18 @@ import Text, {
   Link
 } from "@sens8/component-typography/linear";
 import { Code, Heading } from "sens8";
-
+import Player from "react-player";
 // ensure components are stable
 const components = {
+  Video: props => (
+    <Player
+      {...props}
+      css={{
+        margin: "auto",
+        paddingBottom: "1.5rem"
+      }}
+    />
+  ),
   wrapper: ({ children, className, ...props }) => (
     <div className={className}>{children}</div>
   ),
