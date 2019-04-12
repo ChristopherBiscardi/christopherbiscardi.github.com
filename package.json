@@ -31,8 +31,9 @@
     }
   },
   "resolutions": {
-    "@mdx-js/mdx": "^1.0.0-rc.4",
-    "@mdx-js/react": "^1.0.0-rc.4",
-    "gatsby-mdx": "^0.5.8-ci.367"
+    "@mdx-js/mdx": "^1.0.0",
+    "@mdx-js/react": "^1.0.0",
+    "gatsby-mdx": "^0.6",
+    "theme-ui": "0.0.2-0"
   }
 }

@@ -1,11 +1,10 @@
 import Helmet from "react-helmet";
 import React, { Component } from "react";
-import { graphql, Link } from "gatsby";
+import { graphql, Link as GLink } from "gatsby";
 
-import { Heading } from "sens8";
-import { useTextColor } from "@sens8/tokens";
+import { Heading, Link } from "sens8";
+import { useTextColor, useLayers } from "@sens8/tokens";
 import SiteLayout from "../site-layout";
-import Img from "gatsby-image";
 
 export default class TagsPage extends Component {
   render() {
@@ -20,14 +19,8 @@ export default class TagsPage extends Component {
           <meta name="referrer" content="origin" />
         </Helmet>
         <div>
-          <Img
-            css={{ minHeight: "300px", zIndex: -1 }}
-            fluid={this.props.data.headingImage.childImageSharp.fluid}
-          />
           <section
             css={theme => ({
-              position: "absolute",
-              top: 0,
               width: "100%",
               alignItems: "center",
               //            background: theme.colors.raw.neutral[90],
@@ -51,7 +44,13 @@ export default class TagsPage extends Component {
             </Heading>
           </section>
         </div>
-        <ul>
+        <ul
+          css={{
+            display: "grid",
+            gridTemplateColumns: `1fr 1fr 1fr 1fr 1fr 1fr`,
+            listStyleType: "none"
+          }}
+        >
           {this.props.data.allBlogPost.byTag.map(({ tag }) => (
             <TagItem tag={tag} />
           ))}
@@ -63,15 +62,19 @@ export default class TagsPage extends Component {
 
 const TagItem = ({ tag }) => {
   const textColor = useTextColor();
+  const backgroundColor = useLayers(1);
   return (
-    <li>
+    <li
+      css={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+    >
       <Link
+        as={GLink}
         to={`/tags/${tag}`}
-        css={{
-          color: textColor
-        }}
+        css={{ padding: "1rem", backgroundColor }}
       >
-        {tag}
+        <Heading level={4} css={{ margin: 0 }}>
+          {tag}
+        </Heading>
       </Link>
     </li>
   );
