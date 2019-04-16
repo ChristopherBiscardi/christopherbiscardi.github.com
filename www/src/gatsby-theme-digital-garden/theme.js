@@ -1,5 +1,7 @@
 const blue = "blue";
 
+console.log("my theme");
+
 export default {
   colors: {
     blue,
@@ -21,7 +23,7 @@ export default {
     a: {
       color: "primary",
       "&:hover": {
-        color: "secondary"
+        color: "white"
       }
     },
     img: {
