@@ -1,10 +1,22 @@
-import { Text, BlockQuote, Link } from 'sens8';
+---
+name: Linear Text
+---
 
-# Text
+import {
+  Heading,
+  Text,
+  BlockQuote,
+  Link,
+  OrderedList,
+  UnorderedList
+} from 'sens8';
+import { Playground, Props } from "docz";
 
-Some textual content
+## A BlogPost
 
-<div>
+Text set for reading. Like a blog post.
+
+<Playground>
 <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
 tellus augue, <Link href="/thing">laoreet a purus</Link> sed, semper cursus massa. Phasellus
 dapibus, ex at euismod interdum, enim lectus tincidunt nisi, ac
@@ -17,7 +29,7 @@ hendrerit augue dapibus quis. Vestibulum ultrices, nisi sit amet
 tincidunt rutrum, urna turpis mattis quam, id hendrerit mi enim quis
 diam. Nulla erat mi, accumsan non vestibulum a, laoreet at
 nisi. Phasellus faucibus mi id auctor tempus.</Text>
-<BlockQuote quoted citation={<div>something</div>}>testing</BlockQuote>
+<BlockQuote quoted citation={<div style={{display: 'inline'}}>something</div>}>testing</BlockQuote>
 <Text>Phasellus lorem dolor, bibendum a turpis a, ultrices porta
 massa. Morbi ullamcorper risus ac tincidunt semper. Donec bibendum
 mauris sit amet lacus accumsan, id ultricies nulla
@@ -56,12 +68,50 @@ porttitor turpis. Praesent varius est at augue mollis
 imperdiet. Integer pretium dui nec leo eleifend gravida. Duis a tortor
 sapien. Aliquam erat volutpat. Proin posuere tortor vel purus cursus
 fringilla.</Text>
-</div>
 
-* one
-* two
-* three
+</Playground>
 
-1. one
-2. two
-3. three
+## Ordered List
+
+<Playground>
+<OrderedList>
+<li>one</li>
+<li>two</li>
+<li>
+  three
+<OrderedList>
+  <li>one</li>
+  <li>two</li>
+</OrderedList>
+</li>
+<li>four</li>
+</OrderedList>
+</Playground>
+
+## Unordered List
+
+<Playground>
+<UnorderedList>
+<li>one</li>
+<li>two</li>
+
+<li>
+  three
+<UnorderedList>
+  <li>one</li>
+  <li>two</li>
+</UnorderedList>
+</li>
+<li>four</li>
+</UnorderedList>
+</Playground>
+
+## BlockQuote
+
+<Playground>
+<BlockQuote>Someone said something that time</BlockQuote>
+<br/>
+<BlockQuote citation="Someone">Someone said something that time</BlockQuote>
+<br/>
+<BlockQuote citation="Someone" quoted>Someone said something that time</BlockQuote>
+</Playground>

@@ -2,6 +2,7 @@ module.exports = {
   siteMetadata: {
     title: `sens8 docs`
   },
+  __experimentalThemes: ["gatsby-theme-docz"],
   plugins: [
     `gatsby-plugin-emotion`,
     `gatsby-plugin-react-helmet`,
@@ -17,14 +18,6 @@ module.exports = {
       options: {
         path: `${__dirname}/src/docs`,
         name: "mdx-docs"
-      }
-    },
-    {
-      resolve: `gatsby-mdx`,
-      options: {
-        defaultLayouts: {
-          default: require.resolve("./src/components/site-layout.js")
-        }
       }
     },
     `gatsby-plugin-offline`
