@@ -6,6 +6,6 @@
   "license": "MIT",
   "dependencies": {
     "palx": "^1.0.3",
-    "styled-system": "^4.0.4"
+    "styled-system": "^4.1.0"
   }
 }

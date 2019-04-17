@@ -1,37 +1,20 @@
-exports.createPages = ({ actions, graphql }) => {
-  const { createPage } = actions;
-
-  return graphql(`
-    {
-      allMdx(limit: 1000) {
-        edges {
-          node {
-            parent {
-              ... on File {
-                absolutePath
-                relativePath
-              }
-            }
-          }
+// remove styled-components from docz because it doesn't play well with others
+exports.onCreateBabelConfig = ({ store }) => {
+  const babelStages = store.getState().babelrc.stages;
+  store.getState().babelrc.stages = Object.entries(babelStages)
+    .map(([stage, { plugins, presets, options }]) => {
+      return [
+        stage,
+        {
+          plugins: plugins.filter(
+            plugin => plugin.name !== "babel-plugin-styled-components"
+          ),
+          presets,
+          options
         }
-      }
-    }
-  `).then(result => {
-    if (result.errors) {
-      return Promise.reject(result.errors);
-    }
-
-    result.data.allMdx.edges.forEach(({ node }) => {
-      console.log("creating page", node.parent.relativePath);
-      createPage({
-        path: node.parent.relativePath.slice(0, -4), //node.fileNode.path,
-        component: require.resolve(node.parent.absolutePath),
-        context: {
-          navItems: node.parent.relativePath.slice(0, -4).split("/")
-        } // additional data can be passed via context
-      });
-    });
-  });
+      ];
+    })
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 };
 
 exports.onCreateWebpackConfig = ({

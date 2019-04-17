@@ -127,8 +127,8 @@ const Quote = ({ quoted, ...props }) => {
       css={
         quoted
           ? css`
-              quotes: "“","”","‘","’"
-                &:before {
+              quotes: "“", "”", "‘", "’";
+              &:before {
                 content: open-quote;
                 margin-left: -0.83ch;
               }
@@ -145,18 +145,31 @@ const Quote = ({ quoted, ...props }) => {
 // is= [pull, inline]
 export const BlockQuote = ({ is, quoted, children, citation }) => {
   const textColor = useTextColor();
+  const Wrapper = is === "pull" ? "aside" : "figure";
   return (
-    <Quote
-      quoted
+    <Wrapper
       css={{
-        color: textColor,
         borderLeft: `2px solid ${textColor}`,
-        paddingLeft: "1rem"
+        marginLeft: "calc(-1rem - 2px)"
       }}
     >
-      {children}
-      {citation && <footer>{citation}</footer>}
-    </Quote>
+      <Quote
+        quoted
+        css={{
+          color: textColor,
+          paddingLeft: "1rem"
+        }}
+      >
+        {children}
+      </Quote>
+      {citation && (
+        <figcaption
+          css={{ paddingLeft: "1rem", "&:before": { content: "'— '" } }}
+        >
+          {citation}
+        </figcaption>
+      )}
+    </Wrapper>
   );
 };
 
@@ -169,6 +182,9 @@ export const OL = props => {
         color: ${textColor};
         // numerals in line with other linear text
         padding-left: 0;
+        & li & {
+          margin-left: ${lineHeight}rem;
+        }
         margin-left: 0;
         list-style: none;
         counter-reset: sens8-list;
@@ -194,6 +210,9 @@ export const UL = props => {
         paddingLeft: `${lineHeight}em`,
         // numerals in line with other linear text
         paddingLeft: 0,
+        "& li &": {
+          marginLeft: `${lineHeight}rem`
+        },
         marginLeft: 0
       }}
     />

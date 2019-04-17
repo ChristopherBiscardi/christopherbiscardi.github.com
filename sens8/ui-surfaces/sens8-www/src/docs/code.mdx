@@ -1,0 +1,56 @@
+---
+name: Code
+---
+
+import { Code, Text ,Heading} from "sens8";
+import { Playground, Props } from "docz";
+
+## Props
+
+<Props of={Code}/>
+
+## Basic Examples
+
+### Inline Code
+
+<Playground>
+  <Text>Testing inline <Code lang="js">const T = 1</Code> code.</Text>
+</Playground>
+
+### Code Blocks
+
+<Playground>
+  <Code
+    is="block"
+    lang="javascript">{`const T = 1;
+console.log(T + 2)`}
+  </Code>
+</Playground>
+
+## Language Examples
+
+## JavaScript
+
+<Playground>
+<Code lang='javascript'
+    is="block"
+>
+{`// some react code
+ReactDOM.render(
+  <h1>Hello, world!</h1>,
+  document.getElementById('root')
+);`}
+</Code>
+</Playground>
+
+## Golang
+
+<Playground>
+<Code lang='go' is="block">
+{`package main
+import "fmt"
+func main() {
+    fmt.Println("hello world")
+}`}
+</Code>
+</Playground>

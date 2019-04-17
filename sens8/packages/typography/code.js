@@ -2,10 +2,11 @@
 import React from "react";
 import { jsx } from "@emotion/core";
 import Highlight, { defaultProps } from "prism-react-renderer";
-import { useCodeTheme } from "@sens8/tokens";
+import { useLayers, useCodeTheme } from "@sens8/tokens";
 
 export default ({ is, children, lang = "markup", ...etc }) => {
   const theme = useCodeTheme();
+  const borderColor = useLayers(1);
   const props = {
     ...etc,
     className: etc.className ? etc.className : `language-${lang}`
@@ -15,7 +16,7 @@ export default ({ is, children, lang = "markup", ...etc }) => {
     return (
       <Highlight
         {...defaultProps}
-        theme={theme.code || defaultProps.theme}
+        theme={theme || defaultProps.theme}
         code={children.trim()}
         language={lang}
       >
@@ -36,12 +37,19 @@ export default ({ is, children, lang = "markup", ...etc }) => {
   return (
     <Highlight
       {...defaultProps}
-      theme={theme.code || defaultProps.theme}
+      theme={theme || defaultProps.theme}
       code={children.trim()}
       language={lang}
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
-        <pre className={className} style={style}>
+        <pre
+          className={className}
+          style={style}
+          css={{
+            borderTop: `1px solid ${borderColor}`,
+            borderBottom: `1px solid ${borderColor}`
+          }}
+        >
           {tokens.map((line, i) => (
             <div {...getLineProps({ line, key: i })}>
               {line.map((token, key) => (
