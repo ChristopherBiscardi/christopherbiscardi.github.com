@@ -65,7 +65,7 @@ const components = {
   blockquote: BlockQuote,
   img: props => <img {...props} css={{ maxWidth: "100%" }} />, // eslint-disable-line jsx-a11y/alt-text
   pre: ({ children: { props } }) => {
-    const backgroundColor = useLayers(0);
+    const backgroundColor = useLayers(1);
     // props is for MDXTag, props.props is for code element
     const lang = props.className && props.className.split("-")[1];
     return (
