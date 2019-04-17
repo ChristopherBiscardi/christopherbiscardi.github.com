@@ -229,11 +229,12 @@ class List extends Component {
 
 export const Link = ({ as: Component = "a", ...props }) => {
   const linkColor = useLinkColor();
+  const textColor = useTextColor();
   return (
     <Component
       {...props}
       css={css`
-        color: ${linkColor};
+        color: ${textColor};
         text-decoration: none;
         border-bottom: 1px solid ${linkColor};
         @supports (text-decoration-skip: ink) {
