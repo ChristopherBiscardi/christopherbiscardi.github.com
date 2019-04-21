@@ -95,7 +95,7 @@ excerpt: String!
         body: {
           type: "String!",
           resolve(source, args, context, info) {
-            const type = info.schema.getType(`MDXCodeMdx`);
+            const type = info.schema.getType(`Mdx`);
             const mdxNode = context.nodeModel.getNodeById({
               id: source.parent
             });

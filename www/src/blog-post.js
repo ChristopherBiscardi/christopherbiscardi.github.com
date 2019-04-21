@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { graphql } from "gatsby";
-import MDXRenderer from "gatsby-mdx/mdx-renderer";
+import MDXRenderer from "gatsby-plugin-mdx/mdx-renderer";
 import SEO from "./seo";
 import { Heading, Text } from "sens8";
 import { useLayers, useTextColor, useLinkColor } from "@sens8/tokens";
