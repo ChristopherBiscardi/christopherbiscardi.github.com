@@ -20,6 +20,7 @@ module.exports = {
   ],
   plugins: [
     `gatsby-plugin-emotion`,
+    `gatsby-plugin-jarvis`,
     `gatsby-plugin-og-image`,
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,
