@@ -1,6 +1,6 @@
 ---
 title: Authoring Queries in Themes
-date: 2019-03-24T02:25:00.462Z
+date: 2019-06-06T02:25:00.462Z
 tags:
   - gatsby
   - gatsby-themes
@@ -83,5 +83,23 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   }
 };
 ```
+
+Then if we have a `title` field in our `Mdx` files, we can filter the result set:
+
+```graphql
+{
+  allMdx(filter: { fields: { isNote: { eq: true } } }) {
+    nodes {
+      frontmatter {
+        title
+      }
+    }
+  }
+}
+```
+
+# Fin
+
+This is very flexible in that it allows us to access every field as we're used to on `Mdx` or any other type. It is restricting in that we can't combine multiple types to provide notes. To do that, we'll have to look in to [Constructing Query Types in Themes](/posts/constructing-query-types-in-themes).
 
 
