@@ -96,14 +96,12 @@ module.exports = {
               ) {
                 nodes {
                   excerpt
-                  url
+                  url: slug
                   title
                   date
-                  ... on MdxBlogPost {
         parent {
           ... on Mdx {
             html
-          }
         }
       }
                 }
