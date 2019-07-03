@@ -1,22 +1,21 @@
 import React from "react";
-import theme from "@sens8/tokens";
-import { Global } from "@emotion/core";
-import { Sens8Context } from "@sens8/tokens";
+// import theme from "@sens8/tokens";
+// import { Global } from "@emotion/core";
+// import { Sens8Context } from "@sens8/tokens";
+import { MDXProvider } from "@mdx-js/react";
 
-export default ({ children, ...props }) => (
-  <Sens8Context.Provider value={theme}>
-    <Global
-      styles={{
-        "*": {
-          margin: 0,
-          padding: 0,
-          boxSizing: "border-box"
-        },
-        body: {
-          // background: theme.colors.background
-        }
+const components = {
+  Video: props => (
+    <Player
+      {...props}
+      css={{
+        margin: "auto",
+        paddingBottom: "1.5rem"
       }}
     />
-    <div>{children}</div>
-  </Sens8Context.Provider>
+  )
+};
+
+export default ({ children, ...props }) => (
+  <MDXProvider components={components}>{children}</MDXProvider>
 );
