@@ -1,0 +1,120 @@
+---
+title: "React State With Class Properties"
+date: 2018-02-02
+tags: [react,javascript]
+---
+
+Let's take a look at how to define state inside of React components in order to
+motivate the usage of class properties. First, the most basic setting of any
+state: static values.
+
+```javascript repl
+class Thing extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      job: "my job"
+    };
+  }
+  render() {
+    const { job } = this.state;
+    return <span>{job}</span>;
+  }
+}
+```
+
+There's nothing inherently wrong with this approach, but we can use class
+properties to clean up the `super(props)` boilerplate. The less code in the
+constructor function, the less time someone has to spend understanding the code
+I write. Here's a `class` that is functionally the same, but uses class
+properties for defining the initial `state`.
+
+```javascript
+class Thing extends React.Component {
+  state = {
+    job: "my job"
+  };
+  render() {
+    const { job } = this.state;
+    return <span>{job}</span>;
+  }
+}
+```
+
+We've eliminated the imperative setting of `this.state` in favor of a
+declarative class property. If we trim down the babel configuration to target
+node 9, we get a very clean compilation result that yields a key insight. [repl
+link][basic-repl].
+
+```javascript
+// compiled result
+class Thing extends React.Component {
+  constructor(...args) {
+    var _temp;
+
+    return (
+      (_temp = super(...args)),
+      (this.state = {
+        job: "my job"
+      }),
+      _temp
+    );
+  }
+
+  render() {
+    const { job } = this.state;
+    return React.createElement("span", null, job);
+  }
+}
+```
+
+The state we just declared in a class property is set in the constructor just
+like our original example! This is a great example of how babel lets you write
+code for humans instead of machines. With this key insight in mind, we can
+connect it to the usage of props to set initial state. Instead of populating the
+constructor function, we declare what we want state to be.
+
+```javascript
+class Thing extends React.Component {
+  state = {
+    job: this.props.job || "my job"
+  };
+  render() {
+    const { job } = this.state;
+    return <span>{job}</span>;
+  }
+}
+```
+
+This compiles to essentially the same code we had before!
+
+```javascript
+// compilation result
+class Thing extends React.Component {
+  constructor(...args) {
+    var _temp;
+
+    return (
+      (_temp = super(...args)),
+      (this.state = {
+        job: this.props.job || "my job"
+      }),
+      _temp
+    );
+  }
+
+  render() {
+    const { job } = this.state;
+    return React.createElement("span", null, job);
+  }
+}
+```
+
+# Fin
+
+Use class properties. Of course, you should also go play with the
+[codesandbox](https://codesandbox.io/s/xrww98j55q) for an easy testbed that
+includes state modification via a timer.
+
+[example-1]: https://babeljs.io/repl/#?babili=false&browsers=&build=&builtIns=usage&code_lz=MYGwhgzhAEAqAWBLAdgc2gUwB4BcPIBMYAlDMYHAOgGEB7AWwAdbl8doBvAKGmghzB5oAXk49e0AFa0ARgC5oOJBEqMATrUYrpM6AB890AET0UGI-IC-PNfgIY1ACgCUYibZwBXNcmgAeCEYwZAA-PwB6QOCQnktoLksgA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&lineWrap=true&presets=react%2Cstage-2%2Cenv&prettier=true&targets=Node-9&version=6.26.0&envVersion=1.6.2
+[basic-repl]: https://babeljs.io/repl/#?babili=false&browsers=&build=&builtIns=usage&code_lz=MYGwhgzhAEAqAWBLAdgc2gUwB4BcPIBMYAlDMYHAOgGEB7AWwAdbl8doBvAKGmghzB5oAXk49e0AFa0ARgC5oAInoBPKbMXiAvgG5xAJ3wEM-gBQBKMROjAW_TupnQtI6DiQRK_QRj3XDOACu-sjQADwQjGDIAHwc0jJaYQD0kdExfs5cWlxAA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&lineWrap=true&presets=react%2Cstage-2%2Cenv&prettier=true&targets=Node-9&version=6.26.0&envVersion=1.6.2

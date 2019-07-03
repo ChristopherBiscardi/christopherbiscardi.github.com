@@ -1,0 +1,55 @@
+---
+title: Component Shadowing in Gatsby Child Themes
+date: 2019-01-17T01:39:52.094Z
+tags:
+  - gatsby
+  - gatsby-themes
+---
+
+<Video url="https://www.youtube.com/watch?v=Jzx8UrTdYOk"/>
+
+Today [on stream](https://www.youtube.com/watch?v=Jzx8UrTdYOk) I worked through the final steps for implementing Child Theming for Gatsby. The interesting outcomes of this are that
+
+1. Themes can now depend on other themes as "parents"
+1. Component Shadowing works across all ancestors and has been moved to the root of the `src` directory.
+
+In this post I'll be referencing work from the [gatsby-theme-examples](https://github.com/ChristopherBiscardi/gatsby-theme-examples/pull/13) repo
+
+# Multiple Themes
+
+The way I chose to split up the original `gatsby-theme-blog` was into two basic pieces. `gatsby-theme-blog-core` would hold the data structures while `gatsby-theme-blog` would handle the UI layer. Since this isn't a post about child theming itself but rather Component Shadowing, that's really all you have to know for now.
+
+# Component Shadowing
+
+The idea behind Component Shadowing is fairly small. If we have some file in our theme `theme/a/b.js`, then we can replace this component at build time by creating a different file in our own site at `our-site/a/theme/b.js`. This means that themes can take advantage of Component Shadowing for replacing brand colors, the way a blog post renders, or anything else that can be represented as a file.
+
+Until now, Component Shadowing was only enabled for files placed in `src/components`. This choice was made to limit the blast radius while we evaluated the feature itself. As it turns out, people start putting everything in `src/components` to take advantage of Shadowing. As a result we've moved the supported directory up one level to `src`. 
+
+The impact of this change is that Shadowing is enabled by default for the entire `src/` directory. Since `gastby-theme-blog-core` is a parent of `gatsby-theme-blog` we have the following set of files.
+
+* gatsby-theme-blog-core
+  - `src/components/blog-post.js`
+* gatsby-theme-blog
+  - `src/gatsby-theme-blog-core/components/blog-post.js`
+* blog-b-core (a user's site)
+  - `src/gatsby-theme-blog-core/components/blog-post.js`
+
+Remember that the order for how this file gets resolved is the same order that we use for composition. In our case, it is [`gatsby-theme-blog-core`, `gatsby-theme-blog`, `user-site`]. The last entry in the array wins.
+
+`gatsby-theme-blog-core` offers a shadowable component that handles rendering for a blog post page template at `src/components/blog-post.js`. The only thing this component does is dump the props onto the page inside of a `<pre>` tag.
+
+```js
+import React from "react";
+
+export default props => (
+  <pre style={{ whiteSpace: "pre-wrap" }}>{JSON.stringify(props, null, 2)}</pre>
+);
+```
+
+`gatsby-theme-blog`, being responsible for the UI layer, shadows this component by using a file at `src/gatsby-theme-blog-core/components/blog-post.js`. This file includes a React component, set of styles, and a much nicer rendering of the props we have. Because `gatsby-theme-blog` is included "later", it's version of the blog-post rendering wins.
+
+Then, when we used `gatsby-theme-blog` in our own site, we decided we wanted the blog post to render differently than the child theme, so we created a new file in our site at `src/gatsby-theme-blog-core/components/blog-post.js`. This is a very similar location to when we shadowed the blog post component in the child theme. Because the user's site is always included last, the new blog post file wins over both themes.
+
+## Fin
+
+Component Shadowing is a powerful way for people who are unfamiliar with GraphQL to get started building out their own sites. A child theme could be a collection of these shadowed components that use any set of technologies without needing to worry about writing new GraphQL queries to get data: The page structure and content is already well-defined.

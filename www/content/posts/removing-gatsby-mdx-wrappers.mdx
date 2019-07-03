@@ -1,0 +1,98 @@
+---
+title: Removing Gatsby MDX Wrappers
+date: 2018-12-31T01:31:00.751Z
+tags:
+  - gatsby
+  - mdx
+---
+I just [removed generated wrappers](https://github.com/ChristopherBiscardi/gatsby-mdx/pull/221) from [gatsby-mdx's](https://github.com/ChristopherBiscardi/gatsby-mdx) implementation. This removed a sticking point for a lot of people from the API surface: `componentWithMDXScope`. People no longer have to use this API (in fact, it's deprecated and a no-op on master), which is a good thing because it represented a departure from the UX of Gatsby's core promise.
+
+# What were wrappers?
+
+Wrappers were a construct we used to ensure that Webpack could pick up and process any node modules imported inside of an MDX file. They also were responsible for ensuring the scope of any MDX file (scope == and imported node module) was accessible via context to the `MDXRenderer`. Wrappers were only necessary if you wanted to use MDX content from a remote CMS, like Contentful, or if you wanted to store MDX files somewhere that wasn't `src/pages` and also wanted to generate your own URLs, etc from them. Essentially, if you ever used `createPage` to point to MDX content you probably used Wrappers.
+
+What happened was in a `gatsby-node` `createPage` call, instead of passing in a component as usual:
+
+```js
+createPage({
+  path: `${edge.node.fields.slug}`, // required
+  component: blogPostTemplate,
+  context: {}
+});
+```
+
+You would wrap the component in `componentWithMDXScope` (and also pass the scope in).
+
+```js
+createPage({
+  path: `${edge.node.fields.slug}`, // required
+  component: componentWithMDXScope(blogPostTemplate, scope),
+  context: {}
+});
+```
+
+This was what let gatsby-mdx know that a certain page was going to render MDX content with a particular scope. Behind the scenes when this happened, we generated a higher order component that imported the appropriate scope file and hoisted the user's `pageQuery` in their template to the generated wrapper because Gatsby only lets you use page queries in the page template.
+
+This approach worked, but resulted in a lot of confusion. First of all, the `pageQuery` in the original template never got removed, so a warning got spit out that it "wasn't being used". Of course, we really were using it in the wrapper, but Gatsby didn't know that and neither did our users unless they went digging for it.
+
+That's not the only confusion it caused either. The biggest source of confusion was "why do we need componentWithMDXScope... at all?", and plenty of people forgot or didn't know to use it.
+
+# Removing Wrappers
+
+So, I was documenting `componentWithMDXScope` to explain what it did and why it existed when a couple ideas clicked in my head... and I removed it completely from the API surface.
+
+First, to make sure we didn't break any current consumers, I changed `componentWithMDXScope` to a no-op. This is so that people don't have to worry about removing it from their codebase yet to upgrade. It will just... do nothing.
+
+```js
+// this is so that people don't really have to change their code
+module.exports = function componentWithMDXScope(componentPath) {
+  return componentPath;
+};
+```
+
+Then, taking advantage of Gatsby's `wrapRootElement` API in `gatsby-browser.js` and `gatsby-ssr.js` I inserted all of the scopes from the scope directory in the cache that we were writing them out to.
+
+```js
+import React from "react";
+import { MDXScopeProvider } from "./context";
+import scopeContexts from "./mdx-scopes!";
+
+const WrapRootElement = ({ element }) => {
+  return (
+    <MDXScopeProvider __mdxScope={scopeContexts}>{element}</MDXScopeProvider>
+  );
+};
+
+export default WrapRootElement;
+```
+
+This completely automates the problem of getting MDX scope into the wrapper. The most interesting part is the scope import: `./mdx-scopes!`. This is basically saying "we're just importing the scopes here" and they magically appear as an object. What this syntax is actually saying is that we're using a webpack loader called `./mdx-scopes`, but not passing it a file. This allows us to do *anything* inside of the webpack loader to get the scopes. The only requirement is that we pass the scope object through as a source code string.
+
+In the loader you can see us scoop up all the scope files and push them through.
+
+```js
+const fs = require("fs");
+const path = require("path");
+
+module.exports = () => {
+  const files = fs.readdirSync("./.cache/gatsby-mdx/mdx-scopes-dir");
+  const abs = path.resolve("./.cache/gatsby-mdx/mdx-scopes-dir");
+  return (
+    files
+      .map(
+        (file, i) =>
+          `const scope_${i} = require('${path.join(abs, file)}').default;`
+      )
+      .join("\n") +
+    `export default {
+  ${files.map((_, i) => "...scope_" + i).join(",\n")}
+}`
+  );
+};
+```
+
+The only thing left is to generate the scope files, which previously happened when someone queried the `code.scope` field on the GraphQL schema. Instead, we generate the scope whenever an MDX node is created and so can take advantage of `onCreateNode`.
+
+# Fin
+
+...and that's it. `componentWithMDXScope` is gone and users don't ever have to do something weird when querying or creating pages programmatically in Gatsby with MDX.

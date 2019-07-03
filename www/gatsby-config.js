@@ -4,9 +4,16 @@ module.exports = {
     author: "Chris Biscardi",
     description: "Chris' thoughts and posts",
     siteUrl: "https://www.christopherbiscardi.com/",
-    social: {
-      twitter: `chrisbiscardi`
-    }
+    social: [
+      {
+        name: `twitter`,
+        url: `https://twitter.com/chrisbiscardi`
+      },
+      {
+        name: `github`,
+        url: `https://github.com/christopherbiscardi`
+      }
+    ]
   },
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
@@ -18,11 +25,20 @@ module.exports = {
         mdx: false // use my own gatsby-mdx
       }
     },
+    {
+      resolve: `gatsby-theme-blog`,
+      options: {
+        basePath: "/post"
+      }
+    },
     `gatsby-plugin-emotion`,
-    `gatsby-plugin-jarvis`,
     `gatsby-plugin-og-image`,
-    `gatsby-plugin-sharp`,
-    `gatsby-transformer-sharp`,
+    {
+      resolve: `gatsby-plugin-compile-es6-packages`,
+      options: {
+        modules: [`gatsby-theme-blog`]
+      }
+    },
     {
       resolve: `gatsby-plugin-webmention`,
       options: {
@@ -44,15 +60,6 @@ module.exports = {
       options: {
         name: "images",
         path: `${__dirname}/src/images/`
-      }
-    },
-    {
-      resolve: `gatsby-plugin-mdx`,
-      options: {
-        defaultLayouts: {
-          posts: require.resolve("./src/blog-post.js"),
-          default: require.resolve("./src/default-page-layout.js")
-        }
       }
     },
     `gatsby-plugin-react-helmet`,

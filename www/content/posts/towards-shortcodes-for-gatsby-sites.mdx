@@ -1,0 +1,104 @@
+---
+title: Towards Shortcodes for Gatsby Sites
+date: 2019-01-03T02:20:03.433Z
+tags:
+  - gatsby
+  - mdx
+---
+Many blogging platforms have the concept of shortcodes. This is especially prevalent in the [WordPress community](https://www.smashingmagazine.com/2012/05/wordpress-shortcodes-complete-guide/) and other places like [Hugo](https://gohugo.io/content-management/shortcodes/) use them too.
+
+WordPress' look like square brackets with content inside them.
+
+```
+[recent-posts]
+```
+
+but what if we need to configure them?
+
+```
+[recent-posts posts="5"]
+```
+
+or if we want to have some content that the shortcode uses to display. We'll call it "children".
+
+```
+[recent-posts posts="5"]Posts Heading[/recent-posts]
+```
+
+In all their variations across platforms, there's a bit of syntax marking the start of a shortcode, the attributes a shortcode might accept, and the children of the shortcode.
+
+# Shortcodes and Gatsby
+
+[Gatsby](https://www.gatsbyjs.org/) is built on [React](https://reactjs.org/) and if we look at the three previous examples we can see that React has solved this syntax in an open and ubiquitous way via [JSX](https://reactjs.org/docs/introducing-jsx.html).
+
+```js
+<RecentPosts />
+<RecentPosts posts={5} />
+<RecentPosts posts={5}>Posts Heading</RecentPosts>
+```
+
+It would be great if we could not only re-use this syntax, but also re-use the entire React ecosystem as a set of shortcodes.
+
+Well... we can.
+
+## Gatsby and MDX
+
+[MDX](https://github.com/mdx-js/mdx) allows us to put React components inside Markdown content. As an example, if we wanted to render color picker (or a visualization of some data, etc) we could do the following:
+
+```
+import { SketchPicker } from 'react-color'
+
+# Hello, world!
+
+Here's a color picker!
+
+<SketchPicker />
+```
+
+Which is great! We get our color picker rendered on the page in a very similar way to the shortcodes from WordPress or Hugo. There's still one problem though, the import. Shortcodes from other ecosystems don't need to be imported.
+
+## Introducing globalScope
+
+So in a [recent commit to gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx/commit/df27bb47b936655a2422fd65b066e34d0b6c8720) I introduced a new configuration option called `globalScope`. This configuration option lets us specify a set of components that are then made available to any MDX content we render on our Gatsby site.
+
+It works like this. In your gatsby config simple use a code string that imports some components and then exports an object of all of the components with the names you want to use for your shortcodes.
+
+```js
+module.exports = {
+  plugins: [
+    {
+      resolve: `gatsby-mdx`,
+      options: {
+        globalScope: `import { SketchPicker } from 'react-color';
+export default { Picker: SketchPicker }`,
+      }
+    },
+  ]
+};
+```
+
+and now this exact markdown content will render your shortcode, no import required.
+
+```md
+# A non-page
+
+In not the pages directory, with nothing special about it
+
+<Picker/>
+```
+
+You can check out the color picker example [on the gatsby-mdx kitchen sink site](https://gatsby-mdx-kitchen-sink.netlify.com/posts/non-page-global-scope).
+
+## What next
+
+Well, this can be applied to Youtube videos, Twitter oembeds, or anything else really. These components can even use any data in the page context, embed a `StaticQuery`, and they can execute completely arbitrary code because the shortcodes are now React components. The world is your oyster (it's not my oyster because I don't like oysters. That's why you get the oysters)
+
+```
+<ProgressBar percent="80" />
+<Youtube id="dQw4w9WgXcQ" />
+<Gist gistId="72ef76ecc6ef2c5d58780bac9174d3d1" />
+```
+
+* [ProgressBar](http://react-component.github.io/progress/)
+* [YouTube](https://www.npmjs.com/package/react-youtube-embed)
+* [Gist](https://www.npmjs.com/package/react-gist-embed)

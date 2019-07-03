@@ -1,0 +1,121 @@
+---
+title: Building Gatsby Plugin Webmentions
+date: 2019-01-15T03:59:51.829Z
+tags:
+  - gatsby
+---
+I've been idly thinking about how to do comments on my blog since a few people I follow on Twitter have started asking again. Now, to be fair, I don't want a "comments section" on my blog; That sounds horrible. What I do want, is a link to the Twitter conversations around the content I'm writing so that the conversations happening around the internet are accessible when you're reading the blog.
+
+So I had a flight last Friday and just before my flight I found out about the [Webmention standard](https://www.w3.org/TR/webmention/) because [Max Böck](https://twitter.com/mxbck) wrote a [blog post](https://mxb.at/blog/using-webmentions-on-static-sites/) on using them. So I dove into the blog post, quick-opened a set of tabs I might need and got to work on the plane.
+
+# A Gatsby Plugin
+
+One aspect of setting everything up for webmentions that I wanted to abstract was the number of deploys and html snippets you need to do and remember to set everything up. My platform of choice that would use any Webmention-related content is [Gatsby](https://www.gatsbyjs.org/) so I took the time I had on the plane to write [gatsby-plugin-webmention](https://github.com/ChristopherBiscardi/gatsby-plugin-webmention).
+
+The plugin breaks down the webmention setup experience roughly into:
+
+1. Set a username from twitter or github
+2. Use domain name to log in to https://webmention.io/ using the aforementioned platform
+3. Set webmention username
+
+## Inserting the tags
+
+Gatsby offers an API called [wrapRootElement](/post/controlling-the-gatsby-application-root) that lets us insert information once for the entire site. We can combine this with [React Helmet](https://github.com/nfl/react-helmet) to [insert the meta tags](https://github.com/ChristopherBiscardi/gatsby-plugin-webmention/blob/15eae29b2ea5ebc2704c38610e8ae5ebff38a6f2/wrap-root-element.js) that identify our accounts without making them visible to the user. There's a few of them and they look like this:
+
+```html
+<link rel="webmention" href="https://webmention.io/username/webmention" />
+<link rel="pingback" href="https://webmention.io/username/xmlrpc" />
+```
+
+There's also some that need to be inserted based on the configuration. That's why the first thing I did was write the [README.md](https://github.com/ChristopherBiscardi/gatsby-plugin-webmention). I planned out what the workflow would be for a new user and then built that out afterwards.
+
+```js
+// gatsby-config.js
+module.exports = {
+  plugins: [
+    {
+      resolve: `gatsby-plugin-webmention`,
+      options: {
+        username: undefined, // webmention.io username
+        identity: {
+          github: "username",
+          twitter: "username" // no @
+        },
+        mentions: true,
+        pingbacks: false,
+        forwardPingbacksAsWebmentions: "https://example.com/endpoint",
+        domain: "example.com",
+        token: process.env.WEBMENTIONS_TOKEN
+      }
+    }
+  ]
+};
+```
+
+## A Source
+
+The other large piece of webmentions is... accessing them via some API. That means we need a source. The source is really bare and just calls out to the API we need and fetches all the data.
+
+```js
+const fetch = require("node-fetch");
+const queryString = require("query-string");
+const camelcaseKeys = require("camelcase-keys");
+const createNodeHelpers = require("gatsby-node-helpers").default;
+
+const {
+  createNodeFactory,
+  generateNodeId,
+  generateTypeName
+} = createNodeHelpers({
+  typePrefix: `WebMention`
+});
+const ENTRY_TYPE = `Entry`;
+const WebMentionEntryNode = createNodeFactory(ENTRY_TYPE, entry => ({
+  ...entry,
+  id: generateNodeId(ENTRY_TYPE, entry.wmId.toString())
+}));
+
+// get all mentions for a token and a specific domain
+const getMentions = async ({ domain, token }) => {
+  return fetch(
+    `https://webmention.io/api/mentions.jf2?${queryString.stringify({
+      domain,
+      token
+    })}`
+  )
+    .then(response => response.json())
+    .then(mentions => {
+      if (!mentions || !mentions.children) {
+        return [];
+      }
+      return camelcaseKeys(mentions.children);
+    });
+};
+
+exports.sourceNodes = async (
+  { actions, createNodeId, createContentDigest, reporter },
+  { token, domain }
+) => {
+  if (!token || !domain) {
+    reporter.warn(
+      "`gatsby-plugin-webmention`: token and domain must be set to fetch webmentions"
+    );
+    reporter.warn(`is token set: ${!!token}`);
+    reporter.warn(`is domain set: ${!!domain}`);
+    return;
+  }
+  const { createNode, deleteNode } = actions;
+  return getMentions({ token, domain }).then(mentions => {
+    mentions.forEach(entry => createNode(WebMentionEntryNode(entry)));
+  });
+  //  createNode()
+};
+```
+
+This gives us a nice graphiql interface to make some test queries. Since I set up webmentions with [brid.gy](https://brid.gy/) to pull in Tweets as mentions, I can filter likes out using `ne: 'like-of'` and filter for only the page I'm currently showing using `wmTarget`.
+
+![graphiql](/img/image.png "GraphiQL showing Webmentions Data")
+
+# Fin
+
+So we end up with a basic source, some additional html tag functionality, and the ability to re-use this across any Gatsby site we set up. It's possible that we can define more schema for the mentions themselves, but this raw data inference is working pretty well for now :)

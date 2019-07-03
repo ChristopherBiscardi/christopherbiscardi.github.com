@@ -64,62 +64,62 @@ exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
   );
 };
 
-exports.createPages = ({ graphql, actions }) => {
-  const { createPage } = actions;
-  return new Promise((resolve, reject) => {
-    resolve(
-      graphql(
-        `
-          {
-            allMdxBlogPost {
-              byTag: group(field: tags) {
-                fieldValue
-              }
-              edges {
-                node {
-                  id
-                  body
-                  tags
-                  title
-                  url
-                  webmentionMatchURL
-                }
-              }
-            }
-          }
-        `
-      ).then(result => {
-        if (result.errors) {
-          console.log(result.errors);
-          reject(result.errors);
-        }
+// exports.createPages = ({ graphql, actions }) => {
+//   const { createPage } = actions;
+//   return new Promise((resolve, reject) => {
+//     resolve(
+//       graphql(
+//         `
+//           {
+//             allMdxBlogPost {
+//               byTag: group(field: tags) {
+//                 fieldValue
+//               }
+//               edges {
+//                 node {
+//                   id
+//                   body
+//                   tags
+//                   title
+//                   url
+//                   webmentionMatchURL
+//                 }
+//               }
+//             }
+//           }
+//         `
+//       ).then(result => {
+//         if (result.errors) {
+//           console.log(result.errors);
+//           reject(result.errors);
+//         }
 
-        result.data.allMdxBlogPost.byTag.forEach(({ fieldValue }) => {
-          createPage({
-            path: `/tags/${fieldValue}`,
-            component: require.resolve("./src/content-by-tag"),
-            context: {
-              tag: fieldValue
-            }
-          });
-        });
-        // Create blog posts pages.
-        result.data.allMdxBlogPost.edges.forEach(({ node }) => {
-          const { title, url, id, parent, fields, webmentionMatchURL } = node;
-          createPage({
-            path: url,
-            component: require.resolve("./src/blog-post"),
-            context: {
-              id: id,
-              title: title,
-              webmentionMatchURL: webmentionMatchURL
-            }
-          });
-        });
-      })
-    );
-  });
-};
+//         result.data.allMdxBlogPost.byTag.forEach(({ fieldValue }) => {
+//           createPage({
+//             path: `/tags/${fieldValue}`,
+//             component: require.resolve("./src/content-by-tag"),
+//             context: {
+//               tag: fieldValue
+//             }
+//           });
+//         });
+//         // Create blog posts pages.
+//         result.data.allMdxBlogPost.edges.forEach(({ node }) => {
+//           const { title, url, id, parent, fields, webmentionMatchURL } = node;
+//           createPage({
+//             path: url,
+//             component: require.resolve("./src/blog-post"),
+//             context: {
+//               id: id,
+//               title: title,
+//               webmentionMatchURL: webmentionMatchURL
+//             }
+//           });
+//         });
+//       })
+//     );
+//   });
+// };
 
 exports.onCreateWebpackConfig = ({
   stage,

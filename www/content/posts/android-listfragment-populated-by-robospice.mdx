@@ -1,0 +1,194 @@
+---
+title: "Android ListFragment Populated by RoboSpice"
+date: 2014-01-28
+url: "/2014/1/28/android-listfragment-populated-by-robospice/"
+---
+
+In this post we are going to add a ListFragment backed by the RoboSpice data
+from the [first
+post](http://www.christopherbiscardi.com/2014/01/27/android-robospice-with-googlehttpclient/)
+
+The git repo is
+[here](https://github.com/ChristopherBiscardi/robospice-googlehttpclient-example/tree/8f64ab7d761d095737811018624b0da31b6e4b7b).
+
+Firstly, we are going to need to bump the sdk version to 11 in
+`AndroidManifest.xml`. We could use the support version of the Fragment api, but
+in this instance we don’t need to.
+
+```xml
+<uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="17" />
+```
+
+Then we’ll create a RedditListFragment by extending ListFragment:
+
+```java
+public class RedditListFragment extends ListFragment {
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Log.e("RedditListingsClick",position + " " + id);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        ArrayList<redditchild> redditChildren = new ArrayList<redditchild>();
+        RedditChildAdapter adapter = new RedditChildAdapter(inflater.getContext(), redditChildren);
+        setListAdapter(adapter);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+}</redditchild></redditchild>
+```
+
+Notably, we have it set to log out the position of taps to LogCat and we set a
+new adapter (with empty content) for the ListView.
+
+#### item_reddit_listing.xml
+
+We also need an item layout to display our data. We use a simple `LinearLayout`
+with vertical alignment and some sensible margins to arrange our three
+`TextView`s. We set some stylistic effects (color, bold/italics) on our
+`TextView`s to make the display a little nicer.
+
+Of note is the `android:id` fields. We will use these in our adapter to identify
+each `TextView`.
+
+```xml
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#EDEDED"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="10dp" >
+
+    <TextView
+        android:id="@+id/rTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#454545"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/rAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#acacac"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/rDomain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#acacac" />
+
+</LinearLayout>
+```
+
+#### RedditChildAdapter
+
+Next we need to extend an adapter to map the data we get from RoboSpice to the
+`item_reddit_listing.xml` layout.
+
+Notably, we are using the ViewHolder pattern for performance and using
+`child.getData()` to get at each `RedditListing`.
+
+```java
+package com.christopherbiscardi.robospicetest.lists;
+
+import java.util.ArrayList;
+
+import com.christopherbiscardi.robospicetest.R;
+import com.christopherbiscardi.robospicetest.RedditChild;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+public class RedditChildAdapter extends ArrayAdapter<redditchild> {
+    private static class ViewHolder {
+        TextView title;
+        TextView author;
+        TextView domain;
+    }
+
+    public RedditChildAdapter(Context context, ArrayList<redditchild> redditChildren) {
+        super(context, R.layout.item_reddit_listing, redditChildren);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        // Get the data item for this position
+        RedditChild child = getItem(position);
+        // Check if an existing view is being reused, otherwise inflate the view
+           ViewHolder viewHolder; // view lookup cache stored in tag
+           if (convertView == null) {
+              viewHolder = new ViewHolder();
+              LayoutInflater inflater = LayoutInflater.from(getContext());
+              convertView = inflater.inflate(R.layout.item_reddit_listing, null);
+              viewHolder.title = (TextView) convertView.findViewById(R.id.rTitle);
+              viewHolder.author = (TextView) convertView.findViewById(R.id.rAuthor);
+              viewHolder.domain = (TextView) convertView.findViewById(R.id.rDomain);
+              convertView.setTag(viewHolder);
+           } else {
+               viewHolder = (ViewHolder) convertView.getTag();
+           }
+           // Populate the data into the template view using the data object
+           viewHolder.title.setText(child.getData().getTitle());
+           viewHolder.author.setText(child.getData().getAuthor());
+           viewHolder.domain.setText(child.getData().getDomain());
+           // Return the completed view to render on screen
+           return convertView;
+    }
+}
+</redditchild></redditchild>
+```
+
+#### MainActivity.java
+
+Finally, in `MainActivity.java`:
+
+Add a RedditListFragment to the view using FragmentManager:
+
+```java
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    FragmentManager fm = getFragmentManager();
+
+    if (fm.findFragmentById(android.R.id.content) == null) {
+        RedditListFragment list = new RedditListFragment();
+        fm.beginTransaction().add(android.R.id.content, list).commit();
+    }
+    spiceRequestReddit = new SpiceRequestReddit( "Riak" );
+}
+```
+
+Then in our Request Listener add the data to the ListFragment Adapter:
+
+```java
+public void onRequestSuccess( final Reddit result ) {
+    Toast.makeText( MainActivity.this, "success", Toast.LENGTH_SHORT ).show();
+    Log.e("TEST",result.toString());
+    Log.e("TEST",result.getData().getChildren().get(0).getData().getTitle());
+
+    ListView listView = (ListView) findViewById(android.R.id.list);
+    RedditChildAdapter adapter = (RedditChildAdapter) listView.getAdapter();
+    adapter.clear();
+    adapter.addAll(result.getData().getChildren());
+
+}
+```
+
+At this point we’re good to go. Fire up the app and you should see something
+similar to this:
+
+[![Screenshot of the sample Reddit app](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_188/v1428611518/Screenshot_2014-01-27-16-44-50_njyscb.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611518/Screenshot_2014-01-27-16-44-50_njyscb.png)

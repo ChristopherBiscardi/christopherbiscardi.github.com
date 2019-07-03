@@ -1,0 +1,59 @@
+---
+title: The Small UX of Users of Gatsby Themes
+date: 2019-02-10T05:27:06.063Z
+tags:
+  - gatsby
+---
+As authors of themes we can [take advantage of starters](/post/starters-and-themes-together) to make it easier for users of our themes to bootstrap new projects, thus increasing the usage of our theme. While starters are important for new projects, we should also take care to support people that instantiate new projects from scratch or when swapping from another system. To this end, we need a way to remove barriers for these latter groups of people.
+
+# gatsby-source-filesystem
+
+A small example is the usage of [gatsby-source-filesystem](https://www.gatsbyjs.org/packages/gatsby-source-filesystem/) in a theme. Take the following source config in a hypothetical theme.
+
+```js
+{
+  resolve: `gatsby-source-filesystem`,
+  options: {
+    path: `content/blog`,
+    name: `blog`,
+  },
+}
+```
+
+If the user bootstraps a new project without using a starter that has example data in `content/blog`, they will see this error indicating a missing directory.
+
+```sh
+error
+The path passed to gatsby-source-filesystem does not exist on your file system:
+
+content/blog
+
+Please pick a path to an existing directory.
+
+See docs here - https://www.gatsbyjs.org/packages/gatsby-source-filesystem/
+```
+
+It's a pretty solid error message as far as failures go, but we can totally remove the need to even see it.
+
+# onPreBootstrap
+
+To eliminate this error message we can use [mkdirp](https://github.com/substack/node-mkdirp) and the [onPreBootstrap](https://www.gatsbyjs.org/docs/node-apis/#onPreBootstrap) Gatsby lifecycle to ensure the `content/blog` directory always exists without having adverse effects on people who run our theme. Note that `program.directory` is the root directory of the user's site.
+
+```js
+const path = require("path");
+const fs = require("fs");
+const mkdirp = require("mkdirp");
+
+// make sure src/pages exists for the filesystem source or it will error
+exports.onPreBootstrap = ({ store }) => {
+
+  const { program } = store.getState();
+  const dir = path.join(program.directory, 'content', 'blog');
+
+  mkdirp.sync(dir);
+};
+```
+
+# Fin
+
+When building themes, we can take advantage of Gatsby's APIs to enhance the small details of user experience for people using our themes. As themes enable expansion beyond GraphQL and React experts into people who just want to use a docs site, a marketing page, or a blog these small UX improvements will get more and more important.
