@@ -3,6 +3,7 @@ import React from "react";
 // import { Global } from "@emotion/core";
 // import { Sens8Context } from "@sens8/tokens";
 import { MDXProvider } from "@mdx-js/react";
+import Player from "react-player";
 
 const components = {
   Video: props => (
