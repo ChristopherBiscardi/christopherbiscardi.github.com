@@ -48,7 +48,7 @@ export default class PostsPage extends Component {
 
 export const pageQuery = graphql`
   query PostsQuery {
-    allBlogPost(sort: { fields: date, order: DESC }) {
+    allBlogPost: allMdxBlogPost(sort: { fields: date, order: DESC }) {
       edges {
         node {
           ...PostListItemFragment

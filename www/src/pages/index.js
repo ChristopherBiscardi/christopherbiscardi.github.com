@@ -91,22 +91,23 @@ const FeaturedPost = ({ id, parent, excerpt, title }) => {
 
 export const query = graphql`
   query {
-    featuredPosts: allBlogPost(limit: 10, sort: { fields: date, order: DESC }) {
+    featuredPosts: allMdxBlogPost(
+      limit: 10
+      sort: { fields: date, order: DESC }
+    ) {
       edges {
         node {
           id
           title
           excerpt
           url
-          ... on MdxBlogPost {
-            parent {
-              ... on Mdx {
-                fields {
-                  featuredImage {
-                    childImageSharp {
-                      fluid(maxWidth: 700) {
-                        ...GatsbyImageSharpFluid
-                      }
+          parent {
+            ... on Mdx {
+              fields {
+                featuredImage {
+                  childImageSharp {
+                    fluid(maxWidth: 700) {
+                      ...GatsbyImageSharpFluid
                     }
                   }
                 }

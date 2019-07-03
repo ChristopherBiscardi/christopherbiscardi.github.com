@@ -44,6 +44,7 @@
     "gatsby-plugin-webmention": "^0.1.0",
     "gatsby-remark-prismjs": "3.1.4",
     "gatsby-theme-digital-garden": "^0.0.26",
+    "gatsby-theme-notes": "^0.0.2",
     "gatsby-transformer-sharp": "^2.1.18",
     "graphql-compose": "^6.2.0",
     "husky": "^1.2.0",

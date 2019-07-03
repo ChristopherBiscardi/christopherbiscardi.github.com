@@ -96,22 +96,20 @@ const PostListItem = ({ url, title, excerpt, tags, featuredImage }) => {
 };
 
 export const PostListItemFragment = graphql`
-  fragment PostListItemFragment on BlogPost {
+  fragment PostListItemFragment on MdxBlogPost {
     id
     date
     url
     title
     tags
     excerpt
-    ... on MdxBlogPost {
-      parent {
-        ... on Mdx {
-          fields {
-            featuredImage {
-              childImageSharp {
-                fluid(maxWidth: 700) {
-                  ...GatsbyImageSharpFluid
-                }
+    parent {
+      ... on Mdx {
+        fields {
+          featuredImage {
+            childImageSharp {
+              fluid(maxWidth: 700) {
+                ...GatsbyImageSharpFluid
               }
             }
           }

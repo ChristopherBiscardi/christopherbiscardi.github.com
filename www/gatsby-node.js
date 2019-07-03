@@ -2,72 +2,11 @@ const crypto = require("crypto");
 const path = require(`path`);
 const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
-const { findOne, findManyPaginated } = require("gatsby/dist/schema/resolvers");
-const { GraphQLDate } = require("gatsby/dist/schema/types/date");
-const { getPagination } = require(`gatsby/dist/schema/types/pagination`);
-const { getSortInput } = require(`gatsby/dist/schema/types/sort`);
-const { getFilterInput } = require(`gatsby/dist/schema/types/filter`);
-
-const { SchemaComposer, InterfaceTypeComposer } = require("graphql-compose");
-
-const basicResolve = field => (source, args, context, info) => {
-  return source[field];
-};
 
 exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
-  const schemaComposer = new SchemaComposer();
-  schemaComposer.addAsComposer(GraphQLDate);
-  const blogPostIFTC = InterfaceTypeComposer.createTemp(
-    `
-    interface BlogPost @NodeInterface {
-      id: ID!
-      title: String!
-excerpt: String!
-      body: String!
-      url: String!
-      tags: [String]!
-      date: Date!
-      egghead: String
-      isNewsletter: Boolean!
-      webmentionMatchURL: String!
-    }
-  `,
-    schemaComposer
-  );
-
-  const sortInputTC = getSortInput({
-    schemaComposer,
-    typeComposer: blogPostIFTC
-  });
-  sortInputTC.setTypeName("BlogPostReallyNotSort");
-  const filterInputTC = getFilterInput({
-    schemaComposer,
-    typeComposer: blogPostIFTC
-  });
-  filterInputTC.setTypeName(`BlogPostReallyNotFilter`);
-  const paginationTC = getPagination({
-    schemaComposer,
-    typeComposer: blogPostIFTC
-  });
-
-  createTypes([
-    schemaComposer.getAnyTC("SortOrderEnum").getType(),
-    schemaComposer.getAnyTC("StringQueryOperatorInput").getType(),
-    schemaComposer.getAnyTC("DateQueryOperatorInput").getType(),
-    schemaComposer.getAnyTC("BooleanQueryOperatorInput").getType(),
-    schemaComposer.getAnyTC("PageInfo").getType(),
-    blogPostIFTC.getType(),
-    sortInputTC.getType(),
-    filterInputTC.getType(),
-    paginationTC.getType()
-  ]);
-
   createTypes(
     schema.buildObjectType({
       name: `MdxBlogPost`,
-      args: {
-        filter: "BlogPostReallyNotFilter"
-      },
       fields: {
         id: { type: `ID!` },
         title: {
@@ -120,37 +59,9 @@ excerpt: String!
         },
         webmentionMatchURL: { type: "String!" }
       },
-      interfaces: [`Node`, `BlogPost`]
+      interfaces: [`Node`]
     })
   );
-};
-
-exports.createResolvers = ({ createResolvers }) => {
-  createResolvers({
-    Query: {
-      // Create a new root query field.
-      allBlogPost: {
-        type: `BlogPostConnection`,
-        args: {
-          filter: "BlogPostReallyNotFilter",
-          sort: "BlogPostReallyNotSort",
-          skip: `Int`,
-          limit: `Int`
-        },
-        resolve: (source, args, context, info) =>
-          findManyPaginated("MdxBlogPost")({ source, args, context, info })
-      },
-      blogPost: {
-        type: `BlogPost`,
-        args: {
-          // would be nice to not have to specify this for every field
-          id: `StringQueryOperatorInput`
-        },
-        resolve: (source, args, context, info) =>
-          findOne("MdxBlogPost")({ source, args, context, info })
-      }
-    }
-  });
 };
 
 exports.createPages = ({ graphql, actions }) => {
@@ -160,7 +71,7 @@ exports.createPages = ({ graphql, actions }) => {
       graphql(
         `
           {
-            allBlogPost {
+            allMdxBlogPost {
               byTag: group(field: tags) {
                 fieldValue
               }
@@ -183,7 +94,7 @@ exports.createPages = ({ graphql, actions }) => {
           reject(result.errors);
         }
 
-        result.data.allBlogPost.byTag.forEach(({ fieldValue }) => {
+        result.data.allMdxBlogPost.byTag.forEach(({ fieldValue }) => {
           createPage({
             path: `/tags/${fieldValue}`,
             component: require.resolve("./src/content-by-tag"),
@@ -193,7 +104,7 @@ exports.createPages = ({ graphql, actions }) => {
           });
         });
         // Create blog posts pages.
-        result.data.allBlogPost.edges.forEach(({ node }) => {
+        result.data.allMdxBlogPost.edges.forEach(({ node }) => {
           const { title, url, id, parent, fields, webmentionMatchURL } = node;
           createPage({
             path: url,

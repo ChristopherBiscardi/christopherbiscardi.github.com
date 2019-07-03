@@ -54,7 +54,7 @@ export default class ContentByTagTemplate extends Component {
 
 export const pageQuery = graphql`
   query ContentByTagQuery($tag: String!) {
-    allBlogPost(
+    allBlogPost: allMdxBlogPost(
       filter: { tags: { in: [$tag] } }
       sort: { fields: date, order: DESC }
     ) {

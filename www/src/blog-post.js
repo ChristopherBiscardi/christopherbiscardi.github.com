@@ -201,7 +201,7 @@ const WebMentions = props => {
 
 export const pageQuery = graphql`
   query($id: String!, $webmentionMatchURL: String!, $title: String) {
-    blogPost(id: { eq: $id }) {
+    blogPost: mdxBlogPost(id: { eq: $id }) {
       id
       title
       egghead

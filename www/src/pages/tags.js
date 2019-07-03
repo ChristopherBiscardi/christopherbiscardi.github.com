@@ -81,7 +81,7 @@ const TagItem = ({ tag }) => {
 };
 export const pageQuery = graphql`
   query TagsPageQuery {
-    allBlogPost {
+    allBlogPost: allMdxBlogPost {
       byTag: group(field: tags) {
         tag: fieldValue
       }
