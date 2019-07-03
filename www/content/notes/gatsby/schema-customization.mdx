@@ -1,0 +1,135 @@
+---
+title: "Schema Customization"
+---
+
+## Two main APIs
+
+`createTypes` and `createResolvers`.
+
+`createTypes` allows the introduction or "polishing" of types.
+
+you can use directives to force inference or non-inference of fields.
+
+
+## wrong type returned from resolver
+
+```js
+createTypes(
+  schema.buildObjectType({
+    name: `MdxBlogPost`,
+    fields: {
+      // no type here! type is required
+      title: {
+        resolve(source, args, context, info) {
+          console.log(source, args, context, info);
+        }
+      }
+    }
+  })
+);
+```
+
+shows this error
+
+```
+
+  Error: MdxBlogPost.title provided incorrect OutputType: '{}'
+
+  - TypeMapper.js:282 TypeMapper.convertOutputFieldConfig
+    [christopherbiscardi.github.com]/[graphql-compose]/lib/TypeMapper.js:282:15
+
+  - configAsThunk.js:18 resolveOutputConfigAsThunk
+    [christopherbiscardi.github.com]/[graphql-compose]/lib/utils/configAsThunk.js:18:41
+
+  - configAsThunk.js:36 Object.keys.forEach.name
+    [christopherbiscardi.github.com]/[graphql-compose]/lib/utils/configAsThunk.js:36:22
+
+  - Array.forEach
+
+  - configAsThunk.js:35 resolveOutputConfigMapAsThunk
+    [christopherbiscardi.github.com]/[graphql-compose]/lib/utils/configAsThunk.js:35:27
+
+  - ObjectTypeComposer.js:144 GraphQLObjectType.gqType._fields
+    [christopherbiscardi.github.com]/[graphql-compose]/lib/ObjectTypeComposer.js:144:114
+
+  - Array.reduce
+
+  - SchemaComposer.js:122 SchemaComposer.buildSchema
+    [christopherbiscardi.github.com]/[graphql-compose]/lib/SchemaComposer.js:122:12
+
+  - schema.js:480
+    [christopherbiscardi.github.com]/[gatsby]/dist/schema/schema.js:480:47
+
+  - Generator.next
+
+
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about
+this command.
+```
+
+---
+
+schema out of info, get the type, get the resolver, call it
+
+(as long as it doesn't rely on GraphQL context)
+
+also create the fieldname
+
+---
+
+extendType
+
+multiple interfaces for BlogPostWithComments, BlogPostWithMultipleAuthors, BlogPostv2, etc, all available so that themes can choose which one they support
+
+define new interface (BlogPostWithComments), old resolvers are already defined, so grab originalResolver off the type and execute.
+
+---
+
+
+(kinda) Not Possible to get resolver-specific types
+
+can do this, but it's a stop-gap and will be more formally supported
+
+```
+const type = info.schema.getType('MarkdownRemark`)
+const resolver = type.getFields().html.resolve
+const html = resolver(markdownRemarkNode, {}, context, { fieldName: 'html'})
+```
+
+---
+
+Replaces `setFieldsOnGraphQLNodeType()` (but the API isn't deprecated yet).
+
+---
+
+```
+const { paginate } = require('gatsby/dist/schema/resolvers')
+
+allBlogPost: {
+   // type should go automatically because blog post is a node 
+   resolve:  async (source, args, context, info) => {
+      const result = context.nodeModel.runQuery(
+         {
+           query: args,
+           firstOnly: false,
+           type: info.schema.getType('YourBackingType'),
+         },
+         { path: context.path, connectionType: typeName }
+      )
+      return paginate(result, { skip: args.skip, limit: args.limit })
+    }
+},
+```
+
+
+---
+
+https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby/src/schema/types/pagination.js
+
+```
+import schemacomposer
+
+create interface type as the typecomposer
+```
+

@@ -9,16 +9,15 @@ module.exports = {
     }
   },
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
-  __experimentalThemes: [
+  plugins: [
     {
-      resolve: "gatsby-theme-digital-garden",
+      resolve: "gatsby-theme-notes",
       options: {
-        notes: "../content/note",
+        // contentPath: "../content/note",
+        basePath: "/notes",
         mdx: false // use my own gatsby-mdx
       }
-    }
-  ],
-  plugins: [
+    },
     `gatsby-plugin-emotion`,
     `gatsby-plugin-jarvis`,
     `gatsby-plugin-og-image`,

@@ -13,7 +13,7 @@ export default ({ children, ...props }) => (
           boxSizing: "border-box"
         },
         body: {
-          background: theme.colors.background
+          // background: theme.colors.background
         }
       }}
     />
