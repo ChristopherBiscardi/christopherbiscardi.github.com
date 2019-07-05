@@ -12,6 +12,14 @@ module.exports = {
       {
         name: `github`,
         url: `https://github.com/christopherbiscardi`
+      },
+      {
+        name: `twitch`,
+        url: `https://www.twitch.tv/chrisbiscardi`
+      },
+      {
+        name: "youtube",
+        url: `https://www.youtube.com/channel/UCiSIL42pQRpc-8JNiYDFyzQ`
       }
     ]
   },
