@@ -5968,6 +5968,14 @@ gatsby-theme-notes@^0.0.3:
     react-feather "^1.1.6"
     theme-ui "^0.2.0"
 
+gatsby-theme@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/gatsby-theme/-/gatsby-theme-0.0.2.tgz#576f018957714e20d25aebcd94511df3eada3532"
+  integrity sha512-KnxWPFldKS/s3wBtnjALiSCHRZxJGMFNk4KOKCYmlbhkKgkGLUzjhw/z6PQAAwZWsoqIC3b1fZbnYDRWqge43g==
+  dependencies:
+    glob "^7.1.4"
+    inquirer "^6.4.1"
+
 gatsby-transformer-sharp@^2.1.15:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/gatsby-transformer-sharp/-/gatsby-transformer-sharp-2.2.1.tgz#5bc9c0d22e04c842df0b098e103d9655e051806d"
@@ -7135,7 +7143,7 @@ inquirer@3.3.0:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-inquirer@^6.2.0, inquirer@^6.2.2:
+inquirer@^6.2.0, inquirer@^6.2.2, inquirer@^6.4.1:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-6.4.1.tgz#7bd9e5ab0567cd23b41b0180b68e0cfa82fc3c0b"
   integrity sha512-/Jw+qPZx4EDYsaT6uz7F4GJRNFMRdKNeUZw3ZnKV8lyuUgz/YWRCSUAJMZSVhSq4Ec0R2oYnyi6b3d4JXcL5Nw==
