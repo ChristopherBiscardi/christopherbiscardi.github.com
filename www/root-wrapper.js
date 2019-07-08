@@ -1,7 +1,6 @@
 import React from "react";
-// import theme from "@sens8/tokens";
-// import { Global } from "@emotion/core";
-// import { Sens8Context } from "@sens8/tokens";
+import theme from "@sens8/tokens";
+import { Sens8Context } from "@sens8/tokens";
 import { MDXProvider } from "@mdx-js/react";
 import Player from "react-player";
 
@@ -18,5 +17,7 @@ const components = {
 };
 
 export default ({ children, ...props }) => (
-  <MDXProvider components={components}>{children}</MDXProvider>
+  <Sens8Context.Provider value={theme}>
+    <MDXProvider components={components}>{children}</MDXProvider>
+  </Sens8Context.Provider>
 );
