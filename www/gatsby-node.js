@@ -205,3 +205,47 @@ exports.onCreateNode = ({ node, actions, getNode, createNodeId }) => {
     }
   }
 };
+
+exports.onCreatePage = ({ page, actions, getNode }) => {
+  const { createPage, deletePage } = actions;
+
+  // change /posts to point to right urls
+  // console.log("-", page.path);
+  if (page.path === "/post") {
+    page.context.posts = page.context.posts.map(({ node }) => {
+      const nodeFromGatsby = getNode(node.id);
+      if (!nodeFromGatsby || nodeFromGatsby.internal.type !== "BlogPost") {
+        return;
+      }
+      const parent = getNode(nodeFromGatsby.parent);
+      if (!parent || parent.internal.type !== "Mdx") {
+        return;
+      }
+      if (parent.frontmatter.slug && parent.frontmatter.slug.startsWith("/")) {
+        node.slug = parent.frontmatter.slug;
+      }
+      return { node };
+    });
+  }
+
+  // use old slugs so links don't break
+  const node = getNode(page.context.id);
+  if (!node || node.internal.type !== "BlogPost") {
+    return;
+  }
+  const parent = getNode(node.parent);
+  if (!parent || parent.internal.type !== "Mdx") {
+    return;
+  }
+
+  if (parent.frontmatter.slug && parent.frontmatter.slug.startsWith("/")) {
+    const oldPage = Object.assign({}, page);
+    // use legacy urls if slugs are absolute paths
+    page.path = parent.frontmatter.slug;
+    if (page.path !== oldPage.path) {
+      // Replace new page with old page
+      deletePage(oldPage);
+      createPage(page);
+    }
+  }
+};
