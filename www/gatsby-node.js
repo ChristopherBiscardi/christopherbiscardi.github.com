@@ -64,62 +64,63 @@ exports.sourceNodes = ({ actions: { createTypes }, schema }) => {
   );
 };
 
-// exports.createPages = ({ graphql, actions }) => {
-//   const { createPage } = actions;
-//   return new Promise((resolve, reject) => {
-//     resolve(
-//       graphql(
-//         `
-//           {
-//             allMdxBlogPost {
-//               byTag: group(field: tags) {
-//                 fieldValue
-//               }
-//               edges {
-//                 node {
-//                   id
-//                   body
-//                   tags
-//                   title
-//                   url
-//                   webmentionMatchURL
-//                 }
-//               }
-//             }
-//           }
-//         `
-//       ).then(result => {
-//         if (result.errors) {
-//           console.log(result.errors);
-//           reject(result.errors);
-//         }
+exports.createPages = ({ graphql, actions }) => {
+  const { createPage } = actions;
+  return new Promise((resolve, reject) => {
+    resolve(
+      graphql(
+        `
+          {
+            site {
+              siteMetadata {
+                title
+                social {
+                  name
+                  url
+                }
+              }
+            }
+            tags: allBlogPost(sort: { fields: [date, title], order: DESC }) {
+              byTag: group(field: tags) {
+                tag: fieldValue
+                edges {
+                  node {
+                    id
+                    excerpt
+                    slug
+                    title
+                    date(formatString: "MMMM DD, YYYY")
+                  }
+                }
+              }
+            }
+          }
+        `
+      ).then(result => {
+        if (result.errors) {
+          console.log(result.errors);
+          reject(result.errors);
+        }
+        const {
+          site: { siteMetadata }
+        } = result.data;
+        const { title: siteTitle, social: socialLinks } = siteMetadata;
 
-//         result.data.allMdxBlogPost.byTag.forEach(({ fieldValue }) => {
-//           createPage({
-//             path: `/tags/${fieldValue}`,
-//             component: require.resolve("./src/content-by-tag"),
-//             context: {
-//               tag: fieldValue
-//             }
-//           });
-//         });
-//         // Create blog posts pages.
-//         result.data.allMdxBlogPost.edges.forEach(({ node }) => {
-//           const { title, url, id, parent, fields, webmentionMatchURL } = node;
-//           createPage({
-//             path: url,
-//             component: require.resolve("./src/blog-post"),
-//             context: {
-//               id: id,
-//               title: title,
-//               webmentionMatchURL: webmentionMatchURL
-//             }
-//           });
-//         });
-//       })
-//     );
-//   });
-// };
+        result.data.tags.byTag.forEach(({ tag, edges: posts }) => {
+          createPage({
+            path: `/tags/${tag}`,
+            component: require.resolve(`gatsby-theme-blog/src/templates/posts`),
+            context: {
+              posts,
+              siteTitle,
+              socialLinks
+            }
+          });
+        });
+      })
+    );
+  });
+};
 
 exports.onCreateWebpackConfig = ({
   stage,
