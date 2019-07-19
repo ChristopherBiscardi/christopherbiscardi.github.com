@@ -106,17 +106,21 @@ exports.createPages = ({ graphql, actions }) => {
         } = result.data;
         const { title: siteTitle, social: socialLinks } = siteMetadata;
 
-        result.data.tags.byTag.forEach(({ tag, edges: posts }) => {
-          createPage({
-            path: `/tags/${tag}`,
-            component: require.resolve(`gatsby-theme-blog/src/templates/posts`),
-            context: {
-              posts,
-              siteTitle,
-              socialLinks
-            }
+        result.data.tags.byTag
+          .filter(({ tag }) => tag !== "")
+          .forEach(({ tag, edges: posts }) => {
+            createPage({
+              path: `/tags/${tag}`,
+              component: require.resolve(
+                `gatsby-theme-blog/src/templates/posts`
+              ),
+              context: {
+                posts,
+                siteTitle,
+                socialLinks
+              }
+            });
           });
-        });
       })
     );
   });
