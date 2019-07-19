@@ -111,13 +111,11 @@ exports.createPages = ({ graphql, actions }) => {
           .forEach(({ tag, edges: posts }) => {
             createPage({
               path: `/tags/${tag}`,
-              component: require.resolve(
-                `gatsby-theme-blog/src/templates/posts`
-              ),
+              component: require.resolve(`./src/templates/tag-page`),
               context: {
-                posts,
                 siteTitle,
-                socialLinks
+                socialLinks,
+                tag
               }
             });
           });
