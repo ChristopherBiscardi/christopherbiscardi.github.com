@@ -1,8 +1,18 @@
 import { Link } from "gatsby";
+import Layout from "gatsby-theme-blog/src/components/layout";
+import { Styled } from "theme-ui";
 
-# Chris Biscardi
+<Layout location={props.location} title="Chris Biscardi">
 
-- <Link to="/post">Posts</Link>
-- <Link to="/notes">Notes</Link>
-- <Link to="/tags">Tags</Link>
+- <Styled.a as={Link} to="/post">
+    Posts
+  </Styled.a>
+- <Styled.a as={Link} to="/notes">
+    Notes
+  </Styled.a>
+- <Styled.a as={Link} to="/tags">
+    Tags
+  </Styled.a>
 - [Newsletter](https://pages.convertkit.com/04c24646a3/c136f814fc)
+
+</Layout>
