@@ -78,11 +78,11 @@ const ConvertKitFooterish = ({ children, ...props }) => {
         {children ? (
           children
         ) : (
-          <Text>
+          <Styled.p>
             My newsletter is where you'll find exclusive content from me. I
             write about technology, startups, and why you shouldn't call
             yourself a junior engineer
-          </Text>
+          </Styled.p>
         )}
       </div>
     </div>

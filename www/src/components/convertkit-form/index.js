@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { Styled, Flex } from "theme-ui";
 import { css } from "@emotion/core";
 import { Heading } from "sens8";
 import Message from "./message";
@@ -68,7 +69,7 @@ export default class SignUp extends React.Component {
     const successful = response && response.status === "success";
     return (
       <>
-        {!successful && <Heading>Join the Newsletter</Heading>}
+        {!successful && <Styled.h2>Join the Newsletter</Styled.h2>}
 
         <Formik
           initialValues={{
