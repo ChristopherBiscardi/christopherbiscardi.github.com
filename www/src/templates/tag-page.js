@@ -23,13 +23,13 @@ const Posts = ({ data, pageContext, location }) => {
                 <SEO title={`Tag: ${tag}`} keywords={keywords} />
                 <div>
                   <Styled.h2
-                    css={css({
+                    sx={{
                       mb: 1
-                    })}
+                    }}
                   >
                     <Styled.a
                       as={Link}
-                      css={{
+                      sx={{
                         textDecoration: `none`
                       }}
                       to={node.slug}
