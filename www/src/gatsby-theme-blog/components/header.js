@@ -4,6 +4,6 @@ import { TagPageDataContext } from "../../components/tag-page-data-context";
 
 export default props => {
   const { tag } = useContext(TagPageDataContext);
-  const title = tag ? `${props.title} : in ${tag}` : props.title;
+  const title = tag ? `${props.title} :: on ${tag}` : props.title;
   return <Header {...props} title={title} />;
 };
