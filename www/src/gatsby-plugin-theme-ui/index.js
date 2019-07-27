@@ -8,6 +8,9 @@ export default {
     background: "#2e3440",
     highlight: "#4c566a",
     primary: "#1fa9f4",
+    prism: {
+      ...baseTheme.colors.prism
+    },
     modes: {
       dark: {
         ...baseTheme.colors,
