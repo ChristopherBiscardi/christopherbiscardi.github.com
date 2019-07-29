@@ -25,6 +25,7 @@ module.exports = {
   },
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
+    `rainbow-og-images`,
     {
       resolve: "gatsby-theme-notes",
       options: {
