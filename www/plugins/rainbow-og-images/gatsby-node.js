@@ -127,16 +127,15 @@ const runScreenshots = async ({ titles }) => {
   }
 
   await page.setContent(html);
-  await Promise.all(
-    titles.map(async ({ title }) => {
-      await screenshotDOMElement({
-        path: `${slugify(title)}.png`,
-        selector: `[data-id="${slugify(title)}"] > div`,
-        padding: 0
-      });
+  const titlePromises = titles.map(({ title }) =>
+    screenshotDOMElement({
+      path: `${slugify(title)}.png`,
+      selector: `[data-id="${slugify(title)}"] > div`,
+      padding: 0
     })
   );
 
+  const results = await Promise.all(titlePromises);
   await browser.close();
 };
 
@@ -171,5 +170,5 @@ exports.onPostBuild = async ({ graphql }, pluginOptions) => {
     html: `<div class="clip-text">${title}</div>`
   }));
 
-  runScreenshots({ titles });
+  await runScreenshots({ titles });
 };
