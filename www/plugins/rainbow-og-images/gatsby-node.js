@@ -9,6 +9,8 @@ const { readFileSync } = require("fs");
 const rainbowImg = readFileSync("rainbow-bg.png");
 // const rainbowImgScreened = readFileSync('rainbow-bg-screened.png')
 
+const outputDir = `public/rainbow-og-images`;
+
 const runScreenshots = async ({ titles }) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -114,7 +116,7 @@ const runScreenshots = async ({ titles }) => {
       throw Error(`Could not find element that matches selector: ${selector}.`);
 
     return await page.screenshot({
-      path: `./static/rainbow-og-images/${path}`,
+      path: `./public/rainbow-og-images/${path}`,
       clip: {
         x: rect.left - padding,
         y: rect.top - padding,
@@ -160,7 +162,6 @@ exports.onPostBuild = async ({ graphql }, pluginOptions) => {
     return r.data;
   });
 
-  const outputDir = `static/rainbow-og-images`;
   if (!(await fs.exists(outputDir))) {
     await fs.mkdirp(outputDir);
   }
