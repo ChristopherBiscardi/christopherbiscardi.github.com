@@ -7,6 +7,8 @@ tags:
   - react
 ---
 
+## Raw Strings
+
 If you have a string and you want to create an MDX node from it (for example if you're querying the github API which doesn't give content types), simply create a new node with a `mediaType` of `text/markdown` (or any custom `mediaType` and then add it to gatsby-plugin-mdx's processing options)
 
 ```js
@@ -41,7 +43,7 @@ and stuff
 };
 ```
 
----
+## Raw Strings... OR Nodes
 
 and also if you promise to never hold me accountable for what happens you can import the internal function from `createMDXNode` and create an `Mdx` node directly. This allows you to skip a bunch of boilerplate and also shows how to attach the Mdx node as a child to your node if you have one.
 
