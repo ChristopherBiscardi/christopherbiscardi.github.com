@@ -47,7 +47,7 @@ const runScreenshots = async ({ titles, code }) => {
       -webkit-text-fill-color: transparent;
 
       box-sizing: border-box;
-      width: 764px;
+      width: 796px;
       height: 400px;
   
       background-image: url(data:image/png;base64,${rainbowImg.toString(
