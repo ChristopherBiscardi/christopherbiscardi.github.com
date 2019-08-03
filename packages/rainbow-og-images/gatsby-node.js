@@ -5,30 +5,40 @@ const { renderToString } = require("react-dom");
 // const {data} = require('./data')
 const slugify = require("@sindresorhus/slugify");
 const { readFileSync } = require("fs");
+const { Textfit } = require("react-textfit");
+const rollup = require("rollup");
+const commonjs = require("rollup-plugin-commonjs");
+const resolve = require("rollup-plugin-node-resolve");
+const replace = require("rollup-plugin-replace");
+const builtins = require("rollup-plugin-node-builtins");
+const globals = require("rollup-plugin-node-globals");
 
 const rainbowImg = readFileSync("rainbow-bg.png");
 // const rainbowImgScreened = readFileSync('rainbow-bg-screened.png')
 
 const outputDir = `public/rainbow-og-images`;
 
-const runScreenshots = async ({ titles }) => {
+const runScreenshots = async ({ titles, code }) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   const html = `
   <html>
   <head>
+  <script>${code}</script>
   <style>
-  
+  * {
+    box-sizing: border-box;
+  }
   /* Clip text element */
   .clip-text {
       font-family: sans-serif;
-      font-size: 3em;
+      font-size: 16px;
       font-weight: bold;
       line-height: 1;
       position: relative;
       display: inline-block;
-      margin: .25em;
-      padding: .5em .75em;
+      margin: 4px;
+      padding: 16px 24px;
       text-align: left;
       /* Color fallback */
       color: #fff;
@@ -65,10 +75,10 @@ const runScreenshots = async ({ titles }) => {
   .clip-text:after {
       position: absolute;
       z-index: -1;
-      top: .125em;
-      right: .125em;
-      bottom: .125em;
-      left: .125em;
+      top: 8px;
+      right: 8px;
+      bottom: 8px;
+      left: 8px;
       background-color: #000;
   }
   
@@ -91,9 +101,6 @@ const runScreenshots = async ({ titles }) => {
 </style>
   </head>
   <body>
-  ${titles.map(
-    ({ title, html }) => `<div data-id="${slugify(title)}">${html}</div>`
-  )}
   </body>
   </html>
 `;
@@ -127,10 +134,38 @@ const runScreenshots = async ({ titles }) => {
   }
 
   await page.setContent(html);
-  const titlePromises = titles.map(({ title }) =>
+  await page.evaluate(
+    ({ titles }) => {
+      let dom = document.querySelector("body");
+      dom.innerHTML = titles
+        .map(({ slugTitle }) => `<div data-id="${slugTitle}"></div>`)
+        .join("\n");
+    },
+    { titles }
+  );
+  const head = await page.evaluate(() => {
+    return document.head;
+  });
+
+  await Promise.all(
+    titles.map(({ slugTitle, title }) => {
+      page.evaluate(
+        ({ title, slugTitle }) => {
+          const $element = document.querySelector(`[data-id="${slugTitle}"]`);
+          window.ogRender($element, { title });
+        },
+        { title, slugTitle }
+      );
+    })
+  );
+  const body = await page.evaluate(() => {
+    return document.body.innerHTML;
+  });
+  console.log(body);
+  const titlePromises = titles.map(({ slugTitle }) =>
     screenshotDOMElement({
-      path: `${slugify(title)}.png`,
-      selector: `[data-id="${slugify(title)}"] > div`,
+      path: `${slugTitle}.png`,
+      selector: `[data-id="${slugTitle}"] > div`,
       padding: 0
     })
   );
@@ -145,6 +180,20 @@ const runScreenshots = async ({ titles }) => {
 // runScreenshots()
 
 exports.onPostBuild = async ({ graphql }, pluginOptions) => {
+  const bundle = await rollup.rollup({
+    input: require.resolve("./app.js"),
+    plugins: [
+      resolve(),
+      commonjs({ namedExports: { "react-dom": ["render"] } }),
+      replace({
+        "process.env.NODE_ENV": JSON.stringify("production")
+      }),
+      builtins(),
+      globals()
+    ]
+  });
+  const { output } = await bundle.generate({ format: "iife" });
+
   const data = await graphql(`
     {
       allBlogPost {
@@ -167,8 +216,9 @@ exports.onPostBuild = async ({ graphql }, pluginOptions) => {
 
   const titles = data.allBlogPost.nodes.map(({ title }) => ({
     title,
-    html: `<div class="clip-text">${title}</div>`
+    slugTitle: slugify(title)
+    // html: `<div class="clip-text">${title}</div>`
   }));
-
-  await runScreenshots({ titles });
+  fs.writeFileSync("./compiled-rainbow.js", output[0].code);
+  await runScreenshots({ titles, code: output[0].code });
 };

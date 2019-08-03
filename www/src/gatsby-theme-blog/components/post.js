@@ -20,7 +20,8 @@ export default props => {
             content: `https://www.christopherbiscardi.com/rainbow-og-images/${slugify(
               props.data.post.title
             )}.png`
-          }
+          },
+          { name: `twitter:site`, content: `@chrisbiscardi` }
         ]}
       />
     </>
