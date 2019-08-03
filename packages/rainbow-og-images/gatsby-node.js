@@ -37,8 +37,8 @@ const runScreenshots = async ({ titles, code }) => {
       line-height: 1;
       position: relative;
       display: inline-block;
-      margin: 4px;
-      padding: 16px 24px;
+      margin: 8px;
+      padding: 32px 48px;
       text-align: left;
       /* Color fallback */
       color: #fff;
@@ -47,8 +47,8 @@ const runScreenshots = async ({ titles, code }) => {
       -webkit-text-fill-color: transparent;
 
       box-sizing: border-box;
-      width: 400px;
-      height: 200px;
+      width: 764px;
+      height: 400px;
   
       background-image: url(data:image/png;base64,${rainbowImg.toString(
         "base64"
@@ -161,7 +161,7 @@ const runScreenshots = async ({ titles, code }) => {
   const body = await page.evaluate(() => {
     return document.body.innerHTML;
   });
-  console.log(body);
+  // console.log(body);
   const titlePromises = titles.map(({ slugTitle }) =>
     screenshotDOMElement({
       path: `${slugTitle}.png`,
@@ -219,6 +219,6 @@ exports.onPostBuild = async ({ graphql }, pluginOptions) => {
     slugTitle: slugify(title)
     // html: `<div class="clip-text">${title}</div>`
   }));
-  fs.writeFileSync("./compiled-rainbow.js", output[0].code);
+  // fs.writeFileSync("./compiled-rainbow.js", output[0].code);
   await runScreenshots({ titles, code: output[0].code });
 };
