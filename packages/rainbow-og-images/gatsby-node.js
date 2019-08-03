@@ -73,6 +73,9 @@ const runScreenshots = async ({ titles, code }) => {
   
   /* Text Background (black zone) */
   .clip-text:after {
+    border: 5px solid black;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
       position: absolute;
       z-index: -1;
       top: 8px;
