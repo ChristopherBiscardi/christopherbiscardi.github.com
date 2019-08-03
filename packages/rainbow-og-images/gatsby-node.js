@@ -78,10 +78,10 @@ const runScreenshots = async ({ titles, code }) => {
     border-top-right-radius: 10px;
       position: absolute;
       z-index: -1;
-      top: 8px;
-      right: 8px;
-      bottom: 8px;
-      left: 8px;
+      top: 16px;
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
       background-color: #000;
   }
   
