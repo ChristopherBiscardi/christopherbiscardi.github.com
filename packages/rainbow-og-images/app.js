@@ -10,7 +10,7 @@ const renderFn = ($element, { title }) =>
       React.createElement(
         Textfit,
         {
-          style: { height: "328px" }
+          style: { height: "250px" }
         },
         title
       )
