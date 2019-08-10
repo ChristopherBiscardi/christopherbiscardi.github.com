@@ -1,3 +1,4 @@
+const path = require("path");
 module.exports = {
   siteMetadata: {
     title: `Chris Biscardi`,
@@ -25,6 +26,20 @@ module.exports = {
   },
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
+    {
+      resolve: `gatsby-theme-dev-tips`,
+      options: {
+        contentPath: path.resolve(".", `content/dev-tips`),
+        devtips: [
+          {
+            name: "MDX",
+            slug: "mdx",
+            description:
+              "MDX is an authorable format that lets you seamlessly write JSX in your Markdown documents. You can import components, such as interactive charts or alerts, and embed them within your content. This makes writing long-form content with components a blast 🚀"
+          }
+        ]
+      }
+    },
     `rainbow-og-images`,
     {
       resolve: "gatsby-theme-notes",
