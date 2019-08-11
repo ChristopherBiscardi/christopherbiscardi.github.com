@@ -1,0 +1,41 @@
+---
+title: Using theme options in gatsby-config.js
+date: 2019-08-11
+tags:
+  - gatsby
+  - gatsby-themes
+---
+
+Gatsby themes allow you to pass in options in the same way plugins get options.
+
+```js title=gatsby-config.js
+module.exports = {
+  plugins: [
+    {
+      resolve: "gatsby-theme-awesome",
+      options: {
+        myThing: true,
+        blogPostFormat: "mdx"
+      }
+    }
+  ]
+};
+```
+
+Since gatsby-config has historically exported an object, as seen above, we needed to add a way to grab the options. This is why the function gatsby-config exists, which we can use in our theme to control which plugins are added (or anything else).
+
+```js title=gatsby-theme-awesome/gatsby-config.js
+module.exports = options => {
+  const plugins = [];
+  if (options.blogPostFormat === "mdx") {
+    plugins.push({
+      resolve: `gatsby-plugin-mdx`
+    });
+  }
+  return {
+    plugins
+  };
+};
+```
+
+Note that trying to use the function gatsby-config in the root of a site will fail because there's nowhere to get the options from.
