@@ -79,8 +79,15 @@ module.exports = {
         path: `${__dirname}/src/images/`
       }
     },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        path: `${__dirname}/src/pages/`
+      }
+    },
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-remove-serviceworker`,
+    `gatsby-remark-images`,
     {
       resolve: `gatsby-plugin-feed`,
       options: {
