@@ -110,6 +110,7 @@ module.exports = {
                 return Object.assign(
                   {},
                   {
+                    title: node.title,
                     description: node.excerpt,
                     date: node.date,
                     url: site.siteMetadata.siteUrl + node.url,
