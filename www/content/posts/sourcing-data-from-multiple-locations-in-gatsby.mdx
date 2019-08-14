@@ -26,7 +26,7 @@ This interface allows us to construct types that satisfy the interface which eff
 
 ## Querying for Yaml
 
-We'll start with something that uses the GraphQL SDL, using a Yaml node to satisfy the interface. Since [`gatsby-transformer-yaml`](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-transformer-yaml) names it's type after the directory name, we end up with a Yaml node that is of type `ContentYaml`. We can use the `createTypes` schema customization API to change the types that the fields resolve to by usin gthe same name. Importantly, we specify that this type implements `Node` *and* `BlogPost`, as this will allow us to query the content through the interface. Here's the content of our yaml file:
+We'll start with something that uses the GraphQL SDL, using a Yaml node to satisfy the interface. Since [`gatsby-transformer-yaml`](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-transformer-yaml) names it's type after the directory name, we end up with a Yaml node that is of type `ContentYaml`. We can use the `createTypes` schema customization API to change the types that the fields resolve to by using the same name. Importantly, we specify that this type implements `Node` *and* `BlogPost`, as this will allow us to query the content through the interface. Here's the content of our yaml file:
 
 ```yaml
 subject: Some title
