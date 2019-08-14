@@ -131,10 +131,12 @@ module.exports = {
                   url: slug
                   title
                   date
+                  ... on MdxBlogPost {
         parent {
           ... on Mdx {
             html
         }
+      }
       }
                 }
               }
