@@ -1,0 +1,16 @@
+---
+tweet: Using onCreatePage in @gatsbyjs allows you to change various aspects of pages created by plugins you don't control, such as the page context which is passed to the page queries in templates.
+title: Change Page Context
+---
+
+```js
+exports.onCreatePage = ({ page, actions }) => {
+  const { createPage, deletePage } = actions;
+  const oldPage = Object.assign({}, page);
+  if (oldPage.path === "/posts") {
+    page.path = "/blog-posts";
+    deletePage(oldPage);
+    createPage(page);
+  }
+};
+```
