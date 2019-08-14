@@ -82,8 +82,8 @@ export default () => {
 
 If we had some field that semantically could be included multiple times, we could skip the specific ID and query `allNotesConfig` with our own merge algorithm. Let's take a look at a hypothetical `someOption` field that is typed as such:
 
-```graphql type someOption = [String!]!
-
+```graphql
+type someOption = [String!]!
 ```
 
 Querying this gives us a set of nested arrays.
