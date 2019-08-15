@@ -16,7 +16,7 @@ export default props => {
         sx={{
           display: "grid",
           gridGap: "1rem",
-          gridTemplateColumns: ["1fr", "1fr 1fr", "1fr 1fr 1fr"]
+          gridTemplateColumns: "repeat(auto-fill, minmax(378px, 1fr))"
         }}
       >
         {props.data.allDevTip.nodes.map(({ id, title, tweet, body }) => (
