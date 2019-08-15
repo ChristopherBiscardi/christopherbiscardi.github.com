@@ -29,5 +29,8 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "resolutions": {
+    "@emotion/core": "10.0.15"
   }
 }
