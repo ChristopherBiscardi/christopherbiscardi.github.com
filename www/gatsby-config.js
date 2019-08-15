@@ -26,6 +26,7 @@ module.exports = {
   },
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
+    `gatsby-plugin-inter`,
     {
       resolve: `gatsby-theme-dev-tips`,
       options: {

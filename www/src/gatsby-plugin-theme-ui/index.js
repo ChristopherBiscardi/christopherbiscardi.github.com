@@ -21,7 +21,7 @@ export default {
     }
   },
   fonts: {
-    body: "serif",
-    heading: "system-ui, sans-serif"
+    body: "'Inter var', serif",
+    heading: "'Inter var', system-ui, sans-serif"
   }
 };
