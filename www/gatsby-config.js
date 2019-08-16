@@ -28,6 +28,14 @@ module.exports = {
   plugins: [
     `gatsby-plugin-inter`,
     {
+      resolve: `gatsby-plugin-web-font-loader`,
+      options: {
+        google: {
+          families: ["Source Code Pro"]
+        }
+      }
+    },
+    {
       resolve: `gatsby-theme-dev-tips`,
       options: {
         contentPath: path.resolve(".", `content/dev-tips`),

@@ -22,6 +22,7 @@ export default {
   },
   fonts: {
     body: "'Inter var', serif",
-    heading: "'Inter var', system-ui, sans-serif"
+    heading: "'Inter var', system-ui, sans-serif",
+    monospace: "'Source Code Pro', monospace"
   }
 };
