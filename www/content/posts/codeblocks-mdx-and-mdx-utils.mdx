@@ -5,6 +5,11 @@ tags:
   - gatsby
   - mdx
 ---
+
+> Note: Since the publishing of this post, MDX has hit 1.0. In 1.0 we removed the intermediary `MDXTag` component mentioned here in favor of [a custom pragma](https://mdxjs.com/blog/custom-pragma/). This simplifies `preToCodeProps` so while the description of that function here is still conceptually accurate, it is no longer literally accurate.
+
+> Note: `@mdx-js/tag` became `@mdx-js/react` in MDX 1.0, so that change was made here as well to keep the code examples running and current.
+
 MDX, and [gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx) specifically, is quite often used by people who are building interactive experiences. Some are design system documentation, others are blogs, and this goes on into marketing sites and more. Until today, if you want to replace the way code renders you would have to replace the `pre` element using `MDXProvider` because code renders as `<pre><code>` blocks. The full code needed for this is tricky to remember. Let's say we're writing a custom code block component to replace `pre`.
 
 ```js
@@ -60,7 +65,7 @@ So I went ahead and published [`mdx-utils`](https://github.com/ChristopherBiscar
 
 ```js
 import React from 'react'
-import { MDXProvider } from '@mdx-js/tag'
+import { MDXProvider } from '@mdx-js/react'
 import { Code } from './src/components/code'
 import { preToCodeBlock } from 'mdx-utils'
 
