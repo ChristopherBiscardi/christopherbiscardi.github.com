@@ -1,4 +1,5 @@
 my-tmp
 public/static/d/*.json
 .cache
+netlify-functions
 public
