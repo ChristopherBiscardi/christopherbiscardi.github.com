@@ -4,4 +4,4 @@
   publish = "www/public"
 [build.environment]
   # Change this path with the path to your repository
-  GO_IMPORT_PATH = "github.com/netlify/aws-lambda-go-example"
+  GO_IMPORT_PATH = "github.com/christopherbiscardi/christopherbiscardi.github.com"
