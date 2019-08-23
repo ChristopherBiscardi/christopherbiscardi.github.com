@@ -14,6 +14,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 		"method":       request.HTTPMethod,
 		"hostname":     request.Resource,
 		"request_path": request.Path,
+		"name":         "devtips",
 	})
 
 	// This event will be sent regardless of how we exit
@@ -29,7 +30,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 func main() {
 	libhoney.Init(libhoney.Config{
 		// WriteKey: "",
-		Dataset:      "devtips-lambda",
+		Dataset:      "netlify-lambdas",
 		Transmission: &transmission.WriterSender{},
 	})
 	// Flush any pending calls to Honeycomb before exiting
