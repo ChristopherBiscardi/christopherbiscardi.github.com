@@ -1,12 +1,15 @@
 package main
 
 import (
+	"log"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/honeycombio/libhoney-go"
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+	log.Println("handler")
 	// Create an event, add some data
 	ev := libhoney.NewEvent()
 	ev.Add(map[string]interface{}{
@@ -26,6 +29,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 }
 
 func main() {
+	log.Println("init")
 	libhoney.Init(libhoney.Config{
 		// WriteKey: "",
 		// Dataset:  "",
