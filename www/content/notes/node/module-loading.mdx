@@ -1,0 +1,17 @@
+---
+title: node.js Module loading overrides
+---
+
+This stuff seems to be undocumented: https://nodejs.org/api/modules.html#modules_the_module_object_1
+
+but yarn pnp does it: https://github.com/yarnpkg/yarn/blob/fb03788279278084e81aac9cde40151a3134761b/src/util/generate-pnp-map-api.tpl.js#L590-L658
+
+and linaria does it: https://github.com/callstack/linaria/blob/5400bb0297529b62f03e6e28c6ea25b932eca3a1/src/babel/module.js#L226
+
+## yarn pnp
+
+yarn includes some documentation about the usage of PNP that might be relatable to the internals of module loading. It mentions three alternative resolution packages in wide use, two of which work with PNP's alternate resolution and one of which is typescript.
+
+- https://yarnpkg.com/en/package/resolve
+- https://yarnpkg.com/en/package/enhanced-resolve
+  - enhanced-resolve is webpack's algo. I used it to build Gatsby's component shadowing too.

@@ -1,0 +1,46 @@
+---
+tweet: git status -sb will produce more compact output, showing modified (M), deleted (D), and untracked files (??)
+title: git status -sb
+---
+
+```
+➜ git status
+On branch gatsby-2
+Your branch is up to date with 'origin/gatsby-2'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   go-src/devtips/main.go
+	modified:   go.mod
+	modified:   go.sum
+	deleted:    www/content/notes/rocket-league-replay-format.mdx
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	go-src/rpc-logger.go
+	www/content/dev-tips/cli.yaml
+	www/content/dev-tips/cli/
+	www/content/notes/node/
+	www/content/notes/rocket-league/
+	www/content/posts/removing-drafts-from-gatsby-theme-blog.mdx
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+```
+➜ s
+## gatsby-2...origin/gatsby-2
+ M go-src/devtips/main.go
+ M go.mod
+ M go.sum
+ D www/content/notes/rocket-league-replay-format.mdx
+?? go-src/rpc-logger.go
+?? www/content/dev-tips/cli.yaml
+?? www/content/dev-tips/cli/
+?? www/content/notes/node/
+?? www/content/notes/rocket-league/
+?? www/content/posts/removing-drafts-from-gatsby-theme-blog.mdx
+```

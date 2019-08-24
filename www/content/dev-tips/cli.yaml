@@ -1,0 +1,4 @@
+name: CLI Tools and Shell Scripts
+slug: cli
+description: Command Line Interfaces (or CLIs) range from single-purpose tools and builtins like ls, cd, and cat to full fledged programs and text user interfaces like yarn, midnight commander, or your own scripts.
+content: ./cli

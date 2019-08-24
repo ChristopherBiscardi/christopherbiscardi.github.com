@@ -5,14 +5,28 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/honeycombio/libhoney-go"
 	"github.com/honeycombio/libhoney-go/transmission"
+	"github.com/spf13/viper"
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+	if request.HTTPMethod == "GET" {
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 404,
+			Body:       "hey, how's it going?",
+		}, nil
+	}
+	simpleAuth := viper.GetString("simple_auth")
+	if request.Headers["X-Simple-Auth"] != simpleAuth {
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 404,
+			Body:       "hey, how's it going?",
+		}, nil
+	}
 	// Create an event, add some data
 	ev := libhoney.NewEvent()
 	ev.Add(map[string]interface{}{
 		"method":       request.HTTPMethod,
-		"hostname":     request.Resource,
+		"request_id":   request.RequestContext.RequestID,
 		"request_path": request.Path,
 		"name":         "devtips",
 	})
@@ -28,6 +42,9 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 }
 
 func main() {
+	viper.SetEnvPrefix("cb") // will be uppercased automatically
+	viper.BindEnv("SIMPLE_AUTH")
+
 	libhoney.Init(libhoney.Config{
 		// WriteKey: "",
 		Dataset:      "netlify-lambdas",

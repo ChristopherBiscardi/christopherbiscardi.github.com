@@ -9,6 +9,7 @@ require (
 	github.com/facebookgo/muster v0.0.0-20150708232844-fd3d7953fd52 // indirect
 	github.com/honeycombio/libhoney-go v1.12.0
 	github.com/klauspost/compress v1.7.6 // indirect
+	github.com/spf13/viper v1.4.0
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	gopkg.in/alexcesaro/statsd.v2 v2.0.0 // indirect
 )
