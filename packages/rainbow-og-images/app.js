@@ -1,21 +1,9 @@
 import React from "react";
 import { render } from "react-dom";
-import Textfit from "react-textfit";
+import UserComponent from "__USER_COMPONENT_PATH__";
 
-const renderFn = ($element, { title }) =>
-  render(
-    React.createElement(
-      "div",
-      { className: "clip-text" },
-      React.createElement(
-        Textfit,
-        {
-          style: { height: "250px" }
-        },
-        title
-      )
-    ),
-    $element
-  );
+// const UserComponent = props => React.createElement('div', null, JSON.stringify(props, null, 2))
+const renderFn = ($element, node) =>
+  render(React.createElement(UserComponent, node), $element);
 
 window.ogRender = renderFn;
