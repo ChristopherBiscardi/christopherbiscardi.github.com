@@ -25,6 +25,8 @@ breadcrumbSeparator: String
 Then in `sourceNodes` we'll talk the options configured with defaults and inject them into the node system as a node.
 
 ```js title=gatsby-node.js
+var crypto = require("crypto")
+
 exports.sourceNodes = (
   { actions: { createNode }, schema },
   { basePath = `/`, homeText = `~`, breadcrumbSeparator = `/` }
