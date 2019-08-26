@@ -76,6 +76,13 @@ exports.onCreateNode = async ({ node, actions, getNode, createNodeId }) => {
         }
       ]
     });
+    if (node.frontmatter.tweet.length >= 200) {
+      reporter.warn(
+        `Tweet is too long by ${node.frontmatter.tweet.length - 200} chars: ${
+          node.frontmatter.tweet
+        }`
+      );
+    }
 
     if (parent.sourceInstanceName === "gatsby-theme-dev-tips") {
       const fieldData = {
@@ -93,12 +100,9 @@ exports.onCreateNode = async ({ node, actions, getNode, createNodeId }) => {
         children: [],
         internal: {
           type: `MdxDevTip`,
-          contentDigest: crypto
-            .createHash(`md5`)
-            .update(JSON.stringify(fieldData))
-            .digest(`hex`),
+          contentDigest: parent.internal.contentDigest,
           content: JSON.stringify(fieldData),
-          description: `Satisfies the BlogPost interface for Mdx`
+          description: `Satisfies the DevTip interface for Mdx`
         }
       });
       createParentChildLink({ parent: parent, child: node });
