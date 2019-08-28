@@ -57,7 +57,13 @@ exports.createSchemaCustomization = ({ actions, schema }) => {
   }`);
 };
 
-exports.onCreateNode = async ({ node, actions, getNode, createNodeId }) => {
+exports.onCreateNode = async ({
+  node,
+  actions,
+  getNode,
+  createNodeId,
+  reporter
+}) => {
   const { createNodeField, createNode, createParentChildLink } = actions;
 
   if (node.internal.type === `Mdx`) {
@@ -76,15 +82,18 @@ exports.onCreateNode = async ({ node, actions, getNode, createNodeId }) => {
         }
       ]
     });
-    if (node.frontmatter.tweet.length >= 200) {
-      reporter.warn(
-        `Tweet is too long by ${node.frontmatter.tweet.length - 200} chars: ${
-          node.frontmatter.tweet
-        }`
-      );
-    }
 
     if (parent.sourceInstanceName === "gatsby-theme-dev-tips") {
+      if (!node.frontmatter.tweet) {
+        reporter.warn("devtips can't tweet about " + node.frontmatter.title);
+      }
+      if (node.frontmatter.tweet && node.frontmatter.tweet.length >= 200) {
+        reporter.warn(
+          `Tweet is too long by ${node.frontmatter.tweet.length - 200} chars: ${
+            node.frontmatter.tweet
+          }`
+        );
+      }
       const fieldData = {
         title: node.frontmatter.title,
         tweet: node.frontmatter.tweet,
