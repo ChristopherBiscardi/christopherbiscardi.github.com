@@ -10,3 +10,4 @@ export const layer = (layerIndex, colors) => {
   );
   return colors.raw.neutral[groundEntry.key + layerIndex * 10];
 };
+export default {};

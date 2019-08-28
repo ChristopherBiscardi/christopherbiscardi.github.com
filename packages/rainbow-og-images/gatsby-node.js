@@ -1,119 +1,86 @@
 const fs = require("fs-extra");
 const puppeteer = require("puppeteer");
 const React = require("react");
-const { renderToString } = require("react-dom");
-// const {data} = require('./data')
-const slugify = require("@sindresorhus/slugify");
-const { readFileSync } = require("fs");
-const { Textfit } = require("react-textfit");
+const ReactDOM = require("react-dom");
 const rollup = require("rollup");
 const commonjs = require("rollup-plugin-commonjs");
 const resolve = require("rollup-plugin-node-resolve");
 const replace = require("rollup-plugin-replace");
 const builtins = require("rollup-plugin-node-builtins");
 const globals = require("rollup-plugin-node-globals");
+const babel = require("rollup-plugin-babel");
+const debug = require("debug")("gatsby-plugin-printer");
 
-const rainbowImg = readFileSync("rainbow-bg.png");
 // const rainbowImgScreened = readFileSync('rainbow-bg-screened.png')
 
 const outputDir = `public/rainbow-og-images`;
 
-const runScreenshots = async ({ titles, code }) => {
-  const browser = await puppeteer.launch();
+const genCodeBundle = async ({
+  componentPath = require.resolve("./default-user-component.js")
+} = {}) => {
+  debug("componentPath", componentPath);
+  // check if component exists
+  const fileExists = fs.existsSync(componentPath);
+  if (componentPath && !fileExists) {
+    const isAbsPath = path.isAbsolute(componentPath);
+    const absWarning = isAbsPath
+      ? `try using an absolute path to the component`
+      : "";
+    console.error(
+      `gatsby-plugin-printer expected a file at \`${componentPath}\`, but none was found. ${absWarning}`
+    );
+  }
+  // bundle an instance of the application, using the user's component
+  const bundle = await rollup.rollup({
+    input: require.resolve("./app.js"),
+    plugins: [
+      resolve(),
+      babel({
+        exclude: "node_modules/**",
+        presets: ["babel-preset-gatsby"],
+        plugins: ["babel-plugin-preval"]
+      }),
+      commonjs({
+        namedExports: {
+          "react-dom": Object.keys(ReactDOM),
+          react: Object.keys(React)
+        }
+      }),
+      replace({
+        "process.env.NODE_ENV": JSON.stringify("production"),
+        __USER_COMPONENT_PATH__: componentPath
+      }),
+      builtins(),
+      globals()
+    ]
+  });
+  const { output } = await bundle.generate({ format: "iife" });
+  // await fs.outputFile("./compiled-code.js", output[0].code);
+  return output[0].code;
+};
+
+const runScreenshots = async ({ data, code }) => {
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   const html = `
   <html>
   <head>
   <script>${code}</script>
-  <style>
-  * {
-    box-sizing: border-box;
-  }
-  /* Clip text element */
-  .clip-text {
-      font-family: sans-serif;
-      font-size: 16px;
-      font-weight: bold;
-      line-height: 1;
-      position: relative;
-      display: inline-block;
-      margin: 8px;
-      padding: 32px 48px;
-      text-align: left;
-      /* Color fallback */
-      color: #fff;
-      -webkit-background-clip: text;
-  
-      -webkit-text-fill-color: transparent;
-
-      box-sizing: border-box;
-      width: 600px;
-      height: 314px;
-  
-      background-image: url(data:image/png;base64,${rainbowImg.toString(
-        "base64"
-      )})
-  }
-  
-  .clip-text:before,
-  .clip-text:after {
-      position: absolute;
-      content: '';
-  }
-  
-  /* Background */
-  .clip-text:before {
-      z-index: -2;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background-image: inherit;
-  }
-  
-  /* Text Background (black zone) */
-  .clip-text:after {
-    border: 5px solid black;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-      position: absolute;
-      z-index: -1;
-      top: 16px;
-      right: 16px;
-      bottom: 16px;
-      left: 16px;
-      background-color: #000;
-  }
-  
-  /* Change the background position to display letter when the black zone isn't here */
-  .clip-text--no-textzone:before {
-      background-position: -.75em 0;
-  }
-  
-  .clip-text--no-textzone:after {
-      content: none;
-  }
-  
-  /* Use Background-size cover for photo background and no-repeat background */
-  .clip-text,
-  .clip-text:before {
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-position: 50% 50%;
-  }
-</style>
   </head>
   <body>
   </body>
   </html>
 `;
 
-  async function screenshotDOMElement(opts = {}) {
-    const padding = "padding" in opts ? opts.padding : 0;
-    const path = "path" in opts ? opts.path : null;
-    const selector = opts.selector;
-
-    if (!selector) throw Error("Please provide a selector.");
+  async function screenshotDOMElement({ path, selector } = {}) {
+    if (!path) {
+      throw new Error(
+        `[gatsby-plugin-printer]: screenshotDOMElement requires a filepath to write file to`
+      );
+    }
+    if (!selector) {
+      throw Error("[gatsby-plugin-printer]: Please provide a selector.");
+    }
 
     const rect = await page.evaluate(selector => {
       const element = document.querySelector(selector);
@@ -122,57 +89,60 @@ const runScreenshots = async ({ titles, code }) => {
       return { left: x, top: y, width, height, id: element.id };
     }, selector);
 
-    if (!rect)
+    if (!rect) {
       throw Error(`Could not find element that matches selector: ${selector}.`);
-
+    }
     return await page.screenshot({
       path: `./public/rainbow-og-images/${path}`,
       clip: {
-        x: rect.left - padding,
-        y: rect.top - padding,
-        width: rect.width + padding * 2,
-        height: rect.height + padding * 2
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height
       }
     });
   }
 
   await page.setContent(html);
   await page.evaluate(
-    ({ titles }) => {
+    ({ data }) => {
       let dom = document.querySelector("body");
-      dom.innerHTML = titles
-        .map(({ slugTitle }) => `<div data-id="${slugTitle}"></div>`)
-        .join("\n");
+      dom.innerHTML =
+        `<div data-id="empty"></div>` +
+        data.map(({ id }) => `<div data-id="${id}"></div>`).join("\n");
     },
-    { titles }
+    { data }
   );
-  const head = await page.evaluate(() => {
-    return document.head;
-  });
+
+  await page.evaluate(
+    ({ node }) => {
+      const $element = document.querySelector(`[data-id="empty"]`);
+      window.ogRender($element, node.data);
+    },
+    { node: data[0] }
+  );
+
+  await page.evaluateHandle("document.fonts.ready");
 
   await Promise.all(
-    titles.map(({ slugTitle, title }) => {
-      page.evaluate(
-        ({ title, slugTitle }) => {
-          const $element = document.querySelector(`[data-id="${slugTitle}"]`);
-          window.ogRender($element, { title });
+    data.map(node => {
+      return page.evaluate(
+        ({ node }) => {
+          const $element = document.querySelector(`[data-id="${node.id}"]`);
+          window.ogRender($element, node.data);
         },
-        { title, slugTitle }
+        { node }
       );
     })
   );
-  const body = await page.evaluate(() => {
-    return document.body.innerHTML;
-  });
-  // console.log(body);
-  const titlePromises = titles.map(({ slugTitle }) =>
+
+  const titlePromises = data.map(({ id, fileName, renderDir }) =>
     screenshotDOMElement({
-      path: `${slugTitle}.png`,
-      selector: `[data-id="${slugTitle}"] > div`,
-      padding: 0
+      path: `${fileName}.png`,
+      selector: `[data-id="${id}"] > *`,
+      renderDir
     })
   );
-
   const results = await Promise.all(titlePromises);
   await browser.close();
 };
@@ -182,26 +152,32 @@ const runScreenshots = async ({ titles, code }) => {
 
 // runScreenshots()
 
-exports.onPostBuild = async ({ graphql }, pluginOptions) => {
-  const bundle = await rollup.rollup({
-    input: require.resolve("./app.js"),
-    plugins: [
-      resolve(),
-      commonjs({ namedExports: { "react-dom": ["render"] } }),
-      replace({
-        "process.env.NODE_ENV": JSON.stringify("production")
-      }),
-      builtins(),
-      globals()
-    ]
-  });
-  const { output } = await bundle.generate({ format: "iife" });
+exports.createSchemaCustomization = ({ actions, schema }) => {
+  const { createTypes } = actions;
+  createTypes(`
+    type Printer implements Node {
+      id: ID!
+      fileName: String!
+      renderDir: String!
+      data: JSON!
+      component: String!
+    }
+  `);
+};
+exports.onPostBuild = async ({ graphql, cache }, pluginOptions) => {
+  // const code = await genCodeBundle();
 
   const data = await graphql(`
     {
-      allBlogPost {
-        nodes {
-          title
+      allPrinter {
+        group(field: component) {
+          component: fieldValue
+          nodes {
+            id
+            fileName
+            renderDir
+            data
+          }
         }
       }
     }
@@ -216,12 +192,20 @@ exports.onPostBuild = async ({ graphql }, pluginOptions) => {
   if (!(await fs.exists(outputDir))) {
     await fs.mkdirp(outputDir);
   }
+  debug("num printer groups", data.allPrinter.group.length);
 
-  const titles = data.allBlogPost.nodes.map(({ title }) => ({
-    title,
-    slugTitle: slugify(title)
-    // html: `<div class="clip-text">${title}</div>`
-  }));
-  // fs.writeFileSync("./compiled-rainbow.js", output[0].code);
-  await runScreenshots({ titles, code: output[0].code });
+  await Promise.all(
+    data.allPrinter.group.map(async ({ component, nodes }) => {
+      debug(`processing '${component}'`);
+      const code = await genCodeBundle({ componentPath: component });
+      debug(`running ${nodes.length} nodes with ${component}`);
+      await runScreenshots({
+        data: nodes.map(node => ({
+          ...node,
+          data: JSON.parse(node.data)
+        })),
+        code
+      });
+    })
+  );
 };

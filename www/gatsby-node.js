@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const path = require(`path`);
 const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
+const { createPrinterNode } = require("rainbow-og-images");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
@@ -44,7 +45,7 @@ exports.createPages = ({ graphql, actions }) => {
           site: { siteMetadata }
         } = result.data;
         const { title: siteTitle, social: socialLinks } = siteMetadata;
-
+        // tags pages
         result.data.tags.byTag
           .filter(({ tag }) => tag !== "")
           .forEach(({ tag, edges: posts }) => {
@@ -61,6 +62,27 @@ exports.createPages = ({ graphql, actions }) => {
       })
     );
   });
+};
+
+exports.onCreateNode = ({ node, actions, createNodeId }) => {
+  const { createNode, createParentChildLink } = actions;
+  if (node.internal.type === "MdxBlogPost") {
+    const printerNode = createPrinterNode({
+      id: createNodeId(`${node.id} >>> Printer`),
+      // fileName is something you can use in opengraph images, etc
+      fileName: slugify(node.title),
+      // renderDir is relative to `public` by default
+      renderDir: "blog-post-images",
+      // data gets passed directly to your react component
+      data: node,
+      // the component to use for rendering. Will get batched with
+      // other nodes that use the same component
+      component: require.resolve("./src/printer-components/blog-post.js")
+    });
+
+    createNode(printerNode);
+    //    createParentChildLink({ parent: node, child: printerNode });
+  }
 };
 
 exports.onCreateWebpackConfig = ({
