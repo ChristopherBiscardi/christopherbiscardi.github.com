@@ -1,17 +1,19 @@
 ---
 title: "Emacs Command Frequency 2017"
 date: 2017-12-22
-tags: [emacs,productivity]
+tags: [emacs, productivity]
 ---
 
-I use [keyfreq][keyfreq] to record the commands I use in emacs and periodically
-check the log to see what I should rebind, etc. here's a list of every command I
-used that has more than 100 uses (which hilariously to me, is almost 100
+I use [keyfreq][keyfreq] to record the commands I use in
+emacs and periodically check the log to see what I should
+rebind, etc. here's a list of every command I used that has
+more than 100 uses (which hilariously to me, is almost 100
 commands).
 
-[keyfreq][keyfreq] stores its content in a file (which sometimes I've had
-conflict issues with in the past so consider this output "sampled" in terms of
-absolute number). The output records what mode I'm in and the command used as
+[keyfreq][keyfreq] stores its content in a file (which
+sometimes I've had conflict issues with in the past so
+consider this output "sampled" in terms of absolute number).
+The output records what mode I'm in and the command used as
 well as a number (presumably uses?).
 
 ```lisp
@@ -27,32 +29,35 @@ well as a number (presumably uses?).
 ((fundamental-mode . kill-line) . 45)
 ```
 
-The first two on my list are deletions. The first is a normal press of the
-delete key. The second is more interesting. It's a function from
-[smartparens][smartparens] that I didn't even know I was calling. It makes sense
-though because I've been using it in strict mode since I redid my emacs config
-and that makes me keep all parens balanced all the time (or use `C-q` to insert
-one-offs).
+The first two on my list are deletions. The first is a
+normal press of the delete key. The second is more
+interesting. It's a function from [smartparens][smartparens]
+that I didn't even know I was calling. It makes sense though
+because I've been using it in strict mode since I redid my
+emacs config and that makes me keep all parens balanced all
+the time (or use `C-q` to insert one-offs).
 
 ```
   16079    9.25%  delete-backward-char                         DEL
   11720    6.74%  sp-backward-delete-char
 ```
 
-if I `ack` my keyfreq file for `sp-backward` I end up with a ton of matches. I
-didn't expect there to be so many `sp-backward` commands. It turns out this one
-mostly comes from `go-mode` and secondarily from `web-mode`. This makes sense
-since I mostly write go and JavaScript these days (as opposed to Haskell and
-JavaScript in the past).
+if I `ack` my keyfreq file for `sp-backward` I end up with a
+ton of matches. I didn't expect there to be so many
+`sp-backward` commands. It turns out this one mostly comes
+from `go-mode` and secondarily from `web-mode`. This makes
+sense since I mostly write go and JavaScript these days (as
+opposed to Haskell and JavaScript in the past).
 
 ```lisp
 ((go-mode . sp-backward-delete-char) . 5308)
 ((web-mode . sp-backward-delete-char) . 6095)
 ```
 
-There are actually a bunch more `sp-` commands that I use without even realizing
-it, such as `sp-kill-hybrid-sexp`. I gleaned a uniqued list using some `ack`.
-Smartparens seems to have some cool features so I should definitely look into
+There are actually a bunch more `sp-` commands that I use
+without even realizing it, such as `sp-kill-hybrid-sexp`. I
+gleaned a uniqued list using some `ack`. Smartparens seems
+to have some cool features so I should definitely look into
 the other commands it offers.
 [andohwowijustdiscoveredithasslurpingandbarfing](https://ebzzry.io/en/emacs-pairs/#unwrapping)
 (I'm excited about wrapping/slurping/etc)
@@ -71,7 +76,8 @@ the other commands it offers.
 
 # Saving
 
-duh; save early, save often or perish. I might be mixing my phrases here...
+duh; save early, save often or perish. I might be mixing my
+phrases here...
 
 ```
    9206    5.30%  save-buffer                                  s-s, C-x C-s, <menu-bar> <file> <save-buffer>
@@ -79,8 +85,8 @@ duh; save early, save often or perish. I might be mixing my phrases here...
 
 # Movement
 
-I should put more effort into avoiding the arrow keys when I'm hands-on-keyboard
-since `C-f/b` do the same thing
+I should put more effort into avoiding the arrow keys when
+I'm hands-on-keyboard since `C-f/b` do the same thing
 
 ```
    9105    5.24%  left-char                                    <left>
@@ -95,9 +101,9 @@ since `C-f/b` do the same thing
 
 # "Focus the emacs application with the mouse so I can use it"
 
-Yeah, I don't use a mouse in emacs, but I _do_ use a mouse to swap applications
-because I'm on OSX and don't have a tiling window manager or something cool like
-that.
+Yeah, I don't use a mouse in emacs, but I _do_ use a mouse
+to swap applications because I'm on OSX and don't have a
+tiling window manager or something cool like that.
 
 ```
    8761    5.04%  mouse-drag-region                            <down-mouse-1>
@@ -106,9 +112,10 @@ that.
 
 # markdown
 
-I honestly have no idea why this one is getting called so often. I write a lot
-of markdown (blog posts, READMEs, etc) but feel like its getting called by
-something connected to one of the delete functions I use so much.
+I honestly have no idea why this one is getting called so
+often. I write a lot of markdown (blog posts, READMEs, etc)
+but feel like its getting called by something connected to
+one of the delete functions I use so much.
 
 ```
    7681    4.42%  markdown-outdent-or-delete
@@ -116,9 +123,10 @@ something connected to one of the delete functions I use so much.
 
 # isearch
 
-Something to do with incrementally searching printing characters. Not super sure
-but I do search _a lot_ so I'd expect stuff related to searching or ivy/swiper
-at this point.
+Something to do with incrementally searching printing
+characters. Not super sure but I do search _a lot_ so I'd
+expect stuff related to searching or ivy/swiper at this
+point.
 
 ```
    5167    2.97%  isearch-printing-char
@@ -127,8 +135,9 @@ at this point.
 
 # Operating on Regions
 
-indenting, adding a character to the beginning of a set of lines, regex
-replacement, etc. Everything needs a region to operate on.
+indenting, adding a character to the beginning of a set of
+lines, regex replacement, etc. Everything needs a region to
+operate on.
 
 ```
    3760    2.16%  set-mark-command                             C-@, C-SPC
@@ -136,8 +145,8 @@ replacement, etc. Everything needs a region to operate on.
 
 # Completion
 
-Completion, in the minibuffer. [AKA `<tab>`
-completion](https://www.gnu.org/software/emacs/manual/html_node/elisp/Completion.html)
+Completion, in the minibuffer.
+[AKA `<tab>` completion](https://www.gnu.org/software/emacs/manual/html_node/elisp/Completion.html)
 
 ```
    2754    1.58%  minibuffer-complete
@@ -230,8 +239,9 @@ And a bunch of other stuff that's less interesting.
 
 # fin
 
-I see a bunch of commands that I've replaced or recently switched to so I think
-I'll delete the file and see how Q1 2018 goes.
+I see a bunch of commands that I've replaced or recently
+switched to so I think I'll delete the file and see how Q1
+2018 goes.
 
 [keyfreq]: https://github.com/dacap/keyfreq
 [smartparens]: https://github.com/Fuco1/smartparens

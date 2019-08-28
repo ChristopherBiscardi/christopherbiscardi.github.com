@@ -5,22 +5,23 @@ slug: "/2014/1/15/scaffolding-a-clojurecompojure-webapp-for-heroku/"
 ---
 
 In this post we’ll go through the process to create a basic
-Clojure/Compojure/libnoir scaffolding project and deploying it to Heroku.
+Clojure/Compojure/libnoir scaffolding project and deploying
+it to Heroku.
 
 First, make sure you’ve installed the prereqs:
-[Leiningen](http://leiningen.org/) >= v2.0 [Heroku
-Toolbelt](https://toolbelt.heroku.com/)
+[Leiningen](http://leiningen.org/) >= v2.0
+[Heroku Toolbelt](https://toolbelt.heroku.com/)
 
 and here’s the
-[GitHub](https://github.com/ChristopherBiscardi/clojure-compojure-libnoir) if
-that’s your style.
+[GitHub](https://github.com/ChristopherBiscardi/clojure-compojure-libnoir)
+if that’s your style.
 
 After installing leiningen, run:
 
 `lein new compojure scaffold-app`
 
-to scaffold a new project. Then cd into the project and run `lein ring server`
-to install dependencies and run the app.
+to scaffold a new project. Then cd into the project and run
+`lein ring server` to install dependencies and run the app.
 
 ````shell
 cd scaffold-app

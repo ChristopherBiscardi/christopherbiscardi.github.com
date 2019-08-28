@@ -5,13 +5,27 @@ featuredImage: multi-package-repos-with-lerna.png
 tags:
   - javascript
 ---
-[Lerna](https://github.com/lerna/lerna) is a multi-package repo tool similar to Yarn Workspaces. Many projects choose to use Lerna as the UI for interacting with their multi-package repo while Yarn Workspaces is used under the hood to handle linking packages together.
 
-> We've previously covered [Yarn Workspaces](https://www.christopherbiscardi.com/post/multi-package-repos-with-yarn) for multi-package repo management on it's own.
+[Lerna](https://github.com/lerna/lerna) is a multi-package
+repo tool similar to Yarn Workspaces. Many projects choose
+to use Lerna as the UI for interacting with their
+multi-package repo while Yarn Workspaces is used under the
+hood to handle linking packages together.
+
+> We've previously covered
+> [Yarn Workspaces](https://www.christopherbiscardi.com/post/multi-package-repos-with-yarn)
+> for multi-package repo management on it's own.
 
 ## Repo Setup
 
-If we take a look at our previous Yarn Workspaces setup, we can see that our packages got hoisted and linked into a root `node_modules`. The `->` represents a [symlink](https://en.wikipedia.org/wiki/Symbolic_link) which means that when we try to access `package-a` through the `node_modules` directory, we get re-directed to `../packages/package-a`, where all of our files actually live.
+If we take a look at our previous Yarn Workspaces setup, we
+can see that our packages got hoisted and linked into a root
+`node_modules`. The `->` represents a
+[symlink](https://en.wikipedia.org/wiki/Symbolic_link) which
+means that when we try to access `package-a` through the
+`node_modules` directory, we get re-directed to
+`../packages/package-a`, where all of our files actually
+live.
 
 ```
 ➜ tree .
@@ -31,7 +45,10 @@ If we take a look at our previous Yarn Workspaces setup, we can see that our pac
 └── yarn.lock
 ```
 
-Lets install `lerna` into our root package to prepare to transfer from Yarn Workspaces to exclusively Lerna. (note: we need `-W` because we've already defined workspaces and Yarn tries to warn us that we're installing into the root.
+Lets install `lerna` into our root package to prepare to
+transfer from Yarn Workspaces to exclusively Lerna. (note:
+we need `-W` because we've already defined workspaces and
+Yarn tries to warn us that we're installing into the root.
 
 ```sh
 yarn add lerna -W
@@ -52,7 +69,9 @@ lerna success Initialized Lerna files
 ✨  Done in 0.86s.
 ```
 
-With no arguments, the `lerna.json` config file that gets spit out defaults to pointing at `packages/*`, just like our Yarn Workspaces but in a dedicated file.
+With no arguments, the `lerna.json` config file that gets
+spit out defaults to pointing at `packages/*`, just like our
+Yarn Workspaces but in a dedicated file.
 
 ```js
 {
@@ -63,7 +82,11 @@ With no arguments, the `lerna.json` config file that gets spit out defaults to p
 }
 ```
 
-If we run `yarn lerna bootstrap` now... nothing interesting will happen because we haven't added a dependency between our packages. Add a dependency on `package-b` in `package-a`. We haven't published `package-b` so we'll use the "any version" version `*`.
+If we run `yarn lerna bootstrap` now... nothing interesting
+will happen because we haven't added a dependency between
+our packages. Add a dependency on `package-b` in
+`package-a`. We haven't published `package-b` so we'll use
+the "any version" version `*`.
 
 ```js
 {
@@ -81,7 +104,12 @@ If we run `yarn lerna bootstrap` now... nothing interesting will happen because 
 }
 ```
 
-Now when we bootstrap our multi-package repo, we'll see the packages linked in a slightly different way than our past Yarn Workspaces attempt. The packages are linked into each other rather than hoisted to the root `node_modules` by default. This is one critical difference in the default behavior of Yarn Workspaces vs Lerna.
+Now when we bootstrap our multi-package repo, we'll see the
+packages linked in a slightly different way than our past
+Yarn Workspaces attempt. The packages are linked into each
+other rather than hoisted to the root `node_modules` by
+default. This is one critical difference in the default
+behavior of Yarn Workspaces vs Lerna.
 
 ```
 .
@@ -99,7 +127,14 @@ Now when we bootstrap our multi-package repo, we'll see the packages linked in a
 └── yarn.lock
 ```
 
-Unfortunately, for very large repos, doing this per-package installation and linking is *really slow*. Luckily, we can speed everything up by using Yarn Workspaces as the underlying package dependency resolution approach. We'll add two new keys to `lerna.json`: `npmClient` and `useWorkspaces`. We can also *remove* the `packages` key because Lerna will now look at our `package.json` `workspaces` key instead.
+Unfortunately, for very large repos, doing this per-package
+installation and linking is _really slow_. Luckily, we can
+speed everything up by using Yarn Workspaces as the
+underlying package dependency resolution approach. We'll add
+two new keys to `lerna.json`: `npmClient` and
+`useWorkspaces`. We can also _remove_ the `packages` key
+because Lerna will now look at our `package.json`
+`workspaces` key instead.
 
 ```js
 {
@@ -109,7 +144,9 @@ Unfortunately, for very large repos, doing this per-package installation and lin
 }
 ```
 
-Now running `yarn lerna bootstrap` will use Yarn Workspaces and we'll end up with a very similar layout to our original Yarn Workspaces based approach.
+Now running `yarn lerna bootstrap` will use Yarn Workspaces
+and we'll end up with a very similar layout to our original
+Yarn Workspaces based approach.
 
 ```
 .
@@ -130,19 +167,36 @@ Now running `yarn lerna bootstrap` will use Yarn Workspaces and we'll end up wit
 
 ## But Why?
 
-So that's great, but why would we go through all this effort to use Lerna if we're just going to end up back where we were with Yarn Workspaces on their own? The answer lies in the way Yarn deals with versioning and handles the publishing of packages.
+So that's great, but why would we go through all this effort
+to use Lerna if we're just going to end up back where we
+were with Yarn Workspaces on their own? The answer lies in
+the way Yarn deals with versioning and handles the
+publishing of packages.
 
-Lets say, for example, that you wanted to publish a new version of all of your changed packages on every merge to master, but also didn't want that release to be the mainline stable release. You can do this with Lerna by specifying a canary release and using a special NPM tag (here we choose `ci`, but this could be `alpha` or whatever you want).
+Lets say, for example, that you wanted to publish a new
+version of all of your changed packages on every merge to
+master, but also didn't want that release to be the mainline
+stable release. You can do this with Lerna by specifying a
+canary release and using a special NPM tag (here we choose
+`ci`, but this could be `alpha` or whatever you want).
 
 ```
 lerna publish -y --canary --preid ci --npm-tag=ci
 ```
 
-This command gets us versions that look like `0.3.5-ci.263` published to a `ci` tag on NPM. We can run this on every merge to master, removing a dependency on maintainers to do a release immediately after merging code. Any user of your packages can now pull down the relevant `ci` version and test it before it moves on to a stable release.
+This command gets us versions that look like `0.3.5-ci.263`
+published to a `ci` tag on NPM. We can run this on every
+merge to master, removing a dependency on maintainers to do
+a release immediately after merging code. Any user of your
+packages can now pull down the relevant `ci` version and
+test it before it moves on to a stable release.
 
 ### Changesets
 
-Lerna includes a set of features build on the concept of figuring out what's changed since the last release such as `lerna changed`. If we run it on our project with no releases we see:
+Lerna includes a set of features build on the concept of
+figuring out what's changed since the last release such as
+`lerna changed`. If we run it on our project with no
+releases we see:
 
 ```
 ➜ yarn lerna changed
@@ -156,7 +210,8 @@ lerna success found 2 packages ready to publish
 ✨  Done in 0.93s.
 ```
 
-The full list of commands is found below, along with what they do.
+The full list of commands is found below, along with what
+they do.
 
 ```
   lerna add <pkg> [globs..]  Add a single dependency to matched packages
@@ -175,7 +230,11 @@ The full list of commands is found below, along with what they do.
   lerna version [bump]       Bump version of packages changed since the last release.
 ```
 
-Each command also has a set of filters or other options that we can use to specifically target subsets of our packages. `lerna run` for example, allows us to filter by `scope` (package name) or filter so we can operate on all packages that have changed since a specific ref.
+Each command also has a set of filters or other options that
+we can use to specifically target subsets of our packages.
+`lerna run` for example, allows us to filter by `scope`
+(package name) or filter so we can operate on all packages
+that have changed since a specific ref.
 
 ```
 ➜ yarn lerna run --help
@@ -221,11 +280,15 @@ Examples:
 ✨  Done in 0.31s.
 ```
 
-In this way, Lerna becomes a powerful front end on top of Yarn Workspaces that can be used to publish packages when they change or operate on subsets of packages locally when developing.
+In this way, Lerna becomes a powerful front end on top of
+Yarn Workspaces that can be used to publish packages when
+they change or operate on subsets of packages locally when
+developing.
 
 ## Bonus
 
-With the Yarn Workspaces based setup... we can still use the Yarn commands if we're used to them or find them easier.
+With the Yarn Workspaces based setup... we can still use the
+Yarn commands if we're used to them or find them easier.
 
 ```
 ➜ yarn workspace package-a test

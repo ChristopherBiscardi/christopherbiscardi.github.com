@@ -6,15 +6,34 @@ tags:
   - javascript
   - yarn
 ---
-This week we've been going over multi-package repo tools. Today I want to share a workflow that is enabled by those tools, even across different tooling.
 
-Some of the work I do on [Gatsby](https://www.gatsbyjs.org/) requires me to work on the core `gatsby` package or a small number of other packages. I don't need to bootstrap the entire repo, but I do need specific packages.
+This week we've been going over multi-package repo tools.
+Today I want to share a workflow that is enabled by those
+tools, even across different tooling.
+
+Some of the work I do on [Gatsby](https://www.gatsbyjs.org/)
+requires me to work on the core `gatsby` package or a small
+number of other packages. I don't need to bootstrap the
+entire repo, but I do need specific packages.
 
 ## The Workflow
 
-When I work on [Gatsby Themes](https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/), I usually use a repo called [gatsby-theme-examples](https://github.com/ChristopherBiscardi/gatsby-theme-examples). This repo is set up as a multi-package repo using Yarn Workspaces. `gatsby-theme-examples` includes a couple of themes and a couple of usages of said themes, so when I work on new functionality like [child theming](https://github.com/gatsbyjs/gatsby/pull/10787), there's a [PR on gatsby-theme-examples](https://github.com/ChristopherBiscardi/gatsby-theme-examples/pull/13) that uses that functionality.
+When I work on
+[Gatsby Themes](https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/),
+I usually use a repo called
+[gatsby-theme-examples](https://github.com/ChristopherBiscardi/gatsby-theme-examples).
+This repo is set up as a multi-package repo using Yarn
+Workspaces. `gatsby-theme-examples` includes a couple of
+themes and a couple of usages of said themes, so when I work
+on new functionality like
+[child theming](https://github.com/gatsbyjs/gatsby/pull/10787),
+there's a
+[PR on gatsby-theme-examples](https://github.com/ChristopherBiscardi/gatsby-theme-examples/pull/13)
+that uses that functionality.
 
-I handle both of these PRs to separate repos in the same multi-package repo that spans two git repos. The setup looks like this
+I handle both of these PRs to separate repos in the same
+multi-package repo that spans two git repos. The setup looks
+like this
 
 ```
 git clone git@github.com:ChristopherBiscardi/gatsby-theme-examples.git
@@ -24,7 +43,10 @@ cd vendored-gatsby
 git clone git@github.com:gatsbyjs/gatsby.git
 ```
 
-I clone the gatsby repo into a sub-directory of the examples repo, then point the Yarn Workspaces config in the theme examples `package.json` to include the packages I need. By default the workspaces config looks like
+I clone the gatsby repo into a sub-directory of the examples
+repo, then point the Yarn Workspaces config in the theme
+examples `package.json` to include the packages I need. By
+default the workspaces config looks like
 
 ```js
 {
@@ -41,7 +63,8 @@ I clone the gatsby repo into a sub-directory of the examples repo, then point th
 }
 ```
 
-When working with a forked Gatsby repo I add the packages I need, so if all I need is `gatsby`, it looks like
+When working with a forked Gatsby repo I add the packages I
+need, so if all I need is `gatsby`, it looks like
 
 ```js
 {
@@ -59,8 +82,23 @@ When working with a forked Gatsby repo I add the packages I need, so if all I ne
 }
 ```
 
-Then I run `yarn` to install all dependencies in the examples repo *and* `gatsby`. Since `gatsby` requires a build, I then run `yarn workspace gatsby build` to build the package and it's already linked into my themes repo for experimentation.
+Then I run `yarn` to install all dependencies in the
+examples repo _and_ `gatsby`. Since `gatsby` requires a
+build, I then run `yarn workspace gatsby build` to build the
+package and it's already linked into my themes repo for
+experimentation.
 
 ## Fin
 
-This is a really powerful workflow that allows me to reduce the expensiveness of working with multi-package repos I don't necessarily control. It is so useful to be able to mount repos into each other when developing that I've started starting all my new repositories as multi-package repos using Yarn Workspaces. I've been doing this workflow for awhile now and it makes the cost of migrating packages across repos, working on multiple repos, and modifying forked packages much simpler. If you plan on starting a new project this year, I'd suggest trying to start it using Yarn Workspaces as it doesn't require much overhead at all and it enables a lot of flexibility.
+This is a really powerful workflow that allows me to reduce
+the expensiveness of working with multi-package repos I
+don't necessarily control. It is so useful to be able to
+mount repos into each other when developing that I've
+started starting all my new repositories as multi-package
+repos using Yarn Workspaces. I've been doing this workflow
+for awhile now and it makes the cost of migrating packages
+across repos, working on multiple repos, and modifying
+forked packages much simpler. If you plan on starting a new
+project this year, I'd suggest trying to start it using Yarn
+Workspaces as it doesn't require much overhead at all and it
+enables a lot of flexibility.

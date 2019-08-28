@@ -4,10 +4,12 @@ date: 2014-02-01
 slug: "/2014/2/1/in-search-of-a-riak-solr-client-for-haskell/"
 ---
 
-
 In this post are the beginnings of riak-solr-client.
 
-First, we need to take a look at the response from Solr/Yokozuna/Riak-Search-2 for a single query. In this case, the database only holds two records and we are doing a query that matches all results (`*:*`).
+First, we need to take a look at the response from
+Solr/Yokozuna/Riak-Search-2 for a single query. In this
+case, the database only holds two records and we are doing a
+query that matches all results (`*:*`).
 
 ```javascript
 {
@@ -43,12 +45,14 @@ First, we need to take a look at the response from Solr/Yokozuna/Riak-Search-2 f
 }
 ```
 
-As you can see, I’ve decided to retrieve JSON because of my familiarity with
-Data.Aeson. There is no set schema for Solr responses, so we’re going to have to
-test this fairly well to make a generic library that will be updated over time
-as Solr updates.
+As you can see, I’ve decided to retrieve JSON because of my
+familiarity with Data.Aeson. There is no set schema for Solr
+responses, so we’re going to have to test this fairly well
+to make a generic library that will be updated over time as
+Solr updates.
 
-With the sample response in mind, we can start to create the datatypes:
+With the sample response in mind, we can start to create the
+datatypes:
 
 ```haskell
 newtype Params = Params (Map String String) deriving (Show)
@@ -79,19 +83,22 @@ data SolrResponse = SolrResponse {
 } deriving (Show)
 ```
 
-The most interesting part of this is `Params`. We’ve defined `Params` as a
-`newtype` for a `Data.Map` because, making an educated guess, the keys for
-params won’t always be the same. We can reach this conclusion by seeing that one
-of the keys is an IP address (with a port number).
+The most interesting part of this is `Params`. We’ve defined
+`Params` as a `newtype` for a `Data.Map` because, making an
+educated guess, the keys for params won’t always be the
+same. We can reach this conclusion by seeing that one of the
+keys is an IP address (with a port number).
 
-Another interesting piece of the response is the `Docs`. Solr seems to return
-the id in Solr (`_yz` is presumably for _yokozuna), the Riak Key (`_yz_rk`), the
-Riak Bucket Type `_yz_rt` and the Riak Bucket (`_yz_rb`). This is useful
-information because we will need to use riak-haskell-client (or more likely an
-updated fork for Riak 2.0) to retrieve the actual data.
+Another interesting piece of the response is the `Docs`.
+Solr seems to return the id in Solr (`_yz` is presumably for
+\_yokozuna), the Riak Key (`_yz_rk`), the Riak Bucket Type
+`_yz_rt` and the Riak Bucket (`_yz_rb`). This is useful
+information because we will need to use riak-haskell-client
+(or more likely an updated fork for Riak 2.0) to retrieve
+the actual data.
 
-We can now write some JSON instances and basic http code to test. Here is the
-full file:
+We can now write some JSON instances and basic http code to
+test. Here is the full file:
 
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
@@ -171,8 +178,9 @@ Just (SolrResponse {responseHeader = ResponseHeader {status = 0, qTime = 8, para
 
 Success!
 
-This is just a small start. Hopefully I'll be able to build this out a bit more
-(two changes of note will be usage of `http-streams` and `Lens`) and write a
-snaplet that integrates well with [this Riak
-Snaplet](https://github.com/ChristopherBiscardi/snaplet-riak-2) in a more
-generic fashion.
+This is just a small start. Hopefully I'll be able to build
+this out a bit more (two changes of note will be usage of
+`http-streams` and `Lens`) and write a snaplet that
+integrates well with
+[this Riak Snaplet](https://github.com/ChristopherBiscardi/snaplet-riak-2)
+in a more generic fashion.

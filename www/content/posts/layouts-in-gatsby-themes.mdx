@@ -4,14 +4,41 @@ date: 2019-03-18T06:41:14.535Z
 tags:
   - gatsby-themes
 ---
-First let's talk a bit about layouts. They come in many shapes and sizes, with navigations, headers, footers, sidebars, responsive menus, and many other components. In a regular Gatsby site, you can ensure a layout is used across all pages by taking advantage of [`wrapRootElement` or `wrapPageElement`](/post/controlling-the-gatsby-application-root). It results in a layout that generally can't be removed by application code and that usually isn't an issue because features can be added directly to the relevant code.
 
-Now, having done that, it may seem prudent to put layouts in `wrapRootElement` or `wrapPageElement` when building themes as well. There's a critical difference to this when building themes though, and that's the possibility of multiple other page layouts existing.
+First let's talk a bit about layouts. They come in many
+shapes and sizes, with navigations, headers, footers,
+sidebars, responsive menus, and many other components. In a
+regular Gatsby site, you can ensure a layout is used across
+all pages by taking advantage of
+[`wrapRootElement` or `wrapPageElement`](/post/controlling-the-gatsby-application-root).
+It results in a layout that generally can't be removed by
+application code and that usually isn't an issue because
+features can be added directly to the relevant code.
 
-Any given site or other theme can define a application-level layout by wrapping the site using the `wrap*Element` APIs. This means we need to be more defensive about how we build up our theme because multiple themes wrapping the entire application can result in nested layouts!
+Now, having done that, it may seem prudent to put layouts in
+`wrapRootElement` or `wrapPageElement` when building themes
+as well. There's a critical difference to this when building
+themes though, and that's the possibility of multiple other
+page layouts existing.
+
+Any given site or other theme can define a application-level
+layout by wrapping the site using the `wrap*Element` APIs.
+This means we need to be more defensive about how we build
+up our theme because multiple themes wrapping the entire
+application can result in nested layouts!
 
 ![](/img/gatsby-theme-nested-layouts.png "Gatsby Themes Nested Layouts")
 
-So if we aren't going to apply our layouts globally, where do they go? The answer is that we can put our layout into each of the templates that use it individually in our theme. After doing this, the layouts will only apply to pages our theme controls, reducing the possibility of clashing with existing code. An added benefit is that with component shadowing, the entire layout for a given page can be overridden by the user with their own layout.
+So if we aren't going to apply our layouts globally, where
+do they go? The answer is that we can put our layout into
+each of the templates that use it individually in our theme.
+After doing this, the layouts will only apply to pages our
+theme controls, reducing the possibility of clashing with
+existing code. An added benefit is that with component
+shadowing, the entire layout for a given page can be
+overridden by the user with their own layout.
 
-Applying layouts more granularly in themes yields more control over rendering to the user of our theme, and ensures themes compose well even with other themes we didn't think to check against while developing!
+Applying layouts more granularly in themes yields more
+control over rendering to the user of our theme, and ensures
+themes compose well even with other themes we didn't think
+to check against while developing!

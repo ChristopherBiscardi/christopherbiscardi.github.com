@@ -4,16 +4,18 @@ title: "Notes on Developing gatsby-mdx"
 
 ## html resolving and dataloader
 
-Resolving the `html` field is memory intensive because of MemoryFS,
-and also because we run a webpack process for every `html` query on an
-`Mdx` node.
+Resolving the `html` field is memory intensive because of
+MemoryFS, and also because we run a webpack process for
+every `html` query on an `Mdx` node.
 
 Dataloader batches.
 
 ```js
-var DataLoader = require('dataloader')
+var DataLoader = require("dataloader");
 
-var userLoader = new DataLoader(keys => myBatchGetUsers(keys));
+var userLoader = new DataLoader(keys =>
+  myBatchGetUsers(keys)
+);
 ```
 
 ## cache keys can be objects

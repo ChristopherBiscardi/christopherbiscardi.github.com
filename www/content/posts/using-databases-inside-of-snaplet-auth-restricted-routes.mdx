@@ -1,5 +1,6 @@
 ---
-title: "Using Databases inside of Snaplet Auth Restricted Routes"
+title:
+  "Using Databases inside of Snaplet Auth Restricted Routes"
 date: 2014-01-09
 slug: "/2014/1/9/using-databases-inside-of-snaplet-auth-restricted-routes/"
 ---
@@ -15,8 +16,8 @@ instance HasPostgres (Handler App (AuthManager App)) where
     getPostgresState = withTop pg get
 ```
 
-The app we’re using was built by running `snap init` and adding the following
-code:
+The app we’re using was built by running `snap init` and
+adding the following code:
 
 ##### src/Application.hs
 
@@ -34,7 +35,8 @@ and the following definition to our `App` datatype:
 
 ##### src/Site.hs
 
-In `src/Site.hs` we’ve added the following language extensions:
+In `src/Site.hs` we’ve added the following language
+extensions:
 
 ```haskell
 {-# LANGUAGE FlexibleInstances #-}
@@ -69,45 +71,49 @@ and Snaplet Init code:
 
 ## What's Going On
 
-We've also defined a convenience function `needsAuth` to restrict our
-`"/postgres"` route to only logged in users.
+We've also defined a convenience function `needsAuth` to
+restrict our `"/postgres"` route to only logged in users.
 
 ```haskell
 needsAuth :: Handler App (AuthManager App) () -> Handler
 App App () needsAuth x = with auth $ requireUser auth (redirect "/") x
 ```
 
-`getFromPostgres` does the dirty work for us by querying a table that was
-created as part of the Snaplet-Auth backend. It will return a list of all users.
+`getFromPostgres` does the dirty work for us by querying a
+table that was created as part of the Snaplet-Auth backend.
+It will return a list of all users.
 
 ```haskell
 getFromPostgres :: Handler App (AuthManager App) ()
 getFromPostgres = do --get the results results
 ```
 
-`"/postgres"` is the url to hit to check to see if it's working.
+`"/postgres"` is the url to hit to check to see if it's
+working.
 
 `, ("/postgres", needsAuth getFromPostgres)`
 
 ## The Instance
 
-What's really doing the heavy lifting of using the postgres snaplet inside of
-the auth snaplet's route is this instance:
+What's really doing the heavy lifting of using the postgres
+snaplet inside of the auth snaplet's route is this instance:
 
 ```haskell
 instance HasPostgres (Handler App (AuthManager App)) where
 getPostgresState = withTop pg get
 ```
 
-The important difference from the instance above it is `withTop` which can be
-found
+The important difference from the instance above it is
+`withTop` which can be found
 [here](http://hackage.haskell.org/package/snap-0.6.0.2/docs/Snap-Snaplet.html).
 
 From the docs:
 
-> -- | Like 'with' but doesn't impose the requirement that the action -- being
-> run be a descendant of the current snaplet.
+> -- | Like 'with' but doesn't impose the requirement that
+> the action -- being run be a descendant of the current
+> snaplet.
 
-Essentially, the auth snaplet doesn't know anything about the postgres snaplet
-as we've instantiated it (it doesn't keep around a reference from the Backend
-module), so we have to ask the parent context (using `withTop`).
+Essentially, the auth snaplet doesn't know anything about
+the postgres snaplet as we've instantiated it (it doesn't
+keep around a reference from the Backend module), so we have
+to ask the parent context (using `withTop`).

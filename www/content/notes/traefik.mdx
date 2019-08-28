@@ -5,23 +5,25 @@ title: "Traefik and Let's Encrypt"
 - move DNS to Google Cloud DNS instead of google domains dns
   - make sure gmail, etc DNS is ported over
 
-> wildcard certificates can only be generated through a DNS-01
-> challenge.
+> wildcard certificates can only be generated through a
+> DNS-01 challenge.
 
-traefik DNS provider: `gcloud` can automate the DNS verification.
+traefik DNS provider: `gcloud` can automate the DNS
+verification.
 
 - `GCE_PROJECT`
 - `GCE_SERVICE_ACCOUNT_FILE`
 
 > Every lego environment variable can be overridden by their
-> respective \_FILE counterpart, which should have a filepath to a file
-> that contains the secret as its value. For example,
-> CF_API_EMAIL_FILE=/run/secrets/traefik_cf-api-email could be used to
-> provide a Cloudflare API email address as a Docker secret named
-> traefik_cf-api-email.
+> respective \_FILE counterpart, which should have a
+> filepath to a file that contains the secret as its value.
+> For example,
+> CF_API_EMAIL_FILE=/run/secrets/traefik_cf-api-email could
+> be used to provide a Cloudflare API email address as a
+> Docker secret named traefik_cf-api-email.
 
-wildcard has to be main domain; each domain and SAN results in a cert
-request.
+wildcard has to be main domain; each domain and SAN results
+in a cert request.
 
 ```
 [acme]

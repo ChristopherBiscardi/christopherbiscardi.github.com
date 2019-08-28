@@ -4,9 +4,19 @@ date: 2019-02-05T20:13:12.865Z
 tags:
   - gatsby
 ---
-I recently needed to switch out the slugger I was using from [slugify](https://www.npmjs.com/package/slugify), which requires a bunch of configuration to get the behavior I want, to [@sindresorhus/slugify](https://github.com/sindresorhus/slugify) which requires none. To do this I needed to get all of the URLs generated on my Gatsby site and figure out which ones would change in the transition.
 
-My first step was to open the GraphQL explorer that comes with any Gatsby site and input a query that would give me the path of every page on the site.
+I recently needed to switch out the slugger I was using from
+[slugify](https://www.npmjs.com/package/slugify), which
+requires a bunch of configuration to get the behavior I
+want, to
+[@sindresorhus/slugify](https://github.com/sindresorhus/slugify)
+which requires none. To do this I needed to get all of the
+URLs generated on my Gatsby site and figure out which ones
+would change in the transition.
+
+My first step was to open the GraphQL explorer that comes
+with any Gatsby site and input a query that would give me
+the path of every page on the site.
 
 ```graphql
 {
@@ -44,13 +54,24 @@ Which yields a result that is structured like this:
 }
 ```
 
-Step 2 was to take this JSON output and trim it down into a list of URLs using `jiq`, an interactive version of `jq`. The following command takes the JSON I copied out of the GraphQL explorer, filters it through `jiq`, allowing me to modify the query if I want to, and then "copies" it back into my "clipboard".
+Step 2 was to take this JSON output and trim it down into a
+list of URLs using `jiq`, an interactive version of `jq`.
+The following command takes the JSON I copied out of the
+GraphQL explorer, filters it through `jiq`, allowing me to
+modify the query if I want to, and then "copies" it back
+into my "clipboard".
 
 ```sh
 pbpaste | jiq '.data.allSitePage.edges[].node.path' -rc | pbcopy
 ```
 
-I then installed the new slugger and re-ran the same steps. I put both outputs one over the other in an Emacs buffer and ran `delete-duplicate-lines`. Doing this with the first output on top of the second results in all of the first URLs and only the differing second URLs. I did the same with the orders flipped, which gives me all of the original URLs that will break at the bottom:
+I then installed the new slugger and re-ran the same steps.
+I put both outputs one over the other in an Emacs buffer and
+ran `delete-duplicate-lines`. Doing this with the first
+output on top of the second results in all of the first URLs
+and only the differing second URLs. I did the same with the
+orders flipped, which gives me all of the original URLs that
+will break at the bottom:
 
 ```
 /
@@ -159,7 +180,9 @@ I then installed the new slugger and re-ran the same steps. I put both outputs o
 /post/notes-on-parsing-the-graphql-sdl
 ```
 
-I then took both outputs and combined the "extra" URLs into a netlify `_redirects` file in my `static` folder, which gets directly copied into my final site.
+I then took both outputs and combined the "extra" URLs into
+a netlify `_redirects` file in my `static` folder, which
+gets directly copied into my final site.
 
 ```
 /post/codeblocks,-mdx,-and-mdx-utils                            /post/codeblocks-mdx-and-mdx-utils
@@ -171,4 +194,9 @@ I then took both outputs and combined the "extra" URLs into a netlify `_redirect
 
 # Fin
 
-I used Gatsby's introspection capabilities to get a list of all URLs on my site, filtered it through jq and then de-duplicated those lists to get the final list I needed fairly quickly. Getting this list of URLs can be annoying and difficult in other ecosystems, but Gatsby's GraphQL support makes it trivial.
+I used Gatsby's introspection capabilities to get a list of
+all URLs on my site, filtered it through jq and then
+de-duplicated those lists to get the final list I needed
+fairly quickly. Getting this list of URLs can be annoying
+and difficult in other ecosystems, but Gatsby's GraphQL
+support makes it trivial.

@@ -6,9 +6,16 @@ tags:
   - gatsby-themes
 ---
 
-Sometimes as a Gatsby theme author you need to take a theme option and inject it into the bundle in an arbitrary location. Using web pack's `DefinePlugin` lets us do this using special tokens.
+Sometimes as a Gatsby theme author you need to take a theme
+option and inject it into the bundle in an arbitrary
+location. Using web pack's `DefinePlugin` lets us do this
+using special tokens.
 
-Let's say we want to add some feature flags to our application to control whether the application is built with a sidebar or not. We can accept the option in the theme and use it to set up a feature flag called `__FLAG_SIDEBAR_ENABLED__`.
+Let's say we want to add some feature flags to our
+application to control whether the application is built with
+a sidebar or not. We can accept the option in the theme and
+use it to set up a feature flag called
+`__FLAG_SIDEBAR_ENABLED__`.
 
 ```js title=gatsby-node.js
 exports.onCreateWebpackConfig = (
@@ -25,17 +32,25 @@ exports.onCreateWebpackConfig = (
 };
 ```
 
-Wherever we use this flag, webpack will replace the value with a boolean literal, so we can use this to enable or disable features of our application.
+Wherever we use this flag, webpack will replace the value
+with a boolean literal, so we can use this to enable or
+disable features of our application.
 
 ```js title=src/components/layout.js
 import React from "react";
 
 export default props => (
   <div>
-    {__FLAG_SIDEBAR_ENABLED__ && <aside>some sidebar content</aside>}
+    {__FLAG_SIDEBAR_ENABLED__ && (
+      <aside>some sidebar content</aside>
+    )}
     <main>{props.children}</main>
   </div>
 );
 ```
 
-Note that when using this pattern, it can also be useful to consider using a [custom configuration node](/post/applying-theme-options-using-custom-configuration-nodes/) instead, as that will let you `useStaticQuery` to access specific information.
+Note that when using this pattern, it can also be useful to
+consider using a
+[custom configuration node](/post/applying-theme-options-using-custom-configuration-nodes/)
+instead, as that will let you `useStaticQuery` to access
+specific information.

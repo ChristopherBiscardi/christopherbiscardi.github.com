@@ -6,7 +6,8 @@ tags:
   - gatsby-themes
 ---
 
-Gatsby themes allow you to pass in options in the same way plugins get options.
+Gatsby themes allow you to pass in options in the same way
+plugins get options.
 
 ```js title=gatsby-config.js
 module.exports = {
@@ -22,7 +23,11 @@ module.exports = {
 };
 ```
 
-Since gatsby-config has historically exported an object, as seen above, we needed to add a way to grab the options. This is why the function gatsby-config exists, which we can use in our theme to control which plugins are added (or anything else).
+Since gatsby-config has historically exported an object, as
+seen above, we needed to add a way to grab the options. This
+is why the function gatsby-config exists, which we can use
+in our theme to control which plugins are added (or anything
+else).
 
 ```js title=gatsby-theme-awesome/gatsby-config.js
 module.exports = options => {
@@ -38,4 +43,6 @@ module.exports = options => {
 };
 ```
 
-Note that trying to use the function gatsby-config in the root of a site will fail because there's nowhere to get the options from.
+Note that trying to use the function gatsby-config in the
+root of a site will fail because there's nowhere to get the
+options from.

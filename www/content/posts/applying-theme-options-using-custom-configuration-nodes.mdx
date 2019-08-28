@@ -1,14 +1,22 @@
 ---
-title: Applying theme options using custom configuration nodes
+title:
+  Applying theme options using custom configuration nodes
 date: 2019-08-13
 tags:
   - gatsby
   - gatsby-themes
 ---
 
-Building large Gatsby themes can result in a large array of configuration options to manage as a theme author. We can also find ourselves wanting the ability to let other themes or users' sites to add additional configuration instances (ex: get more blog posts from this folder and process them as usual).
+Building large Gatsby themes can result in a large array of
+configuration options to manage as a theme author. We can
+also find ourselves wanting the ability to let other themes
+or users' sites to add additional configuration instances
+(ex: get more blog posts from this folder and process them
+as usual).
 
-Let's take a look at an example of this pattern. First, set up our configuration node type in the Gatsby system using `createSchemaCustomization`.
+Let's take a look at an example of this pattern. First, set
+up our configuration node type in the Gatsby system using
+`createSchemaCustomization`.
 
 ```js title=gatsby-node.js
 exports.createSchemaCustomization = (
@@ -22,14 +30,19 @@ breadcrumbSeparator: String
 }`)
 ```
 
-Then in `sourceNodes` we'll talk the options configured with defaults and inject them into the node system as a node.
+Then in `sourceNodes` we'll talk the options configured with
+defaults and inject them into the node system as a node.
 
 ```js title=gatsby-node.js
-var crypto = require("crypto")
+var crypto = require("crypto");
 
 exports.sourceNodes = (
   { actions: { createNode }, schema },
-  { basePath = `/`, homeText = `~`, breadcrumbSeparator = `/` }
+  {
+    basePath = `/`,
+    homeText = `~`,
+    breadcrumbSeparator = `/`
+  }
 ) => {
   // create garden data from plugin config
   const notesConfig = {
@@ -56,9 +69,17 @@ exports.sourceNodes = (
 };
 ```
 
-> Note that in this case we've specified a specific known ID we can query. It is best practice to use `createNodeId` for ids like this and we're doing it this way in this post for some clarity.
+> Note that in this case we've specified a specific known ID
+> we can query. It is best practice to use `createNodeId`
+> for ids like this and we're doing it this way in this post
+> for some clarity.
 
-Because we've specified a specific ID, and because of Gatsby's implementation of node ownership, our theme effectively owns this object and we can be confident it hasn't been modified. Using `useStaticQuery` we can now access this data inside our components anywhere in our application.
+Because we've specified a specific ID, and because of
+Gatsby's implementation of node ownership, our theme
+effectively owns this object and we can be confident it
+hasn't been modified. Using `useStaticQuery` we can now
+access this data inside our components anywhere in our
+application.
 
 ```js
 import React from "react";
@@ -82,7 +103,11 @@ export default () => {
 
 ## Combining Nodes
 
-If we had some field that semantically could be included multiple times, we could skip the specific ID and query `allNotesConfig` with our own merge algorithm. Let's take a look at a hypothetical `someOption` field that is typed as such:
+If we had some field that semantically could be included
+multiple times, we could skip the specific ID and query
+`allNotesConfig` with our own merge algorithm. Let's take a
+look at a hypothetical `someOption` field that is typed as
+such:
 
 ```graphql
 type someOption = [String!]!

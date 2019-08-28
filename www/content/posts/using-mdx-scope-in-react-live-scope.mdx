@@ -1,16 +1,28 @@
 ---
-title: 'Using MDX scope in react-live scope'
+title: "Using MDX scope in react-live scope"
 date: 2019-08-16
 tags:
   - gatsby
   - mdx
 ---
 
-I started writing this as a result of a conversation we had on [Jason's Livestream](https://twitter.com/jlengstorf/status/1162539598766985216) about how to get code blocks to use the components imported in the same file. The reference in use was one of my own blog posts [Codeblocks, MDX, and mdx-utils](/post/codeblocks-mdx-and-mdx-utils/) that described the motivation behind publishing the original mdx-utils library.
+I started writing this as a result of a conversation we had
+on
+[Jason's Livestream](https://twitter.com/jlengstorf/status/1162539598766985216)
+about how to get code blocks to use the components imported
+in the same file. The reference in use was one of my own
+blog posts
+[Codeblocks, MDX, and mdx-utils](/post/codeblocks-mdx-and-mdx-utils/)
+that described the motivation behind publishing the original
+mdx-utils library.
 
-That conversation reminded me of something [John Otander](https://twitter.com/4lpine) told me about what some people prefer as the default behavior for MDX when using react-live.
+That conversation reminded me of something
+[John Otander](https://twitter.com/4lpine) told me about
+what some people prefer as the default behavior for MDX when
+using react-live.
 
-Which leads me to the problem: How do we get `Button` to be used in this code block.
+Which leads me to the problem: How do we get `Button` to be
+used in this code block.
 
 ````md
 import Button from '../components/button'
@@ -22,85 +34,119 @@ import Button from '../components/button'
 describing some stuff
 
 ```js live
-<Button text="whatever"/>
+<Button text="whatever" />
 ```
 
 and saying some more for the docs
 ````
 
-
-Well lets first take all of the code from the last blog post and dump it into `gatsby-browser.js`. This gives a concise overview of what we're working with.
+Well lets first take all of the code from the last blog post
+and dump it into `gatsby-browser.js`. This gives a concise
+overview of what we're working with.
 
 ```js title=gatsby-browser.js
-import React from 'react'
-import { MDXProvider } from '@mdx-js/react'
-import Highlight, { defaultProps } from 'prism-react-renderer'
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live'
-import { preToCodeBlock } from 'mdx-utils'
+import React from "react";
+import { MDXProvider } from "@mdx-js/react";
+import Highlight, {
+  defaultProps
+} from "prism-react-renderer";
+import {
+  LiveProvider,
+  LiveEditor,
+  LiveError,
+  LivePreview
+} from "react-live";
+import { preToCodeBlock } from "mdx-utils";
 
 const Code = ({ codeString, language, ...props }) => {
-  if (props['react-live']) {
+  if (props["react-live"]) {
     return (
       <LiveProvider code={codeString}>
         <LiveEditor />
         <LiveError />
         <LivePreview />
       </LiveProvider>
-    )
+    );
   } else {
     return (
-      <Highlight {...defaultProps} code={codeString} language={language}>
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+      <Highlight
+        {...defaultProps}
+        code={codeString}
+        language={language}
+      >
+        {({
+          className,
+          style,
+          tokens,
+          getLineProps,
+          getTokenProps
+        }) => (
           <pre className={className} style={style}>
             {tokens.map((line, i) => (
               <div {...getLineProps({ line, key: i })}>
                 {line.map((token, key) => (
-                  <span {...getTokenProps({ token, key })} />
+                  <span
+                    {...getTokenProps({ token, key })}
+                  />
                 ))}
               </div>
             ))}
           </pre>
         )}
       </Highlight>
-    )
+    );
   }
-}
+};
 
 // components is its own object outside of render so that the references to
 // components are stable
 const components = {
   pre: preProps => {
-    const props = preToCodeBlock(preProps)
+    const props = preToCodeBlock(preProps);
     // if there's a codeString and some props, we passed the test
     if (props) {
-      return <Code {...props} />
+      return <Code {...props} />;
     } else {
       // it's possible to have a pre without a code in it
-      return <pre {...preProps} />
+      return <pre {...preProps} />;
     }
-  },
-}
+  }
+};
 
-export const wrapRootElement = ({element}) => {
-	return <MDXProvider components={components}>{element}</MDXProvider>
-}
+export const wrapRootElement = ({ element }) => {
+  return (
+    <MDXProvider components={components}>
+      {element}
+    </MDXProvider>
+  );
+};
 ```
 
-A markdown codeblock gets syntax highlighted by [prism-react-renderer](https://github.com/FormidableLabs/prism-react-renderer) by default, and if the codeblock uses the `react-live` metastring prop, we render with [react-live](https://github.com/FormidableLabs/react-live) instead.
+A markdown codeblock gets syntax highlighted by
+[prism-react-renderer](https://github.com/FormidableLabs/prism-react-renderer)
+by default, and if the codeblock uses the `react-live`
+metastring prop, we render with
+[react-live](https://github.com/FormidableLabs/react-live)
+instead.
 
-We do have a problem here though. The above code all put together in our Gatsby site still results in an error in our react-live output.
+We do have a problem here though. The above code all put
+together in our Gatsby site still results in an error in our
+react-live output.
 
 ```
 ReferenceError: Button is not defined
 ```
 
-To fix this we have a couple of lines of code to add. First is a hook import from `gatsby-plugin-mdx` that we can use to grab the MDX components in scope.
+To fix this we have a couple of lines of code to add. First
+is a hook import from `gatsby-plugin-mdx` that we can use to
+grab the MDX components in scope.
 
 ```js
-import { useMDXScope } from 'gatsby-plugin-mdx/context'
+import { useMDXScope } from "gatsby-plugin-mdx/context";
 ```
 
-The second is to use that hook and the resulting components list in the scope of our `LiveProvider`.
+The second is to use that hook and the resulting components
+list in the scope of our `LiveProvider`.
 
 ```js diff
 const Code = ({ codeString, language, ...props }) => {
@@ -136,4 +182,5 @@ const Code = ({ codeString, language, ...props }) => {
 }
 ```
 
-This allows us to use our custom components inside of our react-live playgrounds.
+This allows us to use our custom components inside of our
+react-live playgrounds.

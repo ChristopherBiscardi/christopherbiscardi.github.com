@@ -6,11 +6,21 @@ tags:
   - netlify
 ---
 
-When building Gatsby sites we don't run a server, so to use any dynamic logic we can take advantage of serverless functions. In our case we'll deploy [on Netlify](https://www.netlify.com/) and that means we'll go with golang for our functions.
+When building Gatsby sites we don't run a server, so to use
+any dynamic logic we can take advantage of serverless
+functions. In our case we'll deploy
+[on Netlify](https://www.netlify.com/) and that means we'll
+go with golang for our functions.
 
 ## Initial Project
 
-The project we're working on is a yarn workspaces setup with a Gatsby project in `packages/hello-world-site`. We won't be running any of that code, it's there solely to frame the context of deploying golang functions in the context of a larger, multi-language project. Our filesystem layout for our project includes a yarn lockfile, `package.json`, and other assorted Gatsby related stuff.
+The project we're working on is a yarn workspaces setup with
+a Gatsby project in `packages/hello-world-site`. We won't be
+running any of that code, it's there solely to frame the
+context of deploying golang functions in the context of a
+larger, multi-language project. Our filesystem layout for
+our project includes a yarn lockfile, `package.json`, and
+other assorted Gatsby related stuff.
 
 ```
 .
@@ -22,15 +32,20 @@ The project we're working on is a yarn workspaces setup with a Gatsby project in
 
 ## Go source code
 
-We'll create a `go-src` directory since we'll be using go modules to maintain our application, and a `hello-world` directory inside of that to house our first lambda.
+We'll create a `go-src` directory since we'll be using go
+modules to maintain our application, and a `hello-world`
+directory inside of that to house our first lambda.
 
 ```sh
 mkdir go-src/hello-world
 ```
 
-Using Go modules means we don't have to deal with \$GOPATH or other environment variables.
+Using Go modules means we don't have to deal with \$GOPATH
+or other environment variables.
 
-> Note: make sure `GO_IMPORT_PATH` is _not_ set in your environment when deploying on Netlify or go modules will not work and your dependencies will not be found
+> Note: make sure `GO_IMPORT_PATH` is _not_ set in your
+> environment when deploying on Netlify or go modules will
+> not work and your dependencies will not be found
 
 We will have to initialize the modules though.
 
@@ -38,11 +53,17 @@ We will have to initialize the modules though.
 go mod init
 ```
 
-If you see the following message, it means [go wasn't able to automatically determine the package](https://github.com/golang/go/wiki/Modules#why-does-go-mod-init-give-the-error-cannot-determine-module-path-for-source-directory), so you'll have to use the name when initializing.
+If you see the following message, it means
+[go wasn't able to automatically determine the package](https://github.com/golang/go/wiki/Modules#why-does-go-mod-init-give-the-error-cannot-determine-module-path-for-source-directory),
+so you'll have to use the name when initializing.
 
-> go: cannot determine module path for source directory /Users/chris/github/christopherbiscardi/golang-modules-netlify-serverless-gatsby-example (outside GOPATH, no import comments)
+> go: cannot determine module path for source directory
+> /Users/chris/github/christopherbiscardi/golang-modules-netlify-serverless-gatsby-example
+> (outside GOPATH, no import comments)
 
-My repo will be on github at [github.com/christopherbiscardi/golang-modules-netlify-serverless-gatsby-example](github.com/christopherbiscardi/golang-modules-netlify-serverless-gatsby-example), so my init command is:
+My repo will be on github at
+[github.com/christopherbiscardi/golang-modules-netlify-serverless-gatsby-example](github.com/christopherbiscardi/golang-modules-netlify-serverless-gatsby-example),
+so my init command is:
 
 ```sh
 go mod init github.com/christopherbiscardi/golang-modules-netlify-serverless-gatsby-example
@@ -56,7 +77,9 @@ module github.com/christopherbiscardi/golang-modules-netlify-serverless-gatsby-e
 go 1.12
 ```
 
-Next, we'll write some code for a hello-world golang function. In `go-src/hello-world/main.go` use the following code.
+Next, we'll write some code for a hello-world golang
+function. In `go-src/hello-world/main.go` use the following
+code.
 
 ```go
 package main
@@ -101,13 +124,27 @@ func main() {
 }
 ```
 
-This code does two things. The first is setting up [Honeycomb](https://www.honeycomb.io/) for logging with the stdout transmission. This lets us log out events to the netlify console when our lambda function runs with the option to easily switch to sending them to an aggregation dataset later for querying if we want.
+This code does two things. The first is setting up
+[Honeycomb](https://www.honeycomb.io/) for logging with the
+stdout transmission. This lets us log out events to the
+netlify console when our lambda function runs with the
+option to easily switch to sending them to an aggregation
+dataset later for querying if we want.
 
-The second is our lambda handler setup. This is the code that handles receiving and responding to events. We send back a `Hello, World` string in response to an `APIGatewayProxyRequest`.
+The second is our lambda handler setup. This is the code
+that handles receiving and responding to events. We send
+back a `Hello, World` string in response to an
+`APIGatewayProxyRequest`.
 
 ## netlify setup
 
-We'll take advantage of Netlify to build our functions (and the existing Gatsby site). To do that we need a `netlify.toml` (or you can use the web interface). We are going to use Make to orchestrate our build commands. Our functions are going to be built into a `netlify-functions` folder. Finally, our Gatsby site will get built into `packages/hello-world-site/public`.
+We'll take advantage of Netlify to build our functions (and
+the existing Gatsby site). To do that we need a
+`netlify.toml` (or you can use the web interface). We are
+going to use Make to orchestrate our build commands. Our
+functions are going to be built into a `netlify-functions`
+folder. Finally, our Gatsby site will get built into
+`packages/hello-world-site/public`.
 
 ```
 [build]
@@ -116,7 +153,10 @@ We'll take advantage of Netlify to build our functions (and the existing Gatsby 
   publish = "packages/hello-world-site/public"
 ```
 
-Then in the root of our site create a `Makefile` with a `build` command. If you know Make well feel free to spice this up as much as you like with targets, etc. Our build command builds the Gatsby site first, then the go functions.
+Then in the root of our site create a `Makefile` with a
+`build` command. If you know Make well feel free to spice
+this up as much as you like with targets, etc. Our build
+command builds the Gatsby site first, then the go functions.
 
 ```makefile
 build:
@@ -124,13 +164,21 @@ build:
 	GOBIN=${PWD}/netlify-functions go install ./...
 ```
 
-Since `go build` doesn't let us control the location of the resulting binaries, we use `go install` with a `GOBIN` environment variable pointing at our `netlify-functions` folder (which doesn't need to exist in our repo). `./...` roughly means "build all of the binaries"; You can also choose to manually `go build` each one.
+Since `go build` doesn't let us control the location of the
+resulting binaries, we use `go install` with a `GOBIN`
+environment variable pointing at our `netlify-functions`
+folder (which doesn't need to exist in our repo). `./...`
+roughly means "build all of the binaries"; You can also
+choose to manually `go build` each one.
 
-Note that because we used `./...` we're set up to build as many functions as we want by adding new directories in `go-src`.
+Note that because we used `./...` we're set up to build as
+many functions as we want by adding new directories in
+`go-src`.
 
 ## deploying
 
-If we test by running `make`, we get a Gatsby build followed by a go build.
+If we test by running `make`, we get a Gatsby build followed
+by a go build.
 
 ```shell
 make
@@ -184,7 +232,8 @@ go: finding github.com/facebookgo/limitgroup latest
 go: finding github.com/facebookgo/clock latest
 ```
 
-Once we push to netlify, we'll see the build logs relating to our functions (as well as the gatsby site).
+Once we push to netlify, we'll see the build logs relating
+to our functions (as well as the gatsby site).
 
 ```
 11:50:23 PM: Found netlify.toml. Overriding site configuration
@@ -202,9 +251,13 @@ Once we push to netlify, we'll see the build logs relating to our functions (as 
 
 ## Testing our Function
 
-The function is deployed at `https://our-site.netlify.com/.netlify/functions/hello-world` so we'll simply visit that page to trigger the function, seeing `Hello, World` on the page as a result.
+The function is deployed at
+`https://our-site.netlify.com/.netlify/functions/hello-world`
+so we'll simply visit that page to trigger the function,
+seeing `Hello, World` on the page as a result.
 
-Our function logs show that we've hit the hello-world function
+Our function logs show that we've hit the hello-world
+function
 
 ```
 11:53:52 PM: hello-world invoked

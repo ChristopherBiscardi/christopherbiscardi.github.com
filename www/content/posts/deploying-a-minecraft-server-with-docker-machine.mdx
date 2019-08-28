@@ -6,27 +6,30 @@ slug: "/2014/12/27/deploying-a-minecraft-server-with-docker-machine/"
 
 The
 [previous post](http://www.christopherbiscardi.com/2014/12/21/docker-machine/)
-explains how to get up and running with Docker machine. This one will
-be a quick tutorial on setting up a Minecraft server using Machine.
+explains how to get up and running with Docker machine. This
+one will be a quick tutorial on setting up a Minecraft
+server using Machine.
 
 ## Digital Ocean
 
-Create a new Digital Ocean Machine. We need a `1gb` server due to
-Java’s requirements, so we’ll specify the 1gb DO variant: 
+Create a new Digital Ocean Machine. We need a `1gb` server
+due to Java’s requirements, so we’ll specify the 1gb DO
+variant:
+
 ```
 > machine-docker create -d digitalocean --digitalocean-access-token=$DO_TOKEN --digitalocean-size=1gb
 biscarch-minecraft INFO[0000] Creating SSH key...  INFO[0000] Creating
 Digital Ocean droplet...  INFO[0003] Waiting for SSH...  INFO[0155]
 "biscarch-minecraft" has been created and is now the active
 machine. To point Docker at this machine, run: export
-DOCKER_HOST=$(machine url) DOCKER_AUTH=identity 
+DOCKER_HOST=$(machine url) DOCKER_AUTH=identity
 ```
 
 ## Activate
 
 Run the command suggested to activate the Digital Ocean
-machine. Remember that we re-named our binaries, so our command will
-look slightly different:
+machine. Remember that we re-named our binaries, so our
+command will look slightly different:
 
 ```
 export DOCKER_HOST=$(machine-docker url) DOCKER_AUTH=identity
@@ -34,8 +37,9 @@ export DOCKER_HOST=$(machine-docker url) DOCKER_AUTH=identity
 
 ## Run the Server
 
-After creating the machine, we can run a Minecraft server. Notice
-that we’ve accepted the EULA using an environment variable.
+After creating the machine, we can run a Minecraft server.
+Notice that we’ve accepted the EULA using an environment
+variable.
 
 ```
 > machine-docker-1.3.1-dev-identity-auth run -itp 25565:25565 -e EULA=true itzg/minecraft-server
@@ -157,9 +161,9 @@ java.io.FileNotFoundException: whitelist.json (No such file or directory)
 
 ## Launch Minecraft
 
-If we ignore the files that we didn’t create for things like the
-banned players list, that’s all we have to do to run the server!
-Launch Minecraft and select Multiplayer:
+If we ignore the files that we didn’t create for things like
+the banned players list, that’s all we have to do to run the
+server! Launch Minecraft and select Multiplayer:
 [![Minecraft Multiplayer](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611476/Screenshot-2014-12-27-00.41.05_xnigfr.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611476/Screenshot-2014-12-27-00.41.05_xnigfr.png)
 
 Select “Add Server”
@@ -183,13 +187,12 @@ After clicking `done`, we should see our server:
 After clicking play the server, we get a nice new world!
 [![A New World!](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611472/Screenshot-2014-12-27-00.50.45_xcr7h9.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611472/Screenshot-2014-12-27-00.50.45_xcr7h9.png)
 
-
 ## What’s next?
 
 ### Keeping the data around
 
-Spawning servers is cool, but how do we keep the data around after the
-container is killed?
+Spawning servers is cool, but how do we keep the data around
+after the container is killed?
 
 Let’s take a look inside a running Minecraft container.
 
@@ -202,8 +205,8 @@ CONTAINER ID        IMAGE                          COMMAND              CREATED 
 banned-ips.json  banned-players.json  eula.txt  logs  minecraft_server.1.8.1.jar  ops.json  server.properties  usercache.json  whitelist.json  world
 ```
 
-`kill` the old server (we ran it using `-it` so `Control-C` should
-kill it. If you chose to run it with `-d`, just use
+`kill` the old server (we ran it using `-it` so `Control-C`
+should kill it. If you chose to run it with `-d`, just use
 `machine-docker-1.3.1-dev-identity-auth ps` and
 `machine-docker-1.3.1-dev-identity-auth kill $container_id`
 
@@ -211,8 +214,8 @@ After killing the server, we will get kicked from the game:
 [![Screenshot 2014-12-27 00.55.45](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611471/Screenshot-2014-12-27-00.55.45_hsjzmu.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611471/Screenshot-2014-12-27-00.55.45_hsjzmu.png)
 
 We can see that there were quite a few files in the `/data`
-directory. We’re going to mount a volume there using `/opt/craft` on
-the host.
+directory. We’re going to mount a volume there using
+`/opt/craft` on the host.
 
 Notice that we’ve also set the Message of the Day (MOTD).
 
@@ -220,7 +223,8 @@ Notice that we’ve also set the Message of the Day (MOTD).
 machine-docker-1.3.1-dev-identity-auth run -dp 25565:25565 -e EULA=true -e 'MOTD=Crafty Crafting!' -v /opt/craft:/data itzg/minecraft-server
 ```
 
-Let’s ssh in to the Digital Ocean host and see if we have any files:
+Let’s ssh in to the Digital Ocean host and see if we have
+any files:
 
 ```
 > machine-docker ssh
@@ -228,30 +232,34 @@ root@docker:~# ls /opt/craft/
 banned-ips.json  banned-players.json  eula.txt  logs  minecraft_server.1.8.1.jar  ops.json  server.properties  usercache.json  whitelist.json  world
 ```
 
-Voila! We have a bunch of files. Now we reconnect to the server (using
-the Minecraft app) and spend some time doing something (say, chopping
-down a tree). After that, kill the server as before. The files will
-stay on the Digital Ocean machine, so we can just restart the server
-using the same volume mount:
+Voila! We have a bunch of files. Now we reconnect to the
+server (using the Minecraft app) and spend some time doing
+something (say, chopping down a tree). After that, kill the
+server as before. The files will stay on the Digital Ocean
+machine, so we can just restart the server using the same
+volume mount:
 
 ```
 machine-docker-1.3.1-dev-identity-auth run -dp 25565:25565 -e EULA=true -e 'MOTD=Crafty Crafting!' -v /opt/craft:/data itzg/minecraft-server
 ```
 
-And look at that, we’ve still cutting down our tree! The server was
-saved!
+And look at that, we’ve still cutting down our tree! The
+server was saved!
 [![Chopping Wood](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611468/Screenshot-2014-12-27-01.21.57_ldyqeq.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611468/Screenshot-2014-12-27-01.21.57_ldyqeq.png)
 
 ### A new Seed:
 
-Now we’ll re-run our server with a level seed. It should be added to `/opt/craft/server.properties` and we can do that through ssh and vi:
+Now we’ll re-run our server with a level seed. It should be
+added to `/opt/craft/server.properties` and we can do that
+through ssh and vi:
 
 ```
 > machine-docker ssh biscarch/minecraft
 root@docker:~# vi /opt/craft/server.properties
 ```
 
-server.properties looks something like this (we’ve just changed the `level-seed`)
+server.properties looks something like this (we’ve just
+changed the `level-seed`)
 
 ```
 root@docker:~# cat /opt/craft/server.properties
@@ -297,8 +305,8 @@ enable-rcon=false
 motd=Crafty Crafting!
 ```
 
-Now we should be able to blow away `/opt/craft/world` (if it exists in
-the container) and our world will get rebuilt:
+Now we should be able to blow away `/opt/craft/world` (if it
+exists in the container) and our world will get rebuilt:
 
 ```
 rm -rf /opt/craft/world
@@ -310,8 +318,8 @@ run the server with the volume attached:
 machine-docker-1.3.1-dev-identity-auth run -dp 25565:25565 -e EULA=true -e 'MOTD=Crafty Crafting!' -v /opt/craft:/data itzg/minecraft-server
 ```
 
-After starting the server with the new seed, just play the server as
-before (it should still be listed).
+After starting the server with the new seed, just play the
+server as before (it should still be listed).
 [![Screenshot 2014-12-27 01.01.20](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611470/Screenshot-2014-12-27-01.01.20_moh5jl.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611470/Screenshot-2014-12-27-01.01.20_moh5jl.png)
 Turn around and you should see:
 [![Screenshot 2014-12-27 02.00.51](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611466/Screenshot-2014-12-27-02.00.51_disq4c.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611466/Screenshot-2014-12-27-02.00.51_disq4c.png)
@@ -319,8 +327,8 @@ Turn around and you should see:
 # Fin
 
 We can use docker machine to ssh into the server and edit
-`/opt/craft/server.properties`, which holds [a bunch of
-data](http://minecraft.gamepedia.com/Server.properties) we may want to edit.
-Then just restart the container :)
+`/opt/craft/server.properties`, which holds
+[a bunch of data](http://minecraft.gamepedia.com/Server.properties)
+we may want to edit. Then just restart the container :)
 
 Happy Crafting!

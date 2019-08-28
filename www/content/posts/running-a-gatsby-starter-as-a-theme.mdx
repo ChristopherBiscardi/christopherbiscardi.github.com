@@ -5,14 +5,32 @@ tags:
   - gatsby
   - gatsby-themes
 ---
-Gatsby themes introduce a new model for building Gatsby sites and apps. However, due to the recency of themes being available, the majority of the ecosystem is still in starters that could better serve their users as themes. This series of posts will take you through converting the [gatsby-starter-blog](https://github.com/gatsbyjs/gatsby-starter-blog) to a theme. We'll start by getting the starter to run as a theme.
 
-> If you're unfamiliar with themes, you may want to [read my introduction][introducing-gatsby-themes] on the official gatsby blog or [watch my talk][gatsby-days-themes] at the first ever Gatsby Days
-> -- [Tweet this](https://ctt.ac/u1ofj)
+Gatsby themes introduce a new model for building Gatsby
+sites and apps. However, due to the recency of themes being
+available, the majority of the ecosystem is still in
+starters that could better serve their users as themes. This
+series of posts will take you through converting the
+[gatsby-starter-blog](https://github.com/gatsbyjs/gatsby-starter-blog)
+to a theme. We'll start by getting the starter to run as a
+theme.
+
+> If you're unfamiliar with themes, you may want to [read my
+> introduction][introducing-gatsby-themes] on the official
+> gatsby blog or [watch my talk][gatsby-days-themes] at the
+> first ever Gatsby Days --
+> [Tweet this](https://ctt.ac/u1ofj)
 
 # Setup
 
-In this series of posts, we'll use Yarn Workspaces to work on our theme while also keeping an example usage of said theme close by. It is not required to use Yarn Workspaces and you can develop in any way you feel comfortable, such as using `yarn link`, local filepaths for `package.json` dependencies, or anything else. I also wrote an [Introduction to Yarn Workspaces](/post/multi-package-repos-with-yarn) if you are unfamiliar and also interested in learning more.
+In this series of posts, we'll use Yarn Workspaces to work
+on our theme while also keeping an example usage of said
+theme close by. It is not required to use Yarn Workspaces
+and you can develop in any way you feel comfortable, such as
+using `yarn link`, local filepaths for `package.json`
+dependencies, or anything else. I also wrote an
+[Introduction to Yarn Workspaces](/post/multi-package-repos-with-yarn)
+if you are unfamiliar and also interested in learning more.
 
 First create a directory to hold our packages.
 
@@ -22,13 +40,17 @@ cd converting-a-gatsby-starter-to-themes
 yarn init -y
 ```
 
-Then we can use Gatsby's starter functionality to pull down the blog starter into a `gatsby-theme-awesome-blog` folder.
+Then we can use Gatsby's starter functionality to pull down
+the blog starter into a `gatsby-theme-awesome-blog` folder.
 
 ```sh
 npx gatsby new gatsby-theme-awesome-blog https://github.com/gatsbyjs/gatsby-starter-blog
 ```
 
-We'll also remove the `package-lock.json` because we're using `yarn` and change the name in the `~/gatsby-theme-awesome-blog/package.json` from `gatsby-starter-blog` to `gatsby-theme-awesome-blog`.
+We'll also remove the `package-lock.json` because we're
+using `yarn` and change the name in the
+`~/gatsby-theme-awesome-blog/package.json` from
+`gatsby-starter-blog` to `gatsby-theme-awesome-blog`.
 
 ```sh
 rm gatsby-theme-awesome-blog/package-lock.json
@@ -41,8 +63,10 @@ rm gatsby-theme-awesome-blog/package-lock.json
 }
 ```
 
-Next, we'll enable workspaces by making our root `package.json` private (required for workspaces to work), and also add a `workspaces` config. Here's my `package.json` before changes.
-
+Next, we'll enable workspaces by making our root
+`package.json` private (required for workspaces to work),
+and also add a `workspaces` config. Here's my `package.json`
+before changes.
 
 ```javascript
 {
@@ -54,7 +78,9 @@ Next, we'll enable workspaces by making our root `package.json` private (require
 }
 ```
 
-and after we configure two workspaces. One for our theme and another called `my-blog` for our example app. We'll create the example app itself in a bit.
+and after we configure two workspaces. One for our theme and
+another called `my-blog` for our example app. We'll create
+the example app itself in a bit.
 
 ```javascript
 {
@@ -71,7 +97,9 @@ and after we configure two workspaces. One for our theme and another called `my-
 }
 ```
 
-We've set up enough to run the starter as it originally exists. This will ensure that you've set up workspaces correctly.
+We've set up enough to run the starter as it originally
+exists. This will ensure that you've set up workspaces
+correctly.
 
 ```sh
 yarn workspace gatsby-theme-awesome-blog develop
@@ -79,7 +107,9 @@ yarn workspace gatsby-theme-awesome-blog develop
 
 # Converting to a Theme
 
-Now that we have the starter running, we can start using it as a theme and see what breaks. Let's create the `my-blog` example app to use the theme.
+Now that we have the starter running, we can start using it
+as a theme and see what breaks. Let's create the `my-blog`
+example app to use the theme.
 
 ```sh
 mkdir my-blog
@@ -87,9 +117,12 @@ cd my-blog
 yarn init -y
 ```
 
-We need to add `gatsby-theme-awesome-blog` as a dependency of our blog and create the important `gatsby-config.js` where we'll configure our theme.
+We need to add `gatsby-theme-awesome-blog` as a dependency
+of our blog and create the important `gatsby-config.js`
+where we'll configure our theme.
 
-in package.json we add the dependency and some useful scripts.
+in package.json we add the dependency and some useful
+scripts.
 
 ```javascript
 {
@@ -119,11 +152,18 @@ module.exports = {
 };
 ```
 
-One point I would like to note here is that *using* a theme in your new project is a total of two files. The `package.json`, to declare the dependency on `gatsby` and your theme, as well as the `gatsby-config.js` to use the theme.
+One point I would like to note here is that _using_ a theme
+in your new project is a total of two files. The
+`package.json`, to declare the dependency on `gatsby` and
+your theme, as well as the `gatsby-config.js` to use the
+theme.
 
 # Using the Theme
 
-Run `yarn` in the root of the project to install and link our dependencies (including the theme into our blog) and now we can run `develop` to run our starter as a theme and see what breaks.
+Run `yarn` in the root of the project to install and link
+our dependencies (including the theme into our blog) and now
+we can run `develop` to run our starter as a theme and see
+what breaks.
 
 ### index.js and main fields
 
@@ -166,7 +206,13 @@ error Cannot find module 'gatsby-theme-awesome-blog'
   - Generator.next
 ```
 
-This first problem can be a little confusing if you're not used to how node packages get resolved. What it means is that it can't find an `index.js` or a `main` field in the `package.json` for our theme. We can solve this by creating an empty `index.js` file in our theme. You'll also notice this pattern in a lot of gatsby plugins if you check out their source.
+This first problem can be a little confusing if you're not
+used to how node packages get resolved. What it means is
+that it can't find an `index.js` or a `main` field in the
+`package.json` for our theme. We can solve this by creating
+an empty `index.js` file in our theme. You'll also notice
+this pattern in a lot of gatsby plugins if you check out
+their source.
 
 ```sh
 touch gatsby-theme-awesome-blog/index.js
@@ -213,19 +259,44 @@ Output:
 info Visit https://yarnpkg.com/en/docs/cli/workspace for documentation about this command.
 ```
 
-This error is telling us that the `createPage` calls in our theme are creating pages that don't point to React components. If we go to `gatsby-theme-awesome-blog/gatsby-node.js` we can see why. The blog post template is using [`path.resolve`][path-resolve] to create the path to the React component. In a node module, [`path.resolve`][path-resolve] will default to the current working directory if you only give it a relative path, like our theme is doing here.
+This error is telling us that the `createPage` calls in our
+theme are creating pages that don't point to React
+components. If we go to
+`gatsby-theme-awesome-blog/gatsby-node.js` we can see why.
+The blog post template is using
+[`path.resolve`][path-resolve] to create the path to the
+React component. In a node module,
+[`path.resolve`][path-resolve] will default to the current
+working directory if you only give it a relative path, like
+our theme is doing here.
 
-> If after processing all given path segments an absolute path has not yet been generated, the current working directory is used.
-> -- [node docs][path-resolve]
+> If after processing all given path segments an absolute
+> path has not yet been generated, the current working
+> directory is used. -- [node docs][path-resolve]
 
 ```js
-const blogPost = path.resolve(`./src/templates/blog-post.js`)
+const blogPost = path.resolve(
+  `./src/templates/blog-post.js`
+);
 ```
 
-For starters this is fine because we always run scripts from the root of our project and our code isn't tucked away in a node module. When our theme is in a node module, this doesn't work because the current working directory is the directory that our blog is in and our theme is going to be somewhere else (node_modules, a workspace package, etc). Since we're using JavaScript, we can piggy-back on node's require algorithm itself and replace `path` with `require`. An additional benefit of `require.resolve` is that it will error out if it can't find the file. Failing earlier at the source of the problem makes it easier to detect where the actual problem is in our code.
+For starters this is fine because we always run scripts from
+the root of our project and our code isn't tucked away in a
+node module. When our theme is in a node module, this
+doesn't work because the current working directory is the
+directory that our blog is in and our theme is going to be
+somewhere else (node_modules, a workspace package, etc).
+Since we're using JavaScript, we can piggy-back on node's
+require algorithm itself and replace `path` with `require`.
+An additional benefit of `require.resolve` is that it will
+error out if it can't find the file. Failing earlier at the
+source of the problem makes it easier to detect where the
+actual problem is in our code.
 
 ```js
-const blogPost = require.resolve(`./src/templates/blog-post.js`)
+const blogPost = require.resolve(
+  `./src/templates/blog-post.js`
+);
 ```
 
 Now we can run again
@@ -288,23 +359,35 @@ error UNHANDLED REJECTION
   Error: Input file is missing
 ```
 
-This time we're getting an issue from `gatsby-plugin-manifest` about an icon that can't be found. If we dive into [the doesNotExist function](https://github.com/gatsbyjs/gatsby/blob/c79bc6d23d7595119b10a86693669e3a3e7972e4/packages/gatsby-plugin-manifest/src/common.js#L52-L62) that is used [right before generating icons](https://github.com/gatsbyjs/gatsby/blob/c79bc6d23d7595119b10a86693669e3a3e7972e4/packages/gatsby-plugin-manifest/src/gatsby-node.js#L52) we can see it's using a `statSync`, which needs a full file path because it performs a similar resolution to `path.resolve`.
+This time we're getting an issue from
+`gatsby-plugin-manifest` about an icon that can't be found.
+If we dive into
+[the doesNotExist function](https://github.com/gatsbyjs/gatsby/blob/c79bc6d23d7595119b10a86693669e3a3e7972e4/packages/gatsby-plugin-manifest/src/common.js#L52-L62)
+that is used
+[right before generating icons](https://github.com/gatsbyjs/gatsby/blob/c79bc6d23d7595119b10a86693669e3a3e7972e4/packages/gatsby-plugin-manifest/src/gatsby-node.js#L52)
+we can see it's using a `statSync`, which needs a full file
+path because it performs a similar resolution to
+`path.resolve`.
 
 ```js
 exports.doesIconExist = function doesIconExist(srcIcon) {
   try {
-    return fs.statSync(srcIcon).isFile()
+    return fs.statSync(srcIcon).isFile();
   } catch (e) {
     if (e.code === `ENOENT`) {
-      return false
+      return false;
     } else {
-      throw e
+      throw e;
     }
   }
-}
+};
 ```
 
-In this case we'll use `path.resolve` since we're trying to generate a path for a `.png` file. In `gatsby-theme-awesome-blog/gatsby-config.js` we'll replace the `icon` key with `path.resolve` and a `__dirname` as the first path to resolve with.
+In this case we'll use `path.resolve` since we're trying to
+generate a path for a `.png` file. In
+`gatsby-theme-awesome-blog/gatsby-config.js` we'll replace
+the `icon` key with `path.resolve` and a `__dirname` as the
+first path to resolve with.
 
 ```js
 {
@@ -321,7 +404,13 @@ In this case we'll use `path.resolve` since we're trying to generate a path for 
 },
 ```
 
-If we run again, we'll see that we're past the other two path issues, and onto a third :) Path changes are the major change you'll need to make when converting a starter to a theme because it's likely that (due to documentation and other factors) the paths most starters are using include assumptions about running in the same working directory as the site and not an NPM package.
+If we run again, we'll see that we're past the other two
+path issues, and onto a third :) Path changes are the major
+change you'll need to make when converting a starter to a
+theme because it's likely that (due to documentation and
+other factors) the paths most starters are using include
+assumptions about running in the same working directory as
+the site and not an NPM package.
 
 The third is for `gatsby-plugin-typography`
 
@@ -400,7 +489,12 @@ error There was an error compiling the html.js component for the development ser
 See our docs page on debugging HTML builds for help https://gatsby.app/debug-html
 ```
 
-`gatsby-plugin-typography` has a few different ways to resolve the utils file it looks for [based on if the path is an absolute path or not](https://github.com/gatsbyjs/gatsby/blob/c79bc6d23d7595119b10a86693669e3a3e7972e4/packages/gatsby-plugin-typography/src/gatsby-node.js#L11-L20). This means we can change our path to an absolute path like before and it will work again. In this case, we're looking for a JavaScript file again, so we'll use `require.resolve`.
+`gatsby-plugin-typography` has a few different ways to
+resolve the utils file it looks for
+[based on if the path is an absolute path or not](https://github.com/gatsbyjs/gatsby/blob/c79bc6d23d7595119b10a86693669e3a3e7972e4/packages/gatsby-plugin-typography/src/gatsby-node.js#L11-L20).
+This means we can change our path to an absolute path like
+before and it will work again. In this case, we're looking
+for a JavaScript file again, so we'll use `require.resolve`.
 
 ```js
 {
@@ -413,7 +507,8 @@ See our docs page on debugging HTML builds for help https://gatsby.app/debug-htm
 
 # It compiles! and pages...
 
-Ok so now our site is compiling and running and we still have one warning to deal with.
+Ok so now our site is compiling and running and we still
+have one warning to deal with.
 
 ```
 ➜ yarn workspace my-blog develop
@@ -476,7 +571,17 @@ To create a production build, use gatsby build
 ℹ ｢wdm｣: Compiled successfully.
 ```
 
-If we visit the working site we'll see the standard Gatsby development page showing each of the URLs for our blog posts. What we *won't* see is the pages that are in `gatsby-theme-awesome-blog/src/pages`, including the `index.js` or `/` page. This is because `src/pages` is handled by default with every Gatsby site by [gatsby-plugin-page-creator](https://www.gatsbyjs.org/packages/gatsby-plugin-page-creator/) which is automatically instantiated. While Gatsby themes will eventually add this to our themes by default as well, it isn't implemented yet so we'll do it ourselves for now. In `gatsby-config.js`, add the following plugin.
+If we visit the working site we'll see the standard Gatsby
+development page showing each of the URLs for our blog
+posts. What we _won't_ see is the pages that are in
+`gatsby-theme-awesome-blog/src/pages`, including the
+`index.js` or `/` page. This is because `src/pages` is
+handled by default with every Gatsby site by
+[gatsby-plugin-page-creator](https://www.gatsbyjs.org/packages/gatsby-plugin-page-creator/)
+which is automatically instantiated. While Gatsby themes
+will eventually add this to our themes by default as well,
+it isn't implemented yet so we'll do it ourselves for now.
+In `gatsby-config.js`, add the following plugin.
 
 ```js
 {
@@ -489,8 +594,18 @@ If we visit the working site we'll see the standard Gatsby development page show
 
 # Fin
 
-In total, we created an empty `index.js`, changed a few of our paths, and added a plugin to our starter to change it into a theme. In the near future we won't have to add the plugin either. Creating Gatsby themes is *very* much the same as creating a normal Gatsby site. In the next post we'll start making our theme a bit more "theme-like" by moving the markdown files into our blog instead of letting them live in the theme itself.
+In total, we created an empty `index.js`, changed a few of
+our paths, and added a plugin to our starter to change it
+into a theme. In the near future we won't have to add the
+plugin either. Creating Gatsby themes is _very_ much the
+same as creating a normal Gatsby site. In the next post
+we'll start making our theme a bit more "theme-like" by
+moving the markdown files into our blog instead of letting
+them live in the theme itself.
 
-[introducing-gatsby-themes]: https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/
-[gatsby-days-themes]: https://www.gatsbyjs.com/gatsby-days-themes-chris/
-[path-resolve]: https://nodejs.org/docs/latest/api/path.html#path_path_resolve_paths
+[introducing-gatsby-themes]:
+  https://www.gatsbyjs.org/blog/2018-11-11-introducing-gatsby-themes/
+[gatsby-days-themes]:
+  https://www.gatsbyjs.com/gatsby-days-themes-chris/
+[path-resolve]:
+  https://nodejs.org/docs/latest/api/path.html#path_path_resolve_paths

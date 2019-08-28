@@ -8,23 +8,31 @@ tags:
   - emotion
 egghead: https://egghead.io/lessons/gatsby-getting-started-with-emotion-and-gatsby/embed
 ---
-[Emotion](https://emotion.sh/) is a library for authoring and composing CSS rulesets in a performant way. Here's how to get started using it with [Gatsby](https://www.gatsbyjs.org/).
 
-First, we'll boot up a fresh gatsby site using the default starter and install the Gatsby plugin (as well as Emotion itself).
+[Emotion](https://emotion.sh/) is a library for authoring
+and composing CSS rulesets in a performant way. Here's how
+to get started using it with
+[Gatsby](https://www.gatsbyjs.org/).
+
+First, we'll boot up a fresh gatsby site using the default
+starter and install the Gatsby plugin (as well as Emotion
+itself).
 
 ```shell
 gatsby new my-emotion-site
 yarn add gatsby-plugin-emotion @emotion/core
 ```
 
-Then we need to add `gatsby-plugin-emotion` to our `gatsby-config.js`. We'll add it at the top of our plugins list.
+Then we need to add `gatsby-plugin-emotion` to our
+`gatsby-config.js`. We'll add it at the top of our plugins
+list.
 
 ```js
 module.exports = {
   siteMetadata: {
     title: `Gatsby Default Starter`,
     description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@gatsbyjs`,
+    author: `@gatsbyjs`
   },
   plugins: [
     `gatsby-plugin-emotion`,
@@ -33,8 +41,8 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `images`,
-        path: `${__dirname}/src/images`,
-      },
+        path: `${__dirname}/src/images`
+      }
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
@@ -47,17 +55,18 @@ module.exports = {
         background_color: `#663399`,
         theme_color: `#663399`,
         display: `minimal-ui`,
-        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
-      },
-    },
+        icon: `src/images/gatsby-icon.png` // This path is relative to the root of the site.
+      }
+    }
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.app/offline
     // 'gatsby-plugin-offline',
-  ],
-}
+  ]
+};
 ```
 
-We can run `yarn develop` to run our new Gatsby site. The output will look something like this.
+We can run `yarn develop` to run our new Gatsby site. The
+output will look something like this.
 
 ```
 ➜ yarn develop
@@ -107,33 +116,47 @@ To create a production build, use gatsby build
 
 ## Converting to Emotion
 
-The default starter comes with no external styling implementation. There are no CSS files and no other libraries to implement styling. If we look at our index page at `src/pages/index.js`, we see the default starter uses inline styles.
+The default starter comes with no external styling
+implementation. There are no CSS files and no other
+libraries to implement styling. If we look at our index page
+at `src/pages/index.js`, we see the default starter uses
+inline styles.
 
 ```js
-import React from 'react'
-import { Link } from 'gatsby'
+import React from "react";
+import { Link } from "gatsby";
 
-import Layout from '../components/layout'
-import Image from '../components/image'
-import SEO from '../components/seo'
+import Layout from "../components/layout";
+import Image from "../components/image";
+import SEO from "../components/seo";
 
 const IndexPage = () => (
   <Layout>
-    <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
+    <SEO
+      title="Home"
+      keywords={[`gatsby`, `application`, `react`]}
+    />
     <h1>Hi people</h1>
     <p>Welcome to your new Gatsby site.</p>
     <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
+    <div
+      style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}
+    >
       <Image />
     </div>
     <Link to="/page-2/">Go to page 2</Link>
   </Layout>
-)
+);
 
-export default IndexPage
+export default IndexPage;
 ```
 
-The result of this page (specifically the `div` containing inline styles and the image) is more complex than you might think because the image is processed into many different resolutions automatically by Gatsby. We'll ignore most of the output and focus on the root `div` with the inline styles. We can see that they compile to a `style` attribute.
+The result of this page (specifically the `div` containing
+inline styles and the image) is more complex than you might
+think because the image is processed into many different
+resolutions automatically by Gatsby. We'll ignore most of
+the output and focus on the root `div` with the inline
+styles. We can see that they compile to a `style` attribute.
 
 ```html
 <div style="max-width: 300px; margin-bottom: 1.45rem;">
@@ -161,7 +184,6 @@ The result of this page (specifically the `div` containing inline styles and the
         alt=""
         src="/static/6d91c86c0fde632ba4cd01062fd9ccfa/045aa/gatsby-astronaut.png"
         style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center; opacity: 1; transition: opacity 0.5s ease 0s;"/></picture
-
     ><noscript
       ><picture
         ><source
@@ -183,30 +205,39 @@ The result of this page (specifically the `div` containing inline styles and the
 </div>
 ```
 
-Most people want to keep inline styles to a minimum unless they're performing an intensive animation on one of the values, so let's convert this to use Emotion. The only change we need to make in this file is to swap `styles` for `css`.
+Most people want to keep inline styles to a minimum unless
+they're performing an intensive animation on one of the
+values, so let's convert this to use Emotion. The only
+change we need to make in this file is to swap `styles` for
+`css`.
 
 ```js
-import React from 'react'
-import { Link } from 'gatsby'
+import React from "react";
+import { Link } from "gatsby";
 
-import Layout from '../components/layout'
-import Image from '../components/image'
-import SEO from '../components/seo'
+import Layout from "../components/layout";
+import Image from "../components/image";
+import SEO from "../components/seo";
 
 const IndexPage = () => (
   <Layout>
-    <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
+    <SEO
+      title="Home"
+      keywords={[`gatsby`, `application`, `react`]}
+    />
     <h1>Hi people</h1>
     <p>Welcome to your new Gatsby site.</p>
     <p>Now go build something great.</p>
-    <div css={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
+    <div
+      css={{ maxWidth: `300px`, marginBottom: `1.45rem` }}
+    >
       <Image />
     </div>
     <Link to="/page-2/">Go to page 2</Link>
   </Layout>
-)
+);
 
-export default IndexPage
+export default IndexPage;
 ```
 
 Yeah, that's it. Let's take a look at how it renders again.
@@ -238,7 +269,6 @@ Yeah, that's it. Let's take a look at how it renders again.
         src="/static/6d91c86c0fde632ba4cd01062fd9ccfa/045aa/gatsby-astronaut.png"
         naptha_cursor="text"
         style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; object-fit: cover; object-position: center center; opacity: 1; transition: opacity 0.5s ease 0s;"/></picture
-
     ><noscript
       ><picture
         ><source
@@ -260,7 +290,11 @@ Yeah, that's it. Let's take a look at how it renders again.
 </div>
 ```
 
-This time we can see that the containing div has a classname on it instead of inline styles... but where are the styles? Well in `<head>` there's a new `<style>` tag that includes our styles and a source map (this is development mode after all).
+This time we can see that the containing div has a classname
+on it instead of inline styles... but where are the styles?
+Well in `<head>` there's a new `<style>` tag that includes
+our styles and a source map (this is development mode after
+all).
 
 ```html
 <style data-emotion="css">
@@ -273,4 +307,12 @@ This time we can see that the containing div has a classname on it instead of in
 
 ## Fin
 
-This is how Emotion supports the full breadth of CSS which using a syntax that *looks* like inline styles. It uses built-in browser APIs (the CSSOM APIs) to insert styles in a performant way. The syntax we used to replace the `style` prop is know as the "CSS Prop", named for the `css` prop we used on our React components. In our next posts, we'll explore more of the Emotion API, composition of styles, theming, and how to use both the `styled` and `css` style APIs.
+This is how Emotion supports the full breadth of CSS which
+using a syntax that _looks_ like inline styles. It uses
+built-in browser APIs (the CSSOM APIs) to insert styles in a
+performant way. The syntax we used to replace the `style`
+prop is know as the "CSS Prop", named for the `css` prop we
+used on our React components. In our next posts, we'll
+explore more of the Emotion API, composition of styles,
+theming, and how to use both the `styled` and `css` style
+APIs.

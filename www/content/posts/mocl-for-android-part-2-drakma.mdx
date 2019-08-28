@@ -4,13 +4,13 @@ date: 2014-01-16
 slug: "/2014/1/16/mocl-for-android-part-2-drakma/"
 ---
 
-
-In this post we will enable Drakma HTTP support in the Android/MOCL example
-code. I have forked the repo [on
-Github](https://github.com/ChristopherBiscardi/mocl-example-lisp-contacts-android)
+In this post we will enable Drakma HTTP support in the
+Android/MOCL example code. I have forked the repo
+[on Github](https://github.com/ChristopherBiscardi/mocl-example-lisp-contacts-android)
 for posterity. The first post is
 [here](http://www.christopherbiscardi.com/2014/01/10/common-lisp-on-android-running-the-mocl-android-example/)
-and it will get you set up with the Android/MOCL example without Drakma.
+and it will get you set up with the Android/MOCL example
+without Drakma.
 
 First we must download dependencies.
 
@@ -21,9 +21,10 @@ First we must download dependencies.
 [CL-BASE64](http://www.cliki.net/cl-base64)
 [Puri](http://www.cliki.net/puri)
 
-My libs are located in mocl/systems. So I that’s where I place the folders of
-code, then link the .asd files. The instructions may change slightly with
-different versions of libs.
+My libs are located in mocl/systems. So I that’s where I
+place the folders of code, then link the .asd files. The
+instructions may change slightly with different versions of
+libs.
 
 ```bash
 cd mocl/systems
@@ -33,9 +34,10 @@ git clone https://github.com/edicl/cl-ppcre.git
 ln -s cl-ppcre/cl-ppcre.asd cl-ppcre.asd
 ```
 
-Note that `cl-ppcre-unicode.asd` also exists. Also of note is the version of
-`trivial-gray-streams` in use here. As of this writing the current version is
-causing issues and the version presented below should be used.
+Note that `cl-ppcre-unicode.asd` also exists. Also of note
+is the version of `trivial-gray-streams` in use here. As of
+this writing the current version is causing issues and the
+version presented below should be used.
 
 ```bash
 ln -s flexi-streams-1.0.12/flexi-streams.asd flexi-streams.asd
@@ -46,8 +48,8 @@ ln -s cl-base64-3.3.3/cl-base64.asd cl-base64.asd
 ln -s puri-1.5.5/puri.asd puri.asd
 ```
 
-So after doing the linking dance we can uncomment the Drakma code in app.lisp (5
-lines):
+So after doing the linking dance we can uncomment the Drakma
+code in app.lisp (5 lines):
 
 ```lisp
 (pushnew :drakma-no-ssl *features*)
@@ -60,13 +62,14 @@ lines):
   (print (drakma:http-request "http://wukix.com")))
 ```
 
-but we have to change out `http://wukix.com` because as of this writing wukix
-has changed their site to redirect to https, and drakma can’t use ssl yet. In my
-case I changed it to `http://www.cliki.net/` because it currently accepts over
+but we have to change out `http://wukix.com` because as of
+this writing wukix has changed their site to redirect to
+https, and drakma can’t use ssl yet. In my case I changed it
+to `http://www.cliki.net/` because it currently accepts over
 http.
 
-and add `net_test` to our `MainActivity.java`. In this case we just log out the
-result
+and add `net_test` to our `MainActivity.java`. In this case
+we just log out the result
 
 ```java
 CL.cl_init();
@@ -93,7 +96,8 @@ cd LispContacts/jni
 ndk-build
 ```
 
-Then simply debug the project in ADK and watch the logcat output. The result
-should show up as an error, since we used `Log.e("","")`, with a tag of CL.
+Then simply debug the project in ADK and watch the logcat
+output. The result should show up as an error, since we used
+`Log.e("","")`, with a tag of CL.
 
 [![CBLogo_2014_transparent](http://res.cloudinary.com/diqzbm8lz/image/upload/h_300,w_300/v1428611521/CBLogo_2014_transparent_swcmig.png)](http://res.cloudinary.com/diqzbm8lz/image/upload/v1428611521/CBLogo_2014_transparent_swcmig.png)

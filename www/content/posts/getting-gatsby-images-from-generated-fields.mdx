@@ -4,15 +4,41 @@ date: 2019-01-26T23:42:29.130Z
 tags:
   - gatsby
 ---
-Ever since I wrote [SEO Images with Unsplash](/post/seo-images-with-unsplash) I've been making images for my posts, pulling the branch down to my local computer, adding the image to the branch, editing the frontmatter to point to the image (always a png with the same name as the post file) and pushing it back up to merge.
 
-This is kind of an annoying workflow to do every day, so I wanted to automate the finding and processing of the image files. If I automated it instead of placing it in the frontmatter, I could push the images up on master and merge the blog posts in later without having to pull them down. I handled the automation in [this commit](https://github.com/ChristopherBiscardi/christopherbiscardi.github.com/pull/74/files), which also merged the [Getting Started with Emotion](/post/getting-started-with-emotion-and-gatsby) post (the first post to use the automatic featured image functionality.
+Ever since I wrote
+[SEO Images with Unsplash](/post/seo-images-with-unsplash)
+I've been making images for my posts, pulling the branch
+down to my local computer, adding the image to the branch,
+editing the frontmatter to point to the image (always a png
+with the same name as the post file) and pushing it back up
+to merge.
+
+This is kind of an annoying workflow to do every day, so I
+wanted to automate the finding and processing of the image
+files. If I automated it instead of placing it in the
+frontmatter, I could push the images up on master and merge
+the blog posts in later without having to pull them down. I
+handled the automation in
+[this commit](https://github.com/ChristopherBiscardi/christopherbiscardi.github.com/pull/74/files),
+which also merged the
+[Getting Started with Emotion](/post/getting-started-with-emotion-and-gatsby)
+post (the first post to use the automatic featured image
+functionality.
 
 ## Generating Fields
 
-The first change I needed to make was to generate the `featuredImage` field on my content nodes. I use MDX so the resulting field will apply to MDX nodes in the [Gatsby node system](https://www.gatsbyjs.org/docs/node-interface/).
+The first change I needed to make was to generate the
+`featuredImage` field on my content nodes. I use MDX so the
+resulting field will apply to MDX nodes in the
+[Gatsby node system](https://www.gatsbyjs.org/docs/node-interface/).
 
-Here is the code from the change I made that checks for `Mdx` nodes with `File` node parents. On these nodes it checks for the existence of a file with the same name as the `File` node that has a `.png` extension instead of a `.mdx` extension. If the featured image file exists, we add a new field called `featuredImage` to the MDX node with the absolute path to the image.
+Here is the code from the change I made that checks for
+`Mdx` nodes with `File` node parents. On these nodes it
+checks for the existence of a file with the same name as the
+`File` node that has a `.png` extension instead of a `.mdx`
+extension. If the featured image file exists, we add a new
+field called `featuredImage` to the MDX node with the
+absolute path to the image.
 
 ```js
 // gatsby-node.js
@@ -25,7 +51,10 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 
     if (parent.internal.type === "File") {
       const ext = path.extname(parent.absolutePath);
-      const featuredImage = parent.absolutePath.replace(ext, ".png");
+      const featuredImage = parent.absolutePath.replace(
+        ext,
+        ".png"
+      );
       if (fs.existsSync(featuredImage)) {
         createNodeField({
           name: `featuredImage`,
@@ -40,7 +69,8 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 
 ## Strings and Sharp Objects
 
-Now, that gives us a field on `Mdx` nodes that can be queried as such:
+Now, that gives us a field on `Mdx` nodes that can be
+queried as such:
 
 ```graphql
 {
@@ -52,9 +82,21 @@ Now, that gives us a field on `Mdx` nodes that can be queried as such:
 }
 ```
 
-The problem is that `featuredImage` is an absolute path to a png file and thus, is a string. We need to associate this string with a `File` node so that we can make interesting queries through [the sharp transformer](https://www.gatsbyjs.org/packages/gatsby-transformer-sharp/). To do this, we can take advantage of a `gatsby-config.js` key that I don't see used as often as other features: [`mapping`](https://www.gatsbyjs.org/docs/gatsby-config/#mapping-node-types).
+The problem is that `featuredImage` is an absolute path to a
+png file and thus, is a string. We need to associate this
+string with a `File` node so that we can make interesting
+queries through
+[the sharp transformer](https://www.gatsbyjs.org/packages/gatsby-transformer-sharp/).
+To do this, we can take advantage of a `gatsby-config.js`
+key that I don't see used as often as other features:
+[`mapping`](https://www.gatsbyjs.org/docs/gatsby-config/#mapping-node-types).
 
-To associate our field with the absolute path of the `File` node we stick the path to our field in the `mapping` object as a key and the path to the corresponding field on the `File` nodes as the value. These strings are `nodeType.path` so for `Mdx` nodes, we want the `fields.featuredImage` property.
+To associate our field with the absolute path of the `File`
+node we stick the path to our field in the `mapping` object
+as a key and the path to the corresponding field on the
+`File` nodes as the value. These strings are `nodeType.path`
+so for `Mdx` nodes, we want the `fields.featuredImage`
+property.
 
 ```js
 module.exports = {
@@ -63,7 +105,8 @@ module.exports = {
 }
 ```
 
-*This* is the magic piece that lets us query `File` nodes for `ImageSharp` children.
+_This_ is the magic piece that lets us query `File` nodes
+for `ImageSharp` children.
 
 ```graphql
 export const query = graphql`
@@ -91,8 +134,18 @@ export const query = graphql`
 `;
 ```
 
-and now I can drop in a file without having to update the frontmatter for my blog posts and get a nice SEO image to use [when I post on Twitter](https://twitter.com/chrisbiscardi) and query for more interesting images to use on the front page or blog post page template too.
+and now I can drop in a file without having to update the
+frontmatter for my blog posts and get a nice SEO image to
+use
+[when I post on Twitter](https://twitter.com/chrisbiscardi)
+and query for more interesting images to use on the front
+page or blog post page template too.
 
 ## Fin
 
-Now that it all works, I can go back and simplify the code that queries for images on the frontmatter *and* the `fields` so that it just needs to look for `fields.featuredImage`. I can do this by pulling the processing back into the `onCreateNode` lifecycle and checking to see if there's a `frontmatter.featuredImage`.
+Now that it all works, I can go back and simplify the code
+that queries for images on the frontmatter _and_ the
+`fields` so that it just needs to look for
+`fields.featuredImage`. I can do this by pulling the
+processing back into the `onCreateNode` lifecycle and
+checking to see if there's a `frontmatter.featuredImage`.

@@ -1,13 +1,16 @@
 ---
-title: "Installing Montage: A Riak sibling resolution library written in Haskell, on OSX"
+title:
+  "Installing Montage: A Riak sibling resolution library
+  written in Haskell, on OSX"
 date: 2013-07-26
 slug: "/2013/7/25/installing-montage-a-riak-sibling-resolution-library-written-in-haskell-on-osx/"
 ---
 
+Here is a description of how I installed Montage
+(https://github.com/bumptech/montage) with GHC 7.6.1
 
-Here is a description of how I installed Montage (https://github.com/bumptech/montage) with GHC 7.6.1
-
-First clone these repos (the relevant commit I used is listed below each clone command)
+First clone these repos (the relevant commit I used is
+listed below each clone command)
 
 ```bash
 mkdir montage_deps
@@ -32,14 +35,14 @@ git checkout b72a259dc375cce4a8208eedc58d8252b3c44201
 cd ..
 ```
 
-Next I installed some C dependencies using homebrew (http://brew.sh/):
+Next I installed some C dependencies using homebrew
+(http://brew.sh/):
 
 ```bash
 brew install libev redo libsodium
 ```
 
-Grab the nitro C code from http://gonitro.io/
- I used v0.2.0
+Grab the nitro C code from http://gonitro.io/ I used v0.2.0
 
 ```bash
 cd folder_with_nitro_code

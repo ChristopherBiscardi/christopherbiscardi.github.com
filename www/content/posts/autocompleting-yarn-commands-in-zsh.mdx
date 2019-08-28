@@ -6,25 +6,42 @@ tags:
   - yarn
   - javascript
 ---
-Usually I use [jq](https://stedolan.github.io/jq/) to discover what scripts a node project uses like this:
+
+Usually I use [jq](https://stedolan.github.io/jq/) to
+discover what scripts a node project uses like this:
 
 ```shell
 jq '.scripts' package.json
 ```
 
-This is fine, and I can always find it be reverse-searching my shell history using `C-r .scr` but there's a more automated way to handle this. [g-plane](https://gplane.win/) wrote a Rust package to handle autocompletions for Yarn in zsh... and it works wonderfully.
+This is fine, and I can always find it be reverse-searching
+my shell history using `C-r .scr` but there's a more
+automated way to handle this. [g-plane](https://gplane.win/)
+wrote a Rust package to handle autocompletions for Yarn in
+zsh... and it works wonderfully.
 
 ![zsh yarn autocomplete example](/img/zsh-yarn-autocompletions.gif "zsh yarn autocomplete example")
 
-tldr; [https://github.com/g-plane/zsh-yarn-autocompletions](https://github.com/g-plane/zsh-yarn-autocompletions)
+tldr;
+[https://github.com/g-plane/zsh-yarn-autocompletions](https://github.com/g-plane/zsh-yarn-autocompletions)
 
-The `run`, `remove`, and `add` commands are auto-completable (and `yarn add` is even configurable!).
+The `run`, `remove`, and `add` commands are auto-completable
+(and `yarn add` is even configurable!).
 
-The fact that `add` is configurable is really nice because it means I can set it up with my favorite and most-used packages like [gatsby-mdx(https://github.com/ChristopherBiscardi/gatsby-mdx) and [gatsby-plugin-emotion](https://www.gatsbyjs.org/packages/gatsby-plugin-emotion/)
+The fact that `add` is configurable is really nice because
+it means I can set it up with my favorite and most-used
+packages like
+[gatsby-mdx(https://github.com/ChristopherBiscardi/gatsby-mdx)
+and
+[gatsby-plugin-emotion](https://www.gatsbyjs.org/packages/gatsby-plugin-emotion/)
 
 ## Rust
 
-We can see how it works by looking at [src/scripts.rs](https://github.com/g-plane/zsh-yarn-autocompletions/blob/fbf01b061fb7656617a62d62147e5dd33978d2cd/src/scripts.rs). The code does what you might expect, finds a `package.json`, opens it, pulls the `scripts` key out (using serde), and returns it.
+We can see how it works by looking at
+[src/scripts.rs](https://github.com/g-plane/zsh-yarn-autocompletions/blob/fbf01b061fb7656617a62d62147e5dd33978d2cd/src/scripts.rs).
+The code does what you might expect, finds a `package.json`,
+opens it, pulls the `scripts` key out (using serde), and
+returns it.
 
 ```rust
 use std::env;

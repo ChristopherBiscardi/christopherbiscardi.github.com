@@ -1,14 +1,28 @@
 ---
-title: 'Gatsby Themes, Webpack Loaders, and NPM Packages'
+title: "Gatsby Themes, Webpack Loaders, and NPM Packages"
 date: 2019-01-01T02:48:17.338Z
 tags:
   - gatsby
   - gatsby-themes
 ---
 
-Shipping NPM packages is tough, especially for new users. We need to either use build tooling to precompile our code or somehow make the user set up a set of loaders with their build tool of choice.
+Shipping NPM packages is tough, especially for new users. We
+need to either use build tooling to precompile our code or
+somehow make the user set up a set of loaders with their
+build tool of choice.
 
-With Gatsby and Themes, we have another option. Since Gatsby Themes have access to the Webpack config in `gatsby-node` (using the `onCreateWebpackConfig` lifecycle), they can extend the Webpack config with their own requirements. It looks like this and because Gatsby offers a unified set of APIs we can make some assumptions about the user's environment and it means you don't have to think about how to precompile your code for users deploying to IE10. As a theme author write using either the default Gatsby JS babel config, or use anything else you want, and ship it to users in a way that means they can configure how many polyfills to ship.
+With Gatsby and Themes, we have another option. Since Gatsby
+Themes have access to the Webpack config in `gatsby-node`
+(using the `onCreateWebpackConfig` lifecycle), they can
+extend the Webpack config with their own requirements. It
+looks like this and because Gatsby offers a unified set of
+APIs we can make some assumptions about the user's
+environment and it means you don't have to think about how
+to precompile your code for users deploying to IE10. As a
+theme author write using either the default Gatsby JS babel
+config, or use anything else you want, and ship it to users
+in a way that means they can configure how many polyfills to
+ship.
 
 ```js
 /**
@@ -18,20 +32,30 @@ With Gatsby and Themes, we have another option. Since Gatsby Themes have access 
  * we never need a lib-side build step.  Since we dont pre-compile the
  * theme, this is how we let webpack know how to process files.
  */
-exports.onCreateWebpackConfig = ({ stage, loaders, plugins, actions }) => {
-  debug('ensuring Webpack will compile theme code')
+exports.onCreateWebpackConfig = ({
+  stage,
+  loaders,
+  plugins,
+  actions
+}) => {
+  debug("ensuring Webpack will compile theme code");
   actions.setWebpackConfig({
     module: {
       rules: [
         {
           test: /\.js$/,
-          include: path.dirname(require.resolve('gatsby-theme-blog')),
-          use: [loaders.js()],
-        },
-      ],
-    },
-  })
-}
+          include: path.dirname(
+            require.resolve("gatsby-theme-blog")
+          ),
+          use: [loaders.js()]
+        }
+      ]
+    }
+  });
+};
 ```
 
-If this is interesting to you, check out the relevant code in the [themes example repo](https://github.com/ChristopherBiscardi/gatsby-theme-examples/blob/281fd63802802aef3a57bc796e91c80c6ded49e3/themes/gatsby-theme-blog/gatsby-node.js#L79-L107) to explore how this works.
+If this is interesting to you, check out the relevant code
+in the
+[themes example repo](https://github.com/ChristopherBiscardi/gatsby-theme-examples/blob/281fd63802802aef3a57bc796e91c80c6ded49e3/themes/gatsby-theme-blog/gatsby-node.js#L79-L107)
+to explore how this works.

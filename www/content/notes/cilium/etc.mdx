@@ -9,9 +9,9 @@ redirects:
 
 # monitor all dropped packets
 
-Run `cilium monitor` with the `--type=drop` filter to see dropped
-packets. Run it inside a pod (`cilium-8nslj`) that exists in a
-namespace (`cilium`).
+Run `cilium monitor` with the `--type=drop` filter to see
+dropped packets. Run it inside a pod (`cilium-8nslj`) that
+exists in a namespace (`cilium`).
 
 ```sh
 kubectl exec -n cilium -it cilium-8nslj -- cilium monitor --type=drop
@@ -33,8 +33,8 @@ full monitor output looks like
 -> overlay flow 0xe8c0f481 identity 1->0 state new ifindex cilium_vxlan: 10.12.17.1:59950 -> 10.12.16.238:2379 tcp ACK
 ```
 
-list cilium endpoints, their Identity, and their enforcement state for
-ingress and egress.
+list cilium endpoints, their Identity, and their enforcement
+state for ingress and egress.
 
 ```shell
 ➜ kubectl get ciliumendpoints --all-namespaces

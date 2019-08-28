@@ -4,16 +4,16 @@ date: 2014-01-27
 slug: "/2014/1/27/android-robospice-with-googlehttpclient/"
 ---
 
-In this post we will examine an example app in which we make a RoboSpice request
-using GoogleHttpClient.
+In this post we will examine an example app in which we make
+a RoboSpice request using GoogleHttpClient.
 
 The github repo is
 [here](https://github.com/ChristopherBiscardi/robospice-googlehttpclient-example).
 
-
 ## Dependencies
 
-First, we need to grab the RoboSpice dependency JARs from the `repository` repo.
+First, we need to grab the RoboSpice dependency JARs from
+the `repository` repo.
 
 ```bash
 git clone https://github.com/octo-online/robospice/tree/repository
@@ -21,22 +21,24 @@ git clone https://github.com/octo-online/robospice/tree/repository
 
 Inside of
 [1.4.11/robospice-google-http-client](https://github.com/octo-online/robospice/tree/repository/dependencies/1.4.11/robospice-google-http-client)
-are the JARs we need to include in the project. If you are using Eclipse copy
-the JARs into your `libs/` folder and add them to the build path in `Project ->
-Properties -> Libraries` by clicking `Add JARs`. You may also need to click the
-`Order and Export` tab, check their boxes and move the included JARs to the top.
+are the JARs we need to include in the project. If you are
+using Eclipse copy the JARs into your `libs/` folder and add
+them to the build path in
+`Project -> Properties -> Libraries` by clicking `Add JARs`.
+You may also need to click the `Order and Export` tab, check
+their boxes and move the included JARs to the top.
 
 We will also need one JAR from the Google-Http-Lib
 [source](https://code.google.com/p/google-http-java-client/wiki/Setup#Download_Library_with_Dependencies).
-It is `google-http-client-1.17.0`. Again, if using Eclipse, add it to your
-project in the same way.
+It is `google-http-client-1.17.0`. Again, if using Eclipse,
+add it to your project in the same way.
 
 ## Classes
 
 We are going to create a few files:
 
 - [BaseSpiceActivity.java](#spice-base)
-- [Reddit*.java](#spice-reddit)
+- [Reddit\*.java](#spice-reddit)
 - [SpiceRequestReddit.java](#spice-request-reddit)
 
 #### BaseSpiceActivity
@@ -67,22 +69,26 @@ public class BaseSpiceActivity extends Activity {
 }
 ```
 
-The big thing we’re doing in this file is creating an instance of `SpiceManager`
-that will be accessible in the activities that inherit from this base class
-(like our `MainActivity.java` will).
+The big thing we’re doing in this file is creating an
+instance of `SpiceManager` that will be accessible in the
+activities that inherit from this base class (like our
+`MainActivity.java` will).
 
-We then start `spiceManager` in `onStart()` and stop it in `onStop`. This will
-ensure that our activities have a `SpiceManager` accessible when they start and
-clean up after themselves when they stop.
+We then start `spiceManager` in `onStart()` and stop it in
+`onStop`. This will ensure that our activities have a
+`SpiceManager` accessible when they start and clean up after
+themselves when they stop.
 
-The final piece is a getter function (`getSpiceManager()`) so that we have easy
-access to the `spiceManager` in our activities.
+The final piece is a getter function (`getSpiceManager()`)
+so that we have easy access to the `spiceManager` in our
+activities.
 
-#### Reddit*.java
+#### Reddit\*.java
 
-We will be getting our data from Reddit, so we first need to examine the
-responses we’re going to get. I’ve chosen a subreddit where all the posts are
-very similar (/r/Riak). Here is a sample API response:
+We will be getting our data from Reddit, so we first need to
+examine the responses we’re going to get. I’ve chosen a
+subreddit where all the posts are very similar (/r/Riak).
+Here is a sample API response:
 
 ```javascript
 {
@@ -145,10 +151,11 @@ very similar (/r/Riak). Here is a sample API response:
 }
 ```
 
-We will create a few classes to model the data. The first being `Reddit.java`.
+We will create a few classes to model the data. The first
+being `Reddit.java`.
 
-In `Reddit.java` we include the keys `kind` and `data` using `@Key`
-declarations. Then we declare their types.
+In `Reddit.java` we include the keys `kind` and `data` using
+`@Key` declarations. Then we declare their types.
 
 ```java
 package com.christopherbiscardi.robospicetest;
@@ -165,8 +172,8 @@ public class Reddit {
 	}
 ```
 
-Then define some basic getters for when we are dealing with our request’s
-response.
+Then define some basic getters for when we are dealing with
+our request’s response.
 
 ```java
   public String getKind() {
@@ -218,12 +225,13 @@ and override some utility functions:
 }
 ```
 
-The model files will all follow this same format: @Key definitions, getters,
-utilities.
+The model files will all follow this same format: @Key
+definitions, getters, utilities.
 
-Our final model (`RedditListing.java`) is where we are getting the content we
-care about. We don’t have to include `@Key` for every key in our JSON response,
-so we’ll just grab the ones we care about:
+Our final model (`RedditListing.java`) is where we are
+getting the content we care about. We don’t have to include
+`@Key` for every key in our JSON response, so we’ll just
+grab the ones we care about:
 
 ```java
 	@Key
@@ -238,8 +246,8 @@ so we’ll just grab the ones we care about:
 
 #### SpiceRequestReddit.java
 
-To finish off our classes, we’ll create a SpiceRequest that takes a string (our
-subreddit) and returns a `Reddit`.
+To finish off our classes, we’ll create a SpiceRequest that
+takes a string (our subreddit) and returns a `Reddit`.
 
 ```java
 package com.christopherbiscardi.robospicetest;
@@ -272,12 +280,13 @@ public class SpiceRequestReddit extends GoogleHttpClientSpiceRequest<reddit> {
 }</reddit>
 ```
 
-
 ## Calling the API
 
-In `MainActivity.java` we need to add some code to execute the request:
+In `MainActivity.java` we need to add some code to execute
+the request:
 
-We need to extend our `MainActivity` from `BaseSpiceActivity`
+We need to extend our `MainActivity` from
+`BaseSpiceActivity`
 
 ```java
 public class MainActivity extends BaseSpiceActivity {
@@ -315,10 +324,12 @@ public final class RedditSpiceRequestListener implements RequestListener {
 	}
 ```
 
-We’ve just implemented a simple log to view the data, but we could have added it
-to an ArrayAdapter and displayed it in a ListView.
+We’ve just implemented a simple log to view the data, but we
+could have added it to an ArrayAdapter and displayed it in a
+ListView.
 
-Finally, we override the `onStart()` method to actually make the request.
+Finally, we override the `onStart()` method to actually make
+the request.
 
 ```java
   @Override
@@ -332,11 +343,11 @@ Finally, we override the `onStart()` method to actually make the request.
 	}
 ```
 
-
 ## AndroidManifest.xml
 
-Now that’s all the code we need to write, but we still need to register our
-service and permissions in `AndroidManifest.xml`. Notice we’ve added three
+Now that’s all the code we need to write, but we still need
+to register our service and permissions in
+`AndroidManifest.xml`. Notice we’ve added three
 `uses-permission` nodes and a `service` node.
 
 ```xml
@@ -379,8 +390,9 @@ service and permissions in `AndroidManifest.xml`. Notice we’ve added three
 
 ## Fin
 
-Now we can run the app and see the result (success or failure) pop up as a Toast
-as well as viewing the actual data in LogCat.
+Now we can run the app and see the result (success or
+failure) pop up as a Toast as well as viewing the actual
+data in LogCat.
 
 Check out the github repository
 [here](https://github.com/ChristopherBiscardi/robospice-googlehttpclient-example)

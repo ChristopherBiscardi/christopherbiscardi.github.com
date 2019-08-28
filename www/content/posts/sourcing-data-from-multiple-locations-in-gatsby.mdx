@@ -5,14 +5,22 @@ tags:
   - gatsby
 ---
 
-How can we construct a GraphQL interface such that we can source data from multiple locations? Check out the livestream here:
+How can we construct a GraphQL interface such that we can
+source data from multiple locations? Check out the
+livestream here:
 
-<Video url="https://www.youtube.com/watch?v=VFW1rUDRPe0&t=365"/>
+<Video url="https://www.youtube.com/watch?v=VFW1rUDRPe0&t=365" />
 
-The old way (that still works) but is really low level and complicated is [found here:](
-https://github.com/ChristopherBiscardi/christopherbiscardi.github.com/blob/24227770908405592bb916938944579ba50b43c5/www/gatsby-node.js)
+The old way (that still works) but is really low level and
+complicated is
+[found here:](https://github.com/ChristopherBiscardi/christopherbiscardi.github.com/blob/24227770908405592bb916938944579ba50b43c5/www/gatsby-node.js)
 
-So the first thing we need is an interface, conceptually and literally. For this post we’ll keep it small and use an interface with a title and a body. Note that there are two additional features that are required for what we’re doing with Gatsby: `@nodeInterface` and the `id` field, which is required for satisfying the Gatsby `Node` interface.
+So the first thing we need is an interface, conceptually and
+literally. For this post we’ll keep it small and use an
+interface with a title and a body. Note that there are two
+additional features that are required for what we’re doing
+with Gatsby: `@nodeInterface` and the `id` field, which is
+required for satisfying the Gatsby `Node` interface.
 
 ```graphql
 interface BlogPost @nodeInterface {
@@ -22,18 +30,34 @@ interface BlogPost @nodeInterface {
 }`
 ```
 
-This interface allows us to construct types that satisfy the interface which effectively means we are backing `BlogPost` with custom types. Being an interface means we can have multiple custom types that back the interface at the same time. So when we query `allBlogPost`, were really querying the collection of custom types that satisfy the interface.
+This interface allows us to construct types that satisfy the
+interface which effectively means we are backing `BlogPost`
+with custom types. Being an interface means we can have
+multiple custom types that back the interface at the same
+time. So when we query `allBlogPost`, were really querying
+the collection of custom types that satisfy the interface.
 
 ## Querying for Yaml
 
-We'll start with something that uses the GraphQL SDL, using a Yaml node to satisfy the interface. Since [`gatsby-transformer-yaml`](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-transformer-yaml) names it's type after the directory name, we end up with a Yaml node that is of type `ContentYaml`. We can use the `createTypes` schema customization API to change the types that the fields resolve to by using the same name. Importantly, we specify that this type implements `Node` *and* `BlogPost`, as this will allow us to query the content through the interface. Here's the content of our yaml file:
+We'll start with something that uses the GraphQL SDL, using
+a Yaml node to satisfy the interface. Since
+[`gatsby-transformer-yaml`](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-transformer-yaml)
+names it's type after the directory name, we end up with a
+Yaml node that is of type `ContentYaml`. We can use the
+`createTypes` schema customization API to change the types
+that the fields resolve to by using the same name.
+Importantly, we specify that this type implements `Node`
+_and_ `BlogPost`, as this will allow us to query the content
+through the interface. Here's the content of our yaml file:
 
 ```yaml
 subject: Some title
 body: Some body content for the blog post
 ```
 
-and the type we use to override it. Note that we're proxying the `subject` field to the `title` field to comply with the `BlogPost` interface.
+and the type we use to override it. Note that we're proxying
+the `subject` field to the `title` field to comply with the
+`BlogPost` interface.
 
 ```js
 createTypes(`type ContentYaml implements Node & BlogPost {
@@ -47,7 +71,16 @@ And now we can query the Yaml content through `allBlogPost`.
 
 ## Querying for Mdx
 
-Querying for Mdx takes a bit more work. We have to solve an additional problem because some of the content (like `body` or `excerpt`) is only returned by resolvers and doesn't exist on the node itself. To achieve this, we'll take a subset of `Mdx` nodes and turn them into a new node time: `MdxBlogPost`. This new node type will be the type that implements our `BlogPost` interface. Here's the type definition for our new node. We use `buildObjectType` as that lets us pass resolvers through to the parent type (`Mdx` in this case).
+Querying for Mdx takes a bit more work. We have to solve an
+additional problem because some of the content (like `body`
+or `excerpt`) is only returned by resolvers and doesn't
+exist on the node itself. To achieve this, we'll take a
+subset of `Mdx` nodes and turn them into a new node time:
+`MdxBlogPost`. This new node type will be the type that
+implements our `BlogPost` interface. Here's the type
+definition for our new node. We use `buildObjectType` as
+that lets us pass resolvers through to the parent type
+(`Mdx` in this case).
 
 ```js
 createTypes(
@@ -77,11 +110,21 @@ createTypes(
 );
 ```
 
-Then we need to select the subset of `Mdx` nodes to turn into the new node type and create the new nodes.
+Then we need to select the subset of `Mdx` nodes to turn
+into the new node type and create the new nodes.
 
 ```js
-exports.onCreateNode = ({ node, actions, getNode, createNodeId }) => {
-  const { createNodeField, createNode, createParentChildLink } = actions;
+exports.onCreateNode = ({
+  node,
+  actions,
+  getNode,
+  createNodeId
+}) => {
+  const {
+    createNodeField,
+    createNode,
+    createParentChildLink
+  } = actions;
 
   if (node.internal.type === `Mdx`) {
     const { frontmatter } = node;
@@ -108,13 +151,20 @@ exports.onCreateNode = ({ node, actions, getNode, createNodeId }) => {
           description: `Satisfies the BlogPost interface for Mdx`
         }
       });
-      createParentChildLink({ parent: parent, child: node });
+      createParentChildLink({
+        parent: parent,
+        child: node
+      });
     }
   }
 };
 ```
 
-That's it. We now have two types that implement the `BlogPost` interface that we can query at the same time through the interface. This sets the stage for a number of really cool opportunities such as sourcing `BlogPost` content from arbitrary sources, like different CMSs.
+That's it. We now have two types that implement the
+`BlogPost` interface that we can query at the same time
+through the interface. This sets the stage for a number of
+really cool opportunities such as sourcing `BlogPost`
+content from arbitrary sources, like different CMSs.
 
 Check out the full `gatsby-node.js` file here:
 
@@ -151,7 +201,8 @@ exports.sourceNodes = ({ actions, schema }) => {
             const mdxNode = context.nodeModel.getNodeById({
               id: source.parent
             });
-            const resolver = type.getFields()["body"].resolve;
+            const resolver = type.getFields()["body"]
+              .resolve;
             return resolver(mdxNode, {}, context, {
               fieldName: "body"
             });
@@ -163,8 +214,17 @@ exports.sourceNodes = ({ actions, schema }) => {
   );
 };
 
-exports.onCreateNode = ({ node, actions, getNode, createNodeId }) => {
-  const { createNodeField, createNode, createParentChildLink } = actions;
+exports.onCreateNode = ({
+  node,
+  actions,
+  getNode,
+  createNodeId
+}) => {
+  const {
+    createNodeField,
+    createNode,
+    createParentChildLink
+  } = actions;
 
   if (node.internal.type === `Mdx`) {
     const { frontmatter } = node;
@@ -191,7 +251,10 @@ exports.onCreateNode = ({ node, actions, getNode, createNodeId }) => {
           description: `Satisfies the BlogPost interface for Mdx`
         }
       });
-      createParentChildLink({ parent: parent, child: node });
+      createParentChildLink({
+        parent: parent,
+        child: node
+      });
     }
   }
 };

@@ -5,7 +5,11 @@ tags:
   - gatsby
 ---
 
-Gatsby themes introduced an API called Shadowing. This API is implemented as a webpack resolver plug-in. I recently rewrote the tests for shadowing from an e2e perspective which reminded me of the fact that since shadowing is a plug-in, you can use it in any webpack project! Here’s how:
+Gatsby themes introduced an API called Shadowing. This API
+is implemented as a webpack resolver plug-in. I recently
+rewrote the tests for shadowing from an e2e perspective
+which reminded me of the fact that since shadowing is a
+plug-in, you can use it in any webpack project! Here’s how:
 
 ```js
 const webpack = require("webpack");
@@ -22,7 +26,10 @@ const config = {
         themes: [
           {
             themeName: "theme-a",
-            themeDir: path.join(__dirname, "./node_modules/theme-a")
+            themeDir: path.join(
+              __dirname,
+              "./node_modules/theme-a"
+            )
           }
         ]
       })
@@ -35,7 +42,9 @@ webpack(config, (err, stats) => {
 });
 ```
 
-In this case I've placed the themes in `node_modules` for parity with what I'm trying to test. The themes can literally be anywhere though.
+In this case I've placed the themes in `node_modules` for
+parity with what I'm trying to test. The themes can
+literally be anywhere though.
 
 ```js
 basic-shadowing
@@ -49,6 +58,14 @@ basic-shadowing
         └── components.js
 ```
 
-Should you do this? Probably not because this package isn't published separately and is really only meant to be used inside of Gatsby. If you wanted to experiment with it you totally could though and I think this method of building extra functionality into Gatsby (where development can happen in userland) is extremely beneficial.
+Should you do this? Probably not because this package isn't
+published separately and is really only meant to be used
+inside of Gatsby. If you wanted to experiment with it you
+totally could though and I think this method of building
+extra functionality into Gatsby (where development can
+happen in userland) is extremely beneficial.
 
-If you wanted to you could even remove the shadowing plugin in Gatsby and implement your own. I would highly advise against doing this unless you're testing a new Shadowing algorithm to PR to Gatsby itself.
+If you wanted to you could even remove the shadowing plugin
+in Gatsby and implement your own. I would highly advise
+against doing this unless you're testing a new Shadowing
+algorithm to PR to Gatsby itself.

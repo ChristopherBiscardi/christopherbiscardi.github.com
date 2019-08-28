@@ -4,14 +4,16 @@ date: 2018-01-25
 tags: [react, javascript]
 ---
 
-Sometimes you run into a situation where you want to have some logic that isn't
-associated with any rendered output but starts/stops when a certain page is
-rendered. React can handle this by rendering `null` and using lifecycle events
+Sometimes you run into a situation where you want to have
+some logic that isn't associated with any rendered output
+but starts/stops when a certain page is rendered. React can
+handle this by rendering `null` and using lifecycle events
 to deal with listener attachment and cleanup.
 
-The following code creates two components, one representing the App and one to
-handle the logic. `App` mounts or unmounts the `KeydownListener` once every
-second, forcing `componentDidMount` and `componentWillUnmount` to fire.
+The following code creates two components, one representing
+the App and one to handle the logic. `App` mounts or
+unmounts the `KeydownListener` once every second, forcing
+`componentDidMount` and `componentWillUnmount` to fire.
 
 ```javascript
 import React, { Component } from "react";
@@ -50,22 +52,27 @@ class App extends Component {
   };
   componentDidMount() {
     this.interval = setInterval(() => {
-      this.setState(state => ({ ...state, show: !state.show }));
+      this.setState(state => ({
+        ...state,
+        show: !state.show
+      }));
     }, 1000);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
   }
   render() {
-    return <div>{this.state.show && <KeydownListener />}</div>;
+    return (
+      <div>{this.state.show && <KeydownListener />}</div>
+    );
   }
 }
 
 render(<App />, document.getElementById("root"));
 ```
 
-The output for the above is the following (which you can test in
-[codesandbox](https://codesandbox.io/s/yjz3lpmklx).
+The output for the above is the following (which you can
+test in [codesandbox](https://codesandbox.io/s/yjz3lpmklx).
 
 ```
 0.0705

@@ -1,27 +1,28 @@
 ---
-title: "Getting Started with Robolectric: Headless Android Testing with Vagrant"
+title:
+  "Getting Started with Robolectric: Headless Android
+  Testing with Vagrant"
 date: 2014-03-08
 slug: "/2014/3/8/getting-started-with-robolectric-headless-android-testing-with-vagrant/"
 ---
 
-
-In this post we will go over how to set up the sample project for Robolectric,
-run, test and deploy to a device in a headless vagrant environment.
+In this post we will go over how to set up the sample
+project for Robolectric, run, test and deploy to a device in
+a headless vagrant environment.
 
 ## Sample App
 
-Clone the sample app from the [github
-repo](https://github.com/robolectric/RobolectricSample)
+Clone the sample app from the
+[github repo](https://github.com/robolectric/RobolectricSample)
 
 ```
 git clone git@github.com:robolectric/RobolectricSample.git
 ```
 
-
 ## Vagrantfile
 
-Here is our Vagrantfile. We’ll need to add the `precise64` base box to our
-system. also availible as a
+Here is our Vagrantfile. We’ll need to add the `precise64`
+base box to our system. also availible as a
 [Gist](https://gist.github.com/ChristopherBiscardi/9383725)
 
 ```bash
@@ -46,8 +47,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 end
 ```
 
-and the Vagrant build script. The build script downloads and installs ADT and
-Maven.
+and the Vagrant build script. The build script downloads and
+installs ADT and Maven.
 
 ```bash
 apt-get update -y
@@ -74,11 +75,11 @@ sudo -u vagrant echo "y" | /home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/to
 sudo -u vagrant echo export ANDROID_HOME=/home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/ >> /home/vagrant/.bashrc
 ```
 
-
 ## Path and ANDROID_HOME
 
-We need a few thing on our path, all of which are included in our Vagrant build
-script (Android tools, Android platform-tools, Maven and ANDROID_HOME)
+We need a few thing on our path, all of which are included
+in our Vagrant build script (Android tools, Android
+platform-tools, Maven and ANDROID_HOME)
 
 ```bash
 export PATH=/home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/tools:\$PATH
@@ -89,14 +90,16 @@ export ANDROID_HOME=/home/vagrant/adt-bundle-linux-x86_64-20131030/sdk/
 
 ## Vagrant Up
 
-Simply copy the `Vagrantfile` and `vagrant-android-build.sh` into the sample
-project’s root folder. Then `cd` into that folder and run `vagrant up` to boot
-the machine. If you don’t have Vagrant and VirtualBox,
-[here](http://www.vagrantup.com/) and [here](https://www.virtualbox.org/) are
-the respective links.
+Simply copy the `Vagrantfile` and `vagrant-android-build.sh`
+into the sample project’s root folder. Then `cd` into that
+folder and run `vagrant up` to boot the machine. If you
+don’t have Vagrant and VirtualBox,
+[here](http://www.vagrantup.com/) and
+[here](https://www.virtualbox.org/) are the respective
+links.
 
-Note that it may be necessary to run the command to update the Android SDK
-manually due to the licenses.
+Note that it may be necessary to run the command to update
+the Android SDK manually due to the licenses.
 
 ```bash
 vagrant ssh
@@ -131,11 +134,10 @@ Tests run: 87, Failures: 0, Errors: 0, Skipped: 0
 
 Run `exit` to get out of the vm.
 
-
 ## Connecting Test Devices to the VM
 
-With `VBoxManage` and devices connected, we can allow (all?) of them using the
-following `usbfilter` in our `Vagrantfile`
+With `VBoxManage` and devices connected, we can allow (all?)
+of them using the following `usbfilter` in our `Vagrantfile`
 
 ```ruby
 config.vm.provider :virtualbox do |vb|
@@ -144,8 +146,8 @@ config.vm.provider :virtualbox do |vb|
   end
 ```
 
-Alternatively, we can list all connected usbhosts and select a specific device
-as such:
+Alternatively, we can list all connected usbhosts and select
+a specific device as such:
 
 ```bash
 VBoxManage list usbhost
@@ -167,10 +169,10 @@ Address:            p=0xd002;v=0x18d1;s=0x000000006321cfbd;l=0x20260000
 Current State:      Busy
 ```
 
-Find your Android device and use these parameters to change our Vagrantfile:
+Find your Android device and use these parameters to change
+our Vagrantfile:
 
-SerialNumber -> –name
- VendorId -> –vendorid
+SerialNumber -> –name VendorId -> –vendorid
 
 ```ruby
 config.vm.provider :virtualbox do |vb|
@@ -179,9 +181,9 @@ config.vm.provider :virtualbox do |vb|
   end
 ```
 
-Remember to `vagrant reload` after changing network settings in the
-`Vagrantfile`. Some devices may also need to be unplugged and plugged back in
-for the VM to see them.
+Remember to `vagrant reload` after changing network settings
+in the `Vagrantfile`. Some devices may also need to be
+unplugged and plugged back in for the VM to see them.
 
 ## Deploying
 
@@ -192,9 +194,9 @@ vagrant ssh
 sudo adb devices
 ```
 
-If you see an unauthorized message like the one below, it is likely that you
-didn’t start the adb server as root (which will prevent the RSA authorization
-from popping up).
+If you see an unauthorized message like the one below, it is
+likely that you didn’t start the adb server as root (which
+will prevent the RSA authorization from popping up).
 
 ```bash
 * daemon not running. starting it now on port 5037 *
@@ -205,7 +207,8 @@ List of devices attached
 2d605528	device
 ```
 
-We can now install the app on our devices from inside the vm using maven.
+We can now install the app on our devices from inside the vm
+using maven.
 
 ```bash
 cd /vagrant
@@ -214,6 +217,7 @@ mvn clean install && mvn android:deploy
 
 ## Fin
 
-That’s it. The app should be installed on your connected devices. It won’t start
-automatically, but you can navigate to the newly installed `Robolectric Sample`
-app and start it up.
+That’s it. The app should be installed on your connected
+devices. It won’t start automatically, but you can navigate
+to the newly installed `Robolectric Sample` app and start it
+up.

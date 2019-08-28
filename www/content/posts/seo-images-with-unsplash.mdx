@@ -1,29 +1,30 @@
 ---
 title: SEO Images with Unsplash
 date: 2019-01-18T07:36:00.000Z
-featuredImage: 'seo-images-with-unsplash.png'
+featuredImage: "seo-images-with-unsplash.png"
 tags:
   - gatsby
 ---
 
-I added an [SEO
-component](https://www.gatsbyjs.org/docs/add-seo-component/) to my
-blog recently and on top of that I decided to set up infrastructure to
-pull in images for Twitter, etc. The SEO component already handled
-titles and descriptions for cards on Twitter, but I wanted something a
-bit more... interesting. I like large images and I eventually want to
+I added an
+[SEO component](https://www.gatsbyjs.org/docs/add-seo-component/)
+to my blog recently and on top of that I decided to set up
+infrastructure to pull in images for Twitter, etc. The SEO
+component already handled titles and descriptions for cards
+on Twitter, but I wanted something a bit more...
+interesting. I like large images and I eventually want to
 start drawing images for my blog posts. So I dove into
 [gatsby-transformer-sharp](https://www.npmjs.com/package/gatsby-transformer-sharp).
 
-The sharp transformer makes it absolutely trivial to handle an image
-described in frontmatter and post it as a Twitter meta card.
+The sharp transformer makes it absolutely trivial to handle
+an image described in frontmatter and post it as a Twitter
+meta card.
 
-
-First I jacked the [SEO
-component](https://www.gatsbyjs.org/docs/add-seo-component/) from the
-Gatsby starters. Then I added a couple key components. Notably
-`twitter:image` and the switch that enabled the `summary_large_image`
-card type.
+First I jacked the
+[SEO component](https://www.gatsbyjs.org/docs/add-seo-component/)
+from the Gatsby starters. Then I added a couple key
+components. Notably `twitter:image` and the switch that
+enabled the `summary_large_image` card type.
 
 ```js
 import React from "react";
@@ -51,7 +52,9 @@ function SEO({
               lang
             }}
             title={title}
-            titleTemplate={`%s | ${data.site.siteMetadata.title}`}
+            titleTemplate={`%s | ${
+              data.site.siteMetadata.title
+            }`}
             meta={[
               {
                 name: `description`,
@@ -75,7 +78,9 @@ function SEO({
               },
               {
                 name: `twitter:card`,
-                content: !!image ? `summary_large_image` : `summary`
+                content: !!image
+                  ? `summary_large_image`
+                  : `summary`
               },
               {
                 name: `twitter:creator`,
@@ -137,9 +142,8 @@ const detailsQuery = graphql`
 `;
 ```
 
-
-Then I stuck an image in my frontmatter for a blog post. The addition
-of
+Then I stuck an image in my frontmatter for a blog post. The
+addition of
 [gatsby-transformer-sharp](https://www.gatsbyjs.org/packages/gatsby-transformer-sharp/)
 enabled the following query to get the processed image.
 
@@ -167,8 +171,8 @@ export const pageQuery = graphql`
 `;
 ```
 
-Then it's a matter of using that query and passing it into the SEO
-component.
+Then it's a matter of using that query and passing it into
+the SEO component.
 
 ```js
 const imageRoot = data.mdx.frontmatter.featuredImage;
@@ -187,13 +191,14 @@ return (
     />
 ```
 
-Now to add a new "featured image" that shows up on Twitter, we only
-need to add a pointer to the image in our frontmatter.
-
+Now to add a new "featured image" that shows up on Twitter,
+we only need to add a pointer to the image in our
+frontmatter.
 
 # Downsides
 
-I currently use Netlify CMS to edit my blog posts and I'm starting to
-feel the need for something a bit more custom. Currently, Netlify CMS
-will blow away the `featuredImage` key on updates, erasing the Twitter
-opengraph image from being presented.
+I currently use Netlify CMS to edit my blog posts and I'm
+starting to feel the need for something a bit more custom.
+Currently, Netlify CMS will blow away the `featuredImage`
+key on updates, erasing the Twitter opengraph image from
+being presented.

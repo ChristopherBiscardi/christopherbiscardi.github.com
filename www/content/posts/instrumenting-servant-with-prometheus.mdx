@@ -4,8 +4,8 @@ slug: "instrumenting-servant-with-prometheus"
 date: 2016-05-21
 ---
 
-To set up a Servant/WAI application with monitoring, we will first
-scaffold a servant application using stack.
+To set up a Servant/WAI application with monitoring, we will
+first scaffold a servant application using stack.
 
 ```bash
 > stack new servant-prometheus \
@@ -13,9 +13,9 @@ https://raw.githubusercontent.com/commercialhaskell/stack-templates/8cb4889fb7c5
 --resolver nightly-2016-05-21
 ```
 
-To instrument our servant application, add the following three
-dependencies to `servant-prometheus.cabal` under the `build-depends`
-of the `library`. 
+To instrument our servant application, add the following
+three dependencies to `servant-prometheus.cabal` under the
+`build-depends` of the `library`.
 
 ```haskell
 , wai-middleware-prometheus >= 0.1.0.1
@@ -23,8 +23,8 @@ of the `library`.
 , prometheus-metrics-ghc >= 0.1.0.1
 ```
 
-In `src/Lib.hs` we need the following 3 imports. They are fully
-qualified for clarity.
+In `src/Lib.hs` we need the following 3 imports. They are
+fully qualified for clarity.
 
 ```haskell
 import Network.Wai.Middleware.Prometheus (prometheus, PrometheusSettings(..))
@@ -32,9 +32,10 @@ import Prometheus (register)
 import Prometheus.Metric.GHC (ghcMetrics)
 ```
 
-All of our work will be in the `startApp` function defined in the same
-file. Currently, `startApp` is defined as `run 8080 app`. We are going
-to change that to the following.
+All of our work will be in the `startApp` function defined
+in the same file. Currently, `startApp` is defined as
+`run 8080 app`. We are going to change that to the
+following.
 
 ```haskell
 startApp = do
@@ -46,16 +47,16 @@ startApp = do
 We also need `{-# LANGUAGE OverloadedStrings #-}` for the
 `["metrics"]` literal.
 
-Finally, to actually enable consumption of GHC metrics, we need to
-include the `-T` flag in our executable. The `executable`'s
-`ghc-options` becomes:
+Finally, to actually enable consumption of GHC metrics, we
+need to include the `-T` flag in our executable. The
+`executable`'s `ghc-options` becomes:
 
 ```
 ghc-options: -threaded -rtsopts -with-rtsopts=-TN
 ```
 
-After building and running, the servant server should be providing
-prometheus metrics at /metrics.
+After building and running, the servant server should be
+providing prometheus metrics at /metrics.
 
 ```bash
 stack install --only-dependencies
@@ -68,23 +69,24 @@ stack exec servant-prometheus-exe
 All three of the packages we added as dependencies come from
 [fimad/prometheus-haskell](https://github.com/fimad/prometheus-haskell).
 
-* Prometheus Client
-  - Defines the core data types and metrics. The other two packages
-    build on client to provide their metrics.
+- Prometheus Client
+  - Defines the core data types and metrics. The other two
+    packages build on client to provide their metrics.
   - This is the package to use to set up custom metrics.
-* Prometheus Metrics GHC
-  - Provides a set of custom metrics for Prometheus Client that are
-    exposed from GHC's runtime system.
-* WAI Middleware Prometheus
-  - Instruments a WAI application, exposing common HTTP metrics. Also
-    exposes those metrics on /metrics (or the url of the user's
-    choice)
+- Prometheus Metrics GHC
+  - Provides a set of custom metrics for Prometheus Client
+    that are exposed from GHC's runtime system.
+- WAI Middleware Prometheus
+  - Instruments a WAI application, exposing common HTTP
+    metrics. Also exposes those metrics on /metrics (or the
+    url of the user's choice)
 
-[localhost:8080/metrics](http://localhost:8080/metrics) should now
-have the following output, which can be scraped by Prometheus.
+[localhost:8080/metrics](http://localhost:8080/metrics)
+should now have the following output, which can be scraped
+by Prometheus.
 
-* `http_` prefixed metrics come from the WAI middleware
-* `ghc_` prefixed metrics come from `ghcMetrics`
+- `http_` prefixed metrics come from the WAI middleware
+- `ghc_` prefixed metrics come from `ghcMetrics`
 
 ```
 # HELP http_request_duration_microseconds The HTTP request latencies in microseconds.
