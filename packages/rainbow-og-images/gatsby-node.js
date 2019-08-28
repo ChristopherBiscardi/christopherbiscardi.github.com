@@ -59,8 +59,8 @@ const genCodeBundle = async ({
   return output[0].code;
 };
 
-const runScreenshots = async ({ data, code }) => {
-  const browser = await puppeteer.launch({ headless: false });
+const runScreenshots = async ({ data, code }, puppeteerLaunchOptions = {}) => {
+  const browser = await puppeteer.launch(puppeteerLaunchOptions);
   const page = await browser.newPage();
   const html = `
   <html>
@@ -199,13 +199,16 @@ exports.onPostBuild = async ({ graphql, cache }, pluginOptions) => {
       debug(`processing '${component}'`);
       const code = await genCodeBundle({ componentPath: component });
       debug(`running ${nodes.length} nodes with ${component}`);
-      await runScreenshots({
-        data: nodes.map(node => ({
-          ...node,
-          data: JSON.parse(node.data)
-        })),
-        code
-      });
+      await runScreenshots(
+        {
+          data: nodes.map(node => ({
+            ...node,
+            data: JSON.parse(node.data)
+          })),
+          code
+        },
+        pluginOptions.puppeteerLaunchOptions
+      );
     })
   );
 };
