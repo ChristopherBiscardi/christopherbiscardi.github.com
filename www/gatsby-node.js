@@ -72,7 +72,7 @@ exports.onCreateNode = ({ node, actions, createNodeId }) => {
       // fileName is something you can use in opengraph images, etc
       fileName: slugify(node.title),
       // renderDir is relative to `public` by default
-      renderDir: "blog-post-images",
+      outputDir: "blog-post-images",
       // data gets passed directly to your react component
       data: node,
       // the component to use for rendering. Will get batched with
@@ -81,9 +81,6 @@ exports.onCreateNode = ({ node, actions, createNodeId }) => {
     });
   }
 
-  if (node.internal.type === "Printer") {
-    console.log("pre-printer", node);
-  }
   if (
     node.internal.type === "Printer" &&
     node.component ===
@@ -91,7 +88,6 @@ exports.onCreateNode = ({ node, actions, createNodeId }) => {
         "gatsby-theme-dev-tips/src/printer-components/dev-tips-collection.js"
       )
   ) {
-    console.log("in-printer");
     // const oldNode = {...node};
     node.component = require.resolve(
       "./src/printer-components/dev-tips-collection.js"

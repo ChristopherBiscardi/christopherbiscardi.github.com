@@ -127,7 +127,7 @@ exports.onCreateNode = async ({
       // fileName is something you can use in opengraph images, etc
       fileName: slugify(node.name),
       // renderDir is relative to `public` by default
-      renderDir: "dev-tip-images",
+      outputDir: "dev-tip-images",
       // data gets passed directly to your react component
       data: node,
       // the component to use for rendering. Will get batched with

@@ -16,22 +16,13 @@ exports.onCreateNode = ({ actions, node }) => {
       // fileName is something you can use in opengraph images, etc
       fileName: slugify(node.title),
       // renderDir is relative to `public` by default
-      renderDir: "blog-post-images",
+      outputDir: "blog-post-images",
       // data gets passed directly to your react component
       data: node,
       // the component to use for rendering. Will get batched with
       // other nodes that use the same component
       component: require.resolve("./src/printer-components/blog-post.js")
     });
-    // put a Printer node into the Gatsby system for later processing
-    // this is required.
-    createNode(printerNode);
-    // make the printer node a child of the Mdx node
-    // this ensures that if the parent node gets deleted
-    // (like if you have drafts that get removed from the node system)
-    // this node will get deleted and no processing will happen
-    // this is optional
-    createParentChildLink({ parent: node, child: printerNode });
   }
 };
 ```
@@ -62,13 +53,13 @@ exports.onPostBuild = () => {
 
 const titles = data.allBlogPost.nodes.map(({ title }) => ({
 	id: slugify(title),
-    title,
+  title,
   }));
 
   await runScreenshots({
   	data: titles,
-  	component: './src/printer-components',
-  	outputDir: 'public/rainbow-og-images'
+  	component: require.resolve('./src/printer-components/blog-post'),
+  	outputDir: 'rainbow-og-images'
   });
 }
 ```

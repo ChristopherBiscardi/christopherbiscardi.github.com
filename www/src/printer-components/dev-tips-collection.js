@@ -14,7 +14,6 @@ const stuff = preval`
   const inter = fs.readFileSync(path.join(interPlugin, "inter/inter.css"), "utf-8")
                   .replace(/Inter-upright.var.woff2/g, "data:application/x-font-woff;charset=utf-8;base64," + base64InterVarStraight)
                   .replace(/Inter-italic.var.woff2/g, "data:application/x-font-woff;charset=utf-8;base64," + base64InterVarItalic)
-  console.log('inter', inter)
   module.exports = {
     rainbowImg: val,
     inter,

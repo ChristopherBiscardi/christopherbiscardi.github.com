@@ -2,11 +2,11 @@ const crypto = require("crypto");
 const { store } = require("gatsby/dist/redux");
 const apiRunnerNode = require(`gatsby/dist/utils/api-runner-node`);
 
-const createPrinterNode = ({ id, fileName, renderDir, data, component }) => {
+const createPrinterNode = ({ id, fileName, outputDir, data, component }) => {
   const fieldData = {
     id,
     fileName,
-    renderDir,
+    outputDir,
     data: JSON.stringify(data),
     component
   };
@@ -42,9 +42,33 @@ const createPrinterNode = ({ id, fileName, renderDir, data, component }) => {
     // parentSpan,
     // traceTags: { nodeId: node.id, nodeType: node.internal.type },
   });
-  return;
+  return node.id;
 };
 
 module.exports = {
-  createPrinterNode
+  createPrinterNode,
+  runScreenshots: async ({ data, component, outputDir }) => {
+    data.map(obj => {
+      if (!Boolean(obj.id)) {
+        throw new Error(
+          `object requires id in runScreenshots(). object is: \n\n ${JSON.stringify(
+            obj,
+            null,
+            2
+          )}`
+        );
+      }
+
+      if (Boolean(obj.outputDir)) {
+        return obj;
+      }
+
+      const newObj = { ...obj };
+      newObj.outputDir = outputDir;
+
+      return newObj;
+    });
+    const code = await genCodeBundle({ componentPath: component });
+    await runScreenshots({ data, code }, args.puppeteerLaunchOptions);
+  }
 };
