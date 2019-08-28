@@ -3,6 +3,8 @@ const path = require("path");
 const mdx = require("@mdx-js/mdx");
 const grayMatter = require("gray-matter");
 const visit = require("unist-util-visit");
+const { createPrinterNode } = require("rainbow-og-images");
+const slugify = require("@sindresorhus/slugify");
 
 exports.createSchemaCustomization = ({ actions, schema }) => {
   const { createTypes } = actions;
@@ -116,6 +118,27 @@ exports.onCreateNode = async ({
       });
       createParentChildLink({ parent: parent, child: node });
     }
+  }
+
+  // DevTips Pages Images
+  if (node.internal.type === "DevTipsYaml") {
+    const printerNode = createPrinterNode({
+      id: createNodeId(`${node.id} >>> Printer`),
+      // fileName is something you can use in opengraph images, etc
+      fileName: slugify(node.name),
+      // renderDir is relative to `public` by default
+      renderDir: "dev-tip-images",
+      // data gets passed directly to your react component
+      data: node,
+      // the component to use for rendering. Will get batched with
+      // other nodes that use the same component
+      component: require.resolve(
+        "./src/printer-components/dev-tips-collection.js"
+      )
+    });
+
+    // createNode(printerNode);
+    //    createParentChildLink({ parent: node, child: printerNode });
   }
 };
 

@@ -14,6 +14,7 @@ const stuff = preval`
   const inter = fs.readFileSync(path.join(interPlugin, "inter/inter.css"), "utf-8")
                   .replace(/Inter-upright.var.woff2/g, "data:application/x-font-woff;charset=utf-8;base64," + base64InterVarStraight)
                   .replace(/Inter-italic.var.woff2/g, "data:application/x-font-woff;charset=utf-8;base64," + base64InterVarItalic)
+  console.log('inter', inter)
   module.exports = {
     rainbowImg: val,
     inter,
@@ -76,7 +77,7 @@ const styles = css`* {
       right: 8px;
       bottom: 8px;
       left: 8px;
-      background-color: #000;
+      background-color: #1fa9f4;
   }
   
   /* Use Background-size cover for photo background and no-repeat background */
@@ -87,7 +88,7 @@ const styles = css`* {
     background-position: 50% 50%;
   }`;
 
-export default ({ title }) => {
+export default ({ name }) => {
   return (
     <div className="clip-text">
       <Global
@@ -101,7 +102,7 @@ export default ({ title }) => {
           `
         ]}
       />
-      <Textfit style={{ height: "250px" }}>{title}</Textfit>
+      <Textfit style={{ height: "250px" }}>{name}</Textfit>
     </div>
   );
 };

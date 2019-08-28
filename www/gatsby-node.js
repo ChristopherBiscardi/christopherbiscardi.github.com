@@ -65,7 +65,7 @@ exports.createPages = ({ graphql, actions }) => {
 };
 
 exports.onCreateNode = ({ node, actions, createNodeId }) => {
-  const { createNode, createParentChildLink } = actions;
+  const { createNode, deleteNode } = actions;
   if (node.internal.type === "MdxBlogPost") {
     const printerNode = createPrinterNode({
       id: createNodeId(`${node.id} >>> Printer`),
@@ -79,9 +79,25 @@ exports.onCreateNode = ({ node, actions, createNodeId }) => {
       // other nodes that use the same component
       component: require.resolve("./src/printer-components/blog-post.js")
     });
+  }
 
-    createNode(printerNode);
-    //    createParentChildLink({ parent: node, child: printerNode });
+  if (node.internal.type === "Printer") {
+    console.log("pre-printer", node);
+  }
+  if (
+    node.internal.type === "Printer" &&
+    node.component ===
+      require.resolve(
+        "gatsby-theme-dev-tips/src/printer-components/dev-tips-collection.js"
+      )
+  ) {
+    console.log("in-printer");
+    // const oldNode = {...node};
+    node.component = require.resolve(
+      "./src/printer-components/dev-tips-collection.js"
+    );
+    // deleteNode(oldNode)
+    // createNode(node)
   }
 };
 

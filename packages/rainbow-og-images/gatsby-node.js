@@ -1,4 +1,5 @@
 const fs = require("fs-extra");
+const path = require("path");
 const puppeteer = require("puppeteer");
 const React = require("react");
 const ReactDOM = require("react-dom");
@@ -13,7 +14,7 @@ const debug = require("debug")("gatsby-plugin-printer");
 
 // const rainbowImgScreened = readFileSync('rainbow-bg-screened.png')
 
-const outputDir = `public/rainbow-og-images`;
+const defaultOutputDir = `gatsby-plugin-printer/images`;
 
 const genCodeBundle = async ({
   componentPath = require.resolve("./default-user-component.js")
@@ -72,8 +73,12 @@ const runScreenshots = async ({ data, code }, puppeteerLaunchOptions = {}) => {
   </html>
 `;
 
-  async function screenshotDOMElement({ path, selector } = {}) {
-    if (!path) {
+  async function screenshotDOMElement({
+    path: filePath,
+    selector,
+    renderDir
+  } = {}) {
+    if (!filePath) {
       throw new Error(
         `[gatsby-plugin-printer]: screenshotDOMElement requires a filepath to write file to`
       );
@@ -92,8 +97,11 @@ const runScreenshots = async ({ data, code }, puppeteerLaunchOptions = {}) => {
     if (!rect) {
       throw Error(`Could not find element that matches selector: ${selector}.`);
     }
+
+    await fs.mkdirp(path.join("./public/", renderDir));
+
     return await page.screenshot({
-      path: `./public/rainbow-og-images/${path}`,
+      path: path.join("./public/", renderDir, filePath),
       clip: {
         x: rect.left,
         y: rect.top,
@@ -189,9 +197,8 @@ exports.onPostBuild = async ({ graphql, cache }, pluginOptions) => {
     return r.data;
   });
 
-  if (!(await fs.exists(outputDir))) {
-    await fs.mkdirp(outputDir);
-  }
+  await fs.mkdirp(path.join("./public", defaultOutputDir));
+
   debug("num printer groups", data.allPrinter.group.length);
 
   await Promise.all(
