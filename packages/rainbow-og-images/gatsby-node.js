@@ -2,9 +2,6 @@ const fs = require("fs-extra");
 const puppeteer = require("puppeteer");
 const React = require("react");
 const ReactDOM = require("react-dom");
-// const {data} = require('./data')
-const slugify = require("@sindresorhus/slugify");
-const { Textfit } = require("react-textfit");
 const rollup = require("rollup");
 const commonjs = require("rollup-plugin-commonjs");
 const resolve = require("rollup-plugin-node-resolve");
@@ -58,12 +55,12 @@ const genCodeBundle = async ({
     ]
   });
   const { output } = await bundle.generate({ format: "iife" });
-  await fs.outputFile("./compiled-code.js", output[0].code);
+  // await fs.outputFile("./compiled-code.js", output[0].code);
   return output[0].code;
 };
 
 const runScreenshots = async ({ data, code }) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   const html = `
   <html>
@@ -110,12 +107,22 @@ const runScreenshots = async ({ data, code }) => {
   await page.evaluate(
     ({ data }) => {
       let dom = document.querySelector("body");
-      dom.innerHTML = data
-        .map(({ id }) => `<div data-id="${id}"></div>`)
-        .join("\n");
+      dom.innerHTML =
+        `<div data-id="empty"></div>` +
+        data.map(({ id }) => `<div data-id="${id}"></div>`).join("\n");
     },
     { data }
   );
+
+  await page.evaluate(
+    ({ node }) => {
+      const $element = document.querySelector(`[data-id="empty"]`);
+      window.ogRender($element, node.data);
+    },
+    { node: data[0] }
+  );
+
+  await page.evaluateHandle("document.fonts.ready");
 
   await Promise.all(
     data.map(node => {
@@ -128,10 +135,11 @@ const runScreenshots = async ({ data, code }) => {
       );
     })
   );
+
   const titlePromises = data.map(({ id, fileName, renderDir }) =>
     screenshotDOMElement({
       path: `${fileName}.png`,
-      selector: `[data-id="${id}"]`,
+      selector: `[data-id="${id}"] > *`,
       renderDir
     })
   );
