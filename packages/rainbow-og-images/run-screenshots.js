@@ -86,7 +86,7 @@ const runScreenshots = async ({ data, code }, puppeteerLaunchOptions = {}) => {
       );
     })
   );
-
+  console.log("titlePromises", data);
   const titlePromises = data.map(({ id, fileName, outputDir }) =>
     screenshotDOMElement({
       path: `${fileName}.png`,

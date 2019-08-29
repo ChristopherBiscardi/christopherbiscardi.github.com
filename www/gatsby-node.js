@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const path = require(`path`);
 const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
-const { createPrinterNode } = require("rainbow-og-images");
+const { createPrinterNode, runScreenshots } = require("rainbow-og-images");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
@@ -95,6 +95,36 @@ exports.onCreateNode = ({ node, actions, createNodeId }) => {
     // deleteNode(oldNode)
     // createNode(node)
   }
+};
+
+exports.onPostBuild = async ({ graphql }) => {
+  const data = await graphql(`
+    {
+      tags: allBlogPost(sort: { fields: [date, title], order: DESC }) {
+        byTag: group(field: tags) {
+          tag: fieldValue
+        }
+      }
+    }
+  `).then(r => {
+    if (r.errors) {
+      reporter.error(r.errors.join(`, `));
+    }
+    return r.data;
+  });
+
+  const tags = data.tags.byTag
+    .filter(({ tag }) => tag !== "")
+    .map(({ tag }) => ({
+      id: slugify(tag),
+      tag
+    }));
+
+  await runScreenshots({
+    data: tags,
+    component: require.resolve("./src/printer-components/blog-post-tags"),
+    outputDir: "opengraph-images/tags"
+  });
 };
 
 exports.onCreateWebpackConfig = ({

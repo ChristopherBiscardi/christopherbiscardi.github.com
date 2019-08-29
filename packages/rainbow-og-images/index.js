@@ -1,6 +1,8 @@
 const crypto = require("crypto");
 const { store } = require("gatsby/dist/redux");
 const apiRunnerNode = require(`gatsby/dist/utils/api-runner-node`);
+const genCodeBundle = require("./gen-code-bundle");
+const runScreenshots = require("./run-screenshots");
 
 const createPrinterNode = ({ id, fileName, outputDir, data, component }) => {
   const fieldData = {
@@ -47,8 +49,11 @@ const createPrinterNode = ({ id, fileName, outputDir, data, component }) => {
 
 module.exports = {
   createPrinterNode,
-  runScreenshots: async ({ data, component, outputDir }) => {
-    data.map(obj => {
+  runScreenshots: async (
+    { data, component, outputDir },
+    puppeteerLaunchOptions
+  ) => {
+    const mappedData = data.map(obj => {
       if (!Boolean(obj.id)) {
         throw new Error(
           `object requires id in runScreenshots(). object is: \n\n ${JSON.stringify(
@@ -59,16 +64,23 @@ module.exports = {
         );
       }
 
-      if (Boolean(obj.outputDir)) {
-        return obj;
+      const newObj = { ...obj, data: obj };
+      if (!Boolean(obj.outputDir)) {
+        if (!outputDir) {
+          throw new Error(`object requires an 'outputDir' field OR an 'outputDir' needs to be supplied as an argument to 'runScreenshots'
+          
+${JSON.stringify(obj, null, 2)}`);
+        }
+        newObj.outputDir = outputDir;
       }
 
-      const newObj = { ...obj };
-      newObj.outputDir = outputDir;
+      if (!Boolean(obj.fileName)) {
+        newObj.fileName = obj.id;
+      }
 
       return newObj;
     });
     const code = await genCodeBundle({ componentPath: component });
-    await runScreenshots({ data, code }, args.puppeteerLaunchOptions);
+    await runScreenshots({ data: mappedData, code }, puppeteerLaunchOptions);
   }
 };

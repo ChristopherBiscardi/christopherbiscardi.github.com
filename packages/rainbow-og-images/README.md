@@ -32,9 +32,7 @@ exports.onCreateNode = ({ actions, node }) => {
 You can also import and use `runScreenshots` but note that you will have to control batching, etc yourself.
 
 ```js
-import {graphql} from 'gatsby';
-
-exports.onPostBuild = () => {
+exports.onPostBuild = ({graphql}) => {
 
   const data = await graphql(`
     {
