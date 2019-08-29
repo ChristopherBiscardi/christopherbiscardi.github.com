@@ -3,9 +3,20 @@ import React from "react";
 import Layout from "gatsby-theme-blog/src/components/layout";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { jsx, Styled } from "theme-ui";
-import Highlight from "prism-react-renderer";
+import Helmet from "react-helmet";
+import { useStaticQuery, graphql } from "gatsby";
+import slugify from "@sindresorhus/slugify";
 
 export default props => {
+  const data = useStaticQuery(graphql`
+    query DevTipsSiteUrlQuery {
+      site {
+        siteMetadata {
+          siteUrl
+        }
+      }
+    }
+  `);
   return (
     <Layout
       location={props.location}
@@ -43,6 +54,22 @@ export default props => {
           </article>
         ))}
       </div>
+      <Helmet
+        meta={[
+          {
+            name: `twitter:card`,
+            content: "summary_large_image"
+          },
+          {
+            name: `twitter:image`,
+            content: `${
+              data.site.siteMetadata.siteUrl
+            }opengraph-images/tags/${slugify(
+              props.data.devTipsCollection.name
+            )}.png`
+          }
+        ]}
+      />
     </Layout>
   );
 };

@@ -1,5 +1,6 @@
-import { graphql } from "gatsby";
+import { graphq } from "gatsby";
 import React from "react";
+
 import DevTipCollection from "../components/dev-tip-collection";
 
 export default props => <DevTipCollection {...props} />;

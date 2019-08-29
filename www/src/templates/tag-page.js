@@ -1,6 +1,8 @@
 import React, { Fragment, useContext } from "react";
 import { Link, graphql } from "gatsby";
 import { Styled, css } from "theme-ui";
+import Helmet from "react-helmet";
+
 import Layout from "gatsby-theme-blog/src/components/layout";
 import SEO from "gatsby-theme-blog/src/components/seo";
 import Footer from "gatsby-theme-blog/src/components/home-footer";
@@ -45,6 +47,19 @@ const Posts = ({ data, pageContext, location }) => {
         </main>
         <Footer socialLinks={socialLinks} />
       </Layout>
+      <Helmet
+        meta={[
+          {
+            name: `twitter:card`,
+            content: "summary_large_image"
+          },
+          {
+            name: `twitter:image`,
+            content: `https://www.christopherbiscardi.com/opengraph-images/tags/${tag}.png`
+          },
+          { name: `twitter:site`, content: `@chrisbiscardi` }
+        ]}
+      />
     </TagPageDataContext.Provider>
   );
 };

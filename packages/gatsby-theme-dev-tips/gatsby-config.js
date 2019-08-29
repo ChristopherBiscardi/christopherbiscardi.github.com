@@ -1,5 +1,8 @@
 module.exports = options => {
   return {
+    siteMetadata: {
+      siteUrl: "/"
+    },
     plugins: [
       {
         resolve: `gatsby-source-filesystem`,

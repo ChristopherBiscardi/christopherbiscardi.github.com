@@ -17,7 +17,7 @@ export default props => {
           },
           {
             name: `twitter:image`,
-            content: `https://www.christopherbiscardi.com/rainbow-og-images/${slugify(
+            content: `https://www.christopherbiscardi.com/blog-post-images/${slugify(
               props.data.post.title
             )}.png`
           },
