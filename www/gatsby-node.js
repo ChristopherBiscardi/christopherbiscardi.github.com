@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const path = require(`path`);
 const slugify = require("@sindresorhus/slugify");
 const fs = require("fs");
-const { createPrinterNode, runScreenshots } = require("rainbow-og-images");
+const { createPrinterNode, runScreenshots } = require("gatsby-plugin-printer");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;

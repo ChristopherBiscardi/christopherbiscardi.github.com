@@ -49,7 +49,7 @@ module.exports = {
         ]
       }
     },
-    `rainbow-og-images`,
+    `gatsby-plugin-printer`,
     {
       resolve: "gatsby-theme-notes",
       options: {

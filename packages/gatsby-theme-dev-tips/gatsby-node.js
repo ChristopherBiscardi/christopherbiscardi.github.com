@@ -3,7 +3,7 @@ const path = require("path");
 const mdx = require("@mdx-js/mdx");
 const grayMatter = require("gray-matter");
 const visit = require("unist-util-visit");
-const { createPrinterNode } = require("rainbow-og-images");
+const { createPrinterNode } = require("gatsby-plugin-printer");
 const slugify = require("@sindresorhus/slugify");
 
 exports.createSchemaCustomization = ({ actions, schema }) => {
