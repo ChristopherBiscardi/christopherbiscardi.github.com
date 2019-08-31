@@ -1,4 +1,4 @@
-import { graphq } from "gatsby";
+import { graphql } from "gatsby";
 import React from "react";
 
 import DevTipCollection from "../components/dev-tip-collection";

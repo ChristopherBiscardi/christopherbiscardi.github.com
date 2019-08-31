@@ -88,12 +88,21 @@ exports.onCreateNode = ({ node, actions, createNodeId }) => {
         "gatsby-theme-dev-tips/src/printer-components/dev-tips-collection.js"
       )
   ) {
-    // const oldNode = {...node};
     node.component = require.resolve(
       "./src/printer-components/dev-tips-collection.js"
     );
-    // deleteNode(oldNode)
-    // createNode(node)
+  }
+
+  if (
+    node.internal.type === "Printer" &&
+    node.component ===
+      require.resolve(
+        "gatsby-theme-dev-tips/src/printer-components/dev-tip-code-block.js"
+      )
+  ) {
+    node.component = require.resolve(
+      "./src/printer-components/dev-tip-code-block.js"
+    );
   }
 };
 

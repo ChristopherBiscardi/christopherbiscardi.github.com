@@ -49,7 +49,14 @@ module.exports = {
         ]
       }
     },
-    `gatsby-plugin-printer`,
+    {
+      resolve: `gatsby-plugin-printer`,
+      options: {
+        puppeteerLaunchOptions: {
+          headless: true
+        }
+      }
+    },
     {
       resolve: "gatsby-theme-notes",
       options: {

@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const path = require("path");
+const fs = require("fs");
 const mdx = require("@mdx-js/mdx");
 const grayMatter = require("gray-matter");
 const visit = require("unist-util-visit");
@@ -13,7 +14,7 @@ exports.createSchemaCustomization = ({ actions, schema }) => {
       id: ID!
       title: String
       tweet: String
-      codeBlocks: [String]!
+      codeBlocks: [JSON]!
       collection: DevTipsYaml! @link(by: "content")
       body: String!
   }`);
@@ -25,7 +26,7 @@ exports.createSchemaCustomization = ({ actions, schema }) => {
         id: `ID!`,
         title: `String!`,
         tweet: "String",
-        codeBlocks: "[String]!",
+        codeBlocks: "[JSON]!",
         collection: {
           type: "DevTipsYaml!",
           extensions: {
@@ -72,19 +73,6 @@ exports.onCreateNode = async ({
     const { frontmatter } = node;
     const parent = getNode(node.parent);
 
-    const codeBlocks = [];
-
-    await mdx(grayMatter(node.rawBody).content, {
-      remarkPlugins: [
-        () => ast => {
-          visit(ast, "code", node => {
-            codeBlocks.push(node.value);
-          });
-          return ast;
-        }
-      ]
-    });
-
     if (parent.sourceInstanceName === "gatsby-theme-dev-tips") {
       if (!node.frontmatter.tweet) {
         reporter.warn("devtips can't tweet about " + node.frontmatter.title);
@@ -96,6 +84,18 @@ exports.onCreateNode = async ({
           }`
         );
       }
+      const codeBlocks = [];
+      await mdx(grayMatter(node.rawBody).content, {
+        remarkPlugins: [
+          () => ast => {
+            visit(ast, "code", ({ position, ...node }) => {
+              codeBlocks.push(node);
+            });
+            return ast;
+          }
+        ]
+      });
+
       const fieldData = {
         title: node.frontmatter.title,
         tweet: node.frontmatter.tweet,
@@ -136,9 +136,26 @@ exports.onCreateNode = async ({
         "./src/printer-components/dev-tips-collection.js"
       )
     });
+  }
 
-    // createNode(printerNode);
-    //    createParentChildLink({ parent: node, child: printerNode });
+  // DevTips Pages Images
+  if (node.internal.type === "MdxDevTip") {
+    node.codeBlocks.forEach((block, i) => {
+      const printerNode = createPrinterNode({
+        id: createNodeId(`${node.id} >>> Printer`),
+        // fileName is something you can use in opengraph images, etc
+        fileName: slugify(`${node.collection} ${node.title} ${i}`),
+        // renderDir is relative to `public` by default
+        outputDir: "dev-tip-images",
+        // data gets passed directly to your react component
+        data: block,
+        // the component to use for rendering. Will get batched with
+        // other nodes that use the same component
+        component: require.resolve(
+          "./src/printer-components/dev-tip-code-block.js"
+        )
+      });
+    });
   }
 };
 
@@ -182,4 +199,48 @@ exports.createPages = ({ graphql, actions }) => {
   });
 };
 
-exports.onPostBuild = async ({ graphql }, pluginOptions) => {};
+exports.onPostBuild = async ({ graphql, reporter }, pluginOptions) => {
+  const data = await graphql(`
+    {
+      allDevTip {
+        totalCount
+        nodes {
+          id
+          tweet
+          title
+          codeBlocks
+          collection {
+            slug
+          }
+        }
+      }
+    }
+  `).then(r => {
+    if (r.errors) {
+      reporter.error(r.errors.join(`, `));
+    }
+    return r.data;
+  });
+
+  const devTipsJSONFile = data.allDevTip.nodes.map(
+    ({ codeBlocks, collection, title, ...json }) => {
+      return {
+        ...json,
+        images: codeBlocks.map((_, i) =>
+          path.join(
+            "dev-tip-images",
+            slugify(`${collection.content} ${title} ${i}`)
+          )
+        )
+      };
+    }
+  );
+  reporter.log(
+    `[gatsby-theme-devtips]: writing JSON file with ${data.allDevTip.totalCount} DevTips`
+  );
+  fs.writeFileSync(
+    "./public/dev-tips.json",
+    JSON.stringify(devTipsJSONFile, null, 2),
+    "utf-8"
+  );
+};
