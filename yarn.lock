@@ -6650,10 +6650,10 @@ gatsby-plugin-page-creator@^2.1.14:
     lodash "^4.17.15"
     micromatch "^3.1.10"
 
-gatsby-plugin-printer@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-printer/-/gatsby-plugin-printer-1.0.2.tgz#f5783b102605f7c8c8ae97219638313583ff406d"
-  integrity sha512-2DwCMzZyy0RGHa3H8P+j8cmPAohPTrcdtc5UHbuCSrgM1/SXVqmFVT97h7BnGeLn32vAeUVEg5PwcJWbQ6Q6/w==
+gatsby-plugin-printer@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-printer/-/gatsby-plugin-printer-1.0.3.tgz#d62cebbd1b8a2e5247faab3661fa13ce2878a079"
+  integrity sha512-yYPnXGA9/ifSF4253pScZ+skxDCp/B4q4Qhse6XoyM6xJegsGHp8T2kbE7t7qlCQT7VBOSQNo0fyvyJ44LdR4Q==
   dependencies:
     "@sindresorhus/slugify" "^0.9.1"
     babel-plugin-preval "^3.0.1"

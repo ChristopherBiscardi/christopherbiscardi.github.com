@@ -5,7 +5,7 @@
   "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
   "license": "MIT",
   "dependencies": {
-    "gatsby-plugin-printer": "^1.0.2",
+    "gatsby-plugin-printer": "^1.0.3",
     "gatsby-transformer-yaml": "^2.2.7"
   }
 }
