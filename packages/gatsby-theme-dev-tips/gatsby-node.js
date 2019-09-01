@@ -210,7 +210,7 @@ exports.onPostBuild = async ({ graphql, reporter }, pluginOptions) => {
           title
           codeBlocks
           collection {
-            slug
+            content
           }
         }
       }
@@ -224,6 +224,7 @@ exports.onPostBuild = async ({ graphql, reporter }, pluginOptions) => {
 
   const devTipsJSONFile = data.allDevTip.nodes.map(
     ({ codeBlocks, collection, title, ...json }) => {
+      console.log("collection", collection);
       return {
         ...json,
         images: codeBlocks.map((_, i) =>
