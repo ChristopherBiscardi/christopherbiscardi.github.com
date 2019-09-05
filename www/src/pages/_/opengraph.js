@@ -1,14 +1,46 @@
-import React from "react";
+import React, { useReducer } from "react";
 import { graphql, Link } from "gatsby";
 import { Styled } from "theme-ui";
 import Layout from "gatsby-theme-blog/src/components/layout";
+import Images, { Modal, ModalGateway } from "react-images";
 
 export default ({ location, ...props }) => {
   const images = props.data.images.group;
-
+  const [state, dispatch] = useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case "open-with-images":
+          return {
+            images: action.payload.images,
+            initialImage: action.payload.initialImage,
+            modalIsOpen: true
+          };
+        case "close-modal":
+          return {
+            images: [],
+            initialImage: 0,
+            modalIsOpen: false
+          };
+        default:
+          throw new Error("asf");
+      }
+    },
+    {
+      images: [],
+      initialImage: 0,
+      modalIsOpen: false
+    }
+  );
   return (
     <Layout location={location} title="Browse by Tags">
       <Styled.h1>Open Graph Images</Styled.h1>
+      <ModalGateway>
+        {state.modalIsOpen ? (
+          <Modal onClose={() => dispatch({ type: "close-modal" })}>
+            <Images views={state.images} currentIndex={state.initialImage} />
+          </Modal>
+        ) : null}
+      </ModalGateway>
       {images.map(({ component, nodes }) => {
         return (
           <div>
@@ -24,8 +56,20 @@ export default ({ location, ...props }) => {
                 marginBottom: "4rem"
               }}
             >
-              {nodes.map(({ outputDir, fileName }) => (
-                <li>
+              {nodes.map(({ outputDir, fileName }, i) => (
+                <li
+                  onClick={() =>
+                    dispatch({
+                      type: "open-with-images",
+                      payload: {
+                        images: nodes.map(node => ({
+                          src: `/${node.outputDir}/${node.fileName}.png`
+                        })),
+                        initialImage: i
+                      }
+                    })
+                  }
+                >
                   <img
                     src={`/${outputDir}/${fileName}.png`}
                     css={{
