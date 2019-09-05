@@ -1,11 +1,15 @@
 package main
 
 import (
+	"math/rand"
+	"fmt"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/honeycombio/libhoney-go"
 	"github.com/honeycombio/libhoney-go/transmission"
 	"github.com/spf13/viper"
+	"github.com/ChimeraCoder/anaconda"
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
@@ -33,7 +37,28 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 
 	// This event will be sent regardless of how we exit
 	defer ev.Send()
+	
+	err, tips := GetDevTipsJson()
+	if err != nil {
+		ev.AddField("error", err)
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Failed to get list of dev tips",
+		}, nil
+	}
+	numTips := len(tips)
+	tipToTweetIndex := rand.Intn(numTips)
+	tipToTweet := tips[tipToTweetIndex]
 
+	ev.Add(map[string]interface{}{
+		"num_tips":       numTips,
+		"tip_index_to_tweet":   tipToTweetIndex,
+		"tweet": tipToTweet.Tweet,
+		"num_images":         len(tipToTweet.Images),
+	})
+
+	api := anaconda.NewTwitterApiWithCredentials(viper.GetString("TWITTER_ACCESS_TOKEN"), viper.GetString("TWITTER_ACCESS_TOKEN_SECRET"), viper.GetString("TWITTER_CONSUMER_KEY"), viper.GetString("TWITTER_CONSUMER_SECRET"))
+    fmt.Println(api)
 	ev.AddField("status_code", 200)
 	return &events.APIGatewayProxyResponse{
 		StatusCode: 200,
@@ -44,6 +69,10 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 func main() {
 	viper.SetEnvPrefix("cb") // will be uppercased automatically
 	viper.BindEnv("SIMPLE_AUTH")
+	viper.BindEnv("TWITTER_ACCESS_TOKEN")
+	viper.BindEnv("TWITTER_ACCESS_TOKEN_SECRET")
+	viper.BindEnv("TWITTER_CONSUMER_KEY")
+	viper.BindEnv("TWITTER_CONSUMER_SECRET")
 
 	libhoney.Init(libhoney.Config{
 		// WriteKey: "",
