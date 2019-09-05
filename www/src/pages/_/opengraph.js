@@ -47,6 +47,7 @@ export const query = graphql`
   query AllOpenGraphImagesQuery {
     images: allPrinter {
       group(field: component) {
+        component: fieldValue
         nodes {
           outputDir
           fileName
