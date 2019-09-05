@@ -224,13 +224,13 @@ exports.onPostBuild = async ({ graphql, reporter }, pluginOptions) => {
 
   const devTipsJSONFile = data.allDevTip.nodes.map(
     ({ codeBlocks, collection, title, ...json }) => {
-      console.log("collection", collection);
       return {
         ...json,
         images: codeBlocks.map((_, i) =>
           path.join(
-            "dev-tip-images",
-            slugify(`${collection.content} ${title} ${i}`)
+            "/dev-tip-images",
+            slugify(`${collection.content} ${title} ${i}`),
+            "/png"
           )
         )
       };
