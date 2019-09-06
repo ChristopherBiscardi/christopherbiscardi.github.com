@@ -2,7 +2,8 @@ package main
 
 import (
 	"math/rand"
-	"fmt"
+	"strings"
+	"net/url"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -58,7 +59,6 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	})
 
 	api := anaconda.NewTwitterApiWithCredentials(viper.GetString("TWITTER_ACCESS_TOKEN"), viper.GetString("TWITTER_ACCESS_TOKEN_SECRET"), viper.GetString("TWITTER_CONSUMER_KEY"), viper.GetString("TWITTER_CONSUMER_SECRET"))
-    fmt.Println(api)
 
     err, images := FetchDevTipImages(tipToTweet)
     if err != nil {
@@ -82,7 +82,25 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	    medias = append(medias, media)
     }
 
+    mediaIds := []string{}
+    for _, media := range medias {
+    	mediaIds = append(mediaIds, media.MediaIDString)
+    }
+
+    commaSeparatedIds := strings.Join(mediaIds, ",")
+    tweet, err := api.PostTweet(tipToTweet.Tweet, url.Values{
+    	"media_ids": []string{commaSeparatedIds},
+    })
+    if err != nil {
+		ev.AddField("error", err)
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Failed to send tweet",
+		}, nil
+	}
+
 	ev.AddField("status_code", 200)
+	ev.AddField("tweet_id", tweet.IdStr)
 	return &events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       "Hello, World",
