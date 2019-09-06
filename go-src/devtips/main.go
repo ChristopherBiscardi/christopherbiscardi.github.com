@@ -59,6 +59,29 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 
 	api := anaconda.NewTwitterApiWithCredentials(viper.GetString("TWITTER_ACCESS_TOKEN"), viper.GetString("TWITTER_ACCESS_TOKEN_SECRET"), viper.GetString("TWITTER_CONSUMER_KEY"), viper.GetString("TWITTER_CONSUMER_SECRET"))
     fmt.Println(api)
+
+    err, images := FetchDevTipImages(tipToTweet)
+    if err != nil {
+		ev.AddField("error", err)
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Failed to fetch images",
+		}, nil
+	}
+
+    medias := []anaconda.Media{}
+    for _, b64Image := range images {
+	    media, err := api.UploadMedia(b64Image)
+	    if err != nil {
+			ev.AddField("error", err)
+			return &events.APIGatewayProxyResponse{
+				StatusCode: 500,
+				Body:       "Failed to upload images",
+			}, nil
+	    }
+	    medias = append(medias, media)
+    }
+
 	ev.AddField("status_code", 200)
 	return &events.APIGatewayProxyResponse{
 		StatusCode: 200,

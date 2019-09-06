@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"net/http"
     "time"
 	"encoding/json"
+    "encoding/base64"
 )
 
 type DevTip struct {
@@ -32,4 +34,25 @@ func GetDevTipsJson() (error, []DevTip) {
 	decodeErr := json.NewDecoder(r.Body).Decode(&target)
 
     return decodeErr, target 
+}
+
+func FetchDevTipImages(tip DevTip) (error, []string) {
+	var myClient = &http.Client{Timeout: 10 * time.Second}
+
+    images := []string{}
+    for _, imageUrl := range tip.Images {
+		r, err := myClient.Get("https://christopherbiscardi.com" + imageUrl)
+	    if err != nil {
+	        return err, nil
+	    }
+	    defer r.Body.Close()
+
+        buf := make([]byte, r.ContentLength)
+	    fReader := bufio.NewReader(r.Body)
+        fReader.Read(buf)
+	    b64Image := base64.StdEncoding.EncodeToString(buf)
+	    images = append(images, b64Image)
+    }
+
+    return nil, images 
 }
