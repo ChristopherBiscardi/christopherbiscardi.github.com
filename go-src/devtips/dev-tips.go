@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	"io/ioutil"
 	"net/http"
     "time"
 	"encoding/json"
@@ -47,9 +47,11 @@ func FetchDevTipImages(tip DevTip) (error, []string) {
 	    }
 	    defer r.Body.Close()
 
-        buf := make([]byte, r.ContentLength)
-	    fReader := bufio.NewReader(r.Body)
-        fReader.Read(buf)
+        // buf := make([]byte, r.ContentLength)
+	    buf, ioErr := ioutil.ReadAll(r.Body)
+	    if ioErr != nil {
+	        return ioErr, nil
+	    }
 	    b64Image := base64.StdEncoding.EncodeToString(buf)
 	    images = append(images, b64Image)
     }
