@@ -119,7 +119,7 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 
 	tips, err := GetDevTipsJson()
 	if err != nil {
-		ev.AddField("error", err)
+		ev.AddField("error", err.Error())
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "Failed to get list of dev tips",
@@ -138,7 +138,7 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 
 	images, fetchErr := FetchDevTipImages(tipToTweet)
     if err != nil {
-		ev.AddField("error", fetchErr)
+		ev.AddField("error", fetchErr.Error())
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "Failed to fetch images",
@@ -148,8 +148,14 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
     api := BootstrapTwitterApi()
 
     medias, mediaErrs := UploadImages(images, api)
-    if mediaErrs != nil {
-		ev.AddField("error", mediaErrs)
+    if len(mediaErrs) > 0 {
+    	errorStrings := []string{}
+
+    	for _, theErr := range mediaErrs {
+    		errorStrings = append(errorStrings, theErr.Error())
+    	}
+
+		ev.AddField("error", strings.Join(errorStrings, "\n\n"))
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "Failed to upload images",
@@ -166,7 +172,7 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
     	"media_ids": []string{commaSeparatedIds},
     })
     if err != nil {
-		ev.AddField("error", err)
+		ev.AddField("error", err.Error())
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "Failed to send tweet",

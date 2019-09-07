@@ -20,10 +20,10 @@ func TestGetTips(t *testing.T) {
 	fmt.Println(images)
 }
 
-func TestGetTipImages(t *testing.T) {
+// func TestGetTipImages(t *testing.T) {
 
 	
-}
+// }
 
 // func TestHandleRequest(t *testing.T) {
 
@@ -40,8 +40,10 @@ func TestGetTipImages(t *testing.T) {
 // 	// This event will be sent regardless of how we exit
 // 	defer ev.Send()
 
-// 	_, err := HandleRequest(ev)
+// 	res, err := HandleRequest(ev)
 // 	if err != nil {
 // 		t.Error(err)
 // 	}
+// 	fmt.Println(err)
+// 	fmt.Println(res)
 // }
