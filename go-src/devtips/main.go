@@ -1,7 +1,7 @@
 package main
 
 import (
-	
+	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -18,7 +18,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 		}, nil
 	}
 
-	simpleAuth := viper.GetString("simple_auth")
+	simpleAuth := viper.GetString("SIMPLE_AUTH")
 	fmt.Println("simpleAuth: " + simpleAuth)
 
 	if request.Headers["X-Simple-Auth"] != simpleAuth {
