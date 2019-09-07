@@ -230,7 +230,7 @@ exports.onPostBuild = async ({ graphql, reporter }, pluginOptions) => {
           path.join(
             "/dev-tip-images",
             slugify(`${collection.content} ${title} ${i}`),
-            "/png"
+            ".png"
           )
         )
       };
