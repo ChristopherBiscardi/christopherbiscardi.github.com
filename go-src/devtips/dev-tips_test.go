@@ -2,10 +2,10 @@ package main
 
 import (
 	"testing"
-	// "fmt"
+	"fmt"
 
-	"github.com/honeycombio/libhoney-go"
-	"github.com/honeycombio/libhoney-go/transmission"
+	// "github.com/honeycombio/libhoney-go"
+	// "github.com/honeycombio/libhoney-go/transmission"
 )
 func TestGetTips(t *testing.T) {
 	test, err := GetDevTipsJson()
@@ -29,23 +29,23 @@ func TestGetTipImages(t *testing.T) {
 	
 }
 
-func TestHandleRequest(t *testing.T) {
+// func TestHandleRequest(t *testing.T) {
 
-	libhoney.Init(libhoney.Config{
-		// WriteKey: "",
-		Dataset:      "netlify-lambdas",
-		Transmission: &transmission.WriterSender{},
-	})
-	// Flush any pending calls to Honeycomb before exiting
-	defer libhoney.Close()
+// 	libhoney.Init(libhoney.Config{
+// 		// WriteKey: "",
+// 		Dataset:      "netlify-lambdas",
+// 		Transmission: &transmission.WriterSender{},
+// 	})
+// 	// Flush any pending calls to Honeycomb before exiting
+// 	defer libhoney.Close()
 
 
-	ev := libhoney.NewEvent()
-	// This event will be sent regardless of how we exit
-	defer ev.Send()
+// 	ev := libhoney.NewEvent()
+// 	// This event will be sent regardless of how we exit
+// 	defer ev.Send()
 
-	_, err := HandleRequest(ev)
-	if err != nil {
-		t.Error(err)
-	}
-}
+// 	_, err := HandleRequest(ev)
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// }
