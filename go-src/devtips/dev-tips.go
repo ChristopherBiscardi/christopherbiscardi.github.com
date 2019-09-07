@@ -136,9 +136,9 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 		"num_images":         len(tipToTweet.Images),
 	})
 
-	images, err := FetchDevTipImages(tipToTweet)
+	images, fetchErr := FetchDevTipImages(tipToTweet)
     if err != nil {
-		ev.AddField("error", err)
+		ev.AddField("error", fetchErr)
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "Failed to fetch images",

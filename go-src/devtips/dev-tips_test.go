@@ -12,20 +12,16 @@ func TestGetTips(t *testing.T) {
 	if err != nil {
 		t.Error("http req failed", err)
 	}
-	fmt.Println(test)
 	
+	images, imageErr := FetchDevTipImages(test[1])
+	if imageErr != nil {
+		t.Error("http req failed", imageErr)
+	}
+	fmt.Println(images)
 }
 
 func TestGetTipImages(t *testing.T) {
-	test, err := FetchDevTipImages(DevTip{
-		Id: "nothing",
-		Tweet: "some tweet",
-		Images: []string{"/dev-tip-images/cli-bat-replaces-cat-0.png"},
-	})
-	if err != nil {
-		t.Error("http req failed", err)
-	}
-	fmt.Println(len(test))
+
 	
 }
 

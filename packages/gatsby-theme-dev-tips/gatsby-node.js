@@ -142,7 +142,7 @@ exports.onCreateNode = async ({
   if (node.internal.type === "MdxDevTip") {
     node.codeBlocks.forEach((block, i) => {
       const printerNode = createPrinterNode({
-        id: createNodeId(`${node.id} >>> Printer`),
+        id: createNodeId(`${node.id} ${node.title} ${i} >>> Printer`),
         // fileName is something you can use in opengraph images, etc
         fileName: slugify(`${node.collection} ${node.title} ${i}`),
         // renderDir is relative to `public` by default
