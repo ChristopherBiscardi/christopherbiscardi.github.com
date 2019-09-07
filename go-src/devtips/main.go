@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -11,6 +12,10 @@ import (
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+    fmt.Println("in handler vvv")
+	for _, pair := range os.Environ() {
+      fmt.Println(pair)
+    }
 	if request.HTTPMethod == "GET" {
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 404,
@@ -44,6 +49,9 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 }
 
 func main() {
+    for _, pair := range os.Environ() {
+      fmt.Println(pair)
+    }
 	viper.SetEnvPrefix("cb") // will be uppercased automatically
 	viper.BindEnv("SIMPLE_AUTH")
 
