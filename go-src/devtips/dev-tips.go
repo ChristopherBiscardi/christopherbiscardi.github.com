@@ -65,10 +65,10 @@ func FetchDevTipImages(tip DevTip) ([]string, error) {
 	    if ioErr != nil {
 	        return nil, ioErr
 	    }
-        newerr := ioutil.WriteFile("/tmp/run", buf, 0644)
-        if newerr != nil {
+        // newerr := ioutil.WriteFile("/tmp/run", buf, 0644)
+        // if newerr != nil {
 
-        }
+        // }
 	    b64Image := base64.StdEncoding.EncodeToString(buf)
 	    images = append(images, b64Image)
     }

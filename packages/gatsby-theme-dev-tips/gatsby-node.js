@@ -229,8 +229,7 @@ exports.onPostBuild = async ({ graphql, reporter }, pluginOptions) => {
         images: codeBlocks.map((_, i) =>
           path.join(
             "/dev-tip-images",
-            slugify(`${collection.content} ${title} ${i}`),
-            ".png"
+            slugify(`${collection.content} ${title} ${i}.png`)
           )
         )
       };
