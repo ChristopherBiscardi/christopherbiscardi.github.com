@@ -17,7 +17,9 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 			Body:       "hey, how's it going?",
 		}, nil
 	}
+
 	simpleAuth := viper.GetString("simple_auth")
+
 	if request.Headers["X-Simple-Auth"] != simpleAuth {
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 404,
