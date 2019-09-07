@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"strings"
 	"net/url"
+	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
