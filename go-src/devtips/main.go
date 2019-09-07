@@ -39,7 +39,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	// This event will be sent regardless of how we exit
 	defer ev.Send()
 	
-	err, tips := GetDevTipsJson()
+	tips, err := GetDevTipsJson()
 	if err != nil {
 		ev.AddField("error", err)
 		return &events.APIGatewayProxyResponse{
@@ -60,7 +60,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 
 	api := anaconda.NewTwitterApiWithCredentials(viper.GetString("TWITTER_ACCESS_TOKEN"), viper.GetString("TWITTER_ACCESS_TOKEN_SECRET"), viper.GetString("TWITTER_CONSUMER_KEY"), viper.GetString("TWITTER_CONSUMER_SECRET"))
 
-    err, images := FetchDevTipImages(tipToTweet)
+    images, err := FetchDevTipImages(tipToTweet)
     if err != nil {
 		ev.AddField("error", err)
 		return &events.APIGatewayProxyResponse{
@@ -110,10 +110,19 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 func main() {
 	viper.SetEnvPrefix("cb") // will be uppercased automatically
 	viper.BindEnv("SIMPLE_AUTH")
-	viper.BindEnv("TWITTER_ACCESS_TOKEN")
-	viper.BindEnv("TWITTER_ACCESS_TOKEN_SECRET")
-	viper.BindEnv("TWITTER_CONSUMER_KEY")
-	viper.BindEnv("TWITTER_CONSUMER_SECRET")
+	for _, env := range []string{
+		"TWITTER_ACCESS_TOKEN",
+		"TWITTER_ACCESS_TOKEN_SECRET",
+		"TWITTER_CONSUMER_KEY",
+		"TWITTER_CONSUMER_SECRET",
+	}{
+		viper.BindEnv(env)
+		isSet := viper.IsSet(env)
+		if isSet == false {
+			panic(fmt.Sprintf("%v is not set", env))
+		}
+
+	}
 
 	libhoney.Init(libhoney.Config{
 		// WriteKey: "",

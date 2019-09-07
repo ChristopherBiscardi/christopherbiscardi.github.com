@@ -21,40 +21,39 @@ type DevTip struct {
 //     ]
 //   },
 
-func GetDevTipsJson() (error, []DevTip) {
+func GetDevTipsJson() ([]DevTip, error) {
 	target := make([]DevTip, 10)
 
 	var myClient = &http.Client{Timeout: 10 * time.Second}
 	r, err := myClient.Get("https://christopherbiscardi.com/dev-tips.json")
     if err != nil {
-        return err, nil
+        return nil, err
     }
     defer r.Body.Close()
 
 	decodeErr := json.NewDecoder(r.Body).Decode(&target)
 
-    return decodeErr, target 
+    return target, decodeErr
 }
 
-func FetchDevTipImages(tip DevTip) (error, []string) {
+func FetchDevTipImages(tip DevTip) ([]string, error) {
 	var myClient = &http.Client{Timeout: 10 * time.Second}
 
     images := []string{}
     for _, imageUrl := range tip.Images {
 		r, err := myClient.Get("https://christopherbiscardi.com" + imageUrl)
 	    if err != nil {
-	        return err, nil
+	        return nil, err
 	    }
 	    defer r.Body.Close()
 
-        // buf := make([]byte, r.ContentLength)
 	    buf, ioErr := ioutil.ReadAll(r.Body)
 	    if ioErr != nil {
-	        return ioErr, nil
+	        return nil, ioErr
 	    }
 	    b64Image := base64.StdEncoding.EncodeToString(buf)
 	    images = append(images, b64Image)
     }
 
-    return nil, images 
+    return images, nil
 }
