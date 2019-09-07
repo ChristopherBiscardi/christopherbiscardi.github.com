@@ -1,0 +1,25 @@
+---
+tweet: Viper (https://github.com/spf13/viper) lets you check to see if environment variables are set, so you can use that to early terminate a @golang program
+title: Viper isSet
+---
+
+```go
+for _, env := range []string{
+	"TWITTER_ACCESS_TOKEN",
+	"TWITTER_ACCESS_TOKEN_SECRET",
+	"TWITTER_CONSUMER_KEY",
+	"TWITTER_CONSUMER_SECRET",
+}{
+	viper.BindEnv(env)
+	isSet := viper.IsSet(env)
+	if isSet == false {
+		panic(fmt.Sprintf("%v is not set", env))
+	}
+
+}
+
+access_token := viper.GetString("TWITTER_ACCESS_TOKEN")
+access_token_secret := viper.GetString("TWITTER_ACCESS_TOKEN_SECRET")
+consumer_key := viper.GetString("TWITTER_CONSUMER_KEY")
+consumer_secret := viper.GetString("TWITTER_CONSUMER_SECRET")
+```
