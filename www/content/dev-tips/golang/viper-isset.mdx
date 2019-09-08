@@ -1,5 +1,8 @@
 ---
-tweet: Viper (https://github.com/spf13/viper) lets you check to see if environment variables are set, so you can use that to early terminate a @golang program
+tweet:
+  Viper (https://github.com/spf13/viper) lets you check to
+  see if environment variables are set, so you can use that
+  to early terminate a @golang program
 title: Viper isSet
 ---
 
@@ -17,7 +20,6 @@ for _, env := range []string{
 	}
 
 }
-
 access_token := viper.GetString("TWITTER_ACCESS_TOKEN")
 access_token_secret := viper.GetString("TWITTER_ACCESS_TOKEN_SECRET")
 consumer_key := viper.GetString("TWITTER_CONSUMER_KEY")
