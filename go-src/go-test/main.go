@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/honeycombio/libhoney-go"
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
@@ -20,9 +21,13 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 }
 
 func main() {
-    for _, pair := range os.Environ() {
-      fmt.Println(pair)
-    }
+	libhoney.Init(libhoney.Config{
+		// WriteKey: "",
+		Dataset: "netlify-lambdas",
+		// Transmission: &transmission.WriterSender{},
+	})
+	// Flush any pending calls to Honeycomb before exiting
+	defer libhoney.Close()
 	// Make the handler available for Remote Procedure Call by AWS Lambda
 	lambda.Start(handler)
 }
