@@ -11,9 +11,12 @@ import (
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-    fmt.Println("in handler vvv")
+	fmt.Println("in handler vvv")
+	simpleAuth := viper.GetString("SIMPLE_AUTH")
+	fmt.Println("simpleAuth: " + simpleAuth)
+
 	for _, pair := range os.Environ() {
-      fmt.Println(pair)
+		fmt.Println(pair)
 	}
 	return &events.APIGatewayProxyResponse{
 		StatusCode: 200,
