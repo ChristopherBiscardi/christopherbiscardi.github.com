@@ -23,12 +23,12 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	for _, pair := range os.Environ() {
 		fmt.Println(pair)
 	}
-	if request.HTTPMethod == "GET" {
-		return &events.APIGatewayProxyResponse{
-			StatusCode: 404,
-			Body:       "hey, how's it going?",
-		}, nil
-	}
+	// if request.HTTPMethod == "GET" {
+	// 	return &events.APIGatewayProxyResponse{
+	// 		StatusCode: 404,
+	// 		Body:       "hey, how's it going?",
+	// 	}, nil
+	// }
 
 	simpleAuth := viper.GetString("SIMPLE_AUTH")
 	fmt.Println("simpleAuth: " + simpleAuth)
