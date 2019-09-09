@@ -77,7 +77,7 @@ func FetchDevTipImages(tip DevTip) ([]string, error) {
 	return images, nil
 }
 
-func BootstrapTwitterApi() *anaconda.TwitterApi {
+func BootstrapTwitterAPI() (*anaconda.TwitterApi, error) {
 
 	for _, env := range []string{
 		"TWITTER_ACCESS_TOKEN",
@@ -88,17 +88,17 @@ func BootstrapTwitterApi() *anaconda.TwitterApi {
 		viper.BindEnv(env)
 		isSet := viper.IsSet(env)
 		if isSet == false {
-			panic(fmt.Sprintf("%v is not set", env))
+			return nil, errors.New(fmt.Sprintf("%v is not set", env))
 		}
 
 	}
 
-	access_token := viper.GetString("TWITTER_ACCESS_TOKEN")
-	access_token_secret := viper.GetString("TWITTER_ACCESS_TOKEN_SECRET")
-	consumer_key := viper.GetString("TWITTER_CONSUMER_KEY")
-	consumer_secret := viper.GetString("TWITTER_CONSUMER_SECRET")
+	accessToken := viper.GetString("TWITTER_ACCESS_TOKEN")
+	accessTokenSecret := viper.GetString("TWITTER_ACCESS_TOKEN_SECRET")
+	consumerKey := viper.GetString("TWITTER_CONSUMER_KEY")
+	consumerSecret := viper.GetString("TWITTER_CONSUMER_SECRET")
 
-	return anaconda.NewTwitterApiWithCredentials(access_token, access_token_secret, consumer_key, consumer_secret)
+	return anaconda.NewTwitterApiWithCredentials(accessToken, accessTokenSecret, consumerKey, consumerSecret), nil
 
 }
 
@@ -138,7 +138,7 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 	})
 
 	images, fetchErr := FetchDevTipImages(tipToTweet)
-	if err != nil {
+	if fetchErr != nil {
 		ev.AddField("error", fetchErr.Error())
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 500,
@@ -146,7 +146,14 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 		}, nil
 	}
 
-	api := BootstrapTwitterApi()
+	api, err := BootstrapTwitterAPI()
+	if err != nil {
+		ev.AddField("error", err.Error())
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Failed to bootstrap",
+		}, nil
+	}
 
 	medias, mediaErrs := UploadImages(images, api)
 	if len(mediaErrs) > 0 {
