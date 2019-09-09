@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -12,6 +13,13 @@ import (
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	fmt.Println("in handler vvv")
+	fmt.Println("in handler vvv")
+	fmt.Println("in handler vvv")
+	fmt.Println("in handler vvv")
+	fmt.Println("in handler vvv")
+	fmt.Println("in handler vvv")
+	time.Sleep(1000 * time.Millisecond)
+	fmt.Println("in handler last vvv")
 	for _, pair := range os.Environ() {
 		fmt.Println(pair)
 	}
