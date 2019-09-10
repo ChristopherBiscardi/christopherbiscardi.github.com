@@ -100,7 +100,9 @@ export default props => {
     <div>
       <Header />
       <div css={{ maxWidth, margin: "auto", marginTop: "75px" }}>
-        <h1 css={{ fontSize: "3rem", marginBottom: ".3em" }}>Hey, I᾿m Chris</h1>
+        <h1 css={{ fontSize: "3rem", marginBottom: ".3em" }}>
+          Hey, I&rsquo;m Chris
+        </h1>
         <p
           css={{
             fontSize: "1.2rem",
