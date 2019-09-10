@@ -57,6 +57,7 @@ module.exports = {
         }
       }
     },
+    `gatsby-plugin-svgr-loader`,
     {
       resolve: "gatsby-theme-notes",
       options: {

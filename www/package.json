@@ -21,6 +21,8 @@
     "*.{css,scss}": ["prettier --parser css --write", "git add"]
   },
   "dependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.4.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
     "@emotion/babel-preset-css-prop": "^10.0.17",
     "@emotion/core": "^10.0.17",
     "@emotion/styled": "^10.0.17",
@@ -29,6 +31,8 @@
     "@rehooks/component-size": "^1.0.3",
     "@sens8/component-typography": "*",
     "@sindresorhus/slugify": "^0.9.1",
+    "babel-plugin-preval": "^3.0.1",
+    "babel-preset-gatsby": "^0.2.13",
     "emotion-theming": "^10.0.4",
     "formik": "^1.5.1",
     "gatsby": "2.15.1",
@@ -42,6 +46,7 @@
     "gatsby-plugin-printer": "^1.0.3",
     "gatsby-plugin-react-helmet": "3.1.5",
     "gatsby-plugin-remove-serviceworker": "^1.0.0",
+    "gatsby-plugin-svgr-loader": "^0.1.0",
     "gatsby-plugin-web-font-loader": "^1.0.4",
     "gatsby-plugin-webmention": "^0.1.0",
     "gatsby-remark-prismjs": "3.1.4",
