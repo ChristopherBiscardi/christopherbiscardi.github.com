@@ -1,26 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/honeycombio/libhoney-go"
 	"github.com/honeycombio/libhoney-go/transmission"
-	"github.com/spf13/viper"
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	viper.SetEnvPrefix("cb") // will be uppercased automatically
-	viper.AutomaticEnv()
 
-	val, ok := os.LookupEnv("SIMPLE_AUTH")
-	fmt.Printf("\n\nval: %v ; ok: %v\n\n", val, ok)
-
-	// for _, pair := range os.Environ() {
-	// 	fmt.Println(pair)
-	// }
 	// if request.HTTPMethod == "GET" {
 	// 	return &events.APIGatewayProxyResponse{
 	// 		StatusCode: 404,
@@ -28,9 +18,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	// 	}, nil
 	// }
 
-	simpleAuth := viper.GetString("SIMPLE_AUTH")
-	fmt.Printf("\n\nsimpleAuth: %v\n\n", simpleAuth)
-
+	simpleAuth, _ := os.LookupEnv("SIMPLE_AUTH")
 	if request.Headers["X-Simple-Auth"] != simpleAuth {
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 404,

@@ -4,17 +4,18 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/honeycombio/libhoney-go"
-	"github.com/spf13/viper"
 )
 
 // Devtip matches the JSON output of the gatsby-theme-dev-tip dev-tips.json file
@@ -79,26 +80,22 @@ func FetchDevTipImages(tip DevTip) ([]string, error) {
 
 func BootstrapTwitterAPI() (*anaconda.TwitterApi, error) {
 
-	// for _, env := range []string{
-	// 	"TWITTER_ACCESS_TOKEN",
-	// 	"TWITTER_ACCESS_TOKEN_SECRET",
-	// 	"TWITTER_CONSUMER_KEY",
-	// 	"TWITTER_CONSUMER_SECRET",
-	// } {
-	// 	err := viper.BindEnv(env)
-	// 	if err != nil {
-	// 		return nil, fmt.Errorf("BindEnv: %v", err.Error())
-	// 	}
-	// 	// isSet := viper.IsSet(env)
-	// 	// if isSet == false {
-	// 	// 	return nil, fmt.Errorf("%v is not set, %v", env, isSet)
-	// 	// }
-
-	// }
-	accessToken := viper.GetString("TWITTER_ACCESS_TOKEN")
-	accessTokenSecret := viper.GetString("TWITTER_ACCESS_TOKEN_SECRET")
-	consumerKey := viper.GetString("TWITTER_CONSUMER_KEY")
-	consumerSecret := viper.GetString("TWITTER_CONSUMER_SECRET")
+	accessToken, ok1 := os.LookupEnv("TWITTER_ACCESS_TOKEN")
+	if ok1 == false {
+		return nil, fmt.Errorf("TWITTER_ACCESS_TOKEN is not in the environment")
+	}
+	accessTokenSecret, ok2 := os.LookupEnv("TWITTER_ACCESS_TOKEN_SECRET")
+	if ok2 == false {
+		return nil, fmt.Errorf("TWITTER_ACCESS_TOKEN_SECRET is not in the environment")
+	}
+	consumerKey, ok3 := os.LookupEnv("TWITTER_CONSUMER_KEY")
+	if ok3 == false {
+		return nil, fmt.Errorf("TWITTER_CONSUMER_KEY is not in the environment")
+	}
+	consumerSecret, ok4 := os.LookupEnv("TWITTER_CONSUMER_SECRET")
+	if ok4 == false {
+		return nil, fmt.Errorf("TWITTER_CONSUMER_SECRET is not in the environment")
+	}
 
 	return anaconda.NewTwitterApiWithCredentials(accessToken, accessTokenSecret, consumerKey, consumerSecret), nil
 
