@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -13,17 +11,12 @@ import (
 )
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	fmt.Println("in handler vvv")
-	fmt.Println("in handler vvv")
-	fmt.Println("in handler vvv")
-	fmt.Println("in handler vvv")
-	fmt.Println("in handler vvv")
-	fmt.Println("in handler vvv")
-	time.Sleep(1000 * time.Millisecond)
-	fmt.Println("in handler last vvv")
-	for _, pair := range os.Environ() {
-		fmt.Println(pair)
-	}
+	viper.SetEnvPrefix("cb") // will be uppercased automatically
+	viper.BindEnv("SIMPLE_AUTH")
+
+	// for _, pair := range os.Environ() {
+	// 	fmt.Println(pair)
+	// }
 	// if request.HTTPMethod == "GET" {
 	// 	return &events.APIGatewayProxyResponse{
 	// 		StatusCode: 404,
@@ -57,12 +50,9 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 }
 
 func main() {
-	viper.SetEnvPrefix("cb") // will be uppercased automatically
-	viper.BindEnv("SIMPLE_AUTH")
-
 	libhoney.Init(libhoney.Config{
 		// WriteKey: "",
-		Dataset: "netlify-lambdas",
+		Dataset:      "netlify-lambdas",
 		Transmission: &transmission.WriterSender{},
 	})
 	// Flush any pending calls to Honeycomb before exiting
