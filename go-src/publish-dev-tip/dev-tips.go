@@ -90,13 +90,12 @@ func BootstrapTwitterAPI() (*anaconda.TwitterApi, error) {
 		if err != nil {
 			return nil, fmt.Errorf("BindEnv: %v", err.Error())
 		}
-		isSet := viper.IsSet(env)
-		if isSet == false {
-			return nil, fmt.Errorf("%v is not set, %v", env, isSet)
-		}
+		// isSet := viper.IsSet(env)
+		// if isSet == false {
+		// 	return nil, fmt.Errorf("%v is not set, %v", env, isSet)
+		// }
 
 	}
-
 	accessToken := viper.GetString("TWITTER_ACCESS_TOKEN")
 	accessTokenSecret := viper.GetString("TWITTER_ACCESS_TOKEN_SECRET")
 	consumerKey := viper.GetString("TWITTER_CONSUMER_KEY")

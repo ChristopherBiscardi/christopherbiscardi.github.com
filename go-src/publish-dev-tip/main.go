@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -12,7 +13,10 @@ import (
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	viper.SetEnvPrefix("cb") // will be uppercased automatically
-	viper.BindEnv("SIMPLE_AUTH")
+	viper.AutomaticEnv()
+
+	val, ok := os.LookupEnv("SIMPLE_AUTH")
+	fmt.Printf("val: %v ; ok: %v", val, ok)
 
 	// for _, pair := range os.Environ() {
 	// 	fmt.Println(pair)
