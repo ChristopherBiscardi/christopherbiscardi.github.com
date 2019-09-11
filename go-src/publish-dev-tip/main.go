@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -10,24 +10,11 @@ import (
 	"github.com/honeycombio/libhoney-go/transmission"
 )
 
+type BodyStuff struct {
+	SimpleAuth string `json:"simpleAuth"`
+}
+
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-
-	// if request.HTTPMethod == "GET" {
-	// 	return &events.APIGatewayProxyResponse{
-	// 		StatusCode: 404,
-	// 		Body:       "hey, how's it going?",
-	// 	}, nil
-	// }
-
-	simpleAuth, _ := os.LookupEnv("SIMPLE_AUTH")
-	fmt.Printf("\n\n req.headers: %v\n\n", request.Headers)
-	fmt.Printf("\n\n x-simple-auth: %v ; are == %v\n\n", request.Headers["x-simple-auth"], simpleAuth == request.Headers["x-simple-auth"])
-	// if request.Headers["x-simple-auth"] != simpleAuth {
-	// 	return &events.APIGatewayProxyResponse{
-	// 		StatusCode: 404,
-	// 		Body:       "hey, how's it going?",
-	// 	}, nil
-	// }
 
 	// Create an event, add some data
 	ev := libhoney.NewEvent()
@@ -40,6 +27,30 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 
 	// This event will be sent regardless of how we exit
 	defer ev.Send()
+	// if request.HTTPMethod == "GET" {
+	// 	return &events.APIGatewayProxyResponse{
+	// 		StatusCode: 404,
+	// 		Body:       "hey, how's it going?",
+	// 	}, nil
+	// }
+
+	data := BodyStuff{}
+	decodeErr := json.Unmarshal([]byte(request.Body), &data)
+
+	if decodeErr != nil {
+		ev.AddField("error", decodeErr.Error())
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 404,
+			Body:       "failed to send auth",
+		}, nil
+	}
+	simpleAuth, _ := os.LookupEnv("SIMPLE_AUTH")
+	if data.SimpleAuth != simpleAuth {
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 404,
+			Body:       "hey, how's it going?",
+		}, nil
+	}
 
 	return HandleRequest(ev)
 }
