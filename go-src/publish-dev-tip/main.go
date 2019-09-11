@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -19,6 +20,8 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	// }
 
 	simpleAuth, _ := os.LookupEnv("SIMPLE_AUTH")
+	fmt.Printf("\n\n req.headers: %v", request.Headers)
+	fmt.Printf("\n\n req.header: %v", request.Headers["X-Simple-Auth"])
 	if request.Headers["X-Simple-Auth"] != simpleAuth {
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 404,
