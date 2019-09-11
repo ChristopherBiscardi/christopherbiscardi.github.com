@@ -21,7 +21,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 
 	simpleAuth, _ := os.LookupEnv("SIMPLE_AUTH")
 	fmt.Printf("\n\n req.headers: %v", request.Headers)
-	fmt.Printf("\n\n req.header: %v", request.Headers["X-Simple-Auth"])
+	fmt.Printf("\n\n req.header: %v", request.Headers["x-simple-auth"])
 	if request.Headers["X-Simple-Auth"] != simpleAuth {
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 404,
