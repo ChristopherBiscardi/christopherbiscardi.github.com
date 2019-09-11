@@ -1,77 +1,8 @@
 import React from "react";
-import { Link } from "gatsby";
-import Layout from "gatsby-theme-blog/src/components/layout";
+// import Layout from "gatsby-theme-blog/src/components/layout";
 // import { Styled } from "theme-ui";
-import Logo from "../components/logos/logo-full.svg";
-
-const nav = [
-  { displayName: "Posts", url: "/post" },
-  { displayName: "Notes", url: "/notes" },
-  { displayName: "Dev Tips", url: "/devtips" },
-  { displayName: "Tags", url: "/tags" },
-  {
-    displayName: "Newsletter",
-    url: "https://pages.convertkit.com/04c24646a3/c136f814fc"
-  }
-];
-
-const navLinkStyles = {
-  color: "#eef1f7",
-  fontWeight: 250,
-  fontSize: ".9rem",
-  textDecoration: "none"
-};
+import Layout from "../components/layout";
 const maxWidth = "800px";
-const Header = props => (
-  <div
-    css={{
-      display: "flex",
-      height: "75px",
-      maxWidth,
-      margin: "auto",
-      marginTop: "30px"
-    }}
-  >
-    <div>
-      <a href="/" css={{ display: "flex", flex: 1, marginTop: "7px" }}>
-        <Logo />
-      </a>
-    </div>
-    <nav css={{ display: "flex", flex: 1 }}>
-      <ul
-        css={{
-          listStyleType: "none",
-          display: "flex",
-          flex: 1,
-          justifyContent: "flex-end"
-        }}
-      >
-        {nav.map(({ displayName, url }) => {
-          let child = null;
-          if (/^https/.test(url)) {
-            child = (
-              <a href={url} css={navLinkStyles}>
-                {displayName}
-              </a>
-            );
-          } else {
-            child = (
-              <Link to={url} css={navLinkStyles}>
-                {displayName}
-              </Link>
-            );
-          }
-
-          return (
-            <li key={displayName + url} css={{ marginLeft: "2rem" }}>
-              {child}
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  </div>
-);
 
 const socialStyles = {
   twitter: { backgroundColor: "#00aced", color: "#eef1f7" },
@@ -97,8 +28,7 @@ const SocialButton = ({ href, icon, children }) => (
 );
 export default props => {
   return (
-    <div>
-      <Header />
+    <Layout>
       <div css={{ maxWidth, margin: "auto", marginTop: "75px" }}>
         <h1 css={{ fontSize: "3rem", marginBottom: ".3em" }}>
           Hey, I&rsquo;m Chris
@@ -162,11 +92,6 @@ export default props => {
           </li>
         </ul>
       </div>
-    </div>
-  );
-  return (
-    <>
-      <Layout location={props.location} title="Chris Biscardi"></Layout>
-    </>
+    </Layout>
   );
 };

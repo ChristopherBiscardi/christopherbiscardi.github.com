@@ -31,7 +31,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	// }
 
 	simpleAuth := viper.GetString("SIMPLE_AUTH")
-	fmt.Println("simpleAuth: " + simpleAuth)
+	fmt.Printf("\n\nsimpleAuth: %v\n\n", simpleAuth)
 
 	if request.Headers["X-Simple-Auth"] != simpleAuth {
 		return &events.APIGatewayProxyResponse{

@@ -1,0 +1,14 @@
+---
+tweet:
+  You can use a negative lookahead (?!) to safelist or
+  blocklist a specific node_module when applying tools like
+  babel
+title: Negative Lookahead
+---
+
+```js
+require("@babel/register")({
+  presets: ["@babel/preset-react"],
+  ignore: [/node_modules\/(?!some-npm-module)/]
+});
+```

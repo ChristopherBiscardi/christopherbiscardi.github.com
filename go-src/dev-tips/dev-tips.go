@@ -18,8 +18,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Devtip matches the JSON output of the gatsby-theme-dev-tip dev-tips.json file
 type DevTip struct {
-	Id     string   `json:"id"`
+	ID     string   `json:"id"`
 	Tweet  string   `json:"tweet"`
 	Images []string `json:"images"`
 }
@@ -51,15 +52,15 @@ func FetchDevTipImages(tip DevTip) ([]string, error) {
 	var myClient = &http.Client{Timeout: 10 * time.Second}
 
 	images := []string{}
-	for _, imageUrl := range tip.Images {
-		r, err := myClient.Get("https://christopherbiscardi.com" + imageUrl)
+	for _, imageURL := range tip.Images {
+		r, err := myClient.Get("https://christopherbiscardi.com" + imageURL)
 		if err != nil {
 			return nil, err
 		}
 		defer r.Body.Close()
 
 		if r.StatusCode == 404 {
-			return nil, errors.New("imageUrl not found: " + imageUrl)
+			return nil, errors.New("imageURL not found: " + imageURL)
 		}
 
 		buf, ioErr := ioutil.ReadAll(r.Body)
@@ -85,10 +86,13 @@ func BootstrapTwitterAPI() (*anaconda.TwitterApi, error) {
 		"TWITTER_CONSUMER_KEY",
 		"TWITTER_CONSUMER_SECRET",
 	} {
-		viper.BindEnv(env)
+		err := viper.BindEnv(env)
+		if err != nil {
+			return nil, fmt.Errorf("BindEnv: %v", err.Error())
+		}
 		isSet := viper.IsSet(env)
 		if isSet == false {
-			return nil, errors.New(fmt.Sprintf("%v is not set", env))
+			return nil, fmt.Errorf("%v is not set, %v", env, isSet)
 		}
 
 	}
