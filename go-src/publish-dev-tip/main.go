@@ -16,7 +16,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	viper.AutomaticEnv()
 
 	val, ok := os.LookupEnv("SIMPLE_AUTH")
-	fmt.Printf("val: %v ; ok: %v", val, ok)
+	fmt.Printf("\n\nval: %v ; ok: %v\n\n", val, ok)
 
 	// for _, pair := range os.Environ() {
 	// 	fmt.Println(pair)
