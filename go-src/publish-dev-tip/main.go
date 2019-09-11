@@ -20,14 +20,14 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	// }
 
 	simpleAuth, _ := os.LookupEnv("SIMPLE_AUTH")
-	fmt.Printf("\n\n req.headers: %v", request.Headers)
-	fmt.Printf("\n\n req.header: %v", request.Headers["x-simple-auth"])
-	if request.Headers["x-simple-auth"] != simpleAuth {
-		return &events.APIGatewayProxyResponse{
-			StatusCode: 404,
-			Body:       "hey, how's it going?",
-		}, nil
-	}
+	fmt.Printf("\n\n req.headers: %v\n\n", request.Headers)
+	fmt.Printf("\n\n x-simple-auth: %v ; are == %v\n\n", request.Headers["x-simple-auth"], simpleAuth == request.Headers["x-simple-auth"])
+	// if request.Headers["x-simple-auth"] != simpleAuth {
+	// 	return &events.APIGatewayProxyResponse{
+	// 		StatusCode: 404,
+	// 		Body:       "hey, how's it going?",
+	// 	}, nil
+	// }
 
 	// Create an event, add some data
 	ev := libhoney.NewEvent()

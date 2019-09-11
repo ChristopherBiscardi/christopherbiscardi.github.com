@@ -78,6 +78,8 @@ func FetchDevTipImages(tip DevTip) ([]string, error) {
 	return images, nil
 }
 
+// BootstrapTwitterAPI instantiates an anaconda twitter client using
+// environment variables. returns an error if can't acces env.
 func BootstrapTwitterAPI() (*anaconda.TwitterApi, error) {
 
 	accessToken, ok1 := os.LookupEnv("TWITTER_ACCESS_TOKEN")
@@ -101,6 +103,8 @@ func BootstrapTwitterAPI() (*anaconda.TwitterApi, error) {
 
 }
 
+// UploadImages Takes a set of base64 encoded images and uploads them to Twitter
+// returning Media objects that can be attached to tweets
 func UploadImages(imageUrls []string, api *anaconda.TwitterApi) ([]anaconda.Media, []error) {
 	medias := []anaconda.Media{}
 	errors := []error{}
@@ -115,6 +119,7 @@ func UploadImages(imageUrls []string, api *anaconda.TwitterApi) ([]anaconda.Medi
 	return medias, errors
 }
 
+// HandleRequest yo
 func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) {
 
 	tips, err := GetDevTipsJson()
