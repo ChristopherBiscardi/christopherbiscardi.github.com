@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/honeycombio/libhoney-go"
+	"github.com/honeycombio/libhoney-go/transmission"
 	"github.com/spf13/viper"
 )
 
@@ -62,7 +63,7 @@ func main() {
 	libhoney.Init(libhoney.Config{
 		// WriteKey: "",
 		Dataset: "netlify-lambdas",
-		// Transmission: &transmission.WriterSender{},
+		Transmission: &transmission.WriterSender{},
 	})
 	// Flush any pending calls to Honeycomb before exiting
 	defer libhoney.Close()
