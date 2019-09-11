@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -46,10 +47,12 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	}
 	simpleAuth, _ := os.LookupEnv("SIMPLE_AUTH")
 	if data.SimpleAuth != simpleAuth {
-		return &events.APIGatewayProxyResponse{
-			StatusCode: 404,
-			Body:       "hey, how's it going?",
-		}, nil
+		fmt.Printf("\n\n data: %v ; simpleAuth: %v", data.SimpleAuth, simpleAuth)
+		fmt.Println(request.Body)
+		// return &events.APIGatewayProxyResponse{
+		// 	StatusCode: 404,
+		// 	Body:       "hey, how's it going?",
+		// }, nil
 	}
 
 	return HandleRequest(ev)
