@@ -46,23 +46,26 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 		}, nil
 	}
 	simpleAuth, _ := os.LookupEnv("SIMPLE_AUTH")
+	fmt.Printf("\n\n data: %v ; simpleAuth: %v", data.SimpleAuth, simpleAuth)
+	fmt.Println(request.Body)
 	if data.SimpleAuth != simpleAuth {
 		fmt.Printf("\n\n data: %v ; simpleAuth: %v", data.SimpleAuth, simpleAuth)
 		fmt.Println(request.Body)
-		// return &events.APIGatewayProxyResponse{
-		// 	StatusCode: 404,
-		// 	Body:       "hey, how's it going?",
-		// }, nil
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 404,
+			Body:       "hey, how's it going?",
+		}, nil
 	}
 
 	return HandleRequest(ev)
 }
 
 func main() {
+	writeKey, _ := os.LookupEnv("HONEYCOMB_WRITE_KEY")
 	libhoney.Init(libhoney.Config{
-		// WriteKey: "",
-		Dataset:      "netlify-lambdas",
-		Transmission: &transmission.WriterSender{},
+		WriteKey: writeKey,
+		Dataset:      "netlify-serverless",
+		// Transmission: &transmission.WriterSender{},
 	})
 	// Flush any pending calls to Honeycomb before exiting
 	defer libhoney.Close()
