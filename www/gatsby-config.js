@@ -36,7 +36,7 @@ module.exports = {
       }
     },
     {
-      resolve: `gatsby-theme-dev-tips`,
+      resolve: `gatsby-theme-devtips`,
       options: {
         contentPath: path.resolve(".", `content/dev-tips`),
         devtips: [

@@ -52,7 +52,7 @@
     "gatsby-remark-prismjs": "3.1.4",
     "gatsby-theme": "^0.0.6",
     "gatsby-theme-blog": "^1.2.1",
-    "gatsby-theme-dev-tips": "^1.0.0",
+    "gatsby-theme-devtips": "^1.0.0",
     "gatsby-theme-notes": "^1.0.3",
     "graphql-compose": "^6.2.0",
     "husky": "^1.2.0",
