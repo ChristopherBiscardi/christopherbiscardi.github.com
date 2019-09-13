@@ -18,7 +18,7 @@ import (
 	"github.com/honeycombio/libhoney-go"
 )
 
-// Devtip matches the JSON output of the gatsby-theme-dev-tip dev-tips.json file
+// Devtip matches the JSON output of the gatsby-theme-devtips devtips.json file
 type DevTip struct {
 	ID     string   `json:"id"`
 	Tweet  string   `json:"tweet"`
@@ -29,7 +29,7 @@ type DevTip struct {
 //     "id": "1a9401d4-f558-5321-9459-e26707b8f52f",
 //     "tweet": "bat (https://github.com/sharkdp/bat) is a cat replacement that includes syntax highlighting, line numbers, and more.",
 //     "images": [
-//       "dev-tip-images/cli-bat-replaces-cat-0"
+//       "devtip-images/cli-bat-replaces-cat-0"
 //     ]
 //   },
 
@@ -37,7 +37,7 @@ func GetDevTipsJson() ([]DevTip, error) {
 	target := make([]DevTip, 10)
 
 	var myClient = &http.Client{Timeout: 10 * time.Second}
-	r, err := myClient.Get("https://christopherbiscardi.com/dev-tips.json")
+	r, err := myClient.Get("https://christopherbiscardi.com/devtips.json")
 	if err != nil {
 		return nil, err
 	}
