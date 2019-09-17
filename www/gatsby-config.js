@@ -26,6 +26,7 @@ module.exports = {
   },
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
+    `gatsby-theme-field-guides`,
     `gatsby-plugin-inter`,
     {
       resolve: `gatsby-plugin-web-font-loader`,

@@ -1,0 +1,4 @@
+name: git
+slug: git
+description: git is a version control system... or a LARP engine depending on how you use it
+content: ./git
