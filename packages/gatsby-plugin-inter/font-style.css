@@ -4,6 +4,6 @@ html {
 @supports (font-variation-settings: normal) {
   html {
     font-family: "Inter var", sans-serif;
-    font-feature-settings: "zero" 1, "ss01" 1, "frac" 1;
+    font-feature-settings: "zero" 1, "ss01" 1;
   }
 }
