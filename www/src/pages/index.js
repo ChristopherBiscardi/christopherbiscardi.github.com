@@ -1,7 +1,9 @@
 import React from "react";
 // import Layout from "gatsby-theme-blog/src/components/layout";
 // import { Styled } from "theme-ui";
+import { Link, graphql } from "gatsby";
 import Layout from "../components/layout";
+import Icon from "../components/small-icons";
 const maxWidth = "800px";
 
 const socialStyles = {
@@ -26,7 +28,35 @@ const SocialButton = ({ href, icon, children }) => (
     {children}
   </a>
 );
-export default props => {
+
+const List = ({ title, ...props }) => (
+  <div css={{ maxWidth, margin: "auto" }}>
+    <h2>{title}</h2>
+    <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
+      {props.children}
+    </ul>
+  </div>
+);
+
+const ListItem = ({ to, logo, children }) => (
+  <li>
+    <Link
+      to={to}
+      css={{
+        color: "rgba(255,255,255,0.86)",
+        display: "flex",
+        "&:hover": {
+          color: "#fff"
+        }
+      }}
+    >
+      <Icon icon={logo} />
+      <span css={{ marginLeft: "10px" }}>{children}</span>
+    </Link>
+  </li>
+);
+
+export default ({ data, ...props }) => {
   return (
     <Layout>
       <div css={{ maxWidth, margin: "auto", marginTop: "75px" }}>
@@ -92,6 +122,26 @@ export default props => {
           </li>
         </ul>
       </div>
+      <List title="Recent Posts">
+        {data.recentPosts.nodes.map(({ id, title, slug }) => (
+          <ListItem logo="go" to={slug} key={id}>
+            {title}
+          </ListItem>
+        ))}
+      </List>
     </Layout>
   );
 };
+
+export const query = graphql`
+  query HomePageQuery {
+    recentPosts: allBlogPost(sort: { fields: [date], order: DESC }, limit: 5) {
+      nodes {
+        id
+        title
+        tags
+        slug
+      }
+    }
+  }
+`;
