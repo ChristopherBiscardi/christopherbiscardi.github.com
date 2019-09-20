@@ -1,16 +1,68 @@
-exports.createSchemaCustomization = ({ actions: { createTypes }, schema }) => {
+exports.createSchemaCustomization = ({ actions, schema }) => {
+  const { createTypes, createFieldExtension } = actions;
+
+  createFieldExtension({
+    name: "linkFieldGuideInterface",
+    extend(options, prevFieldConfig) {
+      return {
+        resolve: async (source, args, context, info) => {
+          const fieldValues = context.defaultFieldResolver(
+            source,
+            args,
+            context,
+            info
+          );
+          const results = await context.nodeModel.runQuery({
+            type: "GuidesYaml",
+            query: {
+              filter: {
+                slug: { in: fieldValues }
+              }
+            }
+          });
+          return results;
+        }
+      };
+    }
+  });
+
+  // createFieldExtension({
+  //   name: "linkFieldGuideEntryInterface",
+  //   extend(options, prevFieldConfig) {
+  //     return {
+  //       resolve: async (source, args, context, info) => {
+  //         console.log("soruce", source);
+  //         const fieldValues = context.defaultFieldResolver(
+  //           source,
+  //           args,
+  //           context,
+  //           info
+  //         );
+  //         const results = await context.nodeModel.runQuery({
+  //           type: "MdxBlogPostFieldGuideEntry",
+  //           query: {
+  //             filter: {
+  //               guides: { in:  }
+  //             }
+  //           }
+  //         });
+  //         return results;
+  //       }
+  //     };
+  //   }
+  // });
   createTypes(`interface FieldGuide @nodeInterface {
       id: ID!
       slugIdentifier: String!
       displayName: String!
       description: String
-      items: [Node!]
+      items: [FieldGuideEntry!]
     }
     interface FieldGuideEntry @nodeInterface {
         id: ID!
         title: String!
         description: String
-        guides: [GuidesYaml]
+        guides: [FieldGuide]
     }`);
 
   createTypes(`type GuidesYaml implements Node & FieldGuide {
@@ -18,13 +70,13 @@ exports.createSchemaCustomization = ({ actions: { createTypes }, schema }) => {
         displayName: String! @proxy(from: "title")
         slugIdentifier: String! @proxy(from: "slug")
         description: String
-        items: [Node!]
+        items: [FieldGuideEntry!] 
     }
     type MdxBlogPostFieldGuideEntry implements Node & FieldGuideEntry @childOf(type: "MdxBlogPost") {
         id: ID!
         title: String!
         description: String
-        guides: [GuidesYaml]
+        guides: [FieldGuide] @link(by: "slugIdentifier")
     }
     `);
 };

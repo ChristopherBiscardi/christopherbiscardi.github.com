@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Helmet from "react-helmet";
 import { StaticQuery, graphql } from "gatsby";
+import defaultOGImage from "./default-og-image.png";
 
 function SEO({
   description,
@@ -47,7 +48,7 @@ function SEO({
               },
               {
                 name: `twitter:card`,
-                content: !!image ? `summary_large_image` : `summary`
+                content: `summary_large_image`
               },
               {
                 name: `twitter:creator`,
@@ -76,7 +77,10 @@ function SEO({
                       name: `twitter:image`,
                       content: `https://www.christopherbiscardi.com${image}`
                     }
-                  : []
+                  : {
+                      name: `twitter:image`,
+                      content: `https://www.christopherbiscardi.com${defaultOGImage}`
+                    }
               )
               .concat(meta)}
           />

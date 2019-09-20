@@ -3,7 +3,8 @@ import React from "react";
 // import { Styled } from "theme-ui";
 import { Link, graphql } from "gatsby";
 import Layout from "../components/layout";
-import Icon from "../components/small-icons";
+import Icon, { iconFromList } from "../components/small-icons";
+import SEO from "../seo";
 const maxWidth = "800px";
 
 const socialStyles = {
@@ -29,36 +30,54 @@ const SocialButton = ({ href, icon, children }) => (
   </a>
 );
 
-const List = ({ title, ...props }) => (
-  <div css={{ maxWidth, margin: "auto" }}>
-    <h2>{title}</h2>
+const List = ({ title, subtitle, secondary, ...props }) => (
+  <div css={{ maxWidth, margin: "auto", marginBottom: "3rem" }}>
+    <div
+      css={{
+        marginBottom: "1rem",
+        display: "flex",
+        justifyContent: "space-between"
+      }}
+    >
+      <h2 css={{ margin: 0 }}>{title}</h2>
+      {secondary}
+    </div>
     <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
       {props.children}
     </ul>
   </div>
 );
 
-const ListItem = ({ to, logo, children }) => (
-  <li>
-    <Link
-      to={to}
-      css={{
-        color: "rgba(255,255,255,0.86)",
-        display: "flex",
-        "&:hover": {
-          color: "#fff"
-        }
-      }}
-    >
-      <Icon icon={logo} />
-      <span css={{ marginLeft: "10px" }}>{children}</span>
-    </Link>
-  </li>
-);
+const ListItem = ({ to, logo, children }) => {
+  const Component = to.startsWith("https") ? "a" : Link;
+  return (
+    <li>
+      <Component
+        to={to}
+        href={to}
+        css={{
+          color: "rgba(255,255,255,0.86)",
+          display: "flex",
+          borderRadius: "8px",
+          textDecoration: "none",
+          "&:hover": {
+            backgroundColor: "#2D3747"
+          },
+          padding: "1rem",
+          margin: "0 -1rem"
+        }}
+      >
+        <Icon icon={logo} />
+        <span css={{ marginLeft: "10px" }}>{children}</span>
+      </Component>
+    </li>
+  );
+};
 
 export default ({ data, ...props }) => {
   return (
     <Layout>
+      <SEO title="Chris Biscardi" />
       <div css={{ maxWidth, margin: "auto", marginTop: "75px" }}>
         <h1 css={{ fontSize: "3rem", marginBottom: ".3em" }}>
           Hey, I&rsquo;m Chris
@@ -71,15 +90,15 @@ export default ({ data, ...props }) => {
             maxWidth: "32em"
           }}
         >
-          Did he just throw my cat out of the window? So you two dig up, dig up
-          dinosaurs? Life finds a way. God creates dinosaurs. God destroys
-          dinosaurs. God creates Man. Man destroys God. Man creates Dinosaurs.
-          Must go faster. So you two dig up, dig up dinosaurs?
+          Do you want to know how to build and sell Gatsby themes? To build
+          beautiful interactive experiences with MDX? Automate CI/CD with GitHub
+          Actions? Here I talk about this and more.
         </p>
         <ul
           css={{
             margin: 0,
             marginTop: "3rem",
+            marginBottom: "7rem",
             padding: 0,
             listStyleType: "none",
             display: "flex",
@@ -122,12 +141,60 @@ export default ({ data, ...props }) => {
           </li>
         </ul>
       </div>
-      <List title="Recent Posts">
-        {data.recentPosts.nodes.map(({ id, title, slug }) => (
-          <ListItem logo="go" to={slug} key={id}>
+      <List
+        title="Latest Posts"
+        secondary={
+          <Link
+            to="/post"
+            css={{
+              color: "rgba(255,255,255,0.86)",
+              textDecoration: "none",
+              // margin is to align baseline with heading
+              marginBottom: "2px",
+              alignSelf: "flex-end",
+              "&:hover": {
+                textDecoration: "underline"
+              }
+            }}
+          >
+            all posts
+          </Link>
+        }
+      >
+        {data.recentPosts.nodes.map(({ id, title, slug, tags }) => (
+          <ListItem logo={iconFromList(tags)} to={slug} key={id}>
             {title}
           </ListItem>
         ))}
+      </List>
+      <List
+        title="Latest Lessons"
+        subtitle="egghead.io"
+        secondary={
+          <a
+            href="https://egghead.io/instructors/chris-biscardi"
+            css={{
+              color: "rgba(255,255,255,0.86)",
+              textDecoration: "none",
+              // margin is to align baseline with heading
+              marginBottom: "2px",
+              alignSelf: "flex-end",
+              "&:hover": {
+                textDecoration: "underline"
+              }
+            }}
+          >
+            all lessons
+          </a>
+        }
+      >
+        {data.highlightedLessons.nodes.map(
+          ({ id, title, httpUrl: slug, primaryTag }) => (
+            <ListItem logo={iconFromList([primaryTag.name])} to={slug} key={id}>
+              {title}
+            </ListItem>
+          )
+        )}
       </List>
     </Layout>
   );
@@ -141,6 +208,20 @@ export const query = graphql`
         title
         tags
         slug
+      }
+    }
+    highlightedLessons: allEggheadLesson(
+      filter: { state: { eq: "published" } }
+      sort: { fields: publishedAt, order: DESC }
+      limit: 5
+    ) {
+      nodes {
+        id
+        title
+        httpUrl
+        primaryTag {
+          name
+        }
       }
     }
   }
