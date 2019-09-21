@@ -5,6 +5,7 @@ import { Link, graphql } from "gatsby";
 import Layout from "../components/layout";
 import Icon, { iconFromList } from "../components/small-icons";
 import SEO from "../seo";
+import NyanCat from "../components/nyan-cat";
 const maxWidth = "800px";
 
 const socialStyles = {
@@ -167,6 +168,9 @@ export default ({ data, ...props }) => {
           </ListItem>
         ))}
       </List>
+      <div css={{ display: "flex", justifyContent: "flex-end" }}>
+        <NyanCat css={{ height: "37px" }} />
+      </div>
       <List
         title="Latest Lessons"
         subtitle="egghead.io"

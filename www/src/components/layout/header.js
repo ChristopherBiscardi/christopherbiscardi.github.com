@@ -29,7 +29,8 @@ const Header = props => (
       height: "75px",
       maxWidth,
       margin: "auto",
-      marginTop: "30px"
+      marginTop: "30px",
+      flexWrap: "wrap"
     }}
   >
     <div>
@@ -43,7 +44,10 @@ const Header = props => (
           listStyleType: "none",
           display: "flex",
           flex: 1,
-          justifyContent: "flex-end"
+          justifyContent: "flex-end",
+          flexWrap: "wrap",
+          padding: 0,
+          marginTop: "-2px"
         }}
       >
         {nav.map(({ displayName, url }) => {
@@ -63,7 +67,10 @@ const Header = props => (
           }
 
           return (
-            <li key={displayName + url} css={{ marginLeft: "2rem" }}>
+            <li
+              key={displayName + url}
+              css={{ marginLeft: "2rem", marginTop: "18px" }}
+            >
               {child}
             </li>
           );
