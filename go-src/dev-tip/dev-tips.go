@@ -15,6 +15,7 @@ import (
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/aws/aws-lambda-go/events"
+	f "github.com/fauna/faunadb-go/faunadb"
 	"github.com/honeycombio/libhoney-go"
 )
 
@@ -23,6 +24,15 @@ type DevTip struct {
 	ID     string   `json:"id"`
 	Tweet  string   `json:"tweet"`
 	Images []string `json:"images"`
+}
+
+type FaunaTweetResult struct {
+	DevTipID       string `fauna:"devTipId"`
+	TweetID        string `fauna:"tweetId"`
+	TweetContent   string `fauna:"tweetContent"`
+	TweetCreatedAt string `fauna:"tweetCreatedAt"`
+	RetweetCount   int    `fauna:"retweetCount"`
+	FavoriteCount  int    `fauna:"favoriteCount"`
 }
 
 // {
@@ -121,6 +131,16 @@ func UploadImages(imageUrls []string, api *anaconda.TwitterApi) ([]anaconda.Medi
 
 // HandleRequest yo
 func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) {
+	faunaToken, ok := os.LookupEnv("FAUNA_TOKEN")
+	if ok == false {
+		ev.AddField("error", fmt.Errorf("FAUNA_TOKEN is not in the environment"))
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Failed to bootstrap fauna",
+		}, nil
+	}
+
+	client := f.NewFaunaClient(faunaToken)
 
 	tips, err := GetDevTipsJson()
 	if err != nil {
@@ -188,6 +208,35 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       "Failed to send tweet",
+		}, nil
+	}
+
+	faunaTweet := FaunaTweetResult{
+		DevTipID:       tipToTweet.ID,
+		TweetContent:   tipToTweet.Tweet,
+		TweetID:        tweet.IdStr,
+		TweetCreatedAt: tweet.CreatedAt,
+		RetweetCount:   tweet.RetweetCount,
+		FavoriteCount:  tweet.FavoriteCount,
+	}
+
+	// Class is deprecated, try to use Collection
+	_, faunaErr := client.Query(
+		f.Create(
+			// this gets a collection reference
+			f.Class("dev-tip-tweets"),
+			// fauna needs things to be keyed on "data".
+			// not sure why yet. The struct has tags to
+			// work with fauna though, so we're good there.
+			f.Obj{"data": faunaTweet},
+		),
+	)
+
+	if faunaErr != nil {
+		ev.AddField("error", faunaErr.Error())
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       "Failed to save tweet to database",
 		}, nil
 	}
 

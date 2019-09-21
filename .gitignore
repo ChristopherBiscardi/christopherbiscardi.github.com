@@ -3,3 +3,5 @@ public/static/d/*.json
 .cache
 netlify-functions
 public
+# Local Netlify folder
+.netlify
