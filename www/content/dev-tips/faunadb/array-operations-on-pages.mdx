@@ -1,0 +1,36 @@
+---
+tweet:
+  When using @faunadb's FQL, the Page type that is returned
+  from Paginate() calls can be used in array methods.
+title: MDXProvider Dot Notation
+---
+
+```haskell
+Map(
+  Paginate(Match(Index("all_customers"))),
+  Lambda(
+    "X",
+    Select(["data", "firstName"],
+      Get(Var("X"))
+    )
+  )
+)
+```
+
+```json
+{
+  "firstName": "Auria",
+  "lastName": "Osgardby",
+  "address": {
+    "street": "87856 Mendota Court",
+    "city": "Idaho Falls",
+    "state": "ID",
+    "zipCode": "83405"
+  },
+  "telephone": "208-346-0715",
+  "creditCard": {
+    "network": "Visa",
+    "number": "4556781272473393"
+  }
+}
+```

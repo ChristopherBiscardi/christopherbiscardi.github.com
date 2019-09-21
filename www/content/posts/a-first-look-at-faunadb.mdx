@@ -14,6 +14,11 @@ It includes a GraphQL integration natively, is multi-tenant
 by default (using nested databases), and has a powerful
 query language based in lambda calculus called FQL.
 
+Also check out the
+[Jepsen analysis](https://jepsen.io/analyses/faunadb-2.5.4)
+and the [consistency models](https://jepsen.io/consistency)
+chart if you're unfamiliar with consistency models.
+
 Most interestingly is that it's bonkers easy to set up a new
 database for a project (ymmv, statment is subject to chance
 and experience, void where prohibited).
@@ -29,7 +34,7 @@ two of the last time it was tweeted out.
 First, I created a `FaunaTweetResult` type complete with
 fauna tags.
 
-```golang
+```go
 type FaunaTweetResult struct {
 	DevTipID       string `fauna:"devTipId"`
 	TweetID        string `fauna:"tweetId"`
@@ -44,7 +49,7 @@ Then I instantiated a fake tweet that matches the output of
 the function I'm using to send the tweet in
 [anaconda](https://github.com/ChimeraCoder/anaconda)
 
-```golang
+```go
 faunaTweet := FaunaTweetResult{
 	DevTipID:       "somethingtip",
 	TweetID:        "some tweet id",
@@ -60,7 +65,7 @@ instantiation for fauna. You can create sub-clients using
 alternate secrets which is interesting but I didn't have a
 use case for it yet.
 
-```golang
+```go
 faunaToken, _ := os.LookupEnv("FAUNA_TOKEN")
 client := f.NewFaunaClient(faunaToken)
 ```
@@ -70,7 +75,7 @@ Finally we write some
 code and pass in our faked tweet to insert a new document
 into our fauna database.
 
-```golang
+```go
 newTweetRecord, faunaErr := client.Query(
 	f.Create(
 	  // f.Class will be f.Collection soon
