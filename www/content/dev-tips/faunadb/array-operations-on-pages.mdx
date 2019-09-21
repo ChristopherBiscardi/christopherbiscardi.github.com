@@ -1,8 +1,9 @@
 ---
 tweet:
   When using @faunadb's FQL, the Page type that is returned
-  from Paginate() calls can be used in array methods.
-title: MDXProvider Dot Notation
+  from Paginate() calls can be used in array methods, which
+  "see through" the Page structure to the contained array.
+title: Array Operations on Pages
 ---
 
 ```haskell
@@ -18,6 +19,7 @@ Map(
 ```
 
 ```json
+// an example document in the index
 {
   "firstName": "Auria",
   "lastName": "Osgardby",
@@ -32,5 +34,25 @@ Map(
     "network": "Visa",
     "number": "4556781272473393"
   }
+}
+```
+
+```js
+// result of `Paginate(Match(Index("all_customers")))`
+{
+  "data": [
+    Ref(Collection("customers"), "244075679454331401"),
+    Ref(Collection("customers"), "244075679455379977"),
+    Ref(Collection("customers"), "244075679455381001")
+  ]
+}
+
+// result of Map query on Paginate results
+{
+  "data": [
+    "Auria",
+    "Skipper",
+    "Ardith"
+  ]
 }
 ```
