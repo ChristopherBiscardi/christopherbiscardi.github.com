@@ -164,7 +164,9 @@ export default class SignUp extends React.Component {
             first_name: ""
           }}
           validationSchema={SubscribeSchema}
-          onSubmit={this.handleSubmit}
+          onSubmit={(values, { setSubmitting }) =>
+            this.handleSubmit(values, { setSubmitting })
+          }
           render={({ errors, touched, isSubmitting }) => (
             <>
               {!successful && (
