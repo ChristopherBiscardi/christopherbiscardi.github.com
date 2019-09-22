@@ -110,7 +110,7 @@ export default class SignUp extends React.Component {
     submitted: false
   };
 
-  async handleSubmit(values) {
+  async handleSubmit(values, { setSubmitting }) {
     this.setState({ submitted: true });
     try {
       const response = await fetch(
@@ -126,7 +126,7 @@ export default class SignUp extends React.Component {
       );
 
       const responseJson = await response.json();
-
+      setSubmitting(false);
       this.setState({
         submitted: true,
         response: responseJson,
@@ -155,7 +155,7 @@ export default class SignUp extends React.Component {
             first_name: ""
           }}
           validationSchema={SubscribeSchema}
-          onSubmit={values => this.handleSubmit(values)}
+          onSubmit={this.handleSubmit}
           render={({ errors, touched, isSubmitting }) => (
             <>
               {!successful && (
