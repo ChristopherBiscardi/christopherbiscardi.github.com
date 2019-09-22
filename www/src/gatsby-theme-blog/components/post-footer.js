@@ -13,8 +13,9 @@ const Footer = ({ previous, next }) => (
     })}
   >
     <Styled.hr />
-    <Bio />
-    <ConvertKitFooterish />
+    <div css={css({ margin: [0, "0 -300px"] })}>
+      <ConvertKitForm />
+    </div>
     {(previous || next) && (
       <Flex
         as="ul"
@@ -43,50 +44,5 @@ const Footer = ({ previous, next }) => (
     )}
   </footer>
 );
-
-const ConvertKitFooterish = ({ children, ...props }) => {
-  return (
-    <div
-      css={{
-        marginTop: "50px",
-        padding: "1rem",
-        display: "flex",
-        justifyContent: "center",
-        marginBottom: "1.5rem"
-      }}
-    >
-      <div
-        css={{
-          maxWidth: "36em",
-          width: "100%",
-          display: "grid",
-          gridTemplateColumns: "200px 1fr",
-          gridGap: "1rem"
-        }}
-      >
-        <div
-          css={{
-            border: "1px solid #1fa9f4",
-            maxWidth: "200px",
-            padding: "1rem",
-            borderRadius: "3px",
-            transform: "translateY(-50px)"
-          }}
-        >
-          <ConvertKitForm />
-        </div>
-        {children ? (
-          children
-        ) : (
-          <Styled.p>
-            My newsletter is where you'll find exclusive content from me. I
-            write about technology, startups, and why you shouldn't call
-            yourself a junior engineer
-          </Styled.p>
-        )}
-      </div>
-    </div>
-  );
-};
 
 export default Footer;
