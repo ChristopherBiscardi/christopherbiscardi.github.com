@@ -42,6 +42,7 @@ const gradientAnimation = keyframes`
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 `;
+
 const RainbowBorder = ({ children, ...props }) => (
   <div
     css={{
@@ -276,7 +277,7 @@ export default ({ data, ...props }) => {
           )
         )}
       </List>
-      <RainbowBorder>
+      {/*<RainbowBorder>
         <h2 css={{ margin: 0, marginBottom: "2rem" }}>Join the Newsletter</h2>
         <p css={{ margin: 0, marginBottom: "2rem" }}>
           What do they got in there? King Kong? You're a very talented young
@@ -303,7 +304,7 @@ export default ({ data, ...props }) => {
             Subscribe
           </button>
         </div>
-      </RainbowBorder>
+          </RainbowBorder>*/}
     </Layout>
   );
 };
