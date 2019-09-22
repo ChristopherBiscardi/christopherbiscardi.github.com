@@ -18,7 +18,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       summary: String!
       httpUrl: String!
       state: String!
-      primaryTag: EggheadTag!
+      primaryTag: EggheadTag
       tags: [EggheadTag!]
   }`);
 };

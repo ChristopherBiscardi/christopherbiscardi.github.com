@@ -196,7 +196,11 @@ export default ({ data, ...props }) => {
       >
         {data.highlightedLessons.nodes.map(
           ({ id, title, httpUrl: slug, primaryTag }) => (
-            <ListItem logo={iconFromList([primaryTag.name])} to={slug} key={id}>
+            <ListItem
+              logo={iconFromList(primaryTag ? [primaryTag.name] : [])}
+              to={slug}
+              key={id}
+            >
               {title}
             </ListItem>
           )

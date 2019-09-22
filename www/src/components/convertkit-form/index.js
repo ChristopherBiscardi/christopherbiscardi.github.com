@@ -170,19 +170,19 @@ export default class SignUp extends React.Component {
                     }
                   }}
                 >
-                  <label htmlFor="name" css={labelStyles}>
+                  <label htmlFor="first_name" css={labelStyles}>
                     <span css={labelSpanStyles}>Email address</span>
                     <Field
                       aria-label="preferred name"
                       aria-required="true"
-                      name="name"
+                      name="first_name"
                       placeholder="jane"
                       type="text"
                       css={inputStyles}
                     />
                     <div>
                       <ErrorMessage
-                        name="name"
+                        name="first_name"
                         component="span"
                         className="field-error"
                       />
