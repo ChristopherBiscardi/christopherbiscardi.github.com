@@ -146,7 +146,16 @@ export default class SignUp extends React.Component {
     return (
       <RainbowBorder {...this.props}>
         {!successful && (
-          <h2 css={{ margin: 0, marginBottom: "2rem" }}>Join the Newsletter</h2>
+          <>
+            <h2 css={{ margin: 0, marginBottom: "2rem" }}>
+              Join the Newsletter
+            </h2>
+            <p css={{ margin: 0, marginBottom: "2rem" }}>
+              My newsletter is where you'll find exclusive content from me. I
+              write about technology, startups, and why you shouldn't call
+              yourself a junior engineer
+            </p>
+          </>
         )}
 
         <Formik
