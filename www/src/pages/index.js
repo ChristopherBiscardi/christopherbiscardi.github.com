@@ -61,7 +61,7 @@ const RainbowBorder = ({ children, ...props }) => (
       border: "solid 1px transparent",
       borderRadius: "1rem",
 
-      "& :before": {
+      "&:before": {
         animation: `${gradientAnimation} 30s ease infinite`,
         content: '""',
         position: "absolute",
