@@ -182,12 +182,12 @@ export default class SignUp extends React.Component {
                   }}
                 >
                   <label htmlFor="first_name" css={labelStyles}>
-                    <span css={labelSpanStyles}>Email address</span>
+                    <span css={labelSpanStyles}>Preferred name</span>
                     <Field
                       aria-label="preferred name"
                       aria-required="true"
                       name="first_name"
-                      placeholder="jane"
+                      placeholder="Jane"
                       type="text"
                       css={inputStyles}
                     />
