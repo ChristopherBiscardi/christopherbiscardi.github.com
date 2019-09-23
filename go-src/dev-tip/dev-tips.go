@@ -142,6 +142,27 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 
 	client := f.NewFaunaClient(faunaToken)
 
+	var tipsTweetedInLastNDays []string
+	results, fErr := client.Query(
+		f.Select(
+			[]string{"data"},
+			f.Map(
+				f.Paginate(
+					f.Match(f.Index("all_dev-tip-tweets")),
+					f.Before(nil),
+					f.Size(14),
+				),
+				f.Lambda("X", f.Select([]string{"data", "devTipId"}, f.Get(f.Var("X")))),
+			),
+		),
+	)
+	if fErr != nil {
+		ev.AddField("warning", fErr.Error())
+		tipsTweetedInLastNDays = []string{}
+	} else {
+		results.Get(&tipsTweetedInLastNDays)
+	}
+
 	tips, err := GetDevTipsJson()
 	if err != nil {
 		ev.AddField("error", err.Error())
@@ -151,17 +172,33 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 		}, nil
 	}
 	numTips := len(tips)
-	tipToTweetIndex := rand.Intn(numTips)
-	tipToTweet := tips[tipToTweetIndex]
+
+	// Get a dev tip that hasn't been tweeted in N days
+	var tipToTweet *DevTip
+
+	for tipToTweet == nil {
+		tipToTweetIndex := rand.Intn(numTips)
+		chosenTipWasTweeted := false
+
+		for _, tipID := range tipsTweetedInLastNDays {
+			if tipID == tips[tipToTweetIndex].ID {
+				chosenTipWasTweeted = true
+				break
+			}
+		}
+		if !chosenTipWasTweeted {
+			ev.AddField("tip_index_to_tweet", tipToTweetIndex)
+			tipToTweet = &tips[tipToTweetIndex]
+		}
+	}
 
 	ev.Add(map[string]interface{}{
-		"num_tips":           numTips,
-		"tip_index_to_tweet": tipToTweetIndex,
-		"tweet":              tipToTweet.Tweet,
-		"num_images":         len(tipToTweet.Images),
+		"num_tips":   numTips,
+		"tweet":      tipToTweet.Tweet,
+		"num_images": len(tipToTweet.Images),
 	})
 
-	images, fetchErr := FetchDevTipImages(tipToTweet)
+	images, fetchErr := FetchDevTipImages(*tipToTweet)
 	if fetchErr != nil {
 		ev.AddField("error", fetchErr.Error())
 		return &events.APIGatewayProxyResponse{
