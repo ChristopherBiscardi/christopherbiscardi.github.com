@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -15,6 +16,9 @@ type BodyStuff struct {
 }
 
 func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+	// This event will be sent regardless of how we exit
+	defer libhoney.Flush()
+	startTime := time.Now()
 
 	// Create an event, add some data
 	ev := libhoney.NewEvent()
@@ -25,8 +29,6 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 		"name":         "devtips",
 	})
 
-	// This event will be sent regardless of how we exit
-	defer ev.Send()
 	// if request.HTTPMethod == "GET" {
 	// 	return &events.APIGatewayProxyResponse{
 	// 		StatusCode: 404,
@@ -53,7 +55,14 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 		}, nil
 	}
 
-	return HandleRequest(ev)
+	response, err := HandleRequest(ev)
+
+	ev.Add(map[string]interface{}{
+		"duration_ms": time.Since(startTime)
+	})
+
+	ev.Send()
+	return response, err
 }
 
 func main() {
