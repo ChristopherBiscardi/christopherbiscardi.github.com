@@ -58,7 +58,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 	response, err := HandleRequest(ev)
 
 	ev.Add(map[string]interface{}{
-		"duration_ms": time.Since(startTime)
+		"duration_ms": time.Since(startTime),
 	})
 
 	ev.Send()
