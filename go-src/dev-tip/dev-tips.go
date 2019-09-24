@@ -149,7 +149,7 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 			f.Map(
 				f.Paginate(
 					f.Match(f.Index("all_dev-tip-tweets")),
-					f.Before(nil),
+					f.Before(f.NullV{}),
 					f.Size(14),
 				),
 				f.Lambda("X", f.Select([]string{"data", "devTipId"}, f.Get(f.Var("X")))),
