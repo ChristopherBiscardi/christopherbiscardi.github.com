@@ -15,8 +15,8 @@ import (
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/aws/aws-lambda-go/events"
-	f "github.com/fauna/faunadb-go/faunadb"
 	"github.com/honeycombio/libhoney-go"
+	f "github.com/fauna/faunadb-go/faunadb"
 )
 
 // Devtip matches the JSON output of the gatsby-theme-devtips devtips.json file
@@ -261,7 +261,7 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 	_, faunaErr := client.Query(
 		f.Create(
 			// this gets a collection reference
-			f.Class("dev-tip-tweets"),
+			f.Collection("dev-tip-tweets"),
 			// fauna needs things to be keyed on "data".
 			// not sure why yet. The struct has tags to
 			// work with fauna though, so we're good there.

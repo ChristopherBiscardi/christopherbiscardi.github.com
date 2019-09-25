@@ -7,7 +7,7 @@ import (
 	// "fmt"
 	// "github.com/honeycombio/libhoney-go"
 	// "github.com/honeycombio/libhoney-go/transmission"
-	// f "github.com/fauna/faunadb-go/faunadb"
+	// 	f "gopkg.in/fauna/faunadb-go.v2/faunadb"
 )
 
 func TestGetTips(t *testing.T) {
