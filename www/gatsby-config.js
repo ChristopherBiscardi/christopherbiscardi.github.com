@@ -27,6 +27,7 @@ module.exports = {
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
     `gatsby-source-eggheadio`,
+    `gatsby-source-fauna-devtips`,
     `gatsby-theme-field-guides`,
     `gatsby-plugin-inter`,
     {

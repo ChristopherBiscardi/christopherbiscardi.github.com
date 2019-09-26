@@ -51,6 +51,7 @@
     "gatsby-plugin-webmention": "^0.1.0",
     "gatsby-remark-prismjs": "3.1.4",
     "gatsby-source-eggheadio": "1.0.0",
+    "gatsby-source-fauna-devtips": "1.0.0",
     "gatsby-theme": "^0.0.6",
     "gatsby-theme-blog": "^1.2.1",
     "gatsby-theme-devtips": "^1.0.0",
