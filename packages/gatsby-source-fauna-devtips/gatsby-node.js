@@ -13,7 +13,7 @@ exports.createSchemaCustomization = ({ actions }) => {
   `);
 };
 
-exports.sourceNodes = async ({ actions, createNodeId }) => {
+exports.sourceNodes = async ({ actions, createNodeId, reporter }) => {
   const { createNode } = actions;
 
   if (!process.env.FAUNA_GRAPHQL_TOKEN) {
