@@ -41,7 +41,7 @@ exports.sourceNodes = async ({ reporter, actions, createNodeId }) => {
         title: node.title,
         publishedAt: node.published_at,
         summary: node.summary,
-        httpUrl: node.http_url,
+        httpUrl: node.http_url + `?af=7h4hd0`,
         state: node.state,
         primaryTag: node.primary_tag,
         tags: node.tags
