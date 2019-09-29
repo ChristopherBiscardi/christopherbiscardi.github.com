@@ -1,0 +1,21 @@
+---
+title: Takin notes on FaunaDB
+---
+
+- Multi-tenant
+  - Nested Databases
+  - How do cross-database permissions work?
+  - "Team per database" model? from a saas perspective
+  - Can you dev against a single DB and just "expand" to
+    multi? Only difference is keys.
+  - Indexes
+    - how.tf do you create indexes across hundreds of
+      database's collections operationally
+- Temporal querying
+  - Is using this as application history useful?
+  - When to trim?
+    - Is "all history" important?
+    - Can it be done per-nested-database if so?
+    - plans upgrade settings?
+    - History can be changed "after the fact" and is a
+      Collection setting, not DB
