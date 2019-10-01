@@ -12,7 +12,7 @@ const socialIcons = {
   youtube: require("./youtube.svg").default,
   github: require("./github.svg").default
 };
-console.log(socialIcons);
+
 const SocialButton = ({ href, icon, children }) => {
   const Icon = socialIcons[icon];
   return (

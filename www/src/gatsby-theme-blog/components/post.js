@@ -7,7 +7,7 @@ import PostFooter from "../../components/post-footer";
 export default props => {
   const newProps = props;
   newProps.data.post.date = "";
-  console.log("here", newProps.data.post.title);
+
   return (
     <>
       <Post {...newProps} />
