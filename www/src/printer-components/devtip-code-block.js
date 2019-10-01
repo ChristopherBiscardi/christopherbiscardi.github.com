@@ -3,7 +3,29 @@ import React from "react";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import nightOwl from "prism-react-renderer/themes/nightOwl";
 import { jsx } from "@emotion/core";
+import { getMonth } from "date-fns";
 
+const months = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec"
+];
+const imageCollections = {
+  default: "8541457",
+  oct: "8714217"
+};
+const today = new Date();
+const imageCollection =
+  imageCollections[months[getMonth(today)]] || imageCollections.default;
 const fontSize = 20;
 const CodeBlock = ({ lang, value }) => {
   return (
@@ -22,8 +44,7 @@ const CodeBlock = ({ lang, value }) => {
       />
       <div
         css={{
-          backgroundImage:
-            "url(https://source.unsplash.com/collection/8541457)",
+          backgroundImage: `url(https://source.unsplash.com/collection/${imageCollection})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "absolute",
