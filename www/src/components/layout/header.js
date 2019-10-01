@@ -8,7 +8,8 @@ const nav = [
   { displayName: "Posts", url: "/post" },
   { displayName: "Notes", url: "/notes" },
   { displayName: "DevTips", url: "/devtips" },
-  { displayName: "Tags", url: "/tags" },
+  // { displayName: "Tags", url: "/tags" },
+  { displayName: "Discord", url: "https://discord.gg/S9Gdagv" },
   {
     displayName: "Newsletter",
     url: "https://pages.convertkit.com/04c24646a3/c136f814fc"

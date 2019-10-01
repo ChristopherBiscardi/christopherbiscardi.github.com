@@ -16,8 +16,8 @@ exports.createSchemaCustomization = ({ actions }) => {
 exports.sourceNodes = async ({ actions, createNodeId, reporter }) => {
   const { createNode } = actions;
 
-  if (!process.env.FAUNA_GRAPHQL_TOKEN) {
-    reporter.warn("Must set `FAUNA_GRAPHQL_TOKEN` if you want fauna results");
+  if (!process.env.FAUNA_TOKEN) {
+    reporter.warn("Must set `FAUNA_TOKEN` if you want fauna results");
     return;
   }
   //process.env.FAUNA_TOKEN
@@ -54,7 +54,7 @@ exports.sourceNodes = async ({ actions, createNodeId, reporter }) => {
       `
     }),
     headers: {
-      Authorization: `Basic ${process.env.FAUNA_GRAPHQL_TOKEN}`,
+      Authorization: `Bearer ${process.env.FAUNA_TOKEN}`,
       "Content-Type": "application/json",
       "Accept-Type": "application/json"
     }

@@ -6,32 +6,10 @@ import Layout from "../components/layout";
 import Icon, { iconFromList } from "../components/small-icons";
 import SEO from "../seo";
 import NyanCat from "../components/nyan-cat";
+import SocialButton from "../components/social-button";
 // import { keyframes } from "@emotion/core";
 import ConvertKitForm from "../components/convertkit-form";
 const maxWidth = "800px";
-
-const socialStyles = {
-  twitter: { backgroundColor: "#00aced", color: "#eef1f7" },
-  twitch: { backgroundColor: "#6441a5", color: "#eef1f7" },
-  youtube: { backgroundColor: "#c4302b", color: "#eef1f7" },
-  github: { backgroundColor: "#eef1f7", color: "black" }
-};
-const SocialButton = ({ href, icon, children }) => (
-  <a
-    href={href}
-    css={[
-      {
-        padding: " .25rem .75rem",
-        borderRadius: "3px",
-        textDecoration: "none",
-        fontSize: "1rem"
-      },
-      socialStyles[icon]
-    ]}
-  >
-    {children}
-  </a>
-);
 
 const List = ({ title, subtitle, secondary, ...props }) => (
   <div css={{ maxWidth, margin: "auto", marginBottom: "3rem" }}>

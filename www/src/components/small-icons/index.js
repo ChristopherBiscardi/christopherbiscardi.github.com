@@ -17,16 +17,19 @@ const images = {
   css: require("./logos/css.png"),
   emotion: require("./logos/emotion.png"),
   gatsby: require("./logos/gatsby.png"),
-  mdx: require("./logos/mdx.png"),
   go: require("./logos/go.png"),
   graphql: require("./logos/graphql.png"),
-  js: require("./logos/js.png")
+  js: require("./logos/js.png"),
+  mdx: require("./logos/mdx.png"),
+  fauna: require("./logos/fauna.png"),
+  github: require("./logos/github.png")
 };
 
 const aliases = {
   golang: "go",
   "gatsby-themes": "gatsby",
-  javascript: "js"
+  javascript: "js",
+  faunadb: "fauna"
 };
 
 const aliasKeys = Object.keys(aliases);
