@@ -10,11 +10,14 @@ title: Change Page Context
 ```js
 exports.onCreatePage = ({ page, actions }) => {
   const { createPage, deletePage } = actions;
-  const oldPage = Object.assign({}, page);
-  if (oldPage.path === "/posts") {
-    page.path = "/blog-posts";
-    deletePage(oldPage);
-    createPage(page);
-  }
+  deletePage(page);
+  // You can access the variable "favoriteGame" in your page queries now
+  createPage({
+    ...page,
+    context: {
+      ...page.context,
+      favoriteGame: `Rocket League`
+    }
+  });
 };
 ```
