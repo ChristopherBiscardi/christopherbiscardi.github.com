@@ -33,6 +33,7 @@
     "@sindresorhus/slugify": "^0.9.1",
     "babel-plugin-preval": "^3.0.1",
     "babel-preset-gatsby": "^0.2.13",
+    "date-fns": "^2.4.1",
     "emotion-theming": "^10.0.4",
     "formik": "^1.5.1",
     "gatsby": "2.15.28",
