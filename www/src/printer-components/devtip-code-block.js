@@ -3,29 +3,48 @@ import React from "react";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import nightOwl from "prism-react-renderer/themes/nightOwl";
 import { jsx } from "@emotion/core";
-import { getMonth } from "date-fns";
+// import { getMonth } from "date-fns";
 
-const months = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "oct",
-  "nov",
-  "dec"
-];
-const imageCollections = {
-  default: "8541457",
-  oct: "8714217"
-};
-const today = new Date();
-const imageCollection =
-  imageCollections[months[getMonth(today)]] || imageCollections.default;
+const RainbowBorder = ({ children, ...props }) => (
+  <div
+    css={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      margin: "1rem",
+
+      position: "relative",
+      padding: "1px",
+      boxSizing: "border-box",
+
+      background: "#1b1f2a",
+      backgroundClip: "padding-box",
+      border: "solid 1px transparent",
+      borderRadius: "1rem",
+      zIndex: 99,
+
+      "&:before": {
+        content: '""',
+        position: "absolute",
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        zIndex: -1,
+        margin: "-1px",
+        // background: 'linear-gradient(to right, red, orange)',
+        backgroundColor: "#ff1493",
+        background:
+          "linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3)",
+        backgroundSize: "200% 200%",
+        borderRadius: "1rem"
+      }
+    }}
+  >
+    {children}
+  </div>
+);
+
 const fontSize = 20;
 const CodeBlock = ({ lang, value }) => {
   return (
@@ -35,53 +54,44 @@ const CodeBlock = ({ lang, value }) => {
         display: "inline-block",
         position: "relative",
         padding: `${fontSize}px`,
-        overflow: "hidden"
+        overflow: "hidden",
+        background: "#1b1f2a"
       }}
     >
       <link
         href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap"
         rel="stylesheet"
       />
-      <div
-        css={{
-          backgroundImage: `url(https://source.unsplash.com/collection/${imageCollection})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          position: "absolute",
-          width: "calc(100% + 4px)",
-          margin: `calc(-${fontSize}px - 2px)`,
-          height: "calc(100% + 4px)",
-          filter: "blur(2px)"
-        }}
-      ></div>
-      <Highlight
-        {...defaultProps}
-        theme={nightOwl}
-        code={value}
-        language={lang}
-      >
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre
-            className={className}
-            css={{
-              ...style,
-              fontFamily: "Source Code Pro",
-              backgroundColor: "rgba(1, 22, 39, .6)",
-              padding: `${fontSize}px`,
-              margin: `${fontSize}px`,
-              backdropFilter: "blur(10px)"
-            }}
-          >
-            {tokens.map((line, i) => (
-              <div {...getLineProps({ line, key: i })}>
-                {line.map((token, key) => (
-                  <span {...getTokenProps({ token, key })} />
-                ))}
-              </div>
-            ))}
-          </pre>
-        )}
-      </Highlight>
+      <RainbowBorder>
+        <Highlight
+          {...defaultProps}
+          theme={nightOwl}
+          code={value}
+          language={lang}
+        >
+          {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            <pre
+              className={className}
+              css={{
+                ...style,
+                fontFamily: "Source Code Pro",
+                background: "#1b1f2a",
+                padding: `${fontSize}px`,
+                margin: 0,
+                backdropFilter: "blur(10px)"
+              }}
+            >
+              {tokens.map((line, i) => (
+                <div {...getLineProps({ line, key: i })}>
+                  {line.map((token, key) => (
+                    <span {...getTokenProps({ token, key })} />
+                  ))}
+                </div>
+              ))}
+            </pre>
+          )}
+        </Highlight>
+      </RainbowBorder>
     </div>
   );
 };
