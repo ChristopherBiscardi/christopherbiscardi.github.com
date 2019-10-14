@@ -49,7 +49,7 @@ const aliases = {
   golang: "go"
 };
 const CodeBlock = ({ lang: rawLang, value }) => {
-  const lang = rawLang[lang] || rawLang;
+  const lang = aliases[rawLang] || rawLang;
   return (
     <div
       css={{
