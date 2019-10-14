@@ -2,6 +2,7 @@ import React, { Fragment, useContext } from "react";
 import { Link, graphql } from "gatsby";
 import { Styled, css } from "theme-ui";
 import Helmet from "react-helmet";
+import slugify from "@sindresorhus/slugify";
 
 import Layout from "gatsby-theme-blog/src/components/layout";
 import SEO from "gatsby-theme-blog/src/components/seo";

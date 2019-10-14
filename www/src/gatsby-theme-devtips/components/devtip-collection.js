@@ -62,9 +62,7 @@ export default props => {
           },
           {
             name: `twitter:image`,
-            content: `${
-              data.site.siteMetadata.siteUrl
-            }opengraph-images/tags/${slugify(
+            content: `${data.site.siteMetadata.siteUrl}devtip-images/${slugify(
               props.data.devTipsCollection.name
             )}.png`
           }

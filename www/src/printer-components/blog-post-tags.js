@@ -24,94 +24,102 @@ const stuff = preval`
 `;
 // /*      font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
 
-const styles = css`* {
+const RainbowBorder = ({ children, ...props }) => (
+  <div
+    css={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      height: "100%",
+
+      position: "relative",
+      padding: "1px",
+      boxSizing: "border-box",
+
+      background: "#1b1f2a",
+      backgroundClip: "padding-box",
+      border: "solid 1px transparent",
+      borderRadius: "1rem",
+      zIndex: 99,
+
+      "&:before": {
+        content: '""',
+        position: "absolute",
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        zIndex: -1,
+        margin: "-1px",
+        // background: 'linear-gradient(to right, red, orange)',
+        backgroundColor: "#ff1493",
+        background:
+          "linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3)",
+        borderRadius: "1rem"
+      }
+    }}
+  >
+    {children}
+  </div>
+);
+
+const styles = css`
+  * {
     box-sizing: border-box;
   }
-  /* Clip text element */
-  .clip-text {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1;
-      position: relative;
-      display: inline-block;
-      margin: 8px;
-      padding: 32px 48px;
-      text-align: left;
-      /* Color fallback */
-      color: #fff;
-      -webkit-background-clip: text;
-  
-      -webkit-text-fill-color: transparent;
-
-      box-sizing: border-box;
-      width: 600px;
-      height: 314px;
-      background-image: url(data:image/png;base64,${stuff.rainbowImg})
-
-  }
-  
-  .clip-text:before,
-  .clip-text:after {
-      position: absolute;
-      content: '';
-  }
-  
-  /* Background */
-  .clip-text:before {
-      z-index: -2;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background-image: inherit;
-  }
-  
-  /* Text Background (black zone) */
-  .clip-text:after {
-    border: 2px solid rgba(0,0,0,.4);
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    position: absolute;
-    z-index: -1;
-    top: 8px;
-    right: 8px;
-    bottom: 8px;
-    left: 8px;
-    background-image: url(data:image/png;base64,${stuff.rainbowImgScreened})
-  }
-  
-  /* Use Background-size cover for photo background and no-repeat background */
-  .clip-text,
-  .clip-text:before {
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-position: 50% 50%;
-  }`;
+`;
 
 export default ({ tag }) => {
   return (
-    <div className="clip-text">
-      <Global
-        styles={[
-          styles,
-          css`
-            ${stuff.inter}
-          `,
-          css`
-            ${stuff.fontStyles}
-          `
-        ]}
-      />
-      <Textfit
-        mode="single"
-        style={{
-          height: "100px",
-          textAlign: "center",
-          marginTop: 80
-        }}
-      >
-        {tag}
-      </Textfit>
+    <div
+      css={{
+        background: "#1b1f2a",
+        padding: "1rem",
+        width: "800px",
+        height: "400px"
+      }}
+    >
+      <RainbowBorder>
+        <div
+          css={{
+            background: "#1b1f2a",
+            padding: "1rem",
+            // textAlign: "center",
+            // height: "200px",
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            height: "100%"
+          }}
+        >
+          <Global
+            styles={[
+              styles,
+              css`
+                ${stuff.inter}
+              `,
+              css`
+                ${stuff.fontStyles}
+              `
+            ]}
+          />
+
+          <Textfit mode="single" style={{ width: "250px", color: "white" }}>
+            {tag}
+          </Textfit>
+          <span
+            css={{
+              color: "white",
+              textAlign: "center",
+              width: "250px",
+              fontSize: "2rem"
+            }}
+          >
+            blog posts
+          </span>
+        </div>
+      </RainbowBorder>
     </div>
   );
 };

@@ -122,24 +122,3 @@ export default ({ name }) => {
     </div>
   );
 };
-
-// export default ({ name }) => {
-//   return (
-//     <div css={{background: "#1b1f2a",}}>
-//       <RainbowBorder>
-//       <Global
-//         styles={[
-//           styles,
-//           css`
-//             ${stuff.inter}
-//           `,
-//           css`
-//             ${stuff.fontStyles}
-//           `
-//         ]}
-//       />
-//       <Textfit style={{ height: "250px" }}>{name}</Textfit>
-//       </RainbowBorder>
-//     </div>
-//   );
-// };
