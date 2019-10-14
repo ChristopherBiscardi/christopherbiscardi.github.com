@@ -45,7 +45,11 @@ const RainbowBorder = ({ children, ...props }) => (
 );
 
 const fontSize = 20;
-const CodeBlock = ({ lang, value }) => {
+const aliases = {
+  golang: "go"
+};
+const CodeBlock = ({ rawLang, value }) => {
+  const lang = rawLang[lang] || rawLang;
   return (
     <div
       css={{

@@ -1,0 +1,66 @@
+---
+title: triggering actions
+tweet:
+  \@github actions can be triggered by pushes, webhooks, or
+  on a schedule like cron jobs
+  https://egghead.io/lessons/github-scheduling-github-actions-with-cron?pl=github-actions-at-work-ad05f3ff?af=7h4hd0
+---
+
+```yaml
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run a one-line script
+        run: echo Hello, world!
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+```
+
+```yaml
+name: From Webhook
+
+on: repository_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run a one-line script
+        run: echo Hello, world!
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+```
+
+```yaml
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run a one-line script
+        run: echo Hello, world!
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+```
