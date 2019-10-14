@@ -6,6 +6,7 @@ import { jsx, Styled } from "theme-ui";
 import Helmet from "react-helmet";
 import { useStaticQuery, graphql } from "gatsby";
 import slugify from "@sindresorhus/slugify";
+import SEO from "../../seo";
 
 export default props => {
   const data = useStaticQuery(graphql`
@@ -22,6 +23,10 @@ export default props => {
       location={props.location}
       title={`DevTips -- ${props.data.devTipsCollection.name}`}
     >
+      <SEO
+        title={`${props.data.devTipsCollection.name} dev tips`}
+        keywords={[`dev-tips`, props.data.devTipsCollection.name]}
+      />
       <blockquote>{props.data.devTipsCollection.description}</blockquote>
       <div
         sx={{
