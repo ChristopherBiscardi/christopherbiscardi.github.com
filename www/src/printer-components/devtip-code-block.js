@@ -48,7 +48,7 @@ const fontSize = 20;
 const aliases = {
   golang: "go"
 };
-const CodeBlock = ({ rawLang, value }) => {
+const CodeBlock = ({ lang: rawLang, value }) => {
   const lang = rawLang[lang] || rawLang;
   return (
     <div
