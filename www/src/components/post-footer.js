@@ -14,7 +14,7 @@ const Footer = ({ previous, next, title }) => (
           title={title}
           twitterHandle={"@chrisbiscardi"}
         />
-        <div css={css({ margin: [0, "0 -300px"] })}>
+        <div css={css({ margin: [0, 0, "0 -300px"] })}>
           <ConvertKitForm />
         </div>
         {(previous || next) && (

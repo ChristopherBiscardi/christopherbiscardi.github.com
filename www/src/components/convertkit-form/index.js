@@ -174,8 +174,12 @@ export default class SignUp extends React.Component {
                   css={{
                     display: "flex",
                     justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    alignItems: "flex-end",
                     "@media screen and (max-width: 800px)": {
-                      flexDirection: "column"
+                      flexDirection: "column",
+                      flexWrap: "inherit",
+                      alignItems: "inherit"
                     },
                     flexDirection: "row",
                     "& > * ": { marginTop: "1rem" },
