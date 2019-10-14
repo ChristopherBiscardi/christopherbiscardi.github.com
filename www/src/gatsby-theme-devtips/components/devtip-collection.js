@@ -62,7 +62,7 @@ export default props => {
           },
           {
             name: `twitter:image`,
-            content: `${data.site.siteMetadata.siteUrl}devtip-images/${slugify(
+            content: `${data.site.siteMetadata.siteUrl}/devtip-images/${slugify(
               props.data.devTipsCollection.name
             )}.png`
           }
