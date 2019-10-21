@@ -1,0 +1,101 @@
+---
+title:
+  Gatsby Sub Themes
+date: 2019-10-20
+tags:
+  - gatsby
+  - gatsby-themes
+---
+
+# sub-themes
+
+"Sub themes" are themes that are used by a controlling theme to execute logic in various lifecycles. sub-themes operate the same as sub-plugins, which means if you've used gatsby-transformer-remark or gatsby-plugin-mdx _and_ gatsby-remark-\* plugins like gatsby-remark-images, then you're familiar with passing plugins to other plugins using options.
+
+## sub-plugins
+
+Here's an example of sub-plugins in a gatsby config that applies `gatsby-remark-prismjs` using `gatsby-transformer-remark`.
+
+```js
+// In your gatsby-config.js
+plugins: [
+  {
+    resolve: `gatsby-transformer-remark`,
+    options: {
+      plugins: [
+        {
+          resolve: `gatsby-remark-prismjs`,
+          options: {}
+        }
+      ]
+    }
+  }
+];
+```
+
+> It is important to note that as of the writing of this, the only plugins in the `plugins` option of the controlling plugin are the only ones that have gatsby-node, etc executed
+
+## sub-themes
+
+Themes are the same as plugins, so we can take advantage of the same pattern. Note that this is mostly an advanced pattern and you probably want to either use "sibling" themes or "parent/child" themes instead.
+
+Imagine a hypothetical gatsby-theme-blog that allows other plugins to modify the core `BlogPost` interface logic to add an additional field called "categories" to the interface. The hypothetical `BlogPost` interface would be (in this case it was actually taken from the current [gatsby-theme-blog-core](https://github.com/gatsbyjs/gatsby/blob/3d2f82d6909c5ed9621f232b9746cc0196d36193/packages/gatsby-theme-blog-core/gatsby-node.js#L48-L58))
+
+```graphql
+interface BlogPost @nodeInterface {
+  id: ID!
+  title: String!
+  body: String!
+  slug: String!
+  date: Date! @dateformat
+  tags: [String]!
+  keywords: [String]!
+  excerpt: String!
+}
+```
+
+An extremely naiive solution that didn't use the graphql AST or graphql-compose to construct the type could look like (note that this logic is pseudo-code and not copy/pastable into an implementation)
+
+```js
+const blogPostInterface = `
+  interface BlogPost @nodeInterface {
+    id: ID!
+    title: String!
+    body: String!
+    slug: String!
+    date: Date! @dateformat
+    tags: [String]!
+    keywords: [String]!
+    excerpt: String!
+    ${options.plugins.map(plugin =>
+      plugin.gatsbyThemeBlogFile.extend("BlogPost")
+    )}
+  }
+`;
+```
+
+an implementation in the sub-plugin could be in a special `gatsby-theme-blog.js` file, just like the other gatsby-\* files.
+
+```js
+exports.extend = gqlType => `categories: [String!]!`;
+```
+
+in this case our theme is allowing sub-themes to modify the core `BlogPost` interface by injecting additional strings. Note that there are numerous problems with this specific approach and it's not clear that it's a good idea anyway (but illustrates the point).
+
+Our theme could then accept the sub-theme as an option.
+
+```js
+// In your gatsby-config.js
+plugins: [
+  {
+    resolve: `gatsby-theme-blog`,
+    options: {
+      plugins: [
+        {
+          resolve: `gatsby-theme-blog-categories`,
+          options: {}
+        }
+      ]
+    }
+  }
+];
+```
