@@ -67,16 +67,22 @@ const blogPostInterface = `
     keywords: [String]!
     excerpt: String!
     ${options.plugins.map(plugin =>
-      plugin.gatsbyThemeBlogFile.extend("BlogPost")
+      plugin.extend("BlogPost")
     )}
   }
 `;
 ```
 
-an implementation in the sub-plugin could be in a special `gatsby-theme-blog.js` file, just like the other gatsby-\* files.
+An implementation in the sub-plugin could be in a special `gatsby-theme-blog.js` file, just like the other gatsby-\* files. Doing this as a sub-plugin also gives us the built-in option to export this function from the `index.js` file in our theme as well.
 
 ```js
-exports.extend = gqlType => `categories: [String!]!`;
+exports.extend = gqlType => {
+    if(gqlType === 'BlogPost') {
+        return `categories: [String!]!`}
+        else {
+            return ``
+        }
+        };
 ```
 
 in this case our theme is allowing sub-themes to modify the core `BlogPost` interface by injecting additional strings. Note that there are numerous problems with this specific approach and it's not clear that it's a good idea anyway (but illustrates the point).
