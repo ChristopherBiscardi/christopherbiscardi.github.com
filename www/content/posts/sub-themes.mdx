@@ -79,10 +79,10 @@ An implementation in the sub-plugin could be in a special `gatsby-theme-blog.js`
 exports.extend = gqlType => {
     if(gqlType === 'BlogPost') {
         return `categories: [String!]!`}
-        else {
-            return ``
-        }
-        };
+    else {
+        return ``
+    }
+};
 ```
 
 in this case our theme is allowing sub-themes to modify the core `BlogPost` interface by injecting additional strings. Note that there are numerous problems with this specific approach and it's not clear that it's a good idea anyway (but illustrates the point).
