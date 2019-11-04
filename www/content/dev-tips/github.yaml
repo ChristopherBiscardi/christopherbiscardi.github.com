@@ -1,0 +1,4 @@
+name: GitHub
+slug: github
+description: GitHub is a git hosting SaaS service with additional features. It's free for open source use cases.
+content: ./github
