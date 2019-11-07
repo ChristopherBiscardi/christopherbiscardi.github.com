@@ -46,7 +46,8 @@ module.exports = {
           "gatsby-plugin",
           "articles"
         ],
-        siteUrl: "https://www.christopherbiscardi.com/"
+        siteUrl: "https://www.christopherbiscardi.com/",
+        customUrl: "research/links"
       }
     },
     `gatsby-source-eggheadio`,

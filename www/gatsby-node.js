@@ -155,13 +155,3 @@ exports.onCreateWebpackConfig = ({
     }
   });
 };
-
-exports.onCreatePage = ({ page, actions }) => {
-  const { createPage, deletePage } = actions;
-  const oldPage = { ...page };
-  if (oldPage.path === "/articleIndex/") {
-    page.path = "/research/links/";
-    deletePage(oldPage);
-    createPage(page);
-  }
-};

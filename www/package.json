@@ -57,7 +57,7 @@
     "gatsby-theme-blog": "^1.2.1",
     "gatsby-theme-devtips": "^1.0.0",
     "gatsby-theme-notes": "^1.0.3",
-    "gatsby-theme-pocket": "^0.2.15",
+    "gatsby-theme-pocket": "^0.3.0",
     "graphql-compose": "^6.2.0",
     "husky": "^1.2.0",
     "jimp": "^0.6.1",
