@@ -1,0 +1,21 @@
+---
+title: GitHub Workspace
+tweet:
+  The environment variable `GITHUB_WORKSPACE` is
+  automatically populated if you use the `actions/checkout`
+  \@github action
+---
+
+```yaml
+name: Test Package
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: cd $GITHUB_WORKSPACE
+      - run: ls
+```
