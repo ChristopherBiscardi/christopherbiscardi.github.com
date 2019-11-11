@@ -1215,7 +1215,7 @@
     "@emotion/utils" "0.11.2"
     "@emotion/weak-memoize" "0.2.4"
 
-"@emotion/core@^10.0.14", "@emotion/core@^10.0.15", "@emotion/core@^10.0.17", "@emotion/core@^10.0.9":
+"@emotion/core@10.0.17", "@emotion/core@^10.0.14", "@emotion/core@^10.0.15", "@emotion/core@^10.0.17", "@emotion/core@^10.0.22", "@emotion/core@^10.0.9":
   version "10.0.17"
   resolved "https://registry.yarnpkg.com/@emotion/core/-/core-10.0.17.tgz#3367376709721f4ee2068cff54ba581d362789d8"
   integrity sha512-gykyjjr0sxzVuZBVTVK4dUmYsorc2qLhdYgSiOVK+m7WXgcYTKZevGWZ7TLAgTZvMelCTvhNq8xnf8FR1IdTbg==
@@ -1224,18 +1224,6 @@
     "@emotion/cache" "^10.0.17"
     "@emotion/css" "^10.0.14"
     "@emotion/serialize" "^0.11.10"
-    "@emotion/sheet" "0.9.3"
-    "@emotion/utils" "0.11.2"
-
-"@emotion/core@^10.0.22":
-  version "10.0.22"
-  resolved "https://registry.yarnpkg.com/@emotion/core/-/core-10.0.22.tgz#2ac7bcf9b99a1979ab5b0a876fbf37ab0688b177"
-  integrity sha512-7eoP6KQVUyOjAkE6y4fdlxbZRA4ILs7dqkkm6oZUJmihtHv0UBq98VgPirq9T8F9K2gKu0J/au/TpKryKMinaA==
-  dependencies:
-    "@babel/runtime" "^7.5.5"
-    "@emotion/cache" "^10.0.17"
-    "@emotion/css" "^10.0.22"
-    "@emotion/serialize" "^0.11.12"
     "@emotion/sheet" "0.9.3"
     "@emotion/utils" "0.11.2"
 
@@ -1248,7 +1236,7 @@
     "@emotion/utils" "0.11.2"
     babel-plugin-emotion "^10.0.14"
 
-"@emotion/css@^10.0.22", "@emotion/css@^10.0.9":
+"@emotion/css@^10.0.9":
   version "10.0.22"
   resolved "https://registry.yarnpkg.com/@emotion/css/-/css-10.0.22.tgz#37b1abb6826759fe8ac0af0ac0034d27de6d1793"
   integrity sha512-8phfa5mC/OadBTmGpMpwykIVH0gFCbUoO684LUkyixPq4F1Wwri7fK5Xlm8lURNBrd2TuvTbPUGxFsGxF9UacA==
@@ -7390,10 +7378,10 @@ gatsby-theme-blog@^1.2.1:
     typeface-montserrat "0.0.75"
     typography-theme-wordpress-2016 "^0.16.19"
 
-gatsby-theme-devtips@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/gatsby-theme-devtips/-/gatsby-theme-devtips-1.0.2.tgz#73f9604ae95b5e402b1da205e1d87e5518cb826e"
-  integrity sha512-U4MzjaK4pGpj3pt2TNUeuuNwLAjf2XZkoYR3ogdxP8vV7BblCPMyRE1uQoI7KCiYsSBaHo5wZ9fqUuepZQYTiA==
+gatsby-theme-devtips@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/gatsby-theme-devtips/-/gatsby-theme-devtips-1.0.3.tgz#1549a6ab1c755581ff5b9d0be366cc250daa9397"
+  integrity sha512-G/BhQ7pyHBkE7G0UAOEa15ElGLZfxLphscYaY6SUiE+5jeQ5iakJSmJaEYxNkK7ynNL6JlQ/kBOxYCfga7ZzYA==
   dependencies:
     "@mdx-js/mdx" "^1.4.5"
     "@sindresorhus/slugify" "^0.9.1"
@@ -7424,10 +7412,10 @@ gatsby-theme-notes@^1.0.3:
     react-feather "^1.1.6"
     theme-ui "^0.2.18"
 
-gatsby-theme-pocket@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/gatsby-theme-pocket/-/gatsby-theme-pocket-0.3.0.tgz#741754b107121dc1bee5e12ad6d78e2730e7b463"
-  integrity sha512-MMEmZpw39LXvhTNh9fYP74RqRVH9TNx+mqlXxXybx3jHTwpNfBXHqMmGdVQS/8VKkagwBuYOWbX78mxUVL9Yhg==
+gatsby-theme-pocket@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/gatsby-theme-pocket/-/gatsby-theme-pocket-0.3.3.tgz#820c41935658c03a175b73d21a6c4e8d7e80d649"
+  integrity sha512-bjwonZa73k+Vk/6DTzA8IvwtFdYcItGkTK/BoTy0Czwk2l5rDUwjr0PkZ5AD7/M/l7y4na36QlxMXW41ohx+RA==
   dependencies:
     "@emotion/core" "^10.0.22"
     "@emotion/styled" "^10.0.23"
@@ -7444,6 +7432,7 @@ gatsby-theme-pocket@^0.3.0:
     moment "^2.24.0"
     node-getpocket "^1.0.0"
     react-select "^3.0.8"
+    react-switch "^5.0.1"
     shelljs "^0.8.3"
     theme-ui "^0.2.46"
 
