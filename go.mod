@@ -21,7 +21,9 @@ require (
 	github.com/honeycombio/libhoney-go v1.12.0
 	github.com/klauspost/compress v1.7.6 // indirect
 	github.com/klauspost/cpuid v1.2.1 // indirect
+	github.com/robpike/filter v0.0.0-20150108201509-2984852a2183
 	github.com/spf13/viper v1.4.0
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	gopkg.in/alexcesaro/statsd.v2 v2.0.0 // indirect
+	robpike.io/filter v0.0.0-20150108201509-2984852a2183
 )

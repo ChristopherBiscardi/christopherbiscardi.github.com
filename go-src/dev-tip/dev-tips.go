@@ -15,15 +15,17 @@ import (
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/honeycombio/libhoney-go"
 	f "github.com/fauna/faunadb-go/faunadb"
+	"github.com/honeycombio/libhoney-go"
+	filter "github.com/robpike/filter"
 )
 
 // Devtip matches the JSON output of the gatsby-theme-devtips devtips.json file
 type DevTip struct {
-	ID     string   `json:"id"`
-	Tweet  string   `json:"tweet"`
-	Images []string `json:"images"`
+	ID             string   `json:"id"`
+	Tweet          string   `json:"tweet"`
+	Images         []string `json:"images"`
+	CollectionSlug string   `json:"collectionSlug"`
 }
 
 type FaunaTweetResult struct {
@@ -129,6 +131,10 @@ func UploadImages(imageUrls []string, api *anaconda.TwitterApi) ([]anaconda.Medi
 	return medias, errors
 }
 
+func isRelevantTip(tip DevTip) bool {
+	return tip.CollectionSlug == "/devtips/github-actions"
+}
+
 // HandleRequest yo
 func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) {
 	faunaToken, ok := os.LookupEnv("FAUNA_TOKEN")
@@ -163,7 +169,9 @@ func HandleRequest(ev *libhoney.Event) (*events.APIGatewayProxyResponse, error) 
 		results.Get(&tipsTweetedInLastNDays)
 	}
 
-	tips, err := GetDevTipsJson()
+	rawTipsList, err := GetDevTipsJson()
+	tips := []DevTip{}
+	tips = filter.Choose(rawTipsList, isRelevantTip).([]DevTip)
 	if err != nil {
 		ev.AddField("error", err.Error())
 		return &events.APIGatewayProxyResponse{

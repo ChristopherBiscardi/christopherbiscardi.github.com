@@ -1,0 +1,19 @@
+---
+title: GitHub Event Path
+tweet:
+  The environment variable `GITHUB_EVENT_PATH`contains the
+  full payload for the event that triggered this run of your
+  \@github action
+---
+
+```yaml
+name: Cat Webhook Payload
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: cat $GITHUB_EVENT_PATH
+```

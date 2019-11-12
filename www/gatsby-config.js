@@ -26,6 +26,30 @@ module.exports = {
   },
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
+    {
+      resolve: "gatsby-theme-pocket",
+      options: {
+        pocketAccessToken: process.env.POCKET_ACCESS_TOKEN,
+        weeksOfHistory: 52,
+        tagFilter: false,
+        searchFilter: false,
+        pageTitle: "Research List",
+        pageDescription:
+          "This is a curated list of articles tagged under different areas of interest.",
+        seoTitle: "chris is reading",
+        seoDescription: "Stuff I'm reading",
+        seoKeywords: [
+          "gatsby",
+          "react",
+          "pocket",
+          "gatsby-theme",
+          "gatsby-plugin",
+          "articles"
+        ],
+        siteUrl: "https://www.christopherbiscardi.com/",
+        customUrl: "research/links"
+      }
+    },
     `gatsby-source-eggheadio`,
     `gatsby-source-fauna-devtips`,
     `gatsby-theme-field-guides`,
