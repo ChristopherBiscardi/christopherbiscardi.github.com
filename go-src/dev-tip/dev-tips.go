@@ -132,7 +132,8 @@ func UploadImages(imageUrls []string, api *anaconda.TwitterApi) ([]anaconda.Medi
 }
 
 func isRelevantTip(tip DevTip) bool {
-	return tip.CollectionSlug == "/devtips/github-actions"
+	return true
+	// return tip.CollectionSlug == "/devtips/github-actions"
 }
 
 // HandleRequest yo
