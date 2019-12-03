@@ -1,0 +1,95 @@
+---
+title: Rendering Trees with SlateJS
+date: 2019-01-03T02:20:03.433Z
+tags:
+  - javascript
+codesandbox:
+---
+
+SlateJS can render arbitrary elements as long as the leaf
+nodes are `text`. This means we can construct arbitrary JSON
+trees of to represent our content and let
+[Slate](https://www.slatejs.org/) handle the rest.
+
+```
+import React, {useMemo} from "react";
+import ReactDOM from "react-dom";
+// Import the Slate editor factory.
+import { createEditor } from 'slate'
+// Import the Slate components and React plugin.
+import { Slate, Editable, withReact } from 'slate-react'
+
+const defaultValue = [
+  {
+    type: 'stuff',
+    children: [
+      {
+        text: 'A line of text in a paragraph.',
+        marks: [],
+      },
+    ],
+  },
+]
+
+const App = () => {
+  const editor = useMemo(() => withReact(createEditor()), [])
+  return (
+    // Add the default value as a prop to the editor context.
+    <Slate editor={editor} defaultValue={defaultValue}>
+      <Editable />
+    </Slate>
+  )
+}
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
+```
+
+This works because the default React element used to render
+a Slate element is a `div`. Note the contents of the
+`data-slate-node` attributes in the resulting HTML.
+
+```html
+<div
+  data-gramm="false"
+  role="textbox"
+  data-slate-editor="true"
+  data-slate-node="value"
+  contenteditable="true"
+  style="outline: none; white-space: pre-wrap; overflow-wrap: break-word;"
+>
+  <div
+    data-slate-node="element"
+    style="position: relative;"
+  >
+    <span data-slate-node="text"
+      ><span data-slate-leaf="true"
+        ><span data-slate-string="true"
+          >A line of text in a paragraph.</span
+        ></span
+      ></span
+    >
+  </div>
+</div>
+```
+
+The `type` field isn't special, we could name it whatever we
+wanted. The `children` field is important and needs to
+exist. This is part of the
+[`Node` interfaces](https://docs.slatejs.org/concepts/02-nodes).
+
+the tldr; is that your elements need to have `children` and
+your `Text` nodes need to have `text` and `marks`.
+Everything else is up to you from how to structure your tree
+to anything else relating to the keys that make up that
+tree.
+
+```graphql
+interface Element {
+  children: Node[]
+}
+
+interface Text {
+  text: string
+  marks: Mark[]
+}
+```
