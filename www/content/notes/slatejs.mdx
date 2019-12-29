@@ -1,0 +1,50 @@
+---
+title: SlateJS
+---
+
+- `Commands` are user intent: `insertBreak`, `insertText`,
+  etc
+- `Operations` are low-level primitives, and how Slate
+  support collaborative editing. These are the "events" that
+  happen to the document.
+
+* You can override `Commands`
+
+```js
+const { insertText } = editor;
+editor.insertText = text => {
+  if (text === "&") {
+    // always replace `&` with the word `and`
+    insertText("and");
+  } else {
+    // otherwise let the usual happen
+    insertText(text);
+  }
+};
+```
+
+- Ways of annotating points
+  - short
+    ```
+    Location = Path | Point | Range
+    Path = number[]
+    Point = {
+        path: Path
+        offset: number
+        [key: string]: any
+    }
+    Range {
+        anchor: Point
+        focus: Point
+        [key: string]: any
+    }
+    Span = [Path, Path]
+    ```
+  - Path is an array of indexes through a tree
+  - Point is the location of a single Text node.
+    - _points can only refer to Text nodes_
+  - Ranges can span across nodes
+
+* testing
+  - don't render, just create editors and use `Commands`
+    since `Commands` signify a user _intent_

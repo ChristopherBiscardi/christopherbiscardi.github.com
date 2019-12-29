@@ -1,0 +1,30 @@
+---
+title: DynamoDB
+---
+
+- Single table design is heavily suggested
+
+  - you can theoretically fit all of your SQL tables into it
+  - pk and sk names for primary keys
+    - then gsi (global secondary index) other access
+      patterns
+    - known as "overloaded indexes" because you can stick
+      arbitrary values in for different data types
+
+- Primary Key _has_ to be an EQ statement
+- secondary key can have conditionals like >=, starts_with,
+  etc
+
+- low level API vs Document API vs High Level API
+
+  - high level is only java/.net
+  - document is available for more, like node
+  - low level is low
+
+- dynamo streams for getting data out
+- maybe kinesis + _something_ with automerge + lambda for
+  CRDT fronted dynamo tables?
+
+- You can "batch get", nice for graphql optimizations
+- response times measured in milliseconds, but DAX caching
+  (dynamodb accelerator) can accelerate to microseconds.
