@@ -27,6 +27,12 @@ module.exports = {
   mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
     {
+      resolve: "gatsby-plugin-fathom",
+      options: {
+        siteId: process.env.FATHOM_SITE_ID
+      }
+    },
+    {
       resolve: "gatsby-theme-pocket",
       options: {
         pocketAccessToken: process.env.POCKET_ACCESS_TOKEN,
