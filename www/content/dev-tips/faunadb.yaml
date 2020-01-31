@@ -1,4 +1,0 @@
-name: FaunaDB
-slug: faunadb
-description: FaunaDB is a global serverless database that gives you ubiquitous, low latency access to app data, without sacrificing data correctness. It eliminates layers of app code for manually handling data anomalies, security, and scale, creating a friendlier dev experience for you and better app experience for your users.
-content: ./faunadb
