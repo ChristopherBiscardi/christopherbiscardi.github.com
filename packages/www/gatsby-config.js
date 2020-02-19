@@ -24,8 +24,11 @@ module.exports = {
       }
     ]
   },
-  // mapping: { "Mdx.fields.featuredImage": `File.absolutePath` },
   plugins: [
+    {
+      resolve: `gatsby-source-sector`,
+      options: { workspace: "516555bc-f69b-47f9-ae7e-48cfd880b34d" }
+    },
     {
       resolve: "gatsby-plugin-fathom",
       options: {
@@ -44,8 +47,6 @@ module.exports = {
       }
     },
     `gatsby-plugin-svgr-loader`,
-    `gatsby-plugin-emotion`,
-    // `gatsby-plugin-og-image`,
     {
       resolve: `gatsby-plugin-webmention`,
       options: {
@@ -57,6 +58,5 @@ module.exports = {
     },
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-remove-serviceworker`
-    // `gatsby-remark-images`
   ]
 };
