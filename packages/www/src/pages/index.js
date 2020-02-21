@@ -1,15 +1,18 @@
-import React from "react";
+/* @jsx jsx */
+// import React from "react";
+import { jsx } from "@emotion/core";
+// impprt {h} from 'preact'
 // import Layout from "gatsby-theme-blog/src/components/layout";
 // import { Styled } from "theme-ui";
-import { Link, graphql } from "gatsby";
-import Layout from "../components/layout";
-import Icon, { iconFromList } from "../components/small-icons";
-import SEO from "../components/seo";
-import NyanCat from "../components/nyan-cat";
-import SocialButton from "../components/social-button";
-import ConvertKitForm from "../components/convertkit-form";
+// import Layout from "../components/layout";
+// import Icon, { iconFromList } from "../components/small-icons";
+// import SEO from "../components/seo/index.js";
+// import NyanCat from "../components/nyan-cat";
+import SocialButton from "../components/social-button/index.js";
+// import ConvertKitForm from "../components/convertkit-form";
 const maxWidth = "800px";
 
+const Link = props => <a href={props.to} {...props} />;
 const List = ({ title, subtitle, secondary, ...props }) => (
   <div css={{ maxWidth, margin: "auto", marginBottom: "3rem" }}>
     <div
@@ -47,17 +50,18 @@ const ListItem = ({ to, logo, children }) => {
           margin: "0 -1rem"
         }}
       >
-        <Icon icon={logo} />
+        {/* <Icon icon={logo} /> */}
         <span css={{ marginLeft: "10px" }}>{children}</span>
       </Component>
     </li>
   );
 };
 
-export default ({ data, ...props }) => {
+export default props => {
+  const data = { highlightedLessons: [], recentPosts: [] };
   return (
-    <Layout>
-      <SEO title="Chris Biscardi" />
+    <>
+      {/* <SEO title="Chris Biscardi" /> */}
       <div css={{ maxWidth, margin: "auto", marginTop: "75px" }}>
         <h1 css={{ fontSize: "3rem", marginBottom: ".3em" }}>
           Hey, I&rsquo;m Chris
@@ -70,9 +74,9 @@ export default ({ data, ...props }) => {
             maxWidth: "32em"
           }}
         >
-          Do you want to know how to build and sell Gatsby themes? To build
-          beautiful interactive experiences with MDX? Automate CI/CD with GitHub
-          Actions? Here I talk about this and more.
+          I'm an independent consultant that works with startups built on OSS.
+          Here I write about JAMStack, Serverless, MDX, and more. This site is
+          built with ESModules, Snowpack, and MDX.
         </p>
         <ul
           css={{
@@ -141,14 +145,14 @@ export default ({ data, ...props }) => {
           </Link>
         }
       >
-        {data.recentPosts.nodes.map(({ id, title, slug, tags }) => (
+        {data.recentPosts.map(({ id, title, slug, tags }) => (
           <ListItem logo={iconFromList(tags)} to={slug} key={id}>
             {title}
           </ListItem>
         ))}
       </List>
       <div css={{ display: "flex", justifyContent: "flex-end" }}>
-        <NyanCat css={{ height: "37px" }} />
+        {/* <NyanCat css={{ height: "37px" }} /> */}
       </div>
       <List
         title="Latest Lessons"
@@ -171,7 +175,7 @@ export default ({ data, ...props }) => {
           </a>
         }
       >
-        {data.highlightedLessons.nodes.map(
+        {data.highlightedLessons.map(
           ({ id, title, httpUrl: slug, primaryTag }) => (
             <ListItem
               logo={iconFromList(primaryTag ? [primaryTag.name] : [])}
@@ -183,37 +187,37 @@ export default ({ data, ...props }) => {
           )
         )}
       </List>
-      <ConvertKitForm />
-    </Layout>
+      {/* <ConvertKitForm /> */}
+    </>
   );
 };
 
-export const query = graphql`
-  query HomePageQuery {
-    recentPosts: allSectorMdx(
-      sort: { fields: [createdAt], order: DESC }
-      limit: 5
-    ) {
-      nodes {
-        id
-        title
-        # tags
-        slug
-      }
-    }
-    highlightedLessons: allEggheadLesson(
-      filter: { state: { eq: "published" } }
-      sort: { fields: publishedAt, order: DESC }
-      limit: 5
-    ) {
-      nodes {
-        id
-        title
-        httpUrl
-        primaryTag {
-          name
-        }
-      }
-    }
-  }
-`;
+// export const query = graphql`
+//   query HomePageQuery {
+//     recentPosts: allSectorMdx(
+//       sort: { fields: [createdAt], order: DESC }
+//       limit: 5
+//     ) {
+//       nodes {
+//         id
+//         title
+//         # tags
+//         slug
+//       }
+//     }
+//     highlightedLessons: allEggheadLesson(
+//       filter: { state: { eq: "published" } }
+//       sort: { fields: publishedAt, order: DESC }
+//       limit: 5
+//     ) {
+//       nodes {
+//         id
+//         title
+//         httpUrl
+//         primaryTag {
+//           name
+//         }
+//       }
+//     }
+//   }
+// `;
