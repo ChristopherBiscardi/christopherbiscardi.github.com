@@ -8,7 +8,7 @@
     "develop": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,snowpack/assets/babel-plugin.js src/ --out-dir lib --watch"
   },
   "dependencies": {
-    "@emotion/core": "^10.0.27",
+    "@emotion/preact-core": "^10.0.27",
     "@mdx-js/preact": "1.5.7",
     "fetch-sector-docs": "^1.0.0",
     "preact": "^10.3.2",
