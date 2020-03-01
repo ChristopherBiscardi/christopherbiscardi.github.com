@@ -1,26 +1,21 @@
 const fetch = require("node-fetch");
 const path = require("path");
 const slugify = require("@sindresorhus/slugify");
-const fs = require(`fs`);
 const toJsx = require("./mdxast-to-jsx");
-const mkdirp = require("mkdirp");
 
-exports.sourceNodes = async options => {
-  const siteDir = process.cwd();
-
-  if (!options.workspace) {
+exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
+  if (!workspace) {
     console.error(
-      "gatsby-source-sector requires a `workspace` key in the gatsby-config options"
+      "fetch-sector-docs requires a `workspace` key in the options"
     );
     return;
   }
-  mkdirp.sync(path.resolve(siteDir, "src/pages"));
 
   const { data, ...etc } = await fetch(`https://api.sector.dev/graphql`, {
     method: "post",
     body: JSON.stringify({
       query: `{
-        workspace(id: "${options.workspace}") {
+        workspace(id: "${workspace}") {
             id
             allMdx {
                 id
@@ -39,8 +34,12 @@ exports.sourceNodes = async options => {
     }
   })
     .then(res => res.json())
-    .catch(body => console.log(JSON.stringify(body, null, 2)));
-
+    .catch(e => console.log(e));
+  if (!data) {
+    throw new Error(
+      "Sector was unable to fetch data, is your secret key correct?"
+    );
+  }
   const { allMdx } = data.workspace;
 
   return Promise.all(
@@ -58,51 +57,56 @@ exports.sourceNodes = async options => {
         console.log(content);
         throw e;
       }
-      const componentPath = path.resolve(siteDir, `./src/pages/${slug}.js`);
 
-      return {
-        id,
-        content: `/** @jsx mdx */
+      const paths = await createPage({
+        module: `/** @jsx mdx */
         import {mdx} from '@mdx-js/preact';
         ${jsx}`,
         slug,
+        data: { ...rest }
+      });
+      // writeDataFile
+      return {
+        id,
+        content,
+        slug,
         ...rest,
-        component: componentPath
+        ...paths
       };
     })
   );
 };
 
-exports.createPages = async ({ createPage }) => {
-  return graphql(
-    `
-      query loadSectorMdxPagesQuery {
-        allSectorMdx {
-          nodes {
-            id
-            contentType
-            component
-            slug
-            createdAt
-          }
-        }
-      }
-    `
-  ).then(async result => {
-    if (result.errors) {
-      throw result.errors;
-    }
-    return Promise.all(
-      result.data.allSectorMdx.nodes.map(
-        async ({ id, contentType, createdAt, component, slug }) => {
-          return createPage({
-            // Path for this page — required
-            path: contentType ? `/post/${slug}` : `/notes/${slug}`,
-            component,
-            context: {}
-          });
-        }
-      )
-    );
-  });
-};
+// exports.createPages = async ({ createPage }) => {
+//   return graphql(
+//     `
+//       query loadSectorMdxPagesQuery {
+//         allSectorMdx {
+//           nodes {
+//             id
+//             contentType
+//             component
+//             slug
+//             createdAt
+//           }
+//         }
+//       }
+//     `
+//   ).then(async result => {
+//     if (result.errors) {
+//       throw result.errors;
+//     }
+//     return Promise.all(
+//       result.data.allSectorMdx.nodes.map(
+//         async ({ id, contentType, createdAt, component, slug }) => {
+//           return createPage({
+//             // Path for this page — required
+//             path: contentType ? `/post/${slug}` : `/notes/${slug}`,
+//             component,
+//             context: {}
+//           });
+//         }
+//       )
+//     );
+//   });
+// };

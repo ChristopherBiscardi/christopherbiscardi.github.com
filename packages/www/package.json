@@ -4,15 +4,18 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "prepare": "snowpack",
-    "develop": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,snowpack/assets/babel-plugin.js src/ --out-dir lib --watch"
+    "prepare": "snowpack --dest public/web_modules",
+    "snowpack": "snowpack --dest public/web_modules",
+    "develop": "babel --config-file=./sector-babel-config.js src/pages/ --out-dir public --watch",
+    "develop-page-renderer-client": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,snowpack/assets/babel-plugin.js src/page-renderer.js --out-dir public"
   },
   "dependencies": {
     "@emotion/preact-core": "^10.0.27",
     "@mdx-js/preact": "1.5.7",
     "fetch-sector-docs": "^1.0.0",
     "preact": "^10.3.2",
-    "theme-ui": "^0.3.1"
+    "theme-ui": "^0.3.1",
+    "toast": "^0.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -22,6 +25,7 @@
     "@babel/preset-react": "^7.8.3",
     "@babel/register": "^7.8.3",
     "@rollup/plugin-alias": "^3.0.1",
-    "snowpack": "^1.4.0"
+    "preact-render-to-string": "^5.1.4",
+    "snowpack": "^1.5.1"
   }
 }

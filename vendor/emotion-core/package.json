@@ -1,13 +1,14 @@
 {
   "name": "@emotion/preact-core",
   "version": "10.0.27",
-  "main": "dist/core.cjs.js",
+  "main": "node/index.js",
   "module": "lib/index.js",
   "files": ["src", "lib", "types"],
   "author": "mitchellhamilton <mitchell@mitchellhamilton.me>",
   "license": "MIT",
   "scripts": {
-    "develop": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties src/ --out-dir lib --watch"
+    "develop": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties src/ --out-dir lib --watch",
+    "build-node": "babel --no-babelrc --presets=@babel/preset-env,@babel/preset-react --plugins=@babel/plugin-proposal-class-properties src/ --out-dir node"
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
