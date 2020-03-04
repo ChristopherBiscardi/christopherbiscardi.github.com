@@ -32,10 +32,15 @@ import { render, h } from "/web_modules/preact.js";
 async function renderPage() {
   const PageModule = await import(window.componentPath);
   const Page = PageModule.default;
+
+  let pageWrapper = ({ children }) => h("div", null, children);
+  if (window.wrapperComponentPath) {
+    const PageWrapperModule = await import(window.wrapperComponentPath);
+    pageWrapper = PageWrapperModule.default;
+  }
+
   render(
-    // <PageWrapper>
-    h(Page),
-    //</PageWrapper>
+    h(pageWrapper, null, h(Page)),
     document.getElementById("toast-page-section")
   );
 }

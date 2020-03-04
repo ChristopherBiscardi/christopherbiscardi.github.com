@@ -7,7 +7,7 @@
     "prepare": "snowpack --dest public/web_modules",
     "snowpack": "snowpack --dest public/web_modules",
     "develop": "babel --config-file=./sector-babel-config.js src/pages/ --out-dir public --watch",
-    "develop-page-renderer-client": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,snowpack/assets/babel-plugin.js src/page-renderer.js --out-dir public"
+    "develop-project-src": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,snowpack/assets/babel-plugin.js src/ --out-dir public"
   },
   "dependencies": {
     "@emotion/preact-core": "^10.0.27",

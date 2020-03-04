@@ -1,4 +1,5 @@
-import React from "react";
+/** @jsx jsx */
+import { jsx } from "@emotion/preact-core";
 import Header from "./header";
 
 const Layout = ({ children, ...props }) => (

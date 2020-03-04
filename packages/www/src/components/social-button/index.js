@@ -1,6 +1,5 @@
 /** @jsx jsx */
-import React from "react";
-import { jsx } from "theme-ui";
+import { jsx } from "@emotion/preact-core";
 
 const socialStyles = {
   twitter: { backgroundColor: "#00aced", color: "#eef1f7" },
@@ -73,7 +72,7 @@ const SocialButton = ({ href, icon, children }) => {
   return (
     <a
       href={href}
-      sx={{
+      css={{
         display: "flex",
         padding: " .25rem .75rem",
         borderRadius: "3px",
@@ -82,10 +81,10 @@ const SocialButton = ({ href, icon, children }) => {
         ...socialStyles[icon]
       }}
     >
-      <div sx={{ height: "20px" }}>
+      <div css={{ height: "20px" }}>
         <Icon width="20px" height="auto" />
       </div>
-      <span sx={{ marginLeft: ".5rem" }}>{children}</span>
+      <span css={{ marginLeft: ".5rem" }}>{children}</span>
     </a>
   );
 };

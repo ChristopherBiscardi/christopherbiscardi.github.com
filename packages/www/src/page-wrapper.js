@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import { jsx } from "@emotion/preact-core";
-import Logo from "../logos/logo-full.svg";
+import { jsx, Global } from "@emotion/preact-core";
+// import Logo from "../logos/logo-full.svg";
 
 const maxWidth = "800px";
 
@@ -36,7 +36,7 @@ const Header = props => (
   >
     <div>
       <a href="/" css={{ display: "flex", flex: 1, marginTop: "7px" }}>
-        <Logo />
+        {/* <Logo /> */}
       </a>
     </div>
     <nav css={{ display: "flex", flex: 1 }}>
@@ -68,4 +68,21 @@ const Header = props => (
   </header>
 );
 
-export default Header;
+export default ({ children, ...props }) => (
+  <div>
+    <Global
+      styles={{
+        "*": {
+          boxSizing: "border-box",
+          margin: 0,
+          padding: 0
+        },
+        html: {
+          background: "#1b1f2a"
+        }
+      }}
+    />
+    <Header />
+    <div>{children}</div>
+  </div>
+);

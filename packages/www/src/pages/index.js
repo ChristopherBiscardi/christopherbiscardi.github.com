@@ -1,6 +1,7 @@
 /* @jsx jsx */
 // import React from "react";
-import { jsx } from "@emotion/core";
+import { Fragment } from "preact";
+import { jsx } from "@emotion/preact-core";
 // impprt {h} from 'preact'
 // import Layout from "gatsby-theme-blog/src/components/layout";
 // import { Styled } from "theme-ui";
@@ -60,7 +61,7 @@ const ListItem = ({ to, logo, children }) => {
 export default props => {
   const data = { highlightedLessons: [], recentPosts: [] };
   return (
-    <>
+    <Fragment>
       {/* <SEO title="Chris Biscardi" /> */}
       <div css={{ maxWidth, margin: "auto", marginTop: "75px" }}>
         <h1 css={{ fontSize: "3rem", marginBottom: ".3em" }}>
@@ -188,7 +189,7 @@ export default props => {
         )}
       </List>
       {/* <ConvertKitForm /> */}
-    </>
+    </Fragment>
   );
 };
 

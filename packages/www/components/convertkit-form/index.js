@@ -1,9 +1,8 @@
-import React from "react";
+/** @jsx jsx */
+import { Component } from "preact";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-// import { Styled } from "theme-ui";
-import { css, keyframes } from "@emotion/core";
-// import { Heading } from "sens8";
+import { keyframes, jsx } from "@emotion/preact-core";
 import Message from "./message";
 import { PleaseConfirmIllustration } from "./illustrations";
 
@@ -105,10 +104,16 @@ const labelSpanStyles = {
   fontSize: "1rem"
 };
 
-export default class SignUp extends React.Component {
-  state = {
-    submitted: false
-  };
+export default class SignUp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      submitted: false
+    };
+  }
+  // state = {
+  //   submitted: false
+  // };
 
   async handleSubmit(values, { setSubmitting }) {
     this.setState({ submitted: true });

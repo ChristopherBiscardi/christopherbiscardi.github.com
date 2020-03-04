@@ -5,9 +5,14 @@ const { h } = require("preact");
 // const { MDXProvider } = require("@mdx-js/preact");
 // const { jsx, Global } = require("@emotion/preact-core");
 
-const htmlTemplate = ({ componentPath, appHtml }) => `<!DOCTYPE html>
+const htmlTemplate = ({
+  componentPath,
+  pageWrapperPath,
+  appHtml
+}) => `<!DOCTYPE html>
 <script>
 window.componentPath = "${componentPath}";
+window.wrapperComponentPath = "${pageWrapperPath}";
 </script>
 <html lang="en">
   <head>
@@ -20,11 +25,17 @@ window.componentPath = "${componentPath}";
 </html>
 `;
 
-exports.render = async ({ component, browserComponentPath }) => {
-  const output = render(h(component));
+exports.render = async ({
+  component,
+  pageWrapper,
+  browserComponentPath,
+  browserPageWrapperPath
+}) => {
+  const output = render(h(pageWrapper, null, h(component)));
   //   console.log(output);
   return htmlTemplate({
     componentPath: browserComponentPath,
+    pageWrapperPath: browserPageWrapperPath,
     appHtml: output
   });
 };
