@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Global } from "@emotion/preact-core";
-import Logo from "./components/logos/logo-full.svg";
+// import Logo from "./components/logos/logo-full.svg";
 
 const maxWidth = "800px";
 
