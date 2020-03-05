@@ -10,7 +10,8 @@
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
-    "@oclif/plugin-help": "^2"
+    "@oclif/plugin-help": "^2",
+    "react-helmet": "5.2.1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",

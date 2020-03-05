@@ -97,7 +97,7 @@ export default props => {
               href="https://twitter.com/chrisbiscardi"
               icon="twitter"
             >
-              Follow
+              Twitter
             </SocialButton>
           </li>
           <li>
@@ -105,7 +105,7 @@ export default props => {
               href="https://www.twitch.tv/chrisbiscardi"
               icon="twitch"
             >
-              Follow
+              Twitch
             </SocialButton>
           </li>
           <li>
@@ -113,7 +113,7 @@ export default props => {
               href="https://www.youtube.com/channel/UCiSIL42pQRpc-8JNiYDFyzQ"
               icon="youtube"
             >
-              Subscribe
+              YouTube
             </SocialButton>
           </li>
           <li>
@@ -121,7 +121,7 @@ export default props => {
               href="https://github.com/ChristopherBiscardi"
               icon="github"
             >
-              Follow
+              GitHub
             </SocialButton>
           </li>
         </ul>

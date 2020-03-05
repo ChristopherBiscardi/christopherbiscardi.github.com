@@ -14,7 +14,7 @@
     "@mdx-js/preact": "1.5.7",
     "fetch-sector-docs": "^1.0.0",
     "preact": "^10.3.2",
-    "theme-ui": "^0.3.1",
+    "react-helmet": "^5.2.1",
     "toast": "^0.3.0"
   },
   "devDependencies": {
@@ -27,5 +27,13 @@
     "@rollup/plugin-alias": "^3.0.1",
     "preact-render-to-string": "^5.1.4",
     "snowpack": "^1.5.1"
+  },
+  "snowpack": {
+    "webDependencies": [
+      "preact",
+      "@emotion/preact-core",
+      "react-helmet",
+      ["react", "preact/compat"]
+    ]
   }
 }

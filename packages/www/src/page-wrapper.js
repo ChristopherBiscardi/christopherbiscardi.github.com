@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { jsx, Global } from "@emotion/preact-core";
-// import Logo from "./components/logos/logo-full.svg";
+import Logo from "./components/logos/logo-full.js";
+import Helmet from "react-helmet";
 
 const maxWidth = "800px";
 
@@ -36,7 +37,7 @@ const Header = props => (
   >
     <div>
       <a href="/" css={{ display: "flex", flex: 1, marginTop: "7px" }}>
-        {/* <Logo /> */}
+        <Logo />
       </a>
     </div>
     <nav css={{ display: "flex", flex: 1 }}>
@@ -78,10 +79,12 @@ export default ({ children, ...props }) => (
           padding: 0
         },
         html: {
-          background: "#1b1f2a"
+          background: "#1b1f2a",
+          fontFamily: "'Inter var', system-ui, sans-serif"
         }
       }}
     />
+    <Helmet title="Chris Biscardi" />
     <Header />
     <div>{children}</div>
   </div>

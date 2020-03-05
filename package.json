@@ -12,7 +12,7 @@
     "update-sens8": "git subtree pull --prefix sens8 git@github.com:ChristopherBiscardi/sens8.git master --squash"
   },
   "private": true,
-  "workspaces": ["packages/*", "vendor/*"],
+  "workspaces": ["packages/*", "vendor/*", "snowpack/pkg"],
   "lint-staged": {
     "*.{js,jsx}": ["prettier --parser flow --write", "git add"],
     "*.json": ["prettier --parser json --write", "git add"],
