@@ -1,9 +1,11 @@
+require("../module-aliases");
 const { Command, flags } = require("@oclif/command");
 const fs = require("fs").promises;
 const path = require("path");
 const { transformAsync } = require("@babel/core");
 // plugins?
 const { sourceNodes } = require("fetch-sector-docs");
+const WebdependenciesAliases = require("../babel/babel-plugin-webdependencies-aliases");
 
 class ShakeCommand extends Command {
   async run() {
@@ -31,6 +33,7 @@ class ShakeCommand extends Command {
         babelrc: false,
         presets: [`@babel/preset-react`],
         plugins: [
+          WebdependenciesAliases,
           `@babel/plugin-proposal-class-properties`,
           [
             "snowpack/assets/babel-plugin.js",
@@ -53,7 +56,8 @@ class ShakeCommand extends Command {
       // node-requireable component
       const nodeComponent = await transformAsync(module, {
         babelrc: false,
-        presets: [`@babel/preset-env`, `@babel/preset-react`]
+        presets: [`@babel/preset-env`, `@babel/preset-react`],
+        plugins: [WebdependenciesAliases]
       });
       const nodeComponentPath = path.resolve(cacheDir, `${slug}.js`);
       await fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8");

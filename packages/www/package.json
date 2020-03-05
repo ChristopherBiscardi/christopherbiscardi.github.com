@@ -32,6 +32,7 @@
     "webDependencies": [
       "preact",
       "@emotion/preact-core",
+      "@mdx-js/preact",
       "react-helmet",
       ["react", "preact/compat"]
     ]

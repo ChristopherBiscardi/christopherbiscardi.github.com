@@ -1,3 +1,4 @@
+require("../module-aliases");
 const { Command, flags } = require("@oclif/command");
 const fs = require("fs").promises;
 const path = require("path");

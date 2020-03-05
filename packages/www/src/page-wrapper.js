@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Global } from "@emotion/preact-core";
-import Logo from "./components/logos/logo-full.js";
+import Logo from "./components/logos/logo-full";
 import Helmet from "react-helmet";
 
 const maxWidth = "800px";
