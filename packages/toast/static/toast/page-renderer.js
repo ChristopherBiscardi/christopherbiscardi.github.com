@@ -1,46 +1,31 @@
 /* @jsx jsx */
-import { render, h } from "/web_modules/preact.js";
-// import { jsx, Global } from "@emotion/preact-core";
-// import { MDXProvider } from "@mdx-js/preact";
-// window.componentPath = "./pages/starting-a-new-node-project.js";
 
-// const PageWrapper = ({ children }) => (
-//   <MDXProvider
-//     components={{
-//       p: props => (
-//         <p css={{ marginTop: "1rem", color: "#efefef" }} {...props} />
-//       ),
-//       li: props => (
-//         <li
-//           css={{ marginTop: "1rem", color: "#efefef", marginLeft: "1rem" }}
-//           {...props}
-//         />
-//       )
-//     }}
-//   >
-//     <div>
-//       <Global
-//         styles={{
-//           "*": { margin: 0, padding: "0" },
-//           body: { background: "#1fa9f4", padding: "1rem" }
-//         }}
-//       />
-//       {children}
-//     </div>
-//   </MDXProvider>
-// );
 async function renderPage() {
-  const PageModule = await import(window.componentPath);
-  const Page = PageModule.default;
+  const promises = [
+    import(window.componentPath),
+    window.wrapperComponentPath
+      ? import(window.wrapperComponentPath)
+      : undefined,
+    window.dataPath
+      ? fetch(window.dataPath).then(response => {
+          return response.json();
+        })
+      : {},
+    import("/web_modules/preact.js")
+  ];
 
   let pageWrapper = ({ children }) => h("div", null, children);
-  if (window.wrapperComponentPath) {
-    const PageWrapperModule = await import(window.wrapperComponentPath);
-    pageWrapper = PageWrapperModule.default;
-  }
+  const [
+    PageModule,
+    PageWrapperModule,
+    pageData,
+    { render, h }
+  ] = await Promise.all(promises);
+  const Page = PageModule.default;
+  pageWrapper = PageWrapperModule ? PageWrapperModule.default : undefined;
 
   render(
-    h(pageWrapper, null, h(Page)),
+    h(pageWrapper, pageData, h(Page, pageData)),
     document.getElementById("toast-page-section")
   );
 }

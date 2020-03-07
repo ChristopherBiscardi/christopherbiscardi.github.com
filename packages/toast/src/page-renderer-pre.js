@@ -1,6 +1,6 @@
 const { render } = require("preact-render-to-string");
 const { h } = require("preact");
-const Helmet = require("react-helmet");
+const { Helmet } = require("react-helmet");
 // const babel = require("@babel/core");
 // const vm = require("vm");
 // const { MDXProvider } = require("@mdx-js/preact");
@@ -9,22 +9,59 @@ const Helmet = require("react-helmet");
 const htmlTemplate = ({
   componentPath,
   pageWrapperPath,
+  dataPath,
   appHtml,
-  head
+  helmet
 }) => `<!DOCTYPE html>
 <script>
 window.componentPath = "${componentPath}";
 window.wrapperComponentPath = "${pageWrapperPath}";
+window.dataPath = ${dataPath && `"${dataPath}"`};
 </script>
-<html lang="en">
+<html ${helmet.htmlAttributes.toString()}>
   <head>
-  ${head.title.toString()}
-  ${head.meta.toString()}
-  ${head.link.toString()}
+  ${helmet.title.toString()}
+  ${helmet.meta.toString()}
+  ${helmet.link.toString()}
   </head>
-  <body>
+  <body ${helmet.bodyAttributes.toString()}>
     <div id="toast-page-section">${appHtml}</div>
-    <script type="module" src="/toast/page-renderer.js"></script>
+    <script type="module">
+    /* @jsx jsx */
+
+async function renderPage() {
+  const promises = [
+    import(window.componentPath),
+    window.wrapperComponentPath
+      ? import(window.wrapperComponentPath)
+      : undefined,
+    window.dataPath
+      ? fetch(window.dataPath).then(response => {
+          return response.json();
+        })
+      : {},
+    import("/web_modules/preact.js")
+  ];
+
+  let pageWrapper = ({ children }) => h("div", null, children);
+  const [
+    PageModule,
+    PageWrapperModule,
+    pageData,
+    { render, h }
+  ] = await Promise.all(promises);
+  const Page = PageModule.default;
+  pageWrapper = PageWrapperModule ? PageWrapperModule.default : undefined;
+
+  render(
+    h(pageWrapper, pageData, h(Page, pageData)),
+    document.getElementById("toast-page-section")
+  );
+}
+
+renderPage();
+
+</script>
   </body>
 </html>
 `;
@@ -32,16 +69,19 @@ window.wrapperComponentPath = "${pageWrapperPath}";
 exports.render = async ({
   component,
   pageWrapper,
+  data = {},
   browserComponentPath,
-  browserPageWrapperPath
+  browserPageWrapperPath,
+  browserDataPath
 }) => {
-  const output = render(h(pageWrapper, null, h(component)));
+  const output = render(h(pageWrapper, data, h(component, data)));
   //   console.log(output);
-  const head = Helmet.rewind();
+  const helmet = Helmet.renderStatic();
   return htmlTemplate({
     componentPath: browserComponentPath,
     pageWrapperPath: browserPageWrapperPath,
+    dataPath: Object.keys(data).length > 0 ? browserDataPath : undefined,
     appHtml: output,
-    head
+    helmet
   });
 };

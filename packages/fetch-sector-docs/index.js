@@ -76,37 +76,3 @@ exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
     })
   );
 };
-
-// exports.createPages = async ({ createPage }) => {
-//   return graphql(
-//     `
-//       query loadSectorMdxPagesQuery {
-//         allSectorMdx {
-//           nodes {
-//             id
-//             contentType
-//             component
-//             slug
-//             createdAt
-//           }
-//         }
-//       }
-//     `
-//   ).then(async result => {
-//     if (result.errors) {
-//       throw result.errors;
-//     }
-//     return Promise.all(
-//       result.data.allSectorMdx.nodes.map(
-//         async ({ id, contentType, createdAt, component, slug }) => {
-//           return createPage({
-//             // Path for this page — required
-//             path: contentType ? `/post/${slug}` : `/notes/${slug}`,
-//             component,
-//             context: {}
-//           });
-//         }
-//       )
-//     );
-//   });
-// };

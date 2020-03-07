@@ -18,16 +18,32 @@ class BakeCommand extends Command {
     const pages = require(path.resolve(cacheDir, "pages.json"));
     // const PageWrapper = require("./.cache/page-wrapper");
 
+    // run a toast data processing lifecycle.
+    // TBD: how do we know that people have done processing here
+    // so that we can track it back to build individual data bundles...
+    // or do we yeet it and just re-run this processing step every time
+    // then check the data files after.
+    const toastFile = path.resolve(siteDir, "toast.js");
+    let toast = {};
+    try {
+      toast = require(toastFile);
+    } catch (e) {
+      // no lifecycles defined
+    }
+    if (toast.prepData) {
+      await toast.prepData({ cacheDir, publicDir });
+    }
+
     const srcFiles = await globby(["src/**/*.js"]);
     await Promise.all(
       srcFiles.map(async filepath => {
-        console.log(filepath);
         const fullFilePath = path.resolve(siteDir, filepath);
         const fileContents = await fs.readFile(fullFilePath, "utf-8");
         const browserComponent = await transformAsync(fileContents, {
           babelrc: false,
           presets: [`@babel/preset-react`],
           plugins: [
+            `babel-plugin-preval`,
             `@babel/plugin-proposal-class-properties`,
             [
               "snowpack/assets/babel-plugin.js",
@@ -49,9 +65,11 @@ class BakeCommand extends Command {
           browserComponent.code,
           "utf-8"
         );
+
         const nodeComponent = await transformAsync(fileContents, {
           babelrc: false,
-          presets: [`@babel/preset-env`, `@babel/preset-react`]
+          presets: [`@babel/preset-env`, `@babel/preset-react`],
+          plugins: [`babel-plugin-preval`]
         });
         const nodeComponentPath = path.resolve(cacheDir, filepath);
         await fs.mkdir(path.dirname(nodeComponentPath), { recursive: true });
@@ -59,10 +77,19 @@ class BakeCommand extends Command {
         await fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8");
 
         if (filepath.startsWith("src/pages")) {
+          // read in page data json file if it exists
+          const dataPath = path.resolve(publicDir, `${filepath}on`);
+          let data = {};
+          console.log("data path", dataPath);
+          try {
+            data = require(dataPath);
+          } catch (e) {
+            // data path doesn't exist. Some things won't have data, it's fine.
+          }
+          // require user's page wrapper component
           const pageWrapper = require(pageWrapperPath).default;
 
           // write HTML file out for page
-
           const htmlFilePath = path.resolve(
             publicDir,
             filepath.replace("src/pages/", "").replace(".js", ".html")
@@ -71,13 +98,17 @@ class BakeCommand extends Command {
           const html = await render({
             component: require(nodeComponentPath).default,
             pageWrapper,
+            data,
             browserPageWrapperPath,
             browserComponentPath: browserComponentPath.replace(
               path.resolve(process.cwd(), "public/"),
               ""
-            )
-            // pass in page-data here
-            // data = {}
+            ),
+            browserDataPath:
+              browserComponentPath.replace(
+                path.resolve(process.cwd(), "public/"),
+                ""
+              ) + "on"
           });
           await fs.writeFile(htmlFilePath, html);
         }
@@ -96,17 +127,29 @@ class BakeCommand extends Command {
           nodeComponentPath,
           pageDataPath
         }) => {
+          // read in page data json file if it exists
+          let data = {};
+          try {
+            data = require(pageDataPath);
+          } catch (e) {
+            // data path doesn't exist. Some things won't have data, it's fine.
+          }
           const htmlFilePath = path.resolve(publicDir, `${slug}.html`);
 
           const html = await render({
             component: require(nodeComponentPath).default,
             pageWrapper,
             browserPageWrapperPath,
+            data,
             browserComponentPath: browserComponentPath.replace(
               path.resolve(process.cwd(), "public/"),
               ""
-            )
-            // data = {}
+            ),
+            browserDataPath:
+              browserComponentPath.replace(
+                path.resolve(process.cwd(), "public/"),
+                ""
+              ) + "on"
           });
           await fs.writeFile(htmlFilePath, html);
           return;

@@ -1,7 +1,8 @@
 /** @jsx jsx */
 import { jsx, Global } from "@emotion/preact-core";
-import Logo from "./components/logos/logo-full";
-import Helmet from "react-helmet";
+import Logo from "./components/logos/logo-full.js";
+import { Helmet } from "react-helmet";
+import { MDXProvider } from "@mdx-js/preact";
 
 const maxWidth = "800px";
 
@@ -69,6 +70,8 @@ const Header = props => (
   </header>
 );
 
+const headingStyles = { gridColumn: 2, marginTop: "2rem" };
+
 export default ({ children, ...props }) => (
   <div>
     <Global
@@ -84,8 +87,45 @@ export default ({ children, ...props }) => (
         }
       }}
     />
-    <Helmet title="Chris Biscardi" />
+    <Helmet>
+      <meta charSet="utf-8" />
+      <title>Chris Biscardi's Digital Garden</title>
+      <meta name="description" value="JAMStack, Serverless, MDX, and more" />
+    </Helmet>
     <Header />
-    <div>{children}</div>
+    {props.title && (
+      <div css={{ width: "57ch", margin: "4rem auto" }}>
+        <h1 css={{ color: "rgba(255, 255, 255, 0.86)" }}>{props.title}</h1>
+      </div>
+    )}
+    <MDXProvider
+      components={{
+        wrapper: props => (
+          <div
+            css={{
+              display: "grid",
+              color: "rgba(255, 255, 255, 0.86)",
+              gridTemplateColumns:
+                "minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr)"
+            }}
+            {...props}
+          />
+        ),
+        p: props => (
+          <p
+            css={{ gridColumn: 2, marginTop: "1rem", lineHeight: 1.75 }}
+            {...props}
+          />
+        ),
+        h1: props => <h1 css={headingStyles} {...props} />,
+        h2: props => <h2 css={headingStyles} {...props} />,
+        h3: props => <h3 css={headingStyles} {...props} />,
+        h4: props => <h4 css={headingStyles} {...props} />,
+        h5: props => <h5 css={headingStyles} {...props} />,
+        h6: props => <h6 css={headingStyles} {...props} />
+      }}
+    >
+      <div>{children}</div>
+    </MDXProvider>
   </div>
 );
