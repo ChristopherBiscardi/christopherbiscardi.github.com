@@ -25,7 +25,7 @@ class ShakeCommand extends Command {
       // data to insert into the html page
       data
     }) => {
-      console.log("createing", slug);
+      this.log("writing sector doc:", slug);
       // compile module and write out browserComponent to public/
       // browser-runnable JS, minus web module imports
       // const { code, map, ast } = browserComponent;

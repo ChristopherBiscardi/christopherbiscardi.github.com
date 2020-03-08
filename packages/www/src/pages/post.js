@@ -51,7 +51,6 @@ const ListItem = ({ to, logo, children }) => {
 };
 
 export default props => {
-  console.log("props", props);
   return (
     <Fragment>
       <Helmet>

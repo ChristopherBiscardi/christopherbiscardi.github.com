@@ -84,7 +84,7 @@ class BakeCommand extends Command {
           // read in page data json file if it exists
           const dataPath = path.resolve(publicDir, `${filepath}on`);
           let data = {};
-          console.log("data path", dataPath);
+          this.log("data path", dataPath);
           try {
             data = require(dataPath);
           } catch (e) {
@@ -169,8 +169,6 @@ class BakeCommand extends Command {
       ),
       path.resolve(publicDir, "toast/page-renderer.js")
     );
-
-    // TODO transform src/ dir and create pages from src/pages
 
     this.log(`Baked`);
   }

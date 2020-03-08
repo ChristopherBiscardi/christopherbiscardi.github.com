@@ -13,6 +13,8 @@ import SocialButton from "../components/social-button/index.js";
 // import ConvertKitForm from "../components/convertkit-form";
 const maxWidth = "800px";
 
+console.log("SocialButton", SocialButton);
+
 const Link = props => <a href={props.to} {...props} />;
 const List = ({ title, subtitle, secondary, ...props }) => (
   <div css={{ maxWidth, margin: "auto", marginBottom: "3rem" }}>
