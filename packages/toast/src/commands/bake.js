@@ -98,11 +98,7 @@ class BakeCommand extends Command {
             publicDir,
             filepath.replace("src/pages/", "").replace(".js", ".html")
           );
-          const smallIcons = await fs.readFile(
-            path.resolve(cacheDir, "src/components/small-icons/index.js"),
-            "utf-8"
-          );
-          console.log(smallIcons);
+
           const html = await render({
             component: require(nodeComponentPath).default,
             pageWrapper,

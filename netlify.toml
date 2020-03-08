@@ -1,4 +1,4 @@
 [build]
   command = "make build"
   functions = "netlify-functions"
-  publish = "www/public"
+  publish = "packages/www/public"
