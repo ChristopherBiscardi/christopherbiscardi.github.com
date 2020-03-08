@@ -69,7 +69,10 @@ class BakeCommand extends Command {
 
         const nodeComponent = await transformAsync(fileContents, {
           babelrc: false,
-          presets: [`@babel/preset-env`, `@babel/preset-react`],
+          presets: [
+            [`@babel/preset-env`, { targets: { node: "current" } }],
+            `@babel/preset-react`
+          ],
           plugins: [`babel-plugin-preval`]
         });
         const nodeComponentPath = path.resolve(cacheDir, filepath);
@@ -95,6 +98,11 @@ class BakeCommand extends Command {
             publicDir,
             filepath.replace("src/pages/", "").replace(".js", ".html")
           );
+          const smallIcons = await fs.readFile(
+            path.resolve(cacheDir, "src/components/small-icons/index.js"),
+            "utf-8"
+          );
+          console.log(smallIcons);
           const html = await render({
             component: require(nodeComponentPath).default,
             pageWrapper,

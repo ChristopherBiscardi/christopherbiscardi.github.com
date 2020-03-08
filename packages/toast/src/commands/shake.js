@@ -56,7 +56,10 @@ class ShakeCommand extends Command {
       // node-requireable component
       const nodeComponent = await transformAsync(module, {
         babelrc: false,
-        presets: [`@babel/preset-env`, `@babel/preset-react`],
+        presets: [
+          [`@babel/preset-env`, { targets: { node: "current" } }],
+          `@babel/preset-react`
+        ],
         plugins: [WebdependenciesAliases]
       });
       const nodeComponentPath = path.resolve(cacheDir, `${slug}.js`);
