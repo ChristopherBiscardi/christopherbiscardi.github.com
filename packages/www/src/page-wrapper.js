@@ -90,7 +90,30 @@ export default ({ children, ...props }) => (
     <Helmet>
       <meta charSet="utf-8" />
       <title>Chris Biscardi's Digital Garden</title>
-      <meta name="description" value="JAMStack, Serverless, MDX, and more" />
+      <meta name="twitter:title" content="Chris Biscardi's Digital Garden" />
+      <meta name="og:title" content="Chris Biscardi's Digital Garden" />
+      <meta name="description" content="JAMStack, Serverless, MDX, and more" />
+      <meta
+        name="twitter:description"
+        content="JAMStack, Serverless, MDX, and more"
+      />
+      <meta name="og:type" content="website" />
+      <meta name="twitter:site" content="@chrisbiscardi" />
+      <meta name="twitter:creator" content="@chrisbiscardi" />
+      <meta name="twitter:card" content="summary_large_image" />
+
+      <meta
+        name="twitter:image"
+        content={
+          props.title
+            ? encodeURI(
+                `https://opengraph.sector.tools/chris?title=${props.title}`
+              )
+            : encodeURI(
+                `https://opengraph.sector.tools/chris?title=Chris' Digital Garden`
+              )
+        }
+      />
     </Helmet>
     <Header />
     {props.title && (

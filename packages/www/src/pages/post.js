@@ -2,28 +2,28 @@
 import { Fragment } from "preact";
 import { jsx } from "@emotion/preact-core";
 import Icon, { iconFromList } from "../components/small-icons/index.js";
-console.log("icon", iconFromList);
+import { Helmet } from "react-helmet";
+console.log("icon-a", Icon);
 // import ConvertKitForm from "../components/convertkit-form";
 const maxWidth = "800px";
 
-const List = ({ title, subtitle, secondary, ...props }) =>
-  console.log(props) || (
-    <div css={{ maxWidth, margin: "auto", marginBottom: "3rem" }}>
-      <div
-        css={{
-          marginBottom: "1rem",
-          display: "flex",
-          justifyContent: "space-between"
-        }}
-      >
-        <h2 css={{ margin: 0 }}>{title}</h2>
-        {secondary}
-      </div>
-      <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
-        {props.children}
-      </ul>
+const List = ({ title, subtitle, secondary, ...props }) => (
+  <div css={{ maxWidth, margin: "auto", marginBottom: "3rem" }}>
+    <div
+      css={{
+        marginBottom: "1rem",
+        display: "flex",
+        justifyContent: "space-between"
+      }}
+    >
+      <h2 css={{ margin: 0 }}>{title}</h2>
+      {secondary}
     </div>
-  );
+    <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
+      {props.children}
+    </ul>
+  </div>
+);
 
 const ListItem = ({ to, logo, children }) => {
   return (
@@ -54,7 +54,27 @@ export default props => {
   console.log("props", props);
   return (
     <Fragment>
-      {/* <SEO title="Chris Biscardi" /> */}
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>All Chris' Writing</title>
+        <meta name="twitter:title" content="All Chris' Writing" />
+        <meta name="og:title" content="All Chris' Writing" />
+        <meta
+          name="description"
+          content={"My notes, blog posts, deep dives, and other work"}
+        />
+        <meta
+          name="twitter:description"
+          content={"My notes, blog posts, deep dives, and other work"}
+        />
+
+        <meta
+          name="twitter:image"
+          content={encodeURI(
+            `https://opengraph.sector.tools/chris?title=All Writing`
+          )}
+        />
+      </Helmet>
       <List
         title="All Posts"
         secondary={
