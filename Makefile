@@ -1,5 +1,5 @@
 build:
-    git clone https://github.com/ChristopherBiscardi/snowpack.git
+	git clone https://github.com/ChristopherBiscardi/snowpack.git
 	cd snowpack && git checkout webdependency-alias && npm i && npm build
 	yarn
 	cd packages/www && yarn snowpack
