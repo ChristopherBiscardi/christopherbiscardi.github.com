@@ -36,7 +36,7 @@ class BakeCommand extends Command {
     }
 
     const srcFiles = await globby(["src/**/*.js"]);
-    await Promise.all(
+    const files = await Promise.all(
       srcFiles.map(async filepath => {
         const fullFilePath = path.resolve(siteDir, filepath);
         const fileContents = await fs.readFile(fullFilePath, "utf-8");
@@ -80,13 +80,19 @@ class BakeCommand extends Command {
 
         await fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8");
 
-        if (filepath.startsWith("src/pages")) {
+        return { filepath, nodeComponentPath, browserComponentPath };
+      })
+    );
+    await Promise.all(
+      files
+        .filter(({ filepath }) => filepath.startsWith("src/pages"))
+        .map(async ({ filepath, nodeComponentPath, browserComponentPath }) => {
           // read in page data json file if it exists
           const dataPath = path.resolve(publicDir, `${filepath}on`);
           let data = {};
-          this.log("data path", dataPath);
           try {
             data = require(dataPath);
+            this.log("required dataPath:", dataPath);
           } catch (e) {
             // data path doesn't exist. Some things won't have data, it's fine.
           }
@@ -115,9 +121,9 @@ class BakeCommand extends Command {
               ) + "on"
           });
           await fs.writeFile(htmlFilePath, html);
-        }
-        return;
-      })
+
+          return;
+        })
     );
 
     const pageWrapper = require(pageWrapperPath).default;
