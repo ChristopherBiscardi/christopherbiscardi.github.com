@@ -26,9 +26,6 @@ const images = preval`
     [fileNames[i]]: contents
   }), {})
 `;
-console.log("what");
-console.log(Object.keys(images));
-console.log("what2");
 
 // const images = {
 //   default: require("./logos/default.png"),

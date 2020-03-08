@@ -30,6 +30,7 @@ class BakeCommand extends Command {
     } catch (e) {
       // no lifecycles defined
     }
+
     if (toast.prepData) {
       await toast.prepData({ cacheDir, publicDir });
     }
@@ -94,7 +95,6 @@ class BakeCommand extends Command {
             publicDir,
             filepath.replace("src/pages/", "").replace(".js", ".html")
           );
-
           const html = await render({
             component: require(nodeComponentPath).default,
             pageWrapper,
