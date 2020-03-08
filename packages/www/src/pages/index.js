@@ -6,7 +6,7 @@ import { jsx } from "@emotion/preact-core";
 // import Layout from "gatsby-theme-blog/src/components/layout";
 // import { Styled } from "theme-ui";
 // import Layout from "../components/layout";
-import Icon, { iconFromList } from "../components/small-icons";
+import Icon, { iconFromList } from "../components/small-icons/index.js";
 // import SEO from "../components/seo/index.js";
 // import NyanCat from "../components/nyan-cat";
 import SocialButton from "../components/social-button/index.js";
