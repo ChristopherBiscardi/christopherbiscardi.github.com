@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "shake": "toast shake",
+    "bake": "toast bake",
     "prepare": "snowpack --dest public/web_modules",
     "snowpack": "snowpack --dest public/web_modules",
     "develop": "babel --config-file=./sector-babel-config.js src/pages/ --out-dir public --watch",
