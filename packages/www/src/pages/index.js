@@ -10,10 +10,28 @@ import Icon, { iconFromList } from "../components/small-icons/index.js";
 // import SEO from "../components/seo/index.js";
 // import NyanCat from "../components/nyan-cat";
 import SocialButton from "../components/social-button/index.js";
-// import ConvertKitForm from "../components/convertkit-form";
+import ConvertKitForm from "../components/convertkit-form/index.js";
 const maxWidth = "800px";
+const images = preval`
+  const fs = require('fs');
+  const path = require('path')
 
-console.log("SocialButton", SocialButton);
+  const nyanCatPath = path.resolve(__dirname, 'src/components/nyan-cat/nyan-cat-rainbow.webp')
+  const partyCorgiPath = path.resolve(__dirname, 'src/components/party-corgi.gif')
+  
+  module.exports = {
+    nyanCat: fs.readFileSync(nyanCatPath, 'base64'),
+    partyCorgi: fs.readFileSync(partyCorgiPath, 'base64')
+  }
+`;
+
+const NyanCat = props => (
+  <img
+    {...props}
+    src={`data:image/webp;base64,${images.nyanCat}`}
+    alt="nyan cat rainbow animated"
+  />
+);
 
 const Link = props => <a href={props.to} {...props} />;
 const List = ({ title, subtitle, secondary, ...props }) => (
@@ -61,7 +79,7 @@ const ListItem = ({ to, logo, children }) => {
           margin: "0 -1rem"
         }}
       >
-        {/* <Icon icon={logo} /> */}
+        <Icon icon={logo} />
         <span css={{ marginLeft: "10px" }}>{children}</span>
       </Component>
     </li>
@@ -69,7 +87,7 @@ const ListItem = ({ to, logo, children }) => {
 };
 
 export default props => {
-  const data = { highlightedLessons: [], recentPosts: [] };
+  const data = { highlightedLessons: [], recentPosts: props.posts || [] };
   return (
     <Fragment>
       {/* <SEO title="Chris Biscardi" /> */}
@@ -84,6 +102,17 @@ export default props => {
           }}
         >
           Hey, I&rsquo;m Chris
+          <img
+            css={{
+              display: "inline",
+              height: "60px",
+              position: "relative",
+              top: "12px",
+              marginLeft: "1rem"
+            }}
+            src={`data:image/gif;base64,${images.partyCorgi}`}
+            alt="party corgi rainbow animated"
+          />
         </h1>
         <p
           css={{
@@ -172,7 +201,7 @@ export default props => {
         ))}
       </List>
       <div css={{ display: "flex", justifyContent: "flex-end" }}>
-        {/* <NyanCat css={{ height: "37px" }} /> */}
+        <NyanCat css={{ height: "37px" }} />
       </div>
       <List
         title="Latest Lessons"
@@ -207,7 +236,7 @@ export default props => {
           )
         )}
       </List>
-      {/* <ConvertKitForm /> */}
+      <ConvertKitForm />
     </Fragment>
   );
 };

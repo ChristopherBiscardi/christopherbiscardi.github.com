@@ -1,5 +1,5 @@
 import React from "react";
-import { css, keyframes } from "@emotion/core";
+import { css, keyframes } from "@emotion/preact-core";
 
 // PleaseConfirmIllustration
 const PaperRollOut = keyframes`

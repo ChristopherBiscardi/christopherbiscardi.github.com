@@ -90,6 +90,9 @@ export default ({ children, ...props }) => (
         html: {
           background: "#19202c",
           fontFamily: "'Inter var', system-ui, sans-serif"
+        },
+        body: {
+          minHeight: "100vh"
         }
       }}
     />

@@ -5,7 +5,7 @@ import Icon, { iconFromList } from "../components/small-icons/index.js";
 import { Helmet } from "react-helmet";
 import { useReducer } from "preact/hooks";
 
-// import ConvertKitForm from "../components/convertkit-form";
+import ConvertKitForm from "../components/convertkit-form/index.js";
 const maxWidth = "800px";
 
 const List = ({ title, subtitle, secondary, ...props }) => (
@@ -252,7 +252,9 @@ export default props => {
           )
         )}
       </List> */}
-      {/* <ConvertKitForm /> */}
+      <div css={{ gridColumn: "1/5", marginBottom: "3rem", marginTop: "1rem" }}>
+        <ConvertKitForm />
+      </div>
     </div>
   );
 };
