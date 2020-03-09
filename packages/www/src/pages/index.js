@@ -25,7 +25,16 @@ const List = ({ title, subtitle, secondary, ...props }) => (
         justifyContent: "space-between"
       }}
     >
-      <h2 css={{ margin: 0 }}>{title}</h2>
+      <h2
+        css={{
+          // margin: 0,
+          fontFamily: '"InterDisplay var", system-ui, sans-serif',
+          fontWeight: 600,
+          color: "#eef1f7"
+        }}
+      >
+        {title}
+      </h2>
       {secondary}
     </div>
     <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
@@ -66,7 +75,15 @@ export default props => {
     <Fragment>
       {/* <SEO title="Chris Biscardi" /> */}
       <div css={{ maxWidth, margin: "auto", marginTop: "75px" }}>
-        <h1 css={{ fontSize: "3rem", marginBottom: ".3em" }}>
+        <h1
+          css={{
+            fontSize: "3rem",
+            marginBottom: ".3em",
+            fontFamily: '"InterDisplay var", system-ui, sans-serif',
+            fontWeight: 700,
+            color: "#eef1f7"
+          }}
+        >
           Hey, I&rsquo;m Chris
         </h1>
         <p
@@ -74,7 +91,8 @@ export default props => {
             fontSize: "1.2rem",
             fontWeight: 300,
             lineHeight: 1.8,
-            maxWidth: "32em"
+            maxWidth: "32em",
+            color: "#eef1f7"
           }}
         >
           I'm an independent consultant that works with startups built on OSS.

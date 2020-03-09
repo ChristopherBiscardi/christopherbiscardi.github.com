@@ -175,6 +175,16 @@ class BakeCommand extends Command {
       ),
       path.resolve(publicDir, "toast/page-renderer.js")
     );
+    const staticFiles = await globby(["static/**/*"]);
+    await Promise.all(
+      staticFiles.map(async filepath => {
+        console.log(filepath);
+        const destPath = filepath.replace("static/", "public/");
+        await fs.mkdir(path.dirname(destPath), { recursive: true });
+        await fs.copyFile(filepath, destPath);
+        return filepath;
+      })
+    );
 
     this.log(`Baked`);
   }

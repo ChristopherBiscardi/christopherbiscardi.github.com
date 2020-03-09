@@ -70,7 +70,13 @@ const Header = props => (
   </header>
 );
 
-const headingStyles = { gridColumn: 2, marginTop: "2rem" };
+const headingStyles = {
+  gridColumn: 2,
+  marginTop: "2rem",
+  fontFamily: '"InterDisplay var", system-ui, sans-serif',
+  fontWeight: 700,
+  color: "#eef1f7"
+};
 
 export default ({ children, ...props }) => (
   <div>
@@ -114,6 +120,7 @@ export default ({ children, ...props }) => (
               )
         }
       />
+      <link rel="stylesheet" type="text/css" href="inter/inter.css" />
     </Helmet>
     <Header />
     {props.title && (
