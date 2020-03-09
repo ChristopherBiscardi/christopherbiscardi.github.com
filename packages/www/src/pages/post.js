@@ -8,7 +8,7 @@ console.log("icon-a", Icon);
 const maxWidth = "800px";
 
 const List = ({ title, subtitle, secondary, ...props }) => (
-  <div css={{ maxWidth, margin: "auto", marginBottom: "3rem" }}>
+  <div css={{ marginTop: "1rem", gridColumn: "2/4" }}>
     <div
       css={{
         marginBottom: "1rem",
@@ -16,7 +16,6 @@ const List = ({ title, subtitle, secondary, ...props }) => (
         justifyContent: "space-between"
       }}
     >
-      <h2 css={{ margin: 0 }}>{title}</h2>
       {secondary}
     </div>
     <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
@@ -34,7 +33,7 @@ const ListItem = ({ to, logo, children }) => {
         css={{
           color: "rgba(255,255,255,0.86)",
           display: "flex",
-          borderRadius: "8px",
+          borderRadius: "16px",
           textDecoration: "none",
           "&:hover": {
             backgroundColor: "#2D3747"
@@ -52,7 +51,14 @@ const ListItem = ({ to, logo, children }) => {
 
 export default props => {
   return (
-    <Fragment>
+    <div
+      css={{
+        display: "grid",
+        gridGap: "1rem",
+        gridTemplateColumns:
+          "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)"
+      }}
+    >
       <Helmet>
         <meta charSet="utf-8" />
         <title>All Chris' Writing</title>
@@ -74,6 +80,77 @@ export default props => {
           )}
         />
       </Helmet>
+      <h1
+        css={{
+          fontFamily: '"InterDisplay var", system-ui, sans-serif',
+          fontWeight: 600,
+          color: "#e7e9ea",
+          gridColumn: "2/4",
+          marginTop: "3rem",
+          fontSize: "48px"
+        }}
+      >
+        All Writing
+      </h1>
+      <ul
+        css={{
+          display: "flex",
+          listStyleType: "none",
+          gridColumn: "2/4",
+          "& > li:not(:first-of-type)": {
+            marginLeft: "1rem"
+          },
+          marginTop: "2rem"
+        }}
+      >
+        {["Gatsby", "Go", "GraphQL", "MDX"].map(value => (
+          <li>
+            <button
+              css={{
+                padding: "10px 16px",
+                backgroundColor: true ? "#10151e" : "#3981fe",
+                color: true ? "#3981fe" : "#eef1f7",
+                border: "none",
+                fontWeight: "600",
+                fontSize: "15px",
+                borderRadius: "10px",
+                border: "1px solid transparent",
+                boxShadow: `inset 0 2.8px 2.2px rgba(0, 0, 0, 0.02),
+                inset 0 6.7px 5.3px rgba(0, 0, 0, 0.028),
+                inset 0 12.5px 10px rgba(0, 0, 0, 0.035),
+                inset 0 22.3px 17.9px rgba(0, 0, 0, 0.042),
+                inset 0 41.8px 33.4px rgba(0, 0, 0, 0.05),
+                inset 0 100px 80px rgba(0, 0, 0, 0.07)`,
+                "&:focus": {
+                  borderColor: "#3981fe",
+                  outline: "none"
+                }
+              }}
+            >
+              {value}
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div css={{ gridColumn: "2/4" }}>
+        <input
+          placeholder="Type here to filter posts..."
+          css={{
+            width: "100%",
+            background: "#10151e",
+            padding: "16px",
+            flex: 1,
+            fontSize: "16px",
+            border: "1px solid #2f3542",
+            borderRadius: "10px",
+            color: "#eef1f7",
+            "&:focus": {
+              borderColor: "#3981fe",
+              outline: "none"
+            }
+          }}
+        />
+      </div>
       <List
         title="All Posts"
         secondary={
@@ -135,6 +212,6 @@ export default props => {
         )}
       </List> */}
       {/* <ConvertKitForm /> */}
-    </Fragment>
+    </div>
   );
 };

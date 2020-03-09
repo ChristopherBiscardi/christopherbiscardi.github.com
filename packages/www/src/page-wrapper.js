@@ -88,7 +88,7 @@ export default ({ children, ...props }) => (
           padding: 0
         },
         html: {
-          background: "#1b1f2a",
+          background: "#19202c",
           fontFamily: "'Inter var', system-ui, sans-serif"
         }
       }}

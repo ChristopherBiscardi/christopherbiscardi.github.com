@@ -27,7 +27,6 @@ const List = ({ title, subtitle, secondary, ...props }) => (
     >
       <h2
         css={{
-          // margin: 0,
           fontFamily: '"InterDisplay var", system-ui, sans-serif',
           fontWeight: 600,
           color: "#eef1f7"
