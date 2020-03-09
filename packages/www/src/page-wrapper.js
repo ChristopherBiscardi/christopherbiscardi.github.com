@@ -3,6 +3,7 @@ import { jsx, Global } from "@emotion/preact-core";
 import Logo from "./components/logos/logo-full.js";
 import { Helmet } from "react-helmet";
 import { MDXProvider } from "@mdx-js/preact";
+import { Fragment } from "preact";
 
 const maxWidth = "800px";
 
@@ -160,7 +161,7 @@ export default ({ children, ...props }) => (
         h6: props => <h6 css={headingStyles} {...props} />
       }}
     >
-      <div>{children}</div>
+      <Fragment>{children}</Fragment>
     </MDXProvider>
   </div>
 );

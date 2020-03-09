@@ -35,7 +35,7 @@ const NyanCat = props => (
 
 const Link = props => <a href={props.to} {...props} />;
 const List = ({ title, subtitle, secondary, ...props }) => (
-  <div css={{ maxWidth, margin: "auto 1rem", marginBottom: "3rem" }}>
+  <div css={{ maxWidth, marginBottom: "3rem", gridColumn: "2/4" }}>
     <div
       css={{
         marginBottom: "1rem",
@@ -89,9 +89,23 @@ const ListItem = ({ to, logo, children }) => {
 export default props => {
   const data = { highlightedLessons: [], recentPosts: props.posts || [] };
   return (
-    <Fragment>
+    <main
+      css={{
+        display: "grid",
+        color: "rgba(255, 255, 255, 0.86)",
+        gridTemplateColumns:
+          "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)"
+      }}
+    >
       {/* <SEO title="Chris Biscardi" /> */}
-      <div css={{ maxWidth, margin: "auto 1rem", marginTop: "75px" }}>
+
+      <div
+        css={{
+          maxWidth,
+          marginTop: "75px",
+          gridColumn: "2/4"
+        }}
+      >
         <h1
           css={{
             fontSize: "3rem",
@@ -120,7 +134,8 @@ export default props => {
             fontWeight: 300,
             lineHeight: 1.8,
             maxWidth: "32em",
-            color: "#eef1f7"
+            color: "#eef1f7",
+            gridColumn: "2/4"
           }}
         >
           I'm an independent consultant that works with startups built on OSS.
@@ -136,6 +151,7 @@ export default props => {
             listStyleType: "none",
             display: "flex",
             flexWrap: "wrap",
+            gridColumn: "2/4",
             "& > li": {
               marginRight: ".5rem",
               marginTop: ".5rem"
@@ -202,7 +218,9 @@ export default props => {
           </ListItem>
         ))}
       </List>
-      <div css={{ display: "flex", justifyContent: "flex-end" }}>
+      <div
+        css={{ display: "flex", justifyContent: "flex-end", gridColumn: "3" }}
+      >
         <NyanCat css={{ height: "37px" }} />
       </div>
       <List
@@ -238,8 +256,10 @@ export default props => {
           )
         )}
       </List>
-      <ConvertKitForm />
-    </Fragment>
+      <div css={{ gridColumn: "2/4" }}>
+        <ConvertKitForm />
+      </div>
+    </main>
   );
 };
 
