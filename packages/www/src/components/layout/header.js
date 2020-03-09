@@ -29,7 +29,7 @@ const Header = props => (
       display: "flex",
       height: "75px",
       maxWidth,
-      margin: "auto",
+      margin: "1rem",
       marginTop: "30px",
       flexWrap: "wrap"
     }}

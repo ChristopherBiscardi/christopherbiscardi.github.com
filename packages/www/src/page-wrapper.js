@@ -98,6 +98,8 @@ export default ({ children, ...props }) => (
     />
     <Helmet>
       <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+
       <title>Chris Biscardi's Digital Garden</title>
       <meta name="twitter:title" content="Chris Biscardi's Digital Garden" />
       <meta name="og:title" content="Chris Biscardi's Digital Garden" />

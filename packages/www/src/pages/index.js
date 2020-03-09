@@ -35,7 +35,7 @@ const NyanCat = props => (
 
 const Link = props => <a href={props.to} {...props} />;
 const List = ({ title, subtitle, secondary, ...props }) => (
-  <div css={{ maxWidth, margin: "auto", marginBottom: "3rem" }}>
+  <div css={{ maxWidth, margin: "auto 1rem", marginBottom: "3rem" }}>
     <div
       css={{
         marginBottom: "1rem",
@@ -91,7 +91,7 @@ export default props => {
   return (
     <Fragment>
       {/* <SEO title="Chris Biscardi" /> */}
-      <div css={{ maxWidth, margin: "auto", marginTop: "75px" }}>
+      <div css={{ maxWidth, margin: "auto 1rem", marginTop: "75px" }}>
         <h1
           css={{
             fontSize: "3rem",
@@ -130,13 +130,15 @@ export default props => {
         <ul
           css={{
             margin: 0,
-            marginTop: "3rem",
+            marginTop: "2.5rem",
             marginBottom: "7rem",
             padding: 0,
             listStyleType: "none",
             display: "flex",
-            "& > *": {
-              marginRight: ".5rem"
+            flexWrap: "wrap",
+            "& > li": {
+              marginRight: ".5rem",
+              marginTop: ".5rem"
             }
           }}
         >
