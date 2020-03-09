@@ -8,6 +8,7 @@
     "@mdx-js/mdx": "^1.5.5",
     "@sindresorhus/slugify": "^0.10.0",
     "hast-util-raw": "^5.0.1",
+    "node-fetch": "^2.6.0",
     "remark-parse": "^7.0.2",
     "unified": "^8.4.2",
     "unist-util-visit": "^2.0.1"
