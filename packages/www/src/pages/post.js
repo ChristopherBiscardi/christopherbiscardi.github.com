@@ -3,7 +3,8 @@ import { Fragment } from "preact";
 import { jsx } from "@emotion/preact-core";
 import Icon, { iconFromList } from "../components/small-icons/index.js";
 import { Helmet } from "react-helmet";
-console.log("icon-a", Icon);
+import { useReducer } from "preact/hooks";
+
 // import ConvertKitForm from "../components/convertkit-form";
 const maxWidth = "800px";
 
@@ -49,7 +50,31 @@ const ListItem = ({ to, logo, children }) => {
   );
 };
 
+const initialState = {
+  tags: [],
+  filter: ""
+};
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "addTag":
+      return { ...state, tags: state.tags.concat(action.payload) };
+    case "removeTag":
+      return {
+        ...state,
+        tags: state.tags.filter(tag => tag !== action.payload)
+      };
+    case "filterBy":
+      return {
+        ...state,
+        filter: action.payload
+      };
+    default:
+      throw new Error("Unexpected action");
+  }
+};
+
 export default props => {
+  const [filterState, filterDispatch] = useReducer(reducer, initialState);
   return (
     <div
       css={{
@@ -108,8 +133,10 @@ export default props => {
             <button
               css={{
                 padding: "10px 16px",
-                backgroundColor: true ? "#10151e" : "#3981fe",
-                color: true ? "#3981fe" : "#eef1f7",
+                backgroundColor: filterState.tags.includes(value)
+                  ? "#3981fe"
+                  : "#10151e",
+                color: filterState.tags.includes(value) ? "#eef1f7" : "#3981fe",
                 border: "none",
                 fontWeight: "600",
                 fontSize: "15px",
@@ -126,6 +153,13 @@ export default props => {
                   outline: "none"
                 }
               }}
+              onClick={() => {
+                if (filterState.tags.includes(value)) {
+                  filterDispatch({ type: "removeTag", payload: value });
+                } else {
+                  filterDispatch({ type: "addTag", payload: value });
+                }
+              }}
             >
               {value}
             </button>
@@ -135,6 +169,9 @@ export default props => {
       <div css={{ gridColumn: "2/4" }}>
         <input
           placeholder="Type here to filter posts..."
+          onChange={e => {
+            filterDispatch({ type: "filterBy", payload: e.target.value });
+          }}
           css={{
             width: "100%",
             background: "#10151e",
@@ -171,11 +208,15 @@ export default props => {
           </a>
         }
       >
-        {props.posts.map(({ id, title, slug, tags }) => (
-          <ListItem logo={iconFromList(tags)} to={slug} key={id}>
-            {title}
-          </ListItem>
-        ))}
+        {props.posts
+          .filter(({ title }) =>
+            title.toLowerCase().includes(filterState.filter.toLowerCase())
+          )
+          .map(({ id, title, slug, tags }) => (
+            <ListItem logo={iconFromList(tags)} to={slug} key={id}>
+              {title}
+            </ListItem>
+          ))}
       </List>
 
       {/* <List

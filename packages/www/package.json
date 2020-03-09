@@ -33,6 +33,7 @@
   "snowpack": {
     "webDependencies": [
       "preact",
+      "preact/hooks",
       "@emotion/preact-core",
       "@mdx-js/preact",
       "react-helmet",
