@@ -45,6 +45,7 @@ class BakeCommand extends Command {
           presets: [`@babel/preset-react`],
           plugins: [
             `babel-plugin-preval`,
+            `babel-plugin-transform-inline-environment-variables`,
             `@babel/plugin-proposal-class-properties`,
             [
               "snowpack/assets/babel-plugin.js",
@@ -178,7 +179,6 @@ class BakeCommand extends Command {
     const staticFiles = await globby(["static/**/*"]);
     await Promise.all(
       staticFiles.map(async filepath => {
-        console.log(filepath);
         const destPath = filepath.replace("static/", "public/");
         await fs.mkdir(path.dirname(destPath), { recursive: true });
         await fs.copyFile(filepath, destPath);
