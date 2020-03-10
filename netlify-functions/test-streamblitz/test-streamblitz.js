@@ -1,6 +1,6 @@
 const createHandler = require("@stream-blitz/create-handler");
 
-exports.handler = createHandler(({ extra: { channel } }) => ({
+exports.handler = createHandler(() => ({
   name: "not-blitzed",
   message: "yolo",
   description:
