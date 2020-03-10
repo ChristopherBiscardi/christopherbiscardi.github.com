@@ -36,8 +36,9 @@ const ListItem = ({ to, logo, children }) => {
           display: "flex",
           borderRadius: "16px",
           textDecoration: "none",
-          "&:hover": {
-            backgroundColor: "#2D3747"
+          "&:hover,&:focus": {
+            backgroundColor: "#2D3747",
+            outline: "none"
           },
           padding: "1rem",
           margin: "0 -1rem"
