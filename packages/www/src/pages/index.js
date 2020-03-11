@@ -224,7 +224,7 @@ export default props => {
         subtitle="egghead.io"
         secondary={
           <a
-            href="https://egghead.io/instructors/chris-biscardi"
+            href="https://egghead.io/instructors/chris-biscardi?af=7h4hd0"
             css={{
               color: "rgba(255,255,255,0.86)",
               textDecoration: "none",

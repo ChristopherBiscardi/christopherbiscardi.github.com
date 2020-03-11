@@ -4,13 +4,13 @@ const EggheadSource = require("fetch-eggheadio");
 const SectorSource = require("fetch-sector-docs");
 
 exports.sourceData = async ({ cacheDir, publicDir, createPage }) => {
-  const data = await SectorSource.sourceNodes({
+  const sectorData = await SectorSource.sourceNodes({
     createPage,
     workspace: "516555bc-f69b-47f9-ae7e-48cfd880b34d"
   });
   await fs.writeFile(
-    path.resolve(cacheDir, "pages.json"),
-    JSON.stringify(data),
+    path.resolve(cacheDir, "sector.json"),
+    JSON.stringify(sectorData),
     "utf-8"
   );
   const eggo = await EggheadSource.sourceData();
@@ -26,7 +26,7 @@ exports.prepData = async ({ cacheDir, publicDir }) => {
   await fs.mkdir(path.resolve(publicDir, "src/pages"), { recursive: true });
 
   // prep page data for index and post pages
-  const sectorPageData = require(path.resolve(cacheDir, "pages.json"));
+  const sectorPageData = require(path.resolve(cacheDir, "sector.json"));
   const allPostsData = sectorPageData.map(
     ({ title, createdAt, updatedAt, slug, contentType }) => ({
       title,

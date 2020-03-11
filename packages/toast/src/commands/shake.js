@@ -15,6 +15,7 @@ class ShakeCommand extends Command {
     await fs.mkdir(cacheDir, { recursive: true });
     await fs.mkdir(publicDir, { recursive: true });
 
+    let pages = [];
     const createPage = async ({
       // actual code string
       module,
@@ -62,12 +63,19 @@ class ShakeCommand extends Command {
       const nodeComponentPath = path.resolve(cacheDir, `${slug}.js`);
       await fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8");
 
-      // return the paths? is this helpful?
-      return {
+      pages.push({
+        slug,
         browserComponentPath,
         nodeComponentPath,
         pageDataPath
-      };
+      });
+      // return the paths? is this helpful?
+      return;
+      //  {
+      //   browserComponentPath,
+      //   nodeComponentPath,
+      //   pageDataPath
+      // };
     };
 
     // run a toast data processing lifecycle.
@@ -83,12 +91,11 @@ class ShakeCommand extends Command {
       await toast.sourceData({ createPage, cacheDir, publicDir });
     }
 
-    // TODO: figure out the right createPage/pages.json dealio
-    // await fs.writeFile(
-    //   path.resolve(cacheDir, "pages.json"),
-    //   JSON.stringify(data),
-    //   "utf-8"
-    // );
+    await fs.writeFile(
+      path.resolve(cacheDir, "pages.json"),
+      JSON.stringify(pages),
+      "utf-8"
+    );
     this.log(`Shook.`);
   }
 }
