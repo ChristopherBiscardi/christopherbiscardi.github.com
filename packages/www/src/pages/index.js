@@ -1,14 +1,7 @@
 /* @jsx jsx */
-// import React from "react";
 import { Fragment } from "preact";
 import { jsx } from "@emotion/preact-core";
-// impprt {h} from 'preact'
-// import Layout from "gatsby-theme-blog/src/components/layout";
-// import { Styled } from "theme-ui";
-// import Layout from "../components/layout";
 import Icon, { iconFromList } from "../components/small-icons/index.js";
-// import SEO from "../components/seo/index.js";
-// import NyanCat from "../components/nyan-cat";
 import SocialButton from "../components/social-button/index.js";
 import ConvertKitForm from "../components/convertkit-form/index.js";
 const maxWidth = "800px";
@@ -87,7 +80,10 @@ const ListItem = ({ to, logo, children }) => {
 };
 
 export default props => {
-  const data = { highlightedLessons: [], recentPosts: props.posts || [] };
+  const data = {
+    highlightedLessons: props.eggheadLessons || [],
+    recentPosts: props.posts || []
+  };
   return (
     <main
       css={{
@@ -244,17 +240,11 @@ export default props => {
           </a>
         }
       >
-        {data.highlightedLessons.map(
-          ({ id, title, httpUrl: slug, primaryTag }) => (
-            <ListItem
-              logo={iconFromList(primaryTag ? [primaryTag.name] : [])}
-              to={slug}
-              key={id}
-            >
-              {title}
-            </ListItem>
-          )
-        )}
+        {data.highlightedLessons.map(({ id, title, httpUrl: slug, tag }) => (
+          <ListItem logo={iconFromList(tag ? [tag] : [])} to={slug} key={id}>
+            {title}
+          </ListItem>
+        ))}
       </List>
       <div css={{ gridColumn: "2/4" }}>
         <ConvertKitForm />
@@ -262,33 +252,3 @@ export default props => {
     </main>
   );
 };
-
-// export const query = graphql`
-//   query HomePageQuery {
-//     recentPosts: allSectorMdx(
-//       sort: { fields: [createdAt], order: DESC }
-//       limit: 5
-//     ) {
-//       nodes {
-//         id
-//         title
-//         # tags
-//         slug
-//       }
-//     }
-//     highlightedLessons: allEggheadLesson(
-//       filter: { state: { eq: "published" } }
-//       sort: { fields: publishedAt, order: DESC }
-//       limit: 5
-//     ) {
-//       nodes {
-//         id
-//         title
-//         httpUrl
-//         primaryTag {
-//           name
-//         }
-//       }
-//     }
-//   }
-// `;

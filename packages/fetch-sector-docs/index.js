@@ -1,5 +1,4 @@
 const fetch = require("node-fetch");
-const path = require("path");
 const slugify = require("@sindresorhus/slugify");
 const toJsx = require("./mdxast-to-jsx");
 

@@ -3,8 +3,6 @@ const { Command, flags } = require("@oclif/command");
 const fs = require("fs").promises;
 const path = require("path");
 const { transformAsync } = require("@babel/core");
-// plugins?
-const { sourceNodes } = require("fetch-sector-docs");
 const WebdependenciesAliases = require("../babel/babel-plugin-webdependencies-aliases");
 
 class ShakeCommand extends Command {
@@ -71,15 +69,26 @@ class ShakeCommand extends Command {
         pageDataPath
       };
     };
-    const data = await sourceNodes({
-      createPage,
-      workspace: "516555bc-f69b-47f9-ae7e-48cfd880b34d"
-    });
-    await fs.writeFile(
-      path.resolve(cacheDir, "pages.json"),
-      JSON.stringify(data),
-      "utf-8"
-    );
+
+    // run a toast data processing lifecycle.
+    const toastFile = path.resolve(siteDir, "toast.js");
+    let toast = {};
+    try {
+      toast = require(toastFile);
+    } catch (e) {
+      // no lifecycles defined
+    }
+
+    if (toast.sourceData) {
+      await toast.sourceData({ createPage, cacheDir, publicDir });
+    }
+
+    // TODO: figure out the right createPage/pages.json dealio
+    // await fs.writeFile(
+    //   path.resolve(cacheDir, "pages.json"),
+    //   JSON.stringify(data),
+    //   "utf-8"
+    // );
     this.log(`Shook.`);
   }
 }

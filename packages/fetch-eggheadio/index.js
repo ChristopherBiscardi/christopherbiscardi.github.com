@@ -1,7 +1,6 @@
-const crypto = require("crypto");
 const fetch = require("node-fetch");
 
-exports.sourceNodes = async ({}) => {
+exports.sourceData = async () => {
   if (!process.env.EGGHEAD_LESSON_URL) {
     console.warn("Must set `EGGHEAD_LESSON_URL` if you want egghead results");
     return;
@@ -10,7 +9,7 @@ exports.sourceNodes = async ({}) => {
     res.json()
   );
 
-  data.map(node => ({
+  return data.map(node => ({
     id: node.id,
     title: node.title,
     publishedAt: node.published_at,
@@ -20,6 +19,4 @@ exports.sourceNodes = async ({}) => {
     primaryTag: node.primary_tag,
     tags: node.tags
   }));
-
-  return;
 };
