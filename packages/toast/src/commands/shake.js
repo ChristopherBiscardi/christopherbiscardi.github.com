@@ -24,58 +24,60 @@ class ShakeCommand extends Command {
       // data to insert into the html page
       data
     }) => {
-      // compile module and write out browserComponent to public/
-      // browser-runnable JS, minus web module imports
-      // const { code, map, ast } = browserComponent;
-      const browserComponent = await transformAsync(module, {
-        babelrc: false,
-        presets: [`@babel/preset-react`],
-        plugins: [
-          WebdependenciesAliases,
-          `@babel/plugin-proposal-class-properties`,
-          [
-            "snowpack/assets/babel-plugin.js",
-            {
-              importMap: path.resolve(
-                process.cwd(),
-                "public/web_modules/import-map.json"
-              )
-            }
-          ]
-        ]
-      });
       const browserComponentPath = path.resolve(publicDir, `${slug}.js`);
-      await fs.writeFile(browserComponentPath, browserComponent.code, "utf-8");
-      // write out data file to public/
       const pageDataPath = path.resolve(publicDir, `${slug}.json`);
-      await fs.writeFile(pageDataPath, JSON.stringify(data), "utf-8");
-
-      // compile module and write out node component to cache
-      // node-requireable component
-      const nodeComponent = await transformAsync(module, {
-        babelrc: false,
-        presets: [
-          [`@babel/preset-env`, { targets: { node: "current" } }],
-          `@babel/preset-react`
-        ],
-        plugins: [WebdependenciesAliases]
-      });
       const nodeComponentPath = path.resolve(cacheDir, `${slug}.js`);
-      await fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8");
 
+      await Promise.all([
+        // compile module and write out browserComponent to public/
+        // browser-runnable JS, minus web module imports
+        transformAsync(module, {
+          babelrc: false,
+          presets: [`@babel/preset-react`],
+          plugins: [
+            WebdependenciesAliases,
+            `@babel/plugin-proposal-class-properties`,
+            [
+              "snowpack/assets/babel-plugin.js",
+              {
+                importMap: path.resolve(
+                  process.cwd(),
+                  "public/web_modules/import-map.json"
+                )
+              }
+            ]
+          ]
+        }).then(browserComponent =>
+          fs.writeFile(browserComponentPath, browserComponent.code, "utf-8")
+        ),
+
+        // write out data file to public/
+        fs.writeFile(pageDataPath, JSON.stringify(data), "utf-8"),
+
+        // compile module and write out node component to cache
+        // node-requireable component
+        transformAsync(module, {
+          babelrc: false,
+          presets: [
+            [`@babel/preset-env`, { targets: { node: "current" } }],
+            `@babel/preset-react`
+          ],
+          plugins: [WebdependenciesAliases]
+        }).then(nodeComponent =>
+          fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8")
+        )
+      ]);
+
+      // push created pages into the pages cache so we can operate on
+      // them later in `bake`
       pages.push({
         slug,
         browserComponentPath,
         nodeComponentPath,
         pageDataPath
       });
-      // return the paths? is this helpful?
+
       return;
-      //  {
-      //   browserComponentPath,
-      //   nodeComponentPath,
-      //   pageDataPath
-      // };
     };
 
     // run a toast data processing lifecycle.
@@ -88,7 +90,22 @@ class ShakeCommand extends Command {
     }
 
     if (toast.sourceData) {
-      await toast.sourceData({ createPage, cacheDir, publicDir });
+      const withCache = (namespace, fetchPromise) => {
+        const dataFile = path.resolve(cacheDir, `${namespace}.json`);
+        const exists = existsSync(dataFile);
+        if (exists) {
+          return undefined;
+        } else {
+          // fetchPromise is where createPage calls happen in user/plugin land
+          return fetchPromise.then(data =>
+            // yes we're writing files, we should probably be writing individual
+            // nodes to a database to approximate a production dynamo instance
+            fs.writeFile(dataFile, JSON.stringify(data), "utf-8")
+          );
+        }
+      };
+
+      await toast.sourceData({ createPage, withCache });
     }
 
     await fs.writeFile(

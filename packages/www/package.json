@@ -28,6 +28,7 @@
     "@babel/preset-react": "^7.8.3",
     "@babel/register": "^7.8.3",
     "@rollup/plugin-alias": "^3.0.1",
+    "node-getpocket": "^1.0.0",
     "preact-render-to-string": "^5.1.4",
     "snowpack": "^1.5.1"
   },
