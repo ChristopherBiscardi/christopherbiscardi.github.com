@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@stream-blitz/create-handler@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@stream-blitz/create-handler/-/create-handler-0.0.2.tgz#90ce3cd61e6d6b9afbecf84c129464dffdad2f28"
-  integrity sha512-RW2I0Uorqtgt9AJZLeWR7CKrMafqjdpC48hKkVwyDkjOpoYdwKCOM8BffESzkCvB5uYtV4Nch5YA1E7qbl/9Fw==
+"@stream-blitz/create-handler@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@stream-blitz/create-handler/-/create-handler-0.1.0.tgz#33d08a3fea32ce128c29a53dfc38f8c0999d6896"
+  integrity sha512-cTki/OJ5N8uRKGreupghGKgKpAsj3GhJ7iExyQ88yUabGS16UQHTmVf0RbcZgWDZaxGtvbcsSuYKUKvrLdUZYw==
