@@ -5,8 +5,23 @@ const path = require("path");
 const globby = require("globby");
 const { transformAsync } = require("@babel/core");
 const { render } = require("../page-renderer-pre");
+const beeline = require("honeycomb-beeline")({
+  writeKey: process.env.HONEYCOMB_WRITE_KEY,
+  dataset: "serverless"
+  // transmission: "writer"
+});
 
 class BakeCommand extends Command {
+  constructor(argv, config) {
+    super(argv, config);
+    this.trace = beeline.startTrace({
+      commandId: this.id
+    });
+  }
+  async finally(err) {
+    await super.finally(err);
+    beeline.finishTrace(this.trace);
+  }
   async run() {
     // const { flags } = this.parse(BakeCommand);
     const siteDir = process.cwd();
@@ -16,6 +31,7 @@ class BakeCommand extends Command {
     const pageWrapperPath = path.resolve(cacheDir, "src/page-wrapper");
     const browserPageWrapperPath = "/src/page-wrapper.js";
     const pages = require(path.resolve(cacheDir, "pages.json"));
+    beeline.addContext({ numPages: pages.length });
     // const PageWrapper = require("./.cache/page-wrapper");
 
     // run a toast data processing lifecycle.
@@ -36,6 +52,7 @@ class BakeCommand extends Command {
     }
 
     const srcFiles = await globby(["src/**/*.js"]);
+    beeline.addContext({ numSrcFiles: srcFiles.length });
     const files = await Promise.all(
       srcFiles.map(async filepath => {
         const fullFilePath = path.resolve(siteDir, filepath);
@@ -60,13 +77,12 @@ class BakeCommand extends Command {
         });
         const browserComponentPath = path.resolve(publicDir, filepath);
         // make sure directory to put file in exists
-        await fs.mkdir(path.dirname(browserComponentPath), { recursive: true });
-
-        await fs.writeFile(
-          browserComponentPath,
-          browserComponent.code,
-          "utf-8"
-        );
+        // then put file there
+        await fs
+          .mkdir(path.dirname(browserComponentPath), { recursive: true })
+          .then(() =>
+            fs.writeFile(browserComponentPath, browserComponent.code, "utf-8")
+          );
 
         const nodeComponent = await transformAsync(fileContents, {
           babelrc: false,
@@ -77,17 +93,22 @@ class BakeCommand extends Command {
           plugins: [`babel-plugin-preval`]
         });
         const nodeComponentPath = path.resolve(cacheDir, filepath);
-        await fs.mkdir(path.dirname(nodeComponentPath), { recursive: true });
-
-        await fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8");
+        await fs
+          .mkdir(path.dirname(nodeComponentPath), { recursive: true })
+          .then(() =>
+            fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8")
+          );
 
         return { filepath, nodeComponentPath, browserComponentPath };
       })
     );
+    const srcPagesFiles = files.filter(({ filepath }) =>
+      filepath.startsWith("src/pages")
+    );
+    beeline.addContext({ numSrcPages: srcPagesFiles.length });
     await Promise.all(
-      files
-        .filter(({ filepath }) => filepath.startsWith("src/pages"))
-        .map(async ({ filepath, nodeComponentPath, browserComponentPath }) => {
+      srcPagesFiles.map(
+        async ({ filepath, nodeComponentPath, browserComponentPath }) => {
           // read in page data json file if it exists
           const dataPath = path.resolve(publicDir, `${filepath}on`);
           let data = {};
@@ -106,7 +127,8 @@ class BakeCommand extends Command {
             filepath.replace("src/pages/", "").replace(".js", ".html")
           );
 
-          const html = await render({
+          // write html out for page
+          return render({
             component: require(nodeComponentPath).default,
             pageWrapper,
             data,
@@ -120,11 +142,9 @@ class BakeCommand extends Command {
                 path.resolve(process.cwd(), "public/"),
                 ""
               ) + "on"
-          });
-          await fs.writeFile(htmlFilePath, html);
-
-          return;
-        })
+          }).then(html => fs.writeFile(htmlFilePath, html));
+        }
+      )
     );
 
     const pageWrapper = require(pageWrapperPath).default;
@@ -147,7 +167,7 @@ class BakeCommand extends Command {
           }
           const htmlFilePath = path.resolve(publicDir, `${slug}.html`);
 
-          const html = await render({
+          return render({
             component: require(nodeComponentPath).default,
             pageWrapper,
             browserPageWrapperPath,
@@ -161,22 +181,25 @@ class BakeCommand extends Command {
                 path.resolve(process.cwd(), "public/"),
                 ""
               ) + "on"
-          });
-          await fs.writeFile(htmlFilePath, html);
-          return;
+          }).then(html => fs.writeFile(htmlFilePath, html));
         }
       )
     );
     // copy page-renderer client into public/
-    await fs.mkdir(path.resolve(publicDir, "toast"), { recursive: true });
-    await fs.copyFile(
-      path.resolve(
-        path.dirname(path.dirname(require.resolve("toast"))),
-        "static/toast/page-renderer.js"
-      ),
-      path.resolve(publicDir, "toast/page-renderer.js")
-    );
+    await fs
+      .mkdir(path.resolve(publicDir, "toast"), { recursive: true })
+      .then(() =>
+        fs.copyFile(
+          path.resolve(
+            path.dirname(path.dirname(require.resolve("toast"))),
+            "static/toast/page-renderer.js"
+          ),
+          path.resolve(publicDir, "toast/page-renderer.js")
+        )
+      );
+
     const staticFiles = await globby(["static/**/*"]);
+    beeline.addContext({ numStaticFiles: staticFiles.length });
     await Promise.all(
       staticFiles.map(async filepath => {
         const destPath = filepath.replace("static/", "public/");

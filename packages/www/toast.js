@@ -1,4 +1,4 @@
-const { existsSync, promises: fs } = require("fs");
+const { promises: fs } = require("fs");
 const path = require("path");
 const SectorSource = require("fetch-sector-docs");
 const EggheadSource = require("fetch-eggheadio");

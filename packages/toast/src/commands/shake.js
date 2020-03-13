@@ -1,13 +1,30 @@
 require("../module-aliases");
 const { Command, flags } = require("@oclif/command");
-const fs = require("fs").promises;
+const { existsSync, promises: fs } = require("fs");
 const path = require("path");
 const { transformAsync } = require("@babel/core");
+const beeline = require("honeycomb-beeline")({
+  writeKey: process.env.HONEYCOMB_WRITE_KEY,
+  dataset: "serverless"
+  // transmission: "writer"
+});
 const WebdependenciesAliases = require("../babel/babel-plugin-webdependencies-aliases");
 
 class ShakeCommand extends Command {
+  constructor(argv, config) {
+    super(argv, config);
+    this.trace = beeline.startTrace({
+      commandId: this.id
+    });
+  }
+  async finally(err) {
+    await super.finally(err);
+    beeline.finishTrace(this.trace);
+  }
   async run() {
+    let span = beeline.startSpan();
     const { flags } = this.parse(ShakeCommand);
+    beeline.addContext({ flags: flags });
     const siteDir = process.cwd();
     const cacheDir = path.resolve(siteDir, ".cache");
     const publicDir = path.resolve(siteDir, "public");
@@ -27,8 +44,15 @@ class ShakeCommand extends Command {
       const browserComponentPath = path.resolve(publicDir, `${slug}.js`);
       const pageDataPath = path.resolve(publicDir, `${slug}.json`);
       const nodeComponentPath = path.resolve(cacheDir, `${slug}.js`);
-
-      await Promise.all([
+      // push created pages into the pages cache so we can operate on
+      // them later in `bake`
+      pages.push({
+        slug,
+        browserComponentPath,
+        nodeComponentPath,
+        pageDataPath
+      });
+      return Promise.all([
         // compile module and write out browserComponent to public/
         // browser-runnable JS, minus web module imports
         transformAsync(module, {
@@ -67,17 +91,6 @@ class ShakeCommand extends Command {
           fs.writeFile(nodeComponentPath, nodeComponent.code, "utf-8")
         )
       ]);
-
-      // push created pages into the pages cache so we can operate on
-      // them later in `bake`
-      pages.push({
-        slug,
-        browserComponentPath,
-        nodeComponentPath,
-        pageDataPath
-      });
-
-      return;
     };
 
     // run a toast data processing lifecycle.
@@ -88,12 +101,14 @@ class ShakeCommand extends Command {
     } catch (e) {
       // no lifecycles defined
     }
+    beeline.addContext({ lifecycles: Object.keys(toast) });
 
     if (toast.sourceData) {
-      const withCache = (namespace, fetchPromise) => {
+      const withCache = async (namespace, fetchPromise) => {
         const dataFile = path.resolve(cacheDir, `${namespace}.json`);
         const exists = existsSync(dataFile);
         if (exists) {
+          console.log("exists for", namespace);
           return undefined;
         } else {
           // fetchPromise is where createPage calls happen in user/plugin land
@@ -105,15 +120,20 @@ class ShakeCommand extends Command {
         }
       };
 
-      await toast.sourceData({ createPage, withCache });
+      const sourceDataSpan = beeline.startSpan({ lifecycle: "sourceData" });
+      await toast.sourceData({ createPage, withCache }).then(() => {
+        console.log(pages);
+        return fs.writeFile(
+          path.resolve(cacheDir, "pages.json"),
+          JSON.stringify(pages),
+          "utf-8"
+        );
+      });
+      beeline.finishSpan(sourceDataSpan);
     }
 
-    await fs.writeFile(
-      path.resolve(cacheDir, "pages.json"),
-      JSON.stringify(pages),
-      "utf-8"
-    );
     this.log(`Shook.`);
+    beeline.finishSpan(span);
   }
 }
 
