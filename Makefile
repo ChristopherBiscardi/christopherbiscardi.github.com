@@ -6,7 +6,7 @@ build: $(MAH_FILES)
 	GOBIN=${PWD}/netlify-functions go install ./...
 
 public/web_modules/import-map.json: snowpack/pkg/package.json
-	cd packages/www && yarn snowpack
+	cd packages/www && yarn snowpack --optimize
 
 packages/www/.cache/your-first-crdt.js: public/web_modules/import-map.json
 	yarn workspace www shake
