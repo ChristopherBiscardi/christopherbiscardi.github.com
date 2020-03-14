@@ -297,6 +297,7 @@ export default ({ children, ...props }) => (
       <link
         rel="preload"
         as="font"
+        crossorigin="anonymous"
         href="/inter/InterDisplay.var.woff2?v=3.11"
         type="font/woff2"
       />
