@@ -26,7 +26,7 @@ window.dataPath = ${dataPath && `"${dataPath}"`};
   </head>
   <body ${helmet.bodyAttributes.toString()}>
     <div id="toast-page-section">${appHtml}</div>
-    <script type="module">
+    <script type="module" async>
     /* @jsx jsx */
 
 async function renderPage() {
