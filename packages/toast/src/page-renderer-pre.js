@@ -22,46 +22,47 @@ window.dataPath = ${dataPath && `"${dataPath}"`};
   <head>
   ${helmet.title.toString()}
   ${helmet.meta.toString()}
-  ${helmet.link.toString()}
-  </head>
-  <body ${helmet.bodyAttributes.toString()}>
-    <div id="toast-page-section">${appHtml}</div>
-    <script type="module" async>
-    /* @jsx jsx */
+  <script type="module">
+  /* @jsx jsx */
 
 async function renderPage() {
-  const promises = [
-    import(window.componentPath),
-    window.wrapperComponentPath
-      ? import(window.wrapperComponentPath)
-      : undefined,
-    window.dataPath
-      ? fetch(window.dataPath).then(response => {
-          return response.json();
-        })
-      : {},
-    import("/web_modules/preact.js")
-  ];
+const promises = [
+  import(window.componentPath),
+  window.wrapperComponentPath
+    ? import(window.wrapperComponentPath)
+    : undefined,
+  window.dataPath
+    ? fetch(window.dataPath).then(response => {
+        return response.json();
+      })
+    : {},
+  import("/web_modules/preact.js")
+];
 
-  let pageWrapper = ({ children }) => h("div", null, children);
-  const [
-    PageModule,
-    PageWrapperModule,
-    pageData,
-    { render, h }
-  ] = await Promise.all(promises);
-  const Page = PageModule.default;
-  pageWrapper = PageWrapperModule ? PageWrapperModule.default : undefined;
+let pageWrapper = ({ children }) => h("div", null, children);
+const [
+  PageModule,
+  PageWrapperModule,
+  pageData,
+  { render, h }
+] = await Promise.all(promises);
+const Page = PageModule.default;
+pageWrapper = PageWrapperModule ? PageWrapperModule.default : undefined;
 
-  render(
-    h(pageWrapper, pageData, h(Page, pageData)),
-    document.getElementById("toast-page-section")
-  );
+render(
+  h(pageWrapper, pageData, h(Page, pageData)),
+  document.getElementById("toast-page-section")
+);
 }
 
 renderPage();
 
 </script>
+  ${helmet.link.toString()}
+  </head>
+  <body ${helmet.bodyAttributes.toString()}>
+    <div id="toast-page-section">${appHtml}</div>
+   
   </body>
 </html>
 `;
