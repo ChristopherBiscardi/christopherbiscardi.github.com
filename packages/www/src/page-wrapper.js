@@ -294,13 +294,6 @@ export default ({ children, ...props }) => (
       <meta charSet="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-      <link
-        rel="preload"
-        as="font"
-        crossorigin="anonymous"
-        href="/inter/InterDisplay.var.woff2?v=3.11"
-        type="font/woff2"
-      />
       <title>Chris Biscardi's Digital Garden</title>
       <meta name="twitter:title" content="Chris Biscardi's Digital Garden" />
       <meta name="og:title" content="Chris Biscardi's Digital Garden" />
