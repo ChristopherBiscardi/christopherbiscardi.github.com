@@ -22,10 +22,6 @@ window.dataPath = ${dataPath && `"${dataPath}"`};
   <head>
   ${helmet.title.toString()}
   ${helmet.meta.toString()}
-  <link rel="preload" href="/web_modules/preact.js" />
-  <link rel="preload" href="${componentPath}"/>
-  <link rel="preload" href="${pageWrapperPath}"/>
-  <link rel="preload" href="${dataPath}"/>
   ${helmet.link.toString()}
   </head>
   <body ${helmet.bodyAttributes.toString()}>

@@ -324,7 +324,24 @@ export default ({ children, ...props }) => (
               )
         }
       />
-      <link rel="stylesheet" type="text/css" href="inter/inter.css" />
+      {/* <link rel="stylesheet" type="text/css" href="inter/inter.css" /> */}
+      <style>{`@font-face {
+  font-family: "Inter var experimental";
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: oblique 0deg 10deg;
+  src: url("/inter/Inter.var.woff2?v=3.11") format("woff2");
+}
+
+@font-face {
+  font-family: "InterDisplay var";
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+  font-named-instance: "Regular";
+  src: url("/inter/InterDisplay.var.woff2?v=3.11") format("woff2");
+}
+`}</style>
     </Helmet>
     <Header />
     {props.title && (
