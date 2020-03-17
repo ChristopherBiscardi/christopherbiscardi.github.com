@@ -1,0 +1,46 @@
+export const meta = {
+  title: "Removing drafts from gatsby-theme-blog",
+  date: "2019-08-10T00:00:00.000Z",
+  tags: ["gatsby", "gatsby-themes"]
+};
+
+To indicate that one of our MDX files is a draft, we’ll
+include an extra front matter field called status.
+
+```
+---
+status: draft
+title: My awesome blog!
+---
+
+Some content for my blog
+```
+
+This field will appear in the front matter in the Mdx nodes
+in the Gatsby GraphQL node system.
+
+```graphql
+allMdx {
+  nodes {
+    frontmatter {
+      status
+    }
+  }
+}
+```
+
+Perhaps more interestingly, if we delete the Mdx node that
+delete will cascade through the node chain and delete any
+nodes that have a child relationship with the node we
+delete!
+
+This is great in some cases, for example if we had
+MarkdownRemark and Mdx versions of our blog post and wanted
+neither to stick around after deleting a File node. In other
+cases, it’s good to keep this in mind though.
+
+```js
+onCreateNode
+
+Delete Mdx.parent or Mdx if no parent
+```

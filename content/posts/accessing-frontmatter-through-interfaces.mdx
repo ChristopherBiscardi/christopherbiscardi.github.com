@@ -1,0 +1,189 @@
+export const meta = {
+  title: "Accessing Frontmatter through interfaces",
+  date: "2019-10-04T00:00:00.000Z",
+  tags: ["gatsby", "gatsby-themes", "graphql"]
+};
+
+Sometimes you have that one-off field you need to use. So
+you throw it in the frontmatter of your Markdown file and...
+then what? The official Gatsby blog theme defines a
+`BlogPost` interface that doesn't include your frontmatter
+field! This is intentional because `BlogPost` is meant to be
+a type that other themes and plugins can depend on, allowing
+extension. It's an interface so when you try to
+`createNodeField` it doesn't show up in `fields` either
+because `fields` is on `MdxBlogPost` (or some other proxy
+type) and not the interface itself.
+
+So what to do?
+
+## Inline Fragments
+
+Inline fragments are the answer.
+
+With inline fragments you can reach deep into the parent
+types, whether you chose to `createNodeField` or not, to
+access your one-off frontmatter field.
+
+Without changing any code in `gatsby-node` or other
+`gatsby-*` file, we can use inline fragments to do a
+type-switch on the possible return types. Using these type
+switches we can reach up into the parent `Mdx` node and grab
+our frontmatter. This is nice because it makes what we're
+doing explicit (that is, extending the data model with new
+data that other themes won't depend on) and compatible with
+other source types. This part of the query only affects the
+types which it declares and the fields will be empty for
+other types.
+
+```graphql
+{
+  blogPost {
+    id
+    ... on MdxBlogPost {
+      parent {
+        ... on Mdx {
+          frontmatter {
+            title
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## createNodeField
+
+Let's say the frontmatter field we want is a `status` field
+that indicates published status. The frontmatter could look
+like this.
+
+```md
+---
+title: Hello World (example)
+date: 2019-04-15
+status: published
+---
+```
+
+To clean this up a bit we can put the field we want on our
+`MdxBlogPost` type if we want, since that is a concrete
+node.
+
+```js
+exports.onCreateNode = ({ node, actions, getNode }) => {
+  const { createNodeField } = actions;
+  if (node.internal.type === `MdxBlogPost`) {
+    const parent = getNode(node.parent);
+    createNodeField({
+      node,
+      name: "status",
+      value: parent.frontmatter.status
+    });
+  }
+};
+```
+
+This simplifies our query while also potentially allowing us
+to source this information from a different node (for
+example, if we were manually creating MDX content and wanted
+it to be represented as a `BlogPost` anyway).
+
+```js
+{
+  blogPost {
+    id
+    ... on MdxBlogPost {
+      fields {
+        status
+      }
+    }
+  }
+}
+```
+
+## Typing fields
+
+What happens if we query for a field that doesn't exist in
+our frontmatter or fields?
+
+```graphql
+{
+  blogPost {
+    id
+    ... on MdxBlogPost {
+      fields {
+        status
+        date
+      }
+    }
+  }
+}
+```
+
+We get an error.
+
+```json
+{
+  "errors": [
+    {
+      "message": "Cannot query field \"date\" on type \"MdxBlogPostFields\".",
+      "locations": [
+        {
+          "line": 7,
+          "column": 9
+        }
+      ],
+      "stack": [
+        "GraphQLError: Cannot query field \"date\" on type \"MdxBlogPostFields\".",
+        "    at Object.Field (/Users/chris/tmp/inline-fragments-interfaces/node_modules/graphql/validation/rules/FieldsOnCorrectType.js:53:31)",
+        "    at Object.enter (/Users/chris/tmp/inline-fragments-interfaces/node_modules/graphql/language/visitor.js:324:29)",
+        "    at Object.enter (/Users/chris/tmp/inline-fragments-interfaces/node_modules/graphql/language/visitor.js:375:25)",
+        "    at visit (/Users/chris/tmp/inline-fragments-interfaces/node_modules/graphql/language/visitor.js:242:26)",
+        "    at validate (/Users/chris/tmp/inline-fragments-interfaces/node_modules/graphql/validation/validate.js:73:24)",
+        "    at getGraphQLParams.then.then.optionsData (/Users/chris/tmp/inline-fragments-interfaces/node_modules/express-graphql/index.js:121:32)",
+        "    at processTicksAndRejections (internal/process/task_queues.js:86:5)"
+      ]
+    }
+  ]
+}
+```
+
+We can fix this using the Schema Customization APIs.
+Specifically `createTypes`.
+
+```js
+exports.createSchemaCustomization = ({ actions }) => {
+  const { createTypes } = actions;
+  const typeDefs = `
+    type MdxBlogPost implements Node @infer {
+      fields: MdxBlogPostFields
+    }
+
+    type MdxBlogPostFields @infer {
+      status: String
+      date: Date @dateformat
+    }
+  `;
+  createTypes(typeDefs);
+};
+```
+
+This doesn't guarentee we'll get a result. It does guarantee
+our query won't break the site if someone forgets a date
+field though!
+
+```json
+{
+  "data": {
+    "blogPost": {
+      "id": "664d82ef-96ab-53e4-a2a5-ecf967793df0",
+      "fields": {
+        "status": "published",
+        "date": null
+      }
+    }
+  }
+}
+```

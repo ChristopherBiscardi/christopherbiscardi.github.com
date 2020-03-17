@@ -1,0 +1,84 @@
+export const meta = {
+  title: "Creating MDX Nodes from Raw Strings and Nodes",
+  date: "2019-07-31T00:00:00.000Z",
+  tags: ["mdx", "gatsby", "react"]
+};
+
+## Raw Strings
+
+If you have a string and you want to create an MDX node from
+it (for example if you're querying the github API which
+doesn't give content types), simply create a new node with a
+`mediaType` of `text/markdown` (or any custom `mediaType`
+and then add it to gatsby-plugin-mdx's processing options)
+
+```js
+const crypto = require("crypto");
+exports.sourceNodes = ({
+  actions,
+  createNodeId,
+  createContentDigest
+}) => {
+  const { createNode } = actions;
+
+  const mdxContent = `---
+some: frontmatter
+---
+
+# heading
+
+and stuff
+`;
+
+  createNode({
+    id: `a-node-id`,
+    parent: null,
+    children: [],
+    internal: {
+      type: `MyCustomMdxNodesFromString`,
+      contentDigest: crypto
+        .createHash(`md5`)
+        .update(mdxContent)
+        .digest(`hex`),
+      mediaType: `text/markdown`,
+      content: mdxContent,
+      description: `My custom MDX nodes`
+    }
+  });
+};
+```
+
+## Raw Strings... OR Nodes
+
+and also if you promise to never hold me accountable for
+what happens you can import the internal function from
+`createMDXNode` and create an `Mdx` node directly. This
+allows you to skip a bunch of boilerplate and also shows how
+to attach the Mdx node as a child to your node if you have
+one.
+
+You can also use a raw string instead of `content`.
+
+```js
+const createMDXNode = require("gatsby-plugin-mdx/utils/create-mdx-node");
+
+exports.onCreateNode = async ({
+  node,
+  actions,
+  createNodeId,
+  loadNodeContent
+}) => {
+  const { createNode, createParentChildLink } = actions;
+  // do any checks for which content you want to transform here
+  if (node.internal.type === "File") {
+    const content = await loadNodeContent(node);
+    const mdxNode = await createMDXNode({
+      id: createNodeId(`${node.id} >>> Mdx`),
+      node,
+      content
+    });
+    createNode(mdxNode);
+    createParentChildLink({ parent: node, child: mdxNode });
+  }
+};
+```

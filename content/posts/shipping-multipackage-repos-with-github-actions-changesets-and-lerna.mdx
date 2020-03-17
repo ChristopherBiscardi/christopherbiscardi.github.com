@@ -1,0 +1,260 @@
+export const meta = {
+  title:
+    "Shipping multi-package repos with GitHub Actions, Changesets, and Lerna",
+  date: "2019-10-05T00:00:00.000Z",
+  tags: ["lerna", "github-actions"]
+};
+
+Let's say you have a repo full of a set of NPM packages,
+such as a Yarn Workspaces setup. How do you publish those
+packages? With GitHub Actions we can automate the creation
+of changesets as well as the version bumping and publishing
+of the packages affected by those changesets.
+
+## Changesets
+
+Assuming we have a pre-existing Yarn workspaces setup, we
+first we need to set up
+[changesets](https://github.com/atlassian/changesets) using
+the changesets cli.
+
+```sh
+yarn add @changesets/cli
+yarn changeset init
+```
+
+on init, you should see something like this:
+
+```
+yarn run v1.19.0
+$ /Users/chris/github/christopherbiscardi/gatsby-plugins/node_modules/.bin/changeset init
+🦋  Thanks for choosing changesets to help manage your versioning and publishing
+🦋
+🦋  You should be set up to start using changesets now!
+🦋
+🦋  info We have added a `.changeset` folder, and a couple of files to help you out:
+🦋  info - .changeset/README.md contains information about using changesets
+🦋  info - .changeset/config.json is our default config
+✨  Done in 0.96s.
+```
+
+The created `.changesets/config.json` looks something like
+this:
+
+```
+{
+  "$schema": "https://unpkg.com/@changesets/config@0.2.1/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "linked": [],
+  "access": "private"
+}
+```
+
+## Creating our first changeset
+
+A changeset is created using the `changeset` CLI.
+
+```sh
+yarn changeset
+```
+
+When run, we get a number of questions about which packages
+are affected and what semver range this changeset should
+bump (major, minor, or patch).
+
+```
+➜ yarn changeset
+yarn run v1.19.0
+$ /Users/chris/github/christopherbiscardi/gatsby-plugins/node_modules/.bin/changeset
+🦋  Which packages would you like to include? · gatsby-plugin-printer
+🦋  Which packages should have a major bump? · No items were selected
+🦋  Which packages should have a minor bump? · No items were selected
+🦋  The following packages will be patch bumped:
+🦋  gatsby-plugin-printer@1.0.4
+🦋  Please enter a summary for this change (this will be in the changelogs)
+🦋  Summary · Testing changesets PR
+🦋  === Releasing the following packages ===
+🦋  [Patch]
+🦋    gatsby-plugin-printer
+🦋  ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+🦋  ║                                                      ========= NOTE ========                                                       ║
+🦋  ║All dependents of these packages that will be incompatible with the new version will be patch bumped when this changeset is applied.║
+🦋  ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+🦋  Is this your desired changeset? (Y/n) · true
+🦋  Changeset added! - you can now commit it
+🦋
+🦋  If you want to modify or expand on the changeset summary, you can find it here
+🦋  info /Users/chris/github/christopherbiscardi/gatsby-plugins/.changeset/silly-dragons-retire.md
+✨  Done in 42.00s.
+```
+
+The content of `.changeset/silly-dragons-retire.md` turns
+out to be
+
+```md
+---
+"gatsby-plugin-printer": patch
+---
+
+Testing changesets PR
+```
+
+This file will get deleted automatically later (and merged
+into the `CHANGELOG.md`) when we set up our GH Action PR.
+
+## Changesets on Actions
+
+Now that we've created our first changeset, it's time to set
+GitHub Actions up. The changesets GH Action will create a PR
+including all of the version bumps and `CHANGELOG.md`s that
+need to happen from any given changeset. We can then merge
+that PR after reviewing and release it how we wish. Here's
+the config for the action, including two independent jobs:
+one that builds and tests while the other creates the
+changeset PR. We're only running on merge to master so we
+don't have to worry about PRs creating errant changeset PRs.
+
+```yaml
+name: Publish Packages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn
+      - run: yarn test
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Create Release Pull Request
+        uses: changesets/action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Publishing with lerna
+
+Finally we'll add publishing support to our GitHub action
+workflow. In this case I've set it up to publish to `npm`
+_and_ `gpr`. To publish to `gpr` you may need to follow
+additional instructions not included here.
+
+```yaml
+name: Publish Packages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn
+      - run: yarn test
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Create Release Pull Request
+        uses: changesets/action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - run: yarn
+      - run: yarn publish-ci
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
+  publish-gpr:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://npm.pkg.github.com/
+          scope: "@christopherbiscardi"
+      - run: yarn
+      - run: yarn publish-ci
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+```
+
+The key difference is the `yarn publish-ci` command, which
+requires a few flags such as `from-package`, which indicates
+that we get our versioning from the package itself and not
+git history.
+
+```json
+{
+  "scripts": {
+    "publish-ci": "lerna publish from-package -y --no-verify-access"
+  }
+}
+```
+
+## The Release
+
+Now that everything is set up, a push to master with a
+changeset will
+[create a PR](https://github.com/ChristopherBiscardi/gatsby-plugins/pull/6)
+with the package version changes and `CHANGELOG.md`s which
+can then be merged to trigger lerna actually releasing the
+packages to the registries.
+
+All in all this is a fantastic workflow I anticipate using
+across many of my repos. It includes the ability to publish
+packages automatically while also allowing a measure of
+control over when and how they get published. I can merge
+the changesets PR from my phone to trigger a release!

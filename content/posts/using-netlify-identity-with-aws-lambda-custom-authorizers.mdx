@@ -1,0 +1,157 @@
+export const meta = {
+  title:
+    "Using Netlify Identity with AWS Lambda Custom Authorizers",
+  date: "2020-02-18T00:00:00.000Z",
+  tags: ["netlify", "aws", "lambda"]
+};
+
+> If you prefer video,
+> [there's one here](https://egghead.io/lessons/aws-writing-an-aws-custom-authorizer-to-enable-the-use-of-netlify-identity-on-aws-lambda?pl=converting-a-serverless-app-to-run-on-aws-lambda-and-dynamodb-with-serverless-framework-223a?af=7h4hd0)
+> along with several other videos on working with Netlify
+> and AWS Lambda.
+
+[Netlify Identity](https://docs.netlify.com/visitor-access/identity/)
+is an integrated authorization solution for Netlify that
+allows users to sign up, log in, and also provides the
+verified user object inside of Netlify Functions.
+
+Sometimes we'll need to use Netlify Identity on other
+platforms, like AWS. This is the case if we need websocket
+support or want to take advantage of AWS IAM. In these cases
+we can still use Netlify Identity as our source of truth as
+our application scales up by taking advantage of custom
+authorizers.
+
+## What's an authorizer?
+
+> A Lambda authorizer (formerly known as a custom
+> authorizer) is an API Gateway feature that uses a Lambda
+> function to control access to your API.
+> [aws docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html)
+
+There are two types of authorizers: token based and request
+parameter based. We are going to use a token authorizer in
+this post, but you'll need a request parameter authorizer if
+you're using websockets.
+
+Let's say we have a GraphQL API running on AWS Lambda. An
+authorizer sits in front of our GraphQL API, checks the
+bearer token for us, then returns an IAM policy indicating
+whether or not the request should be handled by the GraphQL
+server, or denied. AWS then evaluates the policy and either
+forwards the request to the GraphQL server, or doesn't.
+
+## Implementation
+
+If you play around with an existing Netlify identity
+instance and
+[the GoTrue Playground](https://gotruejs-playground.netlify.com/),
+what you end up realizing is that to get the user data is a
+_single_ HTTP call. This makes our authorizer implementation
+very small.
+
+- Get the token
+- Get the user
+- If the user isn't valid, throw
+- If the user is valid, return the policy
+
+```js
+module.exports = async params => {
+  const token = getToken(params);
+  const user = await getJSON(
+    "https://serverless-todo-netlify-fauna-egghead.netlify.com/.netlify/identity/user",
+    null,
+    { Authorization: `Bearer ${token}` }
+  );
+  if (!user.id) {
+    throw new Error("Netlify Identity Failed");
+  }
+  return {
+    principalId: user.id,
+    policyDocument: getPolicyDocument(
+      "Allow",
+      params.methodArn
+    )
+  };
+};
+```
+
+## Getting the bearer token
+
+As long as the token is sent in the Authorization header as
+a bearer token: `Authorization: Bearer my-token`, when
+getting the token string from the params is fairly
+mechanical.
+
+```js
+const getToken = params => {
+  if (!params.type || params.type !== "TOKEN") {
+    throw new Error(
+      'Expected "event.type" parameter to have value "TOKEN"'
+    );
+  }
+
+  const tokenString = params.authorizationToken;
+  if (!tokenString) {
+    throw new Error(
+      'Expected "event.authorizationToken" parameter to be set'
+    );
+  }
+
+  const match = tokenString.match(/^Bearer (.*)$/);
+  if (!match || match.length < 2) {
+    throw new Error(
+      `Invalid Authorization token - ${tokenString} does not match "Bearer .*"`
+    );
+  }
+  return match[1];
+};
+```
+
+## Policies
+
+We use the `2012-10-17`
+[IAM policy version](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_version.html)
+to say that the user is allowed to invoke an effect on a
+specific resource. In our case above, we decided to `Allow`
+invoking the next lambda:
+`getPolicyDocument("Allow", params.methodArn)`.
+
+```js
+const getPolicyDocument = (effect, resource) => {
+  const policyDocument = {
+    Version: "2012-10-17", // default version
+    Statement: [
+      {
+        Action: "execute-api:Invoke", // default action
+        Effect: effect,
+        Resource: resource
+      }
+    ]
+  };
+  return policyDocument;
+};
+```
+
+## Bent
+
+Perhaps less interesting, I want to call out the use of
+[Bent](https://github.com/mikeal/bent) in this example,
+which has been fantastic to use.
+
+```js
+const bent = require("bent");
+const getJSON = bent("GET", "json");
+const user = await getJSON(
+  "https://serverless-todo-netlify-fauna-egghead.netlify.com/.netlify/identity/user",
+  null,
+  { Authorization: `Bearer ${token}` }
+);
+```
+
+## Thanks
+
+Special thanks to
+[David Wells](https://twitter.com/DavidWells), whose
+[auth0 authorizer ](https://github.com/serverless/forms-service/blob/d260e45c75389f4a09524d518d4dd43e53a15375/backend/lib/auth.js)
+was one of the first I worked with.

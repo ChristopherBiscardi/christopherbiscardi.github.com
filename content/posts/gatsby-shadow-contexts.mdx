@@ -1,0 +1,114 @@
+export const meta = {
+  title: "Gatsby Shadow Contexts",
+  date: "2019-09-15T00:00:00.000Z",
+  tags: ["gatsby", "gatsby-themes"]
+};
+
+Gatsby's Shadowing functionality works on the concept of a
+"shadow context" or "shadow set". This concept doesn't have
+a specific name because it is never mentioned in the code at
+all and is purely conceptual for understanding how shadowing
+works. Let's say a Gatsby site has a set of themes
+installed. We'll list the final ordering of themes here,
+regardless of whether they were horizontally or vertically
+integrated into the site.
+
+```js
+const themes = [
+  `theme-a`,
+  `theme-b-parent`,
+  `theme-b`,
+  `theme-c`
+];
+```
+
+While talking about shadow contexts we have a shadow root
+and possible shadow paths. The root is the file that is
+potentially going to be shadowed and the paths are the paths
+competing for the opportunity to shadow the root. Let's say
+we have a root in `theme-a`. In this case it's a `header`
+React component, but the file content doesn't actually
+matter for this discussion.
+
+```
+theme-a/src/components/header.js
+```
+
+The full list of possible shadow paths for this root is
+then:
+
+```
+theme-a/src/components/header.js
+theme-b-parent/src/theme-a/components/header.js
+theme-b/src/theme-a/components/header.js
+theme-c/src/theme-a/components/header.js
+<user-site>/src/theme-a/components/header.js
+```
+
+When choosing which file to use, we go from last to first in
+this array. The user's site wins above all else, then we
+traverse back up through the final ordering of themes for
+potential matches until we find a file that exists or we end
+up back at the original.
+
+This is how shadowing works. If you import the root path
+from `theme-a` the file the import resolves to will be the
+latest filepath in the list. This allows themes to import
+the root path and integrate with other themes that shadow
+that root path without knowing about those other themes.
+
+## Extending
+
+Shadow roots and contexts don't do a lot to help us explain
+single-path selection (unless we're talking about forking
+multiple contexts... a topic for another day). They do
+however explain something interesting about what happens
+when a file further down in the shadow context imports a
+file further up, like the root. Let's say `theme-b` wants to
+shadow `header`, but instead of providing its own
+implementation wants to modify `theme-a`'s implementation,
+also known as extending.
+
+```js
+// theme-b/src/theme-a/components/header.js
+import Header from "theme-a/src/components/header";
+
+export default props => (
+  <Header {...props} aProp="I want to change">
+    With my own content!
+  </Header>
+);
+```
+
+In the normal case of any other component importing
+`theme-a/src/components/header` the file returned can be any
+of the shadow paths. This way even when shadowing is active
+the import of any given shadow root will always yield the
+same file, even if it's one of the shadow paths. This is
+because the import is happening across shadow contexts. (The
+two shadow contexts in this case are the other component's
+and the header's, which is why we say the import happens
+"across" contexts.)
+
+### Importing within a context
+
+When we are in a shadow context and import a "parent" shadow
+path (for example if
+`theme-b/src/theme-a/components/header.js` imported
+`theme-a/src/components/header.js` as in the above code) we
+receive the original file from `theme-a` instead of the file
+the shadowing algorithm resolves to. If it did not work this
+way we'd end up in an infinite loop because the shadowing
+file in `theme-b` imports the shadow root and with shadowing
+active, the shadow root resolves to the last shadow path in
+the context (in this case, resolving to `theme-b` itself,
+which then imports the shadow root for itself again).
+
+## Fin
+
+This post gave some insight into the mental model for
+shadowing when it comes to importing from a different shadow
+context and importing in the same shadow context. Our next
+post on shadowing will cover what happens when you fork
+shadow contexts and why forking shadow contexts can lead to
+some very confusing behavior.

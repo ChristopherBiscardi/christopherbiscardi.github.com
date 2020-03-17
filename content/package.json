@@ -1,0 +1,9 @@
+{
+  "name": "content",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "front-matter": "^3.1.0"
+  }
+}

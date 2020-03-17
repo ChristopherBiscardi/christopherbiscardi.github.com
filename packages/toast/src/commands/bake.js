@@ -3,12 +3,15 @@ const { Command, flags } = require("@oclif/command");
 const fs = require("fs").promises;
 const path = require("path");
 const globby = require("globby");
-const { transformAsync } = require("@babel/core");
+const {
+  transformComponentForBrowser,
+  transformComponentForNode
+} = require("../transforms");
 const { render } = require("../page-renderer-pre");
 const beeline = require("honeycomb-beeline")({
-  writeKey: process.env.HONEYCOMB_WRITE_KEY,
+  writeKey: process.env.HONEYCOMB_WRITE_KEY || "no write key",
   dataset: "serverless"
-  // transmission: "writer"
+  // transmission: process.env.HONEYCOMB_TRANSMISSION  || null
 });
 
 class BakeCommand extends Command {
@@ -57,24 +60,9 @@ class BakeCommand extends Command {
       srcFiles.map(async filepath => {
         const fullFilePath = path.resolve(siteDir, filepath);
         const fileContents = await fs.readFile(fullFilePath, "utf-8");
-        const browserComponent = await transformAsync(fileContents, {
-          babelrc: false,
-          presets: [`@babel/preset-react`],
-          plugins: [
-            `babel-plugin-preval`,
-            `babel-plugin-transform-inline-environment-variables`,
-            `@babel/plugin-proposal-class-properties`,
-            [
-              "snowpack/assets/babel-plugin.js",
-              {
-                importMap: path.resolve(
-                  process.cwd(),
-                  "public/web_modules/import-map.json"
-                )
-              }
-            ]
-          ]
-        });
+        const browserComponent = await transformComponentForBrowser(
+          fileContents
+        );
         const browserComponentPath = path.resolve(publicDir, filepath);
         // make sure directory to put file in exists
         // then put file there
@@ -84,14 +72,7 @@ class BakeCommand extends Command {
             fs.writeFile(browserComponentPath, browserComponent.code, "utf-8")
           );
 
-        const nodeComponent = await transformAsync(fileContents, {
-          babelrc: false,
-          presets: [
-            [`@babel/preset-env`, { targets: { node: "current" } }],
-            `@babel/preset-react`
-          ],
-          plugins: [`babel-plugin-preval`]
-        });
+        const nodeComponent = await transformComponentForNode(fileContents);
         const nodeComponentPath = path.resolve(cacheDir, filepath);
         await fs
           .mkdir(path.dirname(nodeComponentPath), { recursive: true })

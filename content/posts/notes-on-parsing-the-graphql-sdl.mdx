@@ -1,0 +1,254 @@
+export const meta = {
+  title: "Notes on Parsing the GraphQL SDL",
+  date: "2019-01-23T06:14:57.439Z",
+  featuredImage: "notes-on-parsing-the-graphql-sdl.png",
+  tags: ["javascript", "graphql"]
+};
+
+Lately I've been doing some work with the
+[GraphQL SDL](https://www.prisma.io/blog/graphql-sdl-schema-definition-language-6755bcb9ce51)
+and [graphql-js][graphql-js] (because it's for
+[Gatsby](https://www.gatsbyjs.org/) and Gatsby is
+JavaScript). This post is an attempt to demystify some of
+the code inside of graphql-js. We're not starting at the
+beginning so buckle up.
+
+## Schema Definition Language
+
+The GraphQL SDL (Schema Definition Language) is a custom
+language for defining GraphQL schemas. It looks like this:
+
+```graphql
+type BlogPost {
+  title: String!
+  body: String
+  excerpt: String
+  date: String
+  tags: [String]
+}
+
+type Post {
+  title: String
+}
+```
+
+The idea behind the SDL is that you can use these types to
+define your API types for Query, Mutation, or Subscription.
+Then you have to implement resolvers that match these types
+(or can auto-generate them in advanced use cases). We're
+only working with "fragments" of GraphQL schema today, not a
+full API, so we won't get into what this looks like in a
+larger context.
+
+Since this is a custom language it means we need a way to
+represent it in JavaScript to do anything more than logging
+it out. Enter [graphql-js][graphql-js].
+
+## parse
+
+[graphql-js][graphql-js] is (TODO:). The package has a
+`language` module built in which is responsible for defining
+the [lexer][lexer] and [parser][parser] for the SDL. Gatsby
+[re-exports this package](https://github.com/gatsbyjs/gatsby/blob/4fc1d45bcfe19790c8a94267f2a8d1cd38891a95/packages/gatsby/graphql.js)
+with an additional JSON datatype so we have to make sure we
+only import one of the packages' `graphql`s because you can
+only have one graphql-js (_why_ you can only have one
+version installed is a story for another day and is a
+limitation of `graphql-js` itself).
+
+We can write a small program to parse the schema into a JSON
+format.
+
+```js
+const { parse } = require("graphql/language");
+
+const schema = `
+  type BlogPost {
+    title: String!
+    body: String
+    excerpt: String
+    date: String
+    tags: [String]
+  }
+
+  type Post {
+    title: String
+  }
+`;
+
+console.log(parse(schema));
+```
+
+Remember how we said we were only dealing with "fragments"
+of GraphQL? In this case it turns out to be the `Document`
+type for the entire file. The `Document` holds our two type
+declarations in an array called `definitions` alongside a
+bunch of other relevant data for each type and the code
+location the type occurs in.
+
+```json
+{
+  "kind": "Document",
+  "definitions": [
+    {
+      "kind": "ObjectTypeDefinition",
+      "description": undefined,
+      "name": [Object],
+      "interfaces": [],
+      "directives": [],
+      "fields": [Array],
+      "loc": [Object]
+    },
+    {
+      "kind": "ObjectTypeDefinition",
+      "description": undefined,
+      "name": [Object],
+      "interfaces": [],
+      "directives": [],
+      "fields": [Array],
+      "loc": [Object]
+    }
+  ],
+  "loc": { "start": 0, "end": 129 }
+}
+```
+
+The less complex of the two is our `Post` type. We can see
+that it's an `Object` type with a`name` of `Post`. It has no
+`interfaces` and no `directives` and a single `Field`. On
+our `Field`, we get the name and return type of the field
+(`title` and `String`)
+
+```json
+{
+  kind: "ObjectTypeDefinition",
+  name: { kind: "Name", value: "Post", loc: { start: 123, end: 127 } },
+  interfaces: [],
+  directives: [],
+  fields: [
+    {
+      kind: "FieldDefinition",
+      name: { kind: "Name", value: "title", loc: { start: 134, end: 139 } },
+      arguments: [],
+      type: {
+        kind: "NamedType",
+        name: { kind: "Name", value: "String", loc: { start: 141, end: 147 } },
+        loc: { start: 141, end: 147 }
+      },
+      directives: [],
+      loc: { start: 134, end: 147 }
+    }
+  ],
+  loc: { start: 118, end: 151 }
+};
+```
+
+If we change the `title` field on the `Post` to a required
+field.
+
+```js
+type Post {
+  title: String!
+}
+```
+
+The `FieldDefinition` return type changes to a `NonNullType`
+with a `NamedType` inside of it.
+
+```json
+{
+  "kind": "FieldDefinition",
+  "name": {
+    "kind": "Name",
+    "value": "title",
+    "loc": { "start": 134, "end": 139 }
+  },
+  "arguments": [],
+  "type": {
+    "kind": "NonNullType",
+    "type": {
+      "kind": "NamedType",
+      "name": {
+        "kind": "Name",
+        "value": "String",
+        "loc": { "start": 141, "end": 147 }
+      },
+      "loc": { "start": 141, "end": 147 }
+    },
+    "loc": { "start": 141, "end": 148 }
+  },
+  "directives": [],
+  "loc": { "start": 134, "end": 148 }
+}
+```
+
+And now that we have our type declarations in JavaScript, we
+can traverse them to find all the fields and print them.
+`graphql-js/language` contains two additional functions to
+help us with this: `visit` and `print`.
+
+`visit` allows us to define a set of nodes to process. We
+can change them here too but in this case we'll just
+pretty-print them. Since we're clearly working with an
+[AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
+now, we'll name our argument in the `forEach` `ast` which we
+expect to be each of the Object types we've defined.
+
+```js
+const { parse, visit, print } = require("graphql/language");
+
+const schema = `
+  type BlogPost {
+    title: String!
+    body: String
+    excerpt: String
+    date: String
+    tags: [String]
+  }
+
+  type Post {
+    title: String!
+  }
+`;
+
+parse(schema).definitions.forEach(ast => {
+  console.log("\n");
+  console.log(ast.name.value);
+  visit(ast, {
+    FieldDefinition(node) {
+      console.log(print(node));
+    }
+  });
+});
+```
+
+will return the name of each node and the fields they
+contain.
+
+```
+BlogPost
+title: String!
+body: String
+excerpt: String
+date: String
+tags: [String]
+
+
+Post
+title: String!
+```
+
+This may not seem like much, but it allows us to define data
+types and programmatically manipulate them. We could use
+this information to create an ORM for a database, for
+example.
+
+If you want to explore the AST more without having to write
+your own code, I highly suggest
+[AST Explorer](https://astexplorer.net/#/gist/9bb73e8b0d49f11d0e91b21a1f52aadd/d0b34c79e824f29f7d9b1f1cee24256d3b6f484e),
+which is a browser-based tool for viewing ASTs. I've added
+the example in this blogpost to the AST Explorer link.
+
+[graphql-js]: https://graphql.org/graphql-js/
+[lexer]: https://en.wikipedia.org/wiki/Lexical_analysis
+[parser]: https://en.wikipedia.org/wiki/Parsing

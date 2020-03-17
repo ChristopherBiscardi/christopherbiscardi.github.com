@@ -1,0 +1,15 @@
+export const meta = {
+  "tweet": "In @gatsbyjs, there is a lifecycle dedicated to the task of modifying the types available and creating new types in the GraphQL API",
+  "title": "createSchemaCustomization"
+}
+        
+```js
+exports.createSchemaCustomization = ({ actions }) => {
+  const { createTypes } = actions;
+const typeDefs =
+`type MarkdownRemark implements Node @dontInfer { frontmatter: Frontmatter } type Frontmatter { title: String! tagline: String date: Date @dateformat image: File @fileByRelativePath }`;
+createTypes(typeDefs); };
+
+```
+
+```

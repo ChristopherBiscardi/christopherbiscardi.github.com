@@ -1,0 +1,152 @@
+export const meta = {
+  title:
+    "Using MDXProvider host elements in react-live scope",
+  date: "2019-08-18T00:00:00.000Z",
+  tags: ["gatsby", "mdx"]
+};
+
+Now we've established that
+[`useMDXScope` grabs from the context for imports](/post/using-mdx-scope-in-react-live-scope/)
+and
+[`useMDXComponents` grabs from the combined value of `MDXProvider`s](/post/using-mdx-shortcodes-in-react-live-scope/).
+There is one more missing piece: using host-level elements
+defined in `MDXProvider`. An example of using `MDXProvider`
+to override the rendering of all links in an MDX document:
+
+```js
+<MDXProvider
+  components={{
+    a: props => <a href="/rick-roll">Never gonna</a>
+  }}
+>
+  {app}
+</MDXProvider>
+```
+
+The final step is to use the `mdx` pragma instead of
+manually using the `useMDXComponents` hook. Host-level
+replacements and shortcodes are controlled using the `mdx`
+pragma introduced in mdx-js/react v1.0. As of v1.3.1 the
+logic is still the same for choosing how to render a
+specific component. We take the context and check
+`parent.type` (so `ul.li`, or `pre.code`), `type` (so `li`
+or `code`), then fall back to the defaults (which enables
+`wrapper`), and finally we pass through the original
+component.
+
+```js title="@mdx-js/react/src/create-element.js"
+const Component =
+  components[`${parentName}.${type}`] ||
+  components[type] ||
+  DEFAULTS[type] ||
+  originalType;
+```
+
+````md
+# Something
+
+describing some stuff
+
+```js react-live
+<a href="/somewhere">Click Me!</a>
+```
+
+and saying some more for the docs
+````
+
+So continuing with the same template in `gatsby-browser.js`
+as our last post, we have a couple of changes.
+
+```js
+import React from 'react'
+import { MDXProvider, mdx } from '@mdx-js/react'
+import Highlight, { defaultProps } from 'prism-react-renderer'
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live'
+import { preToCodeBlock } from 'mdx-utils'
+// import {useMDXScope} from 'gatsby-plugin-mdx/context'
+// import {useMDXComponents} from '@mdx-js/react'
+
+
+const Code = ({ codeString, language, ...props }) => {
+  // const components = useMDXComponents()
+  if (props['react-live']) {
+    return (
+      <LiveProvider
+        code={codeString}
+        transformCode={code => `/** @jsx mdx */ ${code}`}
+        scope={{ mdx }}>
+        <LiveEditor />
+        <LiveError />
+        <LivePreview />
+      </LiveProvider>
+    )
+  } else {
+    return (...)
+  }
+}
+
+// components is its own object outside of render so that the references to
+// components are stable
+const components = {
+  Button: props => <button>my button</button>,
+  a: props => <a href="/rick-roll">Never gonna</a>,
+  pre: preProps => {
+    const props = preToCodeBlock(preProps)
+    // if there's a codeString and some props, we passed the test
+    if (props) {
+      return <Code {...props} />
+    } else {
+      console.log('mah pre')
+      // it's possible to have a pre without a code in it
+      return <pre {...preProps} />
+    }
+  },
+}
+
+export const wrapRootElement = ({element}) => {
+  return <MDXProvider components={components}>{element}</MDXProvider>
+}
+```
+
+First we need the pragma from `@mdx-js/react`:
+
+```js
+import { MDXProvider, mdx } from "@mdx-js/react";
+```
+
+Second is that our `LiveProvider` from react-live needs to
+include a `transformCode` prop so that we can tell the
+underlying transformation to use our custom `mdx` pragma
+instead of the default `React.createElement`. We also need
+to pass the actual pragma function in so that it's in scope
+and accessible.
+
+```js
+<LiveProvider
+  code={codeString}
+  transformCode={code => `/** @jsx mdx */ ${code}`}
+  scope={{ mdx }}>
+```
+
+finally we add a host-level replacement to our components.
+In this case it's an `a` tag (also known as an anchor tag).
+We hard-code the `/rick-roll` URL because who would want to
+visit any other page anyway.
+
+```js
+const components = {
+  Button: props => <button>my button</button>,
+  a: props => <a href="/rick-roll">Never gonna</a>,
+  pre: preProps => {
+    const props = preToCodeBlock(preProps);
+    // if there's a codeString and some props, we passed the test
+    if (props) {
+      return <Code {...props} />;
+    } else {
+      console.log("mah pre");
+      // it's possible to have a pre without a code in it
+      return <pre {...preProps} />;
+    }
+  }
+};
+```

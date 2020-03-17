@@ -2,6 +2,7 @@ const { promises: fs } = require("fs");
 const path = require("path");
 const SectorSource = require("fetch-sector-docs");
 const EggheadSource = require("fetch-eggheadio");
+const MDXPostsSource = require("./fetch-mdx-post-files");
 
 exports.sourceData = async ({ withCache, createPage }) => {
   return Promise.all([
@@ -12,7 +13,8 @@ exports.sourceData = async ({ withCache, createPage }) => {
         workspace: "516555bc-f69b-47f9-ae7e-48cfd880b34d"
       })
     ),
-    withCache("eggheadio", EggheadSource.sourceData())
+    withCache("eggheadio", EggheadSource.sourceData()),
+    withCache("mdx-posts", MDXPostsSource.sourceData({ createPage }))
   ]);
 };
 
@@ -34,7 +36,7 @@ exports.prepData = async ({ cacheDir, publicDir }) => {
     })
   );
   await fs.writeFile(
-    path.resolve(publicDir, "src/pages/post.json"),
+    path.resolve(publicDir, "src/pages/garden.json"),
     JSON.stringify({ posts: allPostsData })
   );
 

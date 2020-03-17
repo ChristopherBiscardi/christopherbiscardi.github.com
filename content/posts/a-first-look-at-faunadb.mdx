@@ -1,0 +1,95 @@
+export const meta = {
+  title: "A first look at FaunaDB",
+  date: "2019-09-21T00:00:00.000Z",
+  tags: ["faunadb", "golang"]
+};
+
+FaunaDB is a geo-replicated database in the style of
+[Spanner](<https://en.wikipedia.org/wiki/Spanner_(database)>)
+and
+[Calvin](https://blog.acolyer.org/2019/03/29/calvin-fast-distributed-transactions-for-partitioned-database-systems/).
+It includes a GraphQL integration natively, is multi-tenant
+by default (using nested databases), and has a powerful
+query language based in lambda calculus called FQL.
+
+Also check out the
+[Jepsen analysis](https://jepsen.io/analyses/faunadb-2.5.4)
+and the [consistency models](https://jepsen.io/consistency)
+chart if you're unfamiliar with consistency models.
+
+Most interestingly is that it's bonkers easy to set up a new
+database for a project (ymmv, statment is subject to chance
+and experience, void where prohibited).
+
+## A first document insertion
+
+My use case for fauna is a Golang lambda function that I
+deploy on Netlify that runs once a day at 11am. I would like
+to store the Dev Tip that gets tweeted out somewhere so that
+I can prevent it from being tweeted again within a week or
+two of the last time it was tweeted out.
+
+First, I created a `FaunaTweetResult` type complete with
+fauna tags.
+
+```go
+type FaunaTweetResult struct {
+	DevTipID       string `fauna:"devTipId"`
+	TweetID        string `fauna:"tweetId"`
+	TweetContent   string `fauna:"tweetContent"`
+	TweetCreatedAt string `fauna:"tweetCreatedAt"`
+	RetweetCount   int    `fauna:"retweetCount"`
+	FavoriteCount  int    `fauna:"favoriteCount"`
+}
+```
+
+Then I instantiated a fake tweet that matches the output of
+the function I'm using to send the tweet in
+[anaconda](https://github.com/ChimeraCoder/anaconda)
+
+```go
+faunaTweet := FaunaTweetResult{
+	DevTipID:       "somethingtip",
+	TweetID:        "some tweet id",
+	TweetContent:   "some tweet",
+	TweetCreatedAt: "a date",
+	RetweetCount:   0,
+	FavoriteCount:  0,
+}
+```
+
+Next comes the token fetch from the environment and client
+instantiation for fauna. You can create sub-clients using
+alternate secrets which is interesting but I didn't have a
+use case for it yet.
+
+```go
+faunaToken, _ := os.LookupEnv("FAUNA_TOKEN")
+client := f.NewFaunaClient(faunaToken)
+```
+
+Finally we write some
+[FQL](https://docs.fauna.com/fauna/current/api/fql/) looking
+code and pass in our faked tweet to insert a new document
+into our fauna database.
+
+```go
+newTweetRecord, faunaErr := client.Query(
+	f.Create(
+	  // f.Class will be f.Collection soon
+		f.Class("dev-tip-tweets"),
+		f.Obj{"data": faunaTweet},
+	)
+)
+```
+
+and that's it. We were successfully inserting docs into the
+database in about an hours worth of work, having never
+worked with the platform before.
+
+---
+
+It was pretty fun to throw my proverbial hat in the faunadb
+ring and I'll be working with it more in the future. My next
+task is to tackle querying so that I can develop a better
+mental model for how to architect data for this system.

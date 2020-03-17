@@ -1,0 +1,23 @@
+export const meta = {
+  tweet:
+    "You can use React components without importing them in MDX using MDXProvider!",
+  title: "Shortcodes in MDX"
+}```js
+<MDXProvider
+  components={{
+    YouTube
+  }}
+>
+  {app}
+</MDXProvider>
+```;
+
+```mdx
+# My MDX file
+
+Here is a livestream in which I work on Gatsby!
+
+<YouTube video="https://www.youtube.com/watch?v=oHg5SJYRHA0" />
+
+Let's talk about it!
+```

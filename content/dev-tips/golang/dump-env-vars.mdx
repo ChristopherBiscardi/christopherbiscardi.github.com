@@ -1,0 +1,31 @@
+export const meta = {
+  "tweet": "Sometimes you need to brute force it. To dump all environment variables from inside a @golang program, we can combine `range` and `os.Environ`",
+  "title": "dump env vars"
+}
+        
+```go
+package main
+
+import (
+	"os"
+	"fmt"
+)
+func main() { for \_, pair := range os.Environ() {
+fmt.Println(pair) } }
+
+````
+
+```shell
+LANG=en_US.UTF-8
+PWD=/Users/christopherbiscardi/tmp
+SHELL=/bin/zsh
+TERM_PROGRAM_VERSION=3.2.9
+TERM_PROGRAM=iTerm.app
+COLORTERM=truecolor
+COMMAND_MODE=unix2003
+TERM=xterm-256color
+HOME=/Users/christopherbiscardi
+TMPDIR=/var/folders/br/5cvw25pn6zjbn5nqhf0ptnx80000gn/T/
+PAGER=less
+LESS=-R
+````

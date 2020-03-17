@@ -10,8 +10,7 @@ import Highlight, { defaultProps } from "prism-react-renderer";
 const maxWidth = "800px";
 
 const nav = [
-  { displayName: "Posts", url: "/post" },
-  { displayName: "Notes", url: "/notes" },
+  { displayName: "Garden", url: "/garden" },
   { displayName: "DevTips", url: "/devtips" },
   // { displayName: "Tags", url: "/tags" },
   { displayName: "Discord", url: "https://discord.gg/S9Gdagv" },
@@ -377,6 +376,16 @@ export default ({ children, ...props }) => (
             {...props}
           />
         ),
+        a: props => (
+          <a
+            css={{
+              backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`,
+              "-webkit-background-clip": `text`,
+              "-webkit-text-fill-color": `rgba(255,255,255,0.46)`
+            }}
+            {...props}
+          />
+        ),
         h1: props => <h1 css={headingStyles} {...props} />,
         h2: props => <h2 css={headingStyles} {...props} />,
         h3: props => <h3 css={headingStyles} {...props} />,
@@ -401,43 +410,54 @@ export default ({ children, ...props }) => (
               theme={prismTheme}
             >
               {({ className, style, tokens, getLineProps, getTokenProps }) => (
-                <pre
-                  className={className}
+                <div
                   css={{
                     gridColumn: 2,
                     background: "#11151d",
                     overflow: "auto",
                     borderRadius: 10,
-                    padding: "2rem",
+                    padding: "0 2rem 2rem",
                     marginTop: "1rem",
                     position: "relative",
                     boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
-                                inset 0 6.7px 5.3px rgba(0,0,0,0.028),
-                                inset 0 12.5px 10px rgba(0,0,0,0.035),
-                                inset 0 22.3px 17.9px rgba(0,0,0,0.042),
-                                inset 0 41.8px 33.4px rgba(0,0,0,0.05),
-                                inset 0 100px 80px rgba(0,0,0,0.07)`,
-                    "&:before": {
-                      content: `"${langMap[lang] || lang || ""}"`,
-                      position: "absolute",
-                      right: 0,
-                      top: 0,
-                      margin: "1rem"
-                    }
-                  }}
-                  style={{
-                    ...style,
-                    "background-color": "#11151d"
+                            inset 0 6.7px 5.3px rgba(0,0,0,0.028),
+                            inset 0 12.5px 10px rgba(0,0,0,0.035),
+                            inset 0 22.3px 17.9px rgba(0,0,0,0.042),
+                            inset 0 41.8px 33.4px rgba(0,0,0,0.05),
+                            inset 0 100px 80px rgba(0,0,0,0.07)`
                   }}
                 >
-                  {tokens.map((line, i) => (
-                    <div {...getLineProps({ line, key: i })}>
-                      {line.map((token, key) => (
-                        <span {...getTokenProps({ token, key })} />
-                      ))}
+                  {(langMap[lang] || lang) && (
+                    <div
+                      css={{
+                        fontSize: `12px`,
+                        display: `flex`,
+                        justifyContent: `flex-end`,
+                        position: `sticky`,
+                        left: 0
+                      }}
+                    >
+                      <span css={{ float: "right", padding: "1rem" }}>
+                        {langMap[lang] || lang}
+                      </span>
                     </div>
-                  ))}
-                </pre>
+                  )}
+                  <pre
+                    className={className}
+                    style={{
+                      ...style,
+                      "background-color": "#11151d"
+                    }}
+                  >
+                    {tokens.map((line, i) => (
+                      <div {...getLineProps({ line, key: i })}>
+                        {line.map((token, key) => (
+                          <span {...getTokenProps({ token, key })} />
+                        ))}
+                      </div>
+                    ))}
+                  </pre>{" "}
+                </div>
               )}
             </Highlight>
           );
@@ -446,11 +466,18 @@ export default ({ children, ...props }) => (
           <blockquote
             css={{
               gridColumn: 2,
-              background: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`,
-              backgroundSize: 3,
+              backgroundColor: "#1d2634",
+              background: `linear-gradient(180deg,rgba(251,89,74,.5) 0%,rgba(251,89,74,.5) 25%,rgba(251,222,75,.5) 25%,rgba(251,222,75,.5) 50%,rgba(112,228,112,.5) 50%,rgba(112,228,112,.5) 75%,rgba(51,183,255,.5) 75%)`,
+              backgroundSize: "3px 100%",
               backgroundRepeat: "no-repeat",
               paddingLeft: "1rem",
-              marginTop: "1rem"
+              marginTop: "1rem",
+              borderRight: `1px solid hsla(217, 28%, 26%, 1)`,
+              paddingTop: `1rem`,
+              paddingBottom: `1rem`,
+              "&:hover": {
+                background: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`
+              }
             }}
             {...props}
           />
