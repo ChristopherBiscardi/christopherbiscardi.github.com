@@ -210,6 +210,14 @@ export default props => {
         }
       >
         {props.posts
+          .filter(({ tags = [], ...etc }) => {
+            if (filterState.tags.length === 0) {
+              return true;
+            }
+            return filterState.tags.some(tag =>
+              tags.includes(tag.toLowerCase())
+            );
+          })
           .filter(({ title }) =>
             title.toLowerCase().includes(filterState.filter.toLowerCase())
           )
@@ -220,39 +228,6 @@ export default props => {
           ))}
       </List>
 
-      {/* <List
-        title="Latest Lessons"
-        subtitle="egghead.io"
-        secondary={
-          <a
-            href="https://egghead.io/instructors/chris-biscardi"
-            css={{
-              color: "rgba(255,255,255,0.86)",
-              textDecoration: "none",
-              // margin is to align baseline with heading
-              marginBottom: "2px",
-              alignSelf: "flex-end",
-              "&:hover": {
-                textDecoration: "underline"
-              }
-            }}
-          >
-            all lessons
-          </a>
-        }
-      >
-        {data.highlightedLessons.map(
-          ({ id, title, httpUrl: slug, primaryTag }) => (
-            <ListItem
-              logo={iconFromList(primaryTag ? [primaryTag.name] : [])}
-              to={slug}
-              key={id}
-            >
-              {title}
-            </ListItem>
-          )
-        )}
-      </List> */}
       <div css={{ gridColumn: "1/5", marginBottom: "3rem", marginTop: "1rem" }}>
         <ConvertKitForm />
       </div>
