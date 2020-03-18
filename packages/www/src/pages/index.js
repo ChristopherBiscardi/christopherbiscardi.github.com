@@ -215,7 +215,7 @@ export default props => {
         ))}
       </List>
       <div
-        css={{ display: "flex", justifyContent: "flex-end", gridColumn: "3" }}
+        css={{ display: "flex", justifyContent: "flex-end", gridColumn: "1/5" }}
       >
         <NyanCat css={{ height: "37px" }} />
       </div>

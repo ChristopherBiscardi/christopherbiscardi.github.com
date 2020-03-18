@@ -376,6 +376,7 @@ export default ({ children, ...props }) => (
             {...props}
           />
         ),
+        img: props => <img css={{ gridColumn: 2, width: "100%" }} {...props} />,
         a: props => (
           <a
             css={{
@@ -427,21 +428,19 @@ export default ({ children, ...props }) => (
                             inset 0 100px 80px rgba(0,0,0,0.07)`
                   }}
                 >
-                  {(langMap[lang] || lang) && (
-                    <div
-                      css={{
-                        fontSize: `12px`,
-                        display: `flex`,
-                        justifyContent: `flex-end`,
-                        position: `sticky`,
-                        left: 0
-                      }}
-                    >
-                      <span css={{ float: "right", padding: "1rem" }}>
-                        {langMap[lang] || lang}
-                      </span>
-                    </div>
-                  )}
+                  <div
+                    css={{
+                      fontSize: `12px`,
+                      display: `flex`,
+                      justifyContent: `flex-end`,
+                      position: `sticky`,
+                      left: 0
+                    }}
+                  >
+                    <span css={{ float: "right", padding: "1rem" }}>
+                      {langMap[lang] || lang || ""}
+                    </span>
+                  </div>
                   <pre
                     className={className}
                     style={{

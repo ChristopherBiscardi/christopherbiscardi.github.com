@@ -10,15 +10,6 @@ const maxWidth = "800px";
 
 const List = ({ title, subtitle, secondary, ...props }) => (
   <div css={{ marginTop: "1rem", gridColumn: "2/4" }}>
-    <div
-      css={{
-        marginBottom: "1rem",
-        display: "flex",
-        justifyContent: "space-between"
-      }}
-    >
-      {secondary}
-    </div>
     <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
       {props.children}
     </ul>
