@@ -26,15 +26,25 @@ exports.prepData = async ({ cacheDir, publicDir }) => {
 
   // prep page data for index and post pages
   const sectorPageData = require(path.resolve(cacheDir, "sector.json"));
-  const allPostsData = sectorPageData.map(
-    ({ title, createdAt, updatedAt, slug, contentType }) => ({
+  const mdxPostsData = require(path.resolve(cacheDir, "mdx-posts.json"));
+
+  const allPostsData = sectorPageData
+    .map(({ title, createdAt, updatedAt, slug, contentType }) => ({
       title,
       createdAt,
       updatedAt,
       slug,
       contentType
-    })
-  );
+    }))
+    .concat(
+      mdxPostsData.map(({ title, date, slug, tags }) => ({
+        title,
+        updatedAt: date,
+        slug,
+        tags,
+        contentType: "post"
+      }))
+    );
   await fs.writeFile(
     path.resolve(publicDir, "src/pages/garden.json"),
     JSON.stringify({ posts: allPostsData })

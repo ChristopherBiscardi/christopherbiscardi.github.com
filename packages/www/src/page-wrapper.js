@@ -467,7 +467,7 @@ export default ({ children, ...props }) => (
             css={{
               gridColumn: 2,
               backgroundColor: "#1d2634",
-              background: `linear-gradient(180deg,rgba(251,89,74,.5) 0%,rgba(251,89,74,.5) 25%,rgba(251,222,75,.5) 25%,rgba(251,222,75,.5) 50%,rgba(112,228,112,.5) 50%,rgba(112,228,112,.5) 75%,rgba(51,183,255,.5) 75%)`,
+              backgroundImage: `linear-gradient(180deg,rgba(251,89,74,.5) 0%,rgba(251,89,74,.5) 25%,rgba(251,222,75,.5) 25%,rgba(251,222,75,.5) 50%,rgba(112,228,112,.5) 50%,rgba(112,228,112,.5) 75%,rgba(51,183,255,.5) 75%)`,
               backgroundSize: "3px 100%",
               backgroundRepeat: "no-repeat",
               paddingLeft: "1rem",
@@ -476,7 +476,7 @@ export default ({ children, ...props }) => (
               paddingTop: `1rem`,
               paddingBottom: `1rem`,
               "&:hover": {
-                background: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`
+                backgroundImage: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`
               }
             }}
             {...props}
