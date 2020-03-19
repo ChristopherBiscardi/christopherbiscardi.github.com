@@ -250,7 +250,9 @@ const ProgressBar = props => {
         left: 0,
         height: 5,
         appearance: "none",
-
+        background: "#11151da6",
+        // "linear-gradient(124deg,#ff24004a,#e81d1d4a,#e8b71d4a,#e3e81d4a,#1de8404a,#1ddde84a,#2b1de84a,#dd00f34a,#dd00f34a)",
+        opacity: 1,
         "&::-webkit-progress-value": {
           background:
             "linear-gradient(124deg,#ff2400,#e81d1d,#e8b71d,#e3e81d,#1de840,#1ddde8,#2b1de8,#dd00f3,#dd00f3)",
@@ -258,8 +260,15 @@ const ProgressBar = props => {
           opacity: 0.4
         },
         "&::-webkit-progress-bar": {
-          background: "#11151d",
-          opacity: 0.6
+          // background: "#11151d",
+          background: "transparent",
+          opacity: 1
+        },
+        "&::-moz-progress-bar": {
+          background:
+            "linear-gradient(124deg,#ff2400,#e81d1d,#e8b71d,#e3e81d,#1de840,#1ddde8,#2b1de8,#dd00f3,#dd00f3)",
+          backgroundSize: "100vw",
+          opacity: 0.4
         }
       }}
       value={scrollPositionPecentage}
