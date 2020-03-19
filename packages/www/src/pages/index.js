@@ -26,7 +26,6 @@ const NyanCat = props => (
   />
 );
 
-const Link = props => <a href={props.to} {...props} />;
 const List = ({ title, subtitle, secondary, ...props }) => (
   <div css={{ maxWidth, marginBottom: "3rem", gridColumn: "2/4" }}>
     <div
@@ -54,11 +53,9 @@ const List = ({ title, subtitle, secondary, ...props }) => (
 );
 
 const ListItem = ({ to, logo, children }) => {
-  const Component = to.startsWith("https") ? "a" : Link;
   return (
     <li>
-      <Component
-        to={to}
+      <a
         href={to}
         css={{
           color: "rgba(255,255,255,0.86)",
@@ -74,7 +71,7 @@ const ListItem = ({ to, logo, children }) => {
       >
         <Icon icon={logo} />
         <span css={{ marginLeft: "10px" }}>{children}</span>
-      </Component>
+      </a>
     </li>
   );
 };
@@ -191,8 +188,8 @@ export default props => {
       <List
         title="Latest Posts"
         secondary={
-          <Link
-            to="/post"
+          <a
+            href="/garden"
             css={{
               color: "rgba(255,255,255,0.86)",
               textDecoration: "none",
@@ -205,7 +202,7 @@ export default props => {
             }}
           >
             all posts
-          </Link>
+          </a>
         }
       >
         {data.recentPosts.map(({ id, title, slug, tags }) => (
