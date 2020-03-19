@@ -16,7 +16,7 @@ const List = ({ title, subtitle, secondary, ...props }) => (
   </div>
 );
 
-const ListItem = ({ to, logo, children }) => {
+const ListItem = ({ to, logo, contentType, children }) => {
   return (
     <li>
       <a
@@ -32,7 +32,11 @@ const ListItem = ({ to, logo, children }) => {
             outline: "none"
           },
           padding: "1rem",
-          margin: "0 -1rem"
+          margin: "0 -1rem",
+          borderLeft:
+            contentType === "blog-post" || contentType === "post"
+              ? "1px solid #3981fe"
+              : "none"
         }}
       >
         <Icon icon={logo} />
@@ -212,8 +216,13 @@ export default props => {
           .filter(({ title }) =>
             title.toLowerCase().includes(filterState.filter.toLowerCase())
           )
-          .map(({ id, title, slug, tags }) => (
-            <ListItem logo={iconFromList(tags)} to={slug} key={id}>
+          .map(({ id, title, slug, tags, contentType }) => (
+            <ListItem
+              logo={iconFromList(tags)}
+              to={slug}
+              key={id}
+              contentType={contentType}
+            >
               {title}
             </ListItem>
           ))}
