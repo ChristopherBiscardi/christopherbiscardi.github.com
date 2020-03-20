@@ -42,8 +42,14 @@ exports.sourceData = async ({ createPage, ...options }) => {
         if (!meta.slug) {
           throw new Error("No slug found for", filename);
         }
+
         // remove leading and trailing slashes
         meta.slug = meta.slug.replace(/^\//, "").replace(/\/$/, "");
+        if (!meta.slug.match(/^\d\d\d\d/)) {
+          // console.log("replacing");
+          meta.slug = "post/" + meta.slug;
+          // console.log(meta.slug);
+        }
 
         await createPage({
           module: `/** @jsx mdx */
