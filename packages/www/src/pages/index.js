@@ -87,7 +87,11 @@ export default props => {
         display: "grid",
         color: "rgba(255, 255, 255, 0.86)",
         gridTemplateColumns:
-          "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)"
+          "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)",
+        "@media screen and (max-width: 800px)": {
+          gridTemplateColumns:
+            "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)"
+        }
       }}
     >
       {/* <SEO title="Chris Biscardi" /> */}

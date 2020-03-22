@@ -64,12 +64,17 @@ exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
         slug,
         data: { ...rest }
       });
+      const createdAt = new Date(parseInt(rest.createdAt)).toISOString();
+      const updatedAt = new Date(parseInt(rest.updatedAt)).toISOString();
+
       // writeDataFile
       return {
         id,
         content,
         slug,
         ...rest,
+        createdAt,
+        updatedAt,
         ...paths
       };
     })

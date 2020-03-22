@@ -222,6 +222,11 @@ export default props => {
           .filter(({ title }) =>
             title.toLowerCase().includes(filterState.filter.toLowerCase())
           )
+          .sort((aPost, bPost) => {
+            const a = new Date(aPost.updatedAt);
+            const b = new Date(bPost.updatedAt);
+            return a > b ? -1 : a < b ? 1 : 0;
+          })
           .map(({ id, title, slug, tags, contentType }) => (
             <ListItem
               logo={iconFromList(tags)}
@@ -234,7 +239,7 @@ export default props => {
           ))}
       </List>
 
-      <div css={{ gridColumn: "1/5", marginBottom: "3rem", marginTop: "1rem" }}>
+      <div css={{ gridColumn: "2/4", marginBottom: "3rem", marginTop: "1rem" }}>
         <ConvertKitForm />
       </div>
     </div>

@@ -20,9 +20,9 @@ const RainbowBorder = ({ children, ...props }) => (
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
-      width: "90%",
+      // width: "90%",
       margin: "auto",
-      maxWidth,
+      // maxWidth,
 
       position: "relative",
       padding: "2rem",
