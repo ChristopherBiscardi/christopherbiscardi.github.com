@@ -97,7 +97,7 @@ export default props => {
         <meta
           name="twitter:image"
           content={encodeURI(
-            `https://opengraph.sector.tools/chris?title=All Writing`
+            `https://opengraph.sector.tools/chris?title=Digital Garden`
           )}
         />
       </Helmet>
@@ -111,7 +111,13 @@ export default props => {
           fontSize: "48px"
         }}
       >
-        All Writing
+        Digital Garden{" "}
+        <a
+          href="/what-is-a-digital-garden"
+          css={{ fontSize: 16, color: "#3981fe" }}
+        >
+          What is this?
+        </a>
       </h1>
       <ul
         css={{
