@@ -36,7 +36,6 @@ exports.sourceData = async ({ createPage, ...options }) => {
         //   let slug;
         if (!meta.slug && meta.title) {
           meta.slug = slugify(meta.title);
-          33;
         }
         if (!meta.slug) {
           throw new Error("No slug found for", filename);
