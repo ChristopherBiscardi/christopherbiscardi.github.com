@@ -13,7 +13,7 @@ packages/www/.cache/your-first-crdt.js: public/web_modules/import-map.json
 
 snowpack/pkg/package.json:
 	git clone https://github.com/ChristopherBiscardi/snowpack.git > /dev/null
-	cd snowpack && git checkout webdependency-alias && npm i && yarn build
+	cd snowpack && git checkout webdependency-alias-object && npm i && yarn build
 	yarn
 
 clean:
