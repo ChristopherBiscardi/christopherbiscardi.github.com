@@ -6,6 +6,7 @@
   "scripts": {
     "shake": "toast shake",
     "bake": "toast bake",
+    "build": "toast incremental",
     "prepare": "snowpack --dest public/web_modules",
     "snowpack": "snowpack --dest public/web_modules",
     "develop": "babel --config-file=./sector-babel-config.js src/pages/ --out-dir public --watch",
@@ -18,7 +19,7 @@
     "preact": "^10.3.2",
     "prism-react-renderer": "^1.0.2",
     "react-helmet": "^6.0.0-beta.2",
-    "toast": "^0.3.0"
+    "toast": "0.2.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -33,6 +34,9 @@
     "snowpack": "^1.5.1"
   },
   "snowpack": {
+    "aliases": {
+      "react": "preact/compat"
+    },
     "webDependencies": [
       "preact",
       "preact/hooks",
@@ -40,7 +44,7 @@
       "@mdx-js/preact",
       "react-helmet",
       "prism-react-renderer",
-      ["react", "preact/compat"]
+      "preact/compat"
     ]
   }
 }

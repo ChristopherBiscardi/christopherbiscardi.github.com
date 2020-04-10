@@ -9,7 +9,6 @@ const {
 } = require("toast/src/transforms");
 
 exports.sourceData = async ({ createPage, ...options }) => {
-  console.log("sourceData");
   const files = await fs.readdir("../../content/posts");
 
   return Promise.all(
@@ -35,9 +34,9 @@ exports.sourceData = async ({ createPage, ...options }) => {
         script.runInNewContext(context);
         const { meta } = context.exports || {};
         //   let slug;
-        // TODO: get title from mdx string?
         if (!meta.slug && meta.title) {
           meta.slug = slugify(meta.title);
+          33;
         }
         if (!meta.slug) {
           throw new Error("No slug found for", filename);
