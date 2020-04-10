@@ -1,18 +1,17 @@
-MAH_FILES = snowpack/pkg/package.json packages/www/.cache/your-first-crdt.js
+MAH_FILES = snowpack/pkg/package.json packages/www/public/web_modules/import-map.json
 
 build: $(MAH_FILES)
-	yarn workspace www bake
+	yarn workspace www build
 	cd netlify-functions/test-streamblitz && yarn
 	GOBIN=${PWD}/netlify-functions go install ./...
 
-public/web_modules/import-map.json: snowpack/pkg/package.json
-	cd packages/www && yarn snowpack --optimize
+packages/www/public/web_modules/import-map.json: snowpack/pkg/package.json
+	yarn workspace www snowpack --optimize
 
-packages/www/.cache/your-first-crdt.js: public/web_modules/import-map.json
-	yarn workspace www shake
+snowpack/package.json: 
+	git clone https://github.com/ChristopherBiscardi/snowpack.git
 
-snowpack/pkg/package.json:
-	git clone https://github.com/ChristopherBiscardi/snowpack.git > /dev/null
+snowpack/pkg/package.json: snowpack/package.json
 	cd snowpack && git checkout webdependency-alias-object && npm i && yarn build
 	yarn
 
