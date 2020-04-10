@@ -14,6 +14,7 @@ snowpack/package.json:
 snowpack/pkg/package.json: snowpack/package.json
 	cd snowpack && git checkout webdependency-alias-object && npm i && yarn build
 	yarn
+	yarn why snowpack
 
 clean:
 	rm -rf packages/www/.cache packages/www/public
