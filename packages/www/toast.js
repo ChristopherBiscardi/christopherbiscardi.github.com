@@ -65,7 +65,7 @@ exports.prepData = async ({ cacheDir, publicDir }) => {
     .map(({ id, title, primaryTag, httpUrl }) => ({
       id,
       title,
-      tag: primaryTag.name,
+      tag: (primaryTag && primaryTag.name) || undefined,
       httpUrl
     }));
 
