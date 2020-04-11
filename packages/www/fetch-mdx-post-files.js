@@ -15,7 +15,7 @@ exports.sourceData = async ({ createPage, ...options }) => {
     files
       .filter(name => name.endsWith("mdx"))
       .map(async filename => {
-        console.log("filename", filename);
+        // console.log("filename", filename);
         const file = await fs.readFile(
           `../../content/posts/${filename}`,
           "utf-8"
