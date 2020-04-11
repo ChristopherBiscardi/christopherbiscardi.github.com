@@ -51,5 +51,5 @@ explicitly, e.g.
   font-display: swap;
   font-style: normal;
   font-named-instance: "Regular";
-  src: url("/inter/InterDisplay.var.woff2?v=3.11") format("woff2");
+  src: url("/inter/InterDisplay.var.woff2?v=3.12") format("woff2");
 }
