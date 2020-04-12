@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from "@emotion/preact-core";
+import { jsx } from "@emotion/core";
 
 // eslint-disable-next-line
 const images = preval`

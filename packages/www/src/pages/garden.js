@@ -1,6 +1,6 @@
 /* @jsx jsx */
 import { Fragment } from "preact";
-import { jsx } from "@emotion/preact-core";
+import { jsx } from "@emotion/core";
 import Icon, { iconFromList } from "../components/small-icons/index.js";
 import { Helmet } from "react-helmet";
 import { useReducer } from "preact/hooks";

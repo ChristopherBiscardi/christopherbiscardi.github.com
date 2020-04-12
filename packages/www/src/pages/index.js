@@ -1,6 +1,6 @@
 /* @jsx jsx */
 import { Fragment } from "preact";
-import { jsx } from "@emotion/preact-core";
+import { jsx } from "@emotion/core";
 import Icon, { iconFromList } from "../components/small-icons/index.js";
 import SocialButton from "../components/social-button/index.js";
 import ConvertKitForm from "../components/convertkit-form/index.js";

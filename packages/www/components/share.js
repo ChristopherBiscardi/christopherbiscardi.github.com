@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, css } from "@emotion/preact-core";
+import { jsx, css } from "@emotion/core";
 
 import { TwitterShareButton } from "react-share";
 

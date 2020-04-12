@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, Global } from "@emotion/preact-core";
+import { jsx, Global } from "@emotion/core";
 import Logo from "./components/logos/logo-full.js";
 import { Helmet } from "react-helmet";
 import { MDXProvider } from "@mdx-js/preact";

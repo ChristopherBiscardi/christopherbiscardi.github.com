@@ -13,7 +13,7 @@
     "develop-project-src": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,snowpack/assets/babel-plugin.js src/ --out-dir public"
   },
   "dependencies": {
-    "@emotion/preact-core": "^10.0.27",
+    "@emotion/core": "10.0.28",
     "@mdx-js/preact": "1.5.7",
     "fetch-sector-docs": "^1.0.0",
     "preact": "^10.3.2",
@@ -40,7 +40,7 @@
     "webDependencies": [
       "preact",
       "preact/hooks",
-      "@emotion/preact-core",
+      "@emotion/core",
       "@mdx-js/preact",
       "react-helmet",
       "prism-react-renderer",

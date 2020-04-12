@@ -1,5 +1,5 @@
 import React from "react";
-import { css, keyframes } from "@emotion/preact-core";
+import { css, keyframes } from "@emotion/core";
 
 export default ({
   illustration,
