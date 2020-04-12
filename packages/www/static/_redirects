@@ -6,5 +6,6 @@
 /posts                                                          /post
 /post/manipulating-gatsby-page-context-with-on-create-page      /post/manipulating-gatsby-page-context-with-oncreatepage
 /post/a-first-look-at-fauna-db                                  /post/a-first-look-at-faunadb
+/post/using-mdxp-rovider-host-elements-in-react-live-scope      /post/using-mdxprovider-host-elements-in-react-live-scope
 /feed                                                           /rss.xml
 /rss                                                            /rss.xml
