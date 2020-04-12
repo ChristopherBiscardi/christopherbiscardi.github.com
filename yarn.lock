@@ -10463,10 +10463,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-toast@0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/toast/-/toast-0.2.4.tgz#ec109f85f0c8664b4e9ae69211c2aa993ef6c078"
-  integrity sha512-68BvzBvAddhtTG+C6kO+E78DckKSKDjah+gv5MmKQ7R+yy7A63n7vUlSTSKEj36wiO/qNEw1OUyQq2Tm2R6pSg==
+toast@0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/toast/-/toast-0.2.5.tgz#a05b118f0d9b5dfc25da4b518d38ad5971407329"
+  integrity sha512-HYQWfontzYe24MH5tR/jnu4WaRkabTDCNl3fELCum9id8/tap5D7vgHh9+J+Tv6+AZxpOqCd5cNzH2tymZR5NA==
   dependencies:
     "@babel/core" "^7.9.0"
     "@babel/helper-plugin-utils" "^7.8.3"
