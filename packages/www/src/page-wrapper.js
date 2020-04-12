@@ -181,7 +181,8 @@ const Header = props => (
 const headingStyles = {
   gridColumn: 2,
   marginTop: "2rem",
-  fontFamily: '"InterDisplay var", system-ui, sans-serif',
+  fontFamily: "system-ui, sans-serif", // "InterDisplay var",
+  letterSpacing: "-1px",
   fontWeight: 700,
   color: "#eef1f7"
 };
@@ -328,7 +329,7 @@ export default ({ children, ...props }) => (
         }
       />
       {/* <link rel="stylesheet" type="text/css" href="inter/inter.css" /> */}
-      <style>{`@font-face {
+      {/* <style>{`@font-face {
   font-family: "Inter var experimental";
   font-weight: 100 900;
   font-display: swap;
@@ -344,7 +345,7 @@ export default ({ children, ...props }) => (
   font-named-instance: "Regular";
   src: url("/inter/InterDisplay.var.woff2?v=3.11") format("woff2");
 }
-`}</style>
+`}</style> */}
     </Helmet>
     <Header />
     {props.title && (
