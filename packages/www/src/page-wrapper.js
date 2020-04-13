@@ -377,7 +377,9 @@ export default ({ children, ...props }) => (
               gridTemplateColumns:
                 "minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr)"
             }}
-          />
+          >
+            {props.children}
+          </div>
         ),
         hr: props => (
           <hr
