@@ -377,7 +377,18 @@ export default ({ children, ...props }) => (
               gridTemplateColumns:
                 "minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr)"
             }}
-            {...props}
+          />
+        ),
+        hr: props => (
+          <hr
+            css={{
+              height: "3px",
+              marginTop: "2rem",
+              border: "none",
+              gridColumn: 2,
+              background:
+                "linear-gradient(90deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%);"
+            }}
           />
         ),
         p: props => (
