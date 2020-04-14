@@ -280,56 +280,60 @@ const ProgressBar = props => {
   );
 };
 
-export default ({ children, ...props }) => (
-  <div>
-    <ProgressBar />
-    <Global
-      styles={{
-        "*": {
-          boxSizing: "border-box",
-          margin: 0,
-          padding: 0
-        },
-        html: {
-          background: "#19202c",
-          fontFamily: "'Inter var', system-ui, sans-serif"
-        },
-        body: {
-          minHeight: "100vh"
-        }
-      }}
-    />
-    <Helmet>
-      <meta charSet="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-      <title>Chris Biscardi's Digital Garden</title>
-      <meta name="twitter:title" content="Chris Biscardi's Digital Garden" />
-      <meta name="og:title" content="Chris Biscardi's Digital Garden" />
-      <meta name="description" content="JAMStack, Serverless, MDX, and more" />
-      <meta
-        name="twitter:description"
-        content="JAMStack, Serverless, MDX, and more"
+export default ({ children, ...props }) => {
+  let title = "Chris Biscardi's Digital Garden";
+  let description = "JAMStack, Serverless, MDX, and more";
+  if (props.title) {
+    title = props.title;
+    description = "";
+  }
+  return (
+    <div>
+      <ProgressBar />
+      <Global
+        styles={{
+          "*": {
+            boxSizing: "border-box",
+            margin: 0,
+            padding: 0
+          },
+          html: {
+            background: "#19202c",
+            fontFamily: "'Inter var', system-ui, sans-serif"
+          },
+          body: {
+            minHeight: "100vh"
+          }
+        }}
       />
-      <meta name="og:type" content="website" />
-      <meta name="twitter:site" content="@chrisbiscardi" />
-      <meta name="twitter:creator" content="@chrisbiscardi" />
-      <meta name="twitter:card" content="summary_large_image" />
+      <Helmet>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-      <meta
-        name="twitter:image"
-        content={
-          props.title
-            ? encodeURI(
-                `https://opengraph.sector.tools/chris?title=${props.title}`
-              )
-            : encodeURI(
-                `https://opengraph.sector.tools/chris?title=Chris' Digital Garden`
-              )
-        }
-      />
-      {/* <link rel="stylesheet" type="text/css" href="inter/inter.css" /> */}
-      {/* <style>{`@font-face {
+        <title>Chris Biscardi's Digital Garden</title>
+        <meta name="twitter:title" content={title} />
+        <meta name="og:title" content={title} />
+        <meta name="description" content={description} />
+        <meta name="twitter:description" content={description} />
+        <meta name="og:type" content="website" />
+        <meta name="twitter:site" content="@chrisbiscardi" />
+        <meta name="twitter:creator" content="@chrisbiscardi" />
+        <meta name="twitter:card" content="summary_large_image" />
+
+        <meta
+          name="twitter:image"
+          content={
+            props.title
+              ? encodeURI(
+                  `https://opengraph.sector.tools/chris?title=${props.title}`
+                )
+              : encodeURI(
+                  `https://opengraph.sector.tools/chris?title=Chris' Digital Garden`
+                )
+          }
+        />
+        {/* <link rel="stylesheet" type="text/css" href="inter/inter.css" /> */}
+        {/* <style>{`@font-face {
   font-family: "Inter var experimental";
   font-weight: 100 900;
   font-display: swap;
@@ -346,170 +350,180 @@ export default ({ children, ...props }) => (
   src: url("/inter/InterDisplay.var.woff2?v=3.11") format("woff2");
 }
 `}</style> */}
-    </Helmet>
-    <Header />
-    {props.title && (
-      <div css={{ width: "57ch", margin: "2rem auto" }}>
-        <h1 css={{ color: "rgba(255, 255, 255, 0.95)", fontSize: 48 }}>
-          {props.title}
-        </h1>
-        <hr
-          css={{
-            height: 3,
-            width: 60,
-            marginTop: "2rem",
-            border: "none",
-            background: `linear-gradient(90deg, rgba(251,89,74,1) 0%,
+      </Helmet>
+      <Header />
+      {props.title && (
+        <div css={{ width: "57ch", margin: "2rem auto" }}>
+          <h1 css={{ color: "rgba(255, 255, 255, 0.95)", fontSize: 48 }}>
+            {props.title}
+          </h1>
+          <hr
+            css={{
+              height: 3,
+              width: 60,
+              marginTop: "2rem",
+              border: "none",
+              background: `linear-gradient(90deg, rgba(251,89,74,1) 0%,
             rgba(251,89,74,1)   25%, rgba(251,222,75,1)  25%,
             rgba(251,222,75,1)  50%, rgba(112,228,112,1) 50%,
             rgba(112,228,112,1) 75%, rgba(51,183,255,1)  75%)`
-          }}
-        />
-      </div>
-    )}
-    <MDXProvider
-      components={{
-        wrapper: props => (
-          <div
-            css={{
-              display: "grid",
-              color: "rgba(255, 255, 255, 0.86)",
-              gridTemplateColumns:
-                "minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr)"
-            }}
-          >
-            {props.children}
-          </div>
-        ),
-        hr: props => (
-          <hr
-            css={{
-              height: "3px",
-              marginTop: "2rem",
-              border: "none",
-              gridColumn: 2,
-              background:
-                "linear-gradient(90deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%);"
             }}
           />
-        ),
-        p: props => (
-          <p
-            css={{ gridColumn: 2, marginTop: "1rem", lineHeight: 1.75 }}
-            {...props}
-          />
-        ),
-        img: props => <img css={{ gridColumn: 2, width: "100%" }} {...props} />,
-        a: props => (
-          <a
-            css={{
-              backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`,
-              "-webkit-background-clip": `text`,
-              "-webkit-text-fill-color": `rgba(255,255,255,0.46)`
-            }}
-            {...props}
-          />
-        ),
-        h1: props => <h1 css={headingStyles} {...props} />,
-        h2: props => <h2 css={headingStyles} {...props} />,
-        h3: props => <h3 css={headingStyles} {...props} />,
-        h4: props => <h4 css={headingStyles} {...props} />,
-        h5: props => <h5 css={headingStyles} {...props} />,
-        h6: props => <h6 css={headingStyles} {...props} />,
-        ul: props => <ul css={{ gridColumn: 2 }} {...props} />,
-        ol: props => <ol css={{ gridColumn: 2 }} {...props} />,
-        pre: props => {
-          const lang =
-            props.children.props.class &&
-            props.children.props.class.split("-")[1];
-          const langMap = {
-            graphql: "GraphQL",
-            js: "JS"
-          };
-          return (
-            <Highlight
-              {...defaultProps}
-              code={props.children.props.children.trim()}
-              language={lang}
-              theme={prismTheme}
+        </div>
+      )}
+      <MDXProvider
+        components={{
+          wrapper: props => (
+            <div
+              css={{
+                display: "grid",
+                color: "rgba(255, 255, 255, 0.86)",
+                gridTemplateColumns:
+                  "minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr)"
+              }}
             >
-              {({ className, style, tokens, getLineProps, getTokenProps }) => (
-                <div
-                  css={{
-                    gridColumn: 2,
-                    background: "#11151d",
-                    overflow: "auto",
-                    borderRadius: 10,
-                    padding: "0 2rem 2rem",
-                    marginTop: "1rem",
-                    position: "relative",
-                    boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
+              {props.children}
+            </div>
+          ),
+          hr: props => (
+            <hr
+              css={{
+                height: "3px",
+                marginTop: "2rem",
+                border: "none",
+                gridColumn: 2,
+                background:
+                  "linear-gradient(90deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%);"
+              }}
+            />
+          ),
+          p: props => (
+            <p
+              css={{ gridColumn: 2, marginTop: "1rem", lineHeight: 1.75 }}
+              {...props}
+            />
+          ),
+          img: props => (
+            <img css={{ gridColumn: 2, width: "100%" }} {...props} />
+          ),
+          a: props => (
+            <a
+              css={{
+                backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`,
+                "-webkit-background-clip": `text`,
+                "-webkit-text-fill-color": `rgba(255,255,255,0.46)`
+              }}
+              {...props}
+            />
+          ),
+          h1: props => <h1 css={headingStyles} {...props} />,
+          h2: props => <h2 css={headingStyles} {...props} />,
+          h3: props => <h3 css={headingStyles} {...props} />,
+          h4: props => <h4 css={headingStyles} {...props} />,
+          h5: props => <h5 css={headingStyles} {...props} />,
+          h6: props => <h6 css={headingStyles} {...props} />,
+          ul: props => <ul css={{ gridColumn: 2 }} {...props} />,
+          ol: props => <ol css={{ gridColumn: 2 }} {...props} />,
+          pre: props => {
+            const lang =
+              props.children.props.class &&
+              props.children.props.class.split("-")[1];
+            const langMap = {
+              graphql: "GraphQL",
+              js: "JS"
+            };
+            return (
+              <Highlight
+                {...defaultProps}
+                code={props.children.props.children.trim()}
+                language={lang}
+                theme={prismTheme}
+              >
+                {({
+                  className,
+                  style,
+                  tokens,
+                  getLineProps,
+                  getTokenProps
+                }) => (
+                  <div
+                    css={{
+                      gridColumn: 2,
+                      background: "#11151d",
+                      overflow: "auto",
+                      borderRadius: 10,
+                      padding: "0 2rem 2rem",
+                      marginTop: "1rem",
+                      position: "relative",
+                      boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
                             inset 0 6.7px 5.3px rgba(0,0,0,0.028),
                             inset 0 12.5px 10px rgba(0,0,0,0.035),
                             inset 0 22.3px 17.9px rgba(0,0,0,0.042),
                             inset 0 41.8px 33.4px rgba(0,0,0,0.05),
                             inset 0 100px 80px rgba(0,0,0,0.07)`
-                  }}
-                >
-                  <div
-                    css={{
-                      fontSize: `12px`,
-                      display: `flex`,
-                      justifyContent: `flex-end`,
-                      position: `sticky`,
-                      left: 0
                     }}
                   >
-                    <span css={{ float: "right", padding: "1rem" }}>
-                      {langMap[lang] || lang || ""}
-                    </span>
+                    <div
+                      css={{
+                        fontSize: `12px`,
+                        display: `flex`,
+                        justifyContent: `flex-end`,
+                        position: `sticky`,
+                        left: 0
+                      }}
+                    >
+                      <span css={{ float: "right", padding: "1rem" }}>
+                        {langMap[lang] || lang || ""}
+                      </span>
+                    </div>
+                    <pre
+                      className={className}
+                      style={{
+                        ...style,
+                        "background-color": "#11151d"
+                      }}
+                    >
+                      {tokens.map((line, i) => (
+                        <div {...getLineProps({ line, key: i })}>
+                          {line.map((token, key) => (
+                            <span {...getTokenProps({ token, key })} />
+                          ))}
+                        </div>
+                      ))}
+                    </pre>{" "}
                   </div>
-                  <pre
-                    className={className}
-                    style={{
-                      ...style,
-                      "background-color": "#11151d"
-                    }}
-                  >
-                    {tokens.map((line, i) => (
-                      <div {...getLineProps({ line, key: i })}>
-                        {line.map((token, key) => (
-                          <span {...getTokenProps({ token, key })} />
-                        ))}
-                      </div>
-                    ))}
-                  </pre>{" "}
-                </div>
-              )}
-            </Highlight>
-          );
-        },
-        blockquote: props => (
-          <blockquote
-            css={{
-              gridColumn: 2,
-              backgroundColor: "#1d2634",
-              backgroundImage: `linear-gradient(180deg,rgba(251,89,74,.5) 0%,rgba(251,89,74,.5) 25%,rgba(251,222,75,.5) 25%,rgba(251,222,75,.5) 50%,rgba(112,228,112,.5) 50%,rgba(112,228,112,.5) 75%,rgba(51,183,255,.5) 75%)`,
-              backgroundSize: "3px 100%",
-              backgroundRepeat: "no-repeat",
-              paddingLeft: "1rem",
-              marginTop: "1rem",
-              borderRight: `1px solid hsla(217, 28%, 26%, 1)`,
-              paddingTop: `1rem`,
-              paddingBottom: `1rem`,
-              "&:hover": {
-                backgroundImage: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`
-              }
-            }}
-            {...props}
-          />
-        ),
-        "blockquote.p": props => (
-          <p css={{ gridColumn: 2, lineHeight: 1.75 }} {...props} />
-        )
-      }}
-    >
-      <Fragment>{children}</Fragment>
-    </MDXProvider>
-  </div>
-);
+                )}
+              </Highlight>
+            );
+          },
+          blockquote: props => (
+            <blockquote
+              css={{
+                gridColumn: 2,
+                backgroundColor: "#1d2634",
+                backgroundImage: `linear-gradient(180deg,rgba(251,89,74,.5) 0%,rgba(251,89,74,.5) 25%,rgba(251,222,75,.5) 25%,rgba(251,222,75,.5) 50%,rgba(112,228,112,.5) 50%,rgba(112,228,112,.5) 75%,rgba(51,183,255,.5) 75%)`,
+                backgroundSize: "3px 100%",
+                backgroundRepeat: "no-repeat",
+                paddingLeft: "1rem",
+                marginTop: "1rem",
+                borderRight: `1px solid hsla(217, 28%, 26%, 1)`,
+                paddingTop: `1rem`,
+                paddingBottom: `1rem`,
+                "&:hover": {
+                  backgroundImage: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`
+                }
+              }}
+              {...props}
+            />
+          ),
+          "blockquote.p": props => (
+            <p css={{ gridColumn: 2, lineHeight: 1.75 }} {...props} />
+          )
+        }}
+      >
+        <Fragment>{children}</Fragment>
+      </MDXProvider>
+      <div css={{ height: "5rem" }} />
+    </div>
+  );
+};

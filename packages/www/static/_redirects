@@ -7,5 +7,8 @@
 /post/manipulating-gatsby-page-context-with-on-create-page      /post/manipulating-gatsby-page-context-with-oncreatepage
 /post/a-first-look-at-fauna-db                                  /post/a-first-look-at-faunadb
 /post/using-mdxp-rovider-host-elements-in-react-live-scope      /post/using-mdxprovider-host-elements-in-react-live-scope
+/post/creating-mdx-nodes-from-raw-strings                       /post/creating-mdx-nodes-from-raw-strings-and-nodes
+/post/if-you-can-t-delete-code-then-you-re-stuck-with-it        /post/if-you-cant-delete-code-then-youre-stuck-with-it
+/post/shipping-multi-package-repos-with-git-hub-actions-changesets-and-lerna /post/shipping-multipackage-repos-with-github-actions-changesets-and-lerna
 /feed                                                           /rss.xml
 /rss                                                            /rss.xml
