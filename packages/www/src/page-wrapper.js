@@ -11,7 +11,7 @@ const maxWidth = "800px";
 
 const nav = [
   { displayName: "Garden", url: "/garden" },
-  { displayName: "DevTips", url: "/devtips" },
+  { displayName: "Party Corgi", url: "https://partycorgi.com" },
   // { displayName: "Tags", url: "/tags" },
   { displayName: "Discord", url: "https://discord.gg/S9Gdagv" },
   {
