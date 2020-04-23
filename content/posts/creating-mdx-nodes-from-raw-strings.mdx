@@ -4,12 +4,15 @@ export const meta = {
   slug: "creating-mdx-nodes-from-raw-strings-and-nodes",
   tags: ["mdx", "gatsby", "react"]
 };
+
 ## Raw Strings
+
 If you have a string and you want to create an MDX node from
 it (for example if you're querying the github API which
 doesn't give content types), simply create a new node with a
 `mediaType` of `text/markdown` (or any custom `mediaType`
 and then add it to gatsby-plugin-mdx's processing options)
+
 ```js
 const crypto = require("crypto");
 exports.sourceNodes = ({
@@ -18,21 +21,33 @@ exports.sourceNodes = ({
   createContentDigest
 }) => {
   const { createNode } = actions;
-const mdxContent = `--- some: frontmatter
 
+  const mdxContent = `---
+some: frontmatter
 ---
 
 # heading
 
-and stuff `;
+and stuff
+`;
 
-createNode({ id: `a-node-id`, parent: null, children: [],
-internal: { type: `MyCustomMdxNodesFromString`,
-contentDigest: crypto .createHash(`md5`) .update(mdxContent)
-.digest(`hex`), mediaType: `text/markdown`, content:
-mdxContent, description: `My custom MDX nodes` } }); };
-
-````
+  createNode({
+    id: `a-node-id`,
+    parent: null,
+    children: [],
+    internal: {
+      type: `MyCustomMdxNodesFromString`,
+      contentDigest: crypto
+        .createHash(`md5`)
+        .update(mdxContent)
+        .digest(`hex`),
+      mediaType: `text/markdown`,
+      content: mdxContent,
+      description: `My custom MDX nodes`
+    }
+  });
+};
+```
 
 ## Raw Strings... OR Nodes
 
@@ -67,4 +82,4 @@ exports.onCreateNode = async ({
     createParentChildLink({ parent: node, child: mdxNode });
   }
 };
-````
+```
