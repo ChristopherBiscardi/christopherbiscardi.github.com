@@ -325,7 +325,13 @@ export default ({ children, ...props }) => {
           content={
             props.title
               ? encodeURI(
-                  `https://opengraph.sector.tools/chris?title=${props.title}`
+                  `https://opengraph.sector.tools/chris?title=${props.title}${
+                    props.tags ? "&tags=" + props.tags.join(",") : ""
+                  }${
+                    props.contentType && props.contentType === "note"
+                      ? "&budding=true"
+                      : ""
+                  }`
                 )
               : encodeURI(
                   `https://opengraph.sector.tools/chris?title=Chris' Digital Garden`

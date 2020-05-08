@@ -4,22 +4,21 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "shake": "toast shake",
-    "bake": "toast bake",
     "build": "toast incremental",
-    "prepare": "snowpack --dest public/web_modules",
-    "snowpack": "snowpack --dest public/web_modules",
+    "prepare": "breadbox --dest public/web_modules",
+    "breadbox": "breadbox --dest public/web_modules",
     "develop": "babel --config-file=./sector-babel-config.js src/pages/ --out-dir public --watch",
-    "develop-project-src": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,snowpack/assets/babel-plugin.js src/ --out-dir public"
+    "develop-project-src": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,@snowpack/babel-plugin-package-import src/ --out-dir public"
   },
   "dependencies": {
     "@emotion/core": "10.0.28",
     "@mdx-js/preact": "1.5.7",
+    "@sector/babel-plugin-package-import": "^0.3.0",
     "fetch-sector-docs": "^1.0.0",
     "preact": "^10.3.2",
     "prism-react-renderer": "^1.0.2",
     "react-helmet": "^6.0.0-beta.2",
-    "toast": "0.2.5"
+    "toast": "0.2.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -31,13 +30,15 @@
     "@rollup/plugin-alias": "^3.0.1",
     "node-getpocket": "^1.0.0",
     "preact-render-to-string": "^5.1.4",
-    "snowpack": "^1.5.1"
+    "@sector/breadbox": "^0.0.4"
   },
   "snowpack": {
-    "aliases": {
-      "react": "preact/compat"
+    "installOptions": {
+      "alias": {
+        "react": "preact/compat"
+      }
     },
-    "webDependencies": [
+    "knownEntrypoints": [
       "preact",
       "preact/hooks",
       "@emotion/core",
