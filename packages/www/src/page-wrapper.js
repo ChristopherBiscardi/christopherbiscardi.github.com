@@ -417,7 +417,11 @@ export default ({ children, ...props }) => {
               css={{
                 backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`,
                 "-webkit-background-clip": `text`,
-                "-webkit-text-fill-color": `rgba(255,255,255,0.46)`
+                "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
+                display: "inline-block",
+                "&:hover": {
+                  "-webkit-text-fill-color": `rgba(255,255,255,.8)`
+                }
               }}
               {...props}
             />
