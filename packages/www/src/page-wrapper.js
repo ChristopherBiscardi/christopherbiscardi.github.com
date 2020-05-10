@@ -420,7 +420,7 @@ export default ({ children, ...props }) => {
                 "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
                 display: "inline-block",
                 "&:hover": {
-                  "-webkit-text-fill-color": `rgba(255,255,255,.8)`
+                  "-webkit-text-fill-color": `rgba(255,255,255,.1)`
                 }
               }}
               {...props}
