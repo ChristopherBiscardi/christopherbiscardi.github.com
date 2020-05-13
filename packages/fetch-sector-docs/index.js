@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 const slugify = require("@sindresorhus/slugify");
 const toJsx = require("./mdxast-to-jsx");
+const rehypePrism = require("rehype-prism-mdx");
 
 exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
   if (!workspace) {
@@ -49,7 +50,9 @@ exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
       }
       let jsx;
       try {
-        jsx = await toJsx(content);
+        jsx = await toJsx(content, {
+          rehypePlugins: [rehypePrism]
+        });
       } catch (e) {
         console.log(e);
         console.log("failed to process", rest);

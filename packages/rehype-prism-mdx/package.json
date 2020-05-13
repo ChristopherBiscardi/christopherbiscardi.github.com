@@ -1,0 +1,12 @@
+{
+  "name": "rehype-prism-mdx",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT",
+  "dependencies": {
+    "preact-render-to-string": "^5.1.8",
+    "prism-react-renderer": "^1.1.0",
+    "unist-util-visit": "^2.0.2"
+  }
+}

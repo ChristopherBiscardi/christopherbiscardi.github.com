@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet";
 import { MDXProvider } from "@mdx-js/preact";
 import { Fragment } from "preact";
 import { useState, useEffect } from "preact/hooks";
-import Highlight, { defaultProps } from "prism-react-renderer";
+// import Highlight, { defaultProps } from "prism-react-renderer";
 
 const maxWidth = "800px";
 
@@ -442,68 +442,44 @@ export default ({ children, ...props }) => {
               graphql: "GraphQL",
               js: "JS"
             };
+
             return (
-              <Highlight
-                {...defaultProps}
-                code={props.children.props.children.trim()}
-                language={lang}
-                theme={prismTheme}
+              <div
+                css={{
+                  gridColumn: 2,
+                  background: "#11151d",
+                  overflow: "auto",
+                  borderRadius: 10,
+                  padding: "0 2rem 2rem",
+                  marginTop: "1rem",
+                  position: "relative",
+                  boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
+                      inset 0 6.7px 5.3px rgba(0,0,0,0.028),
+                      inset 0 12.5px 10px rgba(0,0,0,0.035),
+                      inset 0 22.3px 17.9px rgba(0,0,0,0.042),
+                      inset 0 41.8px 33.4px rgba(0,0,0,0.05),
+                      inset 0 100px 80px rgba(0,0,0,0.07)`
+                }}
               >
-                {({
-                  className,
-                  style,
-                  tokens,
-                  getLineProps,
-                  getTokenProps
-                }) => (
-                  <div
-                    css={{
-                      gridColumn: 2,
-                      background: "#11151d",
-                      overflow: "auto",
-                      borderRadius: 10,
-                      padding: "0 2rem 2rem",
-                      marginTop: "1rem",
-                      position: "relative",
-                      boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
-                            inset 0 6.7px 5.3px rgba(0,0,0,0.028),
-                            inset 0 12.5px 10px rgba(0,0,0,0.035),
-                            inset 0 22.3px 17.9px rgba(0,0,0,0.042),
-                            inset 0 41.8px 33.4px rgba(0,0,0,0.05),
-                            inset 0 100px 80px rgba(0,0,0,0.07)`
-                    }}
-                  >
-                    <div
-                      css={{
-                        fontSize: `12px`,
-                        display: `flex`,
-                        justifyContent: `flex-end`,
-                        position: `sticky`,
-                        left: 0
-                      }}
-                    >
-                      <span css={{ float: "right", padding: "1rem" }}>
-                        {langMap[lang] || lang || ""}
-                      </span>
-                    </div>
-                    <pre
-                      className={className}
-                      style={{
-                        ...style,
-                        "background-color": "#11151d"
-                      }}
-                    >
-                      {tokens.map((line, i) => (
-                        <div {...getLineProps({ line, key: i })}>
-                          {line.map((token, key) => (
-                            <span {...getTokenProps({ token, key })} />
-                          ))}
-                        </div>
-                      ))}
-                    </pre>{" "}
-                  </div>
-                )}
-              </Highlight>
+                <div
+                  css={{
+                    fontSize: `12px`,
+                    display: `flex`,
+                    justifyContent: `flex-end`,
+                    position: `sticky`,
+                    left: 0
+                  }}
+                >
+                  <span css={{ float: "right", padding: "1rem" }}>
+                    {langMap[lang] || lang || ""}
+                  </span>
+                </div>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: props.children.props.children
+                  }}
+                />
+              </div>
             );
           },
           blockquote: props => (

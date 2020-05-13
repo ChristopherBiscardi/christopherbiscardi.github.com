@@ -3,12 +3,15 @@ const slugify = require("@sindresorhus/slugify");
 const mdx = require("@mdx-js/mdx");
 const util = require("util");
 const vm = require("vm");
+const rehypePrism = require("rehype-prism-mdx");
+
 const {
   transformComponentForBrowser,
   transformComponentForNode
 } = require("toast/src/transforms");
 
 exports.sourceData = async ({ createPage, ...options }) => {
+  // console.log("sourceData");
   const files = await fs.readdir("../../content/posts");
 
   return Promise.all(
@@ -21,8 +24,12 @@ exports.sourceData = async ({ createPage, ...options }) => {
           "utf-8"
         );
         let compiledMDX;
+        // console.log("compiled");
         try {
-          compiledMDX = await mdx(file, {});
+          compiledMDX = await mdx(file, {
+            // remarkPlugins: [codeblocks],
+            rehypePlugins: [rehypePrism]
+          });
         } catch (e) {
           console.log(e);
           throw e;
