@@ -434,6 +434,21 @@ export default ({ children, ...props }) => {
           h6: props => <h6 css={headingStyles} {...props} />,
           ul: props => <ul css={{ gridColumn: 2 }} {...props} />,
           ol: props => <ol css={{ gridColumn: 2 }} {...props} />,
+          table: props => (
+            <table css={{ gridColumn: 2, marginTop: "1rem" }} {...props} />
+          ),
+          thead: props => (
+            <thead css={{ background: "#ffffff12" }} {...props} />
+          ),
+          th: props => (
+            <th css={{ padding: ".5rem", textAlign: "left" }} {...props} />
+          ),
+          td: props => (
+            <td
+              css={{ padding: ".5rem", borderBottom: "1px solid #ffffff22" }}
+              {...props}
+            />
+          ),
           pre: props => {
             const lang =
               props.children.props.class &&
