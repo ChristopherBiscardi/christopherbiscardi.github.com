@@ -8,6 +8,7 @@ import { useState, useEffect } from "preact/hooks";
 // import Highlight, { defaultProps } from "prism-react-renderer";
 
 const maxWidth = "800px";
+const textColor = "rgba(255, 255, 255, 0.86)";
 
 const nav = [
   { displayName: "Garden", url: "/garden" },
@@ -280,6 +281,33 @@ const ProgressBar = props => {
   );
 };
 
+const CopyButton = props => {
+  const [buttonText, setText] = useState("Copy");
+  return (
+    <button
+      css={{
+        color: textColor,
+        backgroundColor: "#11151da6",
+        transition: "background-color 1s cubic-bezier(.27,1.35,.83,.67)",
+        float: "right",
+        padding: "1rem",
+        "&:hover": {
+          backgroundColor: "#ffffff22"
+        }
+      }}
+      onClick={e => {
+        navigator.clipboard.writeText(props.content);
+        setText("Done");
+        setTimeout(() => {
+          setText("Copy");
+        }, 1000);
+      }}
+    >
+      {buttonText}
+    </button>
+  );
+};
+
 export default ({ children, ...props }) => {
   let title = "Chris Biscardi's Digital Garden";
   let description = "JAMStack, Serverless, MDX, and more";
@@ -295,7 +323,8 @@ export default ({ children, ...props }) => {
           "*": {
             boxSizing: "border-box",
             margin: 0,
-            padding: 0
+            padding: 0,
+            border: "0 solid #ffffff22"
           },
           html: {
             background: "#19202c",
@@ -450,6 +479,7 @@ export default ({ children, ...props }) => {
             />
           ),
           pre: props => {
+            // console.log(props.children.props.codestring);
             const lang =
               props.children.props.class &&
               props.children.props.class.split("-")[1];
@@ -488,6 +518,7 @@ export default ({ children, ...props }) => {
                   <span css={{ float: "right", padding: "1rem" }}>
                     {langMap[lang] || lang || ""}
                   </span>
+                  <CopyButton content={props.children.props.codestring} />
                 </div>
                 <div
                   dangerouslySetInnerHTML={{
