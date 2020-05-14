@@ -116,7 +116,7 @@ const calculateLinesToHighlight = meta => {
   if (RE.test(meta)) {
     const strlineNumbers = RE.exec(meta)[1];
     const lineNumbers = rangeParser(strlineNumbers);
-    console.log(lineNumbers);
+    // console.log(lineNumbers);
     return index => lineNumbers.includes(index + 1);
   } else {
     return () => false;

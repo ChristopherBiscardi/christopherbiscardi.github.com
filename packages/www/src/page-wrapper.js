@@ -420,6 +420,20 @@ export default ({ children, ...props }) => {
               {props.children}
             </div>
           ),
+          Aside: props => (
+            <div
+              {...props}
+              css={{
+                gridColumn: 2,
+                backgroundColor: "hsla(220, 26%, 18%, 1)",
+                borderLeft: "2px solid rgba(51,183,255,.41)",
+                padding: "1rem",
+                paddingTop: 0,
+                marginTop: "1rem",
+                borderRight: "1px solid rgba(51,183,255,.41)"
+              }}
+            />
+          ),
           hr: props => (
             <hr
               css={{
@@ -434,7 +448,7 @@ export default ({ children, ...props }) => {
           ),
           p: props => (
             <p
-              css={{ gridColumn: 2, marginTop: "1rem", lineHeight: 1.75 }}
+              css={{ gridColumn: 2, paddingTop: "1rem", lineHeight: 1.75 }}
               {...props}
             />
           ),
@@ -494,7 +508,6 @@ export default ({ children, ...props }) => {
                   background: "#11151d",
                   overflow: "auto",
                   borderRadius: 10,
-                  padding: "0 2rem 2rem",
                   marginTop: "1rem",
                   position: "relative",
                   border: "1px solid rgba(51,183,255,.21)",
@@ -513,7 +526,6 @@ export default ({ children, ...props }) => {
                     justifyContent: `space-between`,
                     position: `sticky`,
                     left: 0,
-                    margin: "0 -2rem",
                     borderBottom: "1px solid rgba(51,183,255,.21)"
                   }}
                 >
@@ -528,7 +540,7 @@ export default ({ children, ...props }) => {
                   </div>
                 </div>
                 <div
-                  css={{ marginTop: "1rem" }}
+                  css={{ padding: "1rem 2rem" }}
                   dangerouslySetInnerHTML={{
                     __html: props.children.props.children
                   }}
