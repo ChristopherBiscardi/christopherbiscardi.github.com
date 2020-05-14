@@ -292,7 +292,7 @@ const CopyButton = props => {
         float: "right",
         padding: "1rem",
         "&:hover": {
-          backgroundColor: "#ffffff22"
+          backgroundColor: "rgba(51,183,255,.21)"
         }
       }}
       onClick={e => {
@@ -479,7 +479,6 @@ export default ({ children, ...props }) => {
             />
           ),
           pre: props => {
-            // console.log(props.children.props.codestring);
             const lang =
               props.children.props.class &&
               props.children.props.class.split("-")[1];
@@ -498,6 +497,7 @@ export default ({ children, ...props }) => {
                   padding: "0 2rem 2rem",
                   marginTop: "1rem",
                   position: "relative",
+                  border: "1px solid rgba(51,183,255,.21)",
                   boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
                       inset 0 6.7px 5.3px rgba(0,0,0,0.028),
                       inset 0 12.5px 10px rgba(0,0,0,0.035),
@@ -510,17 +510,25 @@ export default ({ children, ...props }) => {
                   css={{
                     fontSize: `12px`,
                     display: `flex`,
-                    justifyContent: `flex-end`,
+                    justifyContent: `space-between`,
                     position: `sticky`,
-                    left: 0
+                    left: 0,
+                    margin: "0 -2rem",
+                    borderBottom: "1px solid rgba(51,183,255,.21)"
                   }}
                 >
-                  <span css={{ float: "right", padding: "1rem" }}>
-                    {langMap[lang] || lang || ""}
+                  <span css={{ padding: "1rem" }}>
+                    {props.children.props.title}
                   </span>
-                  <CopyButton content={props.children.props.codestring} />
+                  <div css={{ display: "flex" }}>
+                    <span css={{ padding: "1rem" }}>
+                      {langMap[lang] || lang || ""}
+                    </span>
+                    <CopyButton content={props.children.props.codestring} />
+                  </div>
                 </div>
                 <div
+                  css={{ marginTop: "1rem" }}
                   dangerouslySetInnerHTML={{
                     __html: props.children.props.children
                   }}

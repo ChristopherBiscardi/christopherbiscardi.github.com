@@ -20,7 +20,7 @@ Here's an example of sub-plugins in a gatsby config that
 applies `gatsby-remark-prismjs` using
 `gatsby-transformer-remark`.
 
-```js
+```js title=gatsby-config.js
 // In your gatsby-config.js
 plugins: [
   {
@@ -56,7 +56,7 @@ The hypothetical `BlogPost` interface would be (in this case
 it was actually taken from the current
 [gatsby-theme-blog-core](https://github.com/gatsbyjs/gatsby/blob/3d2f82d6909c5ed9621f232b9746cc0196d36193/packages/gatsby-theme-blog-core/gatsby-node.js#L48-L58))
 
-```graphql
+```graphql title=gatsby-node.js
 interface BlogPost @nodeInterface {
   id: ID!
   title: String!
@@ -116,7 +116,7 @@ approach and it's not clear that it's a good idea anyway
 
 Our theme could then accept the sub-theme as an option.
 
-```js
+```js {6-11} title=gatsby-config.js
 // In your gatsby-config.js
 plugins: [
   {

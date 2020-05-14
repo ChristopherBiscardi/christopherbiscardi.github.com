@@ -3,6 +3,7 @@ const preact = require("preact");
 const { h } = preact;
 const Highlight = require("prism-react-renderer");
 const visit = require("unist-util-visit");
+const rangeParser = require("parse-numeric-range");
 
 const prismTheme = {
   plain: {
@@ -110,11 +111,26 @@ const prismTheme = {
   ]
 };
 
+const RE = /{([\d,-]+)}/;
+const calculateLinesToHighlight = meta => {
+  if (RE.test(meta)) {
+    const strlineNumbers = RE.exec(meta)[1];
+    const lineNumbers = rangeParser(strlineNumbers);
+    console.log(lineNumbers);
+    return index => lineNumbers.includes(index + 1);
+  } else {
+    return () => false;
+  }
+};
+
 module.exports = options => ast => {
   visit(ast, "element", tree => {
     if (tree.tagName === "code") {
       // store codestring for later
       tree.properties.codestring = tree.children[0].value;
+      const shouldHighlightLine = calculateLinesToHighlight(
+        tree.properties.metastring
+      );
 
       const lang =
         tree.properties.className &&
@@ -136,15 +152,26 @@ module.exports = options => ast => {
               "pre",
               {
                 className: className,
-                style: { ...style, "background-color": "#11151d" }
+                style: { ...style, "background-color": "transparent" }
               },
               tokens.map((line, i) =>
                 h(
                   "div",
+
                   getLineProps({
                     line,
-                    key: i
+                    key: i,
+                    style: shouldHighlightLine(i)
+                      ? {
+                          borderLeft: "1px solid red",
+                          backgroundColor: "hsla(220, 26%, 13%, 1)",
+                          margin: "0 -2rem",
+                          padding: "0 2rem",
+                          borderLeft: "1px solid rgba(51,183,255,.41)"
+                        }
+                      : {}
                   }),
+
                   line.map((token, key) =>
                     h(
                       "span",
