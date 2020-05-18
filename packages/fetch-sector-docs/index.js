@@ -53,7 +53,25 @@ exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
       let jsx;
       try {
         jsx = await toJsx(content, {
-          rehypePlugins: [rehypePrism, rehypeSlug, rehypeLink]
+          rehypePlugins: [
+            rehypePrism,
+            rehypeSlug,
+            [
+              rehypeLink,
+              {
+                properties: {
+                  style: "position: absolute; right: calc(100% + 5px);"
+                },
+                content: {
+                  type: "element",
+                  tagName: "corgilink",
+                  properties: { className: ["corgi-heading-link"] },
+                  children: []
+                  // children: [parsedCorgi]
+                }
+              }
+            ]
+          ]
         });
       } catch (e) {
         console.log(e);
