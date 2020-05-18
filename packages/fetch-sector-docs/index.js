@@ -2,6 +2,8 @@ const fetch = require("node-fetch");
 const slugify = require("@sindresorhus/slugify");
 const toJsx = require("./mdxast-to-jsx");
 const rehypePrism = require("rehype-prism-mdx");
+const rehypeSlug = require("rehype-slug");
+const rehypeLink = require("rehype-autolink-headings");
 
 exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
   if (!workspace) {
@@ -51,7 +53,7 @@ exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
       let jsx;
       try {
         jsx = await toJsx(content, {
-          rehypePlugins: [rehypePrism]
+          rehypePlugins: [rehypePrism, rehypeSlug, rehypeLink]
         });
       } catch (e) {
         console.log(e);

@@ -1,14 +1,46 @@
 const fs = require("fs").promises;
+const fsReg = require("fs");
 const slugify = require("@sindresorhus/slugify");
 const mdx = require("@mdx-js/mdx");
 const util = require("util");
 const vm = require("vm");
 const rehypePrism = require("rehype-prism-mdx");
+const rehypeSlug = require("rehype-slug");
+const rehypeLink = require("rehype-autolink-headings");
+const parse = require("rehype-parse");
+const unified = require("unified");
 
 const {
   transformComponentForBrowser,
   transformComponentForNode
 } = require("toast/src/transforms");
+
+const corgi = fsReg.readFileSync("./corgi.svg");
+
+const parseSvg = unified().use(parse, {
+  emitParseErrors: true,
+  duplicateAttribute: false
+});
+
+// { [Function: processor]
+//   data: [Function: data],
+//   freeze: [Function: freeze],
+//   attachers: [ [ [Function: parse], [Object] ] ],
+//   use: [Function: use],
+//   parse: [Function: parse],
+//   stringify: [Function: stringify],
+//   run: [Function: run],
+//   runSync: [Function: runSync],
+//   process: [Function: process],
+//   processSync: [Function: processSync] }
+
+let parsedCorgi;
+try {
+  parsedCorgi = parseSvg.runSync(parseSvg.parse(corgi)).children[0].children[1]
+    .children;
+} catch (e) {
+  console.log(e);
+}
 
 exports.sourceData = async ({ createPage, ...options }) => {
   // console.log("sourceData");
@@ -28,7 +60,25 @@ exports.sourceData = async ({ createPage, ...options }) => {
         try {
           compiledMDX = await mdx(file, {
             // remarkPlugins: [codeblocks],
-            rehypePlugins: [rehypePrism]
+            rehypePlugins: [
+              rehypePrism,
+              rehypeSlug,
+              [
+                rehypeLink,
+                {
+                  properties: {
+                    style: "position: absolute; right: calc(100% + 5px);"
+                  },
+                  content: {
+                    type: "element",
+                    tagName: "corgilink",
+                    properties: { className: ["corgi-heading-link"] },
+                    children: []
+                    // children: [parsedCorgi]
+                  }
+                }
+              ]
+            ]
           });
         } catch (e) {
           console.log(e);

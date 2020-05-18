@@ -2,8 +2,21 @@ const renderToString = require("preact-render-to-string");
 const preact = require("preact");
 const { h } = preact;
 const Highlight = require("prism-react-renderer");
+const Prism = require("prismjs");
+const loadLanguages = require("prismjs/components/index");
+const prismComponents = require("prismjs/components");
 const visit = require("unist-util-visit");
 const rangeParser = require("parse-numeric-range");
+
+try {
+  // meta doesn't exist in the prismjs package and thus will *FAIL* because it's a FAILURE
+  loadLanguages(
+    Object.keys(prismComponents.languages).filter(v => v !== "meta")
+  );
+} catch (e) {
+  // this is here in case prismjs ever removes a language, so we can easily debug
+  console.log(e);
+}
 
 const prismTheme = {
   plain: {
@@ -144,7 +157,8 @@ module.exports = options => ast => {
             ...{
               code: tree.children[0].value.trim(),
               language: lang,
-              theme: prismTheme
+              theme: prismTheme,
+              Prism
             }
           },
           ({ className, style, tokens, getLineProps, getTokenProps }) =>
