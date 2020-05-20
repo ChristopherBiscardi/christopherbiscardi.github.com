@@ -704,7 +704,10 @@ export default ({ children, ...props }) => {
           a: props => (
             <a
               css={{
-                backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`,
+                backgroundImage: `linear-gradient(0deg, #08AEEA 0%, #2AF598 100%)`,
+                "&[href^='/']": {
+                  backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
+                },
                 "-webkit-background-clip": `text`,
                 "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
                 display: "inline-block",
