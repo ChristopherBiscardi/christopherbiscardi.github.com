@@ -724,7 +724,17 @@ export default ({ children, ...props }) => {
           h4: props => <h4 css={headingStyles} {...props} />,
           h5: props => <h5 css={headingStyles} {...props} />,
           h6: props => <h6 css={headingStyles} {...props} />,
-          ul: props => <ul css={{ gridColumn: 2 }} {...props} />,
+          ul: props => (
+            <ul
+              css={{
+                gridColumn: 2,
+                marginTop: `1rem`,
+                marginLeft: `calc(1rem + 4px)`,
+                lineHeight: 1.3
+              }}
+              {...props}
+            />
+          ),
           ol: props => <ol css={{ gridColumn: 2 }} {...props} />,
           table: props => (
             <table css={{ gridColumn: 2, marginTop: "1rem" }} {...props} />
