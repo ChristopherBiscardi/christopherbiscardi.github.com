@@ -735,7 +735,17 @@ export default ({ children, ...props }) => {
               {...props}
             />
           ),
-          ol: props => <ol css={{ gridColumn: 2 }} {...props} />,
+          ol: props => (
+            <ol
+              css={{
+                gridColumn: 2,
+                marginTop: `1rem`,
+                marginLeft: `calc(1rem + 4px)`,
+                lineHeight: 1.3
+              }}
+              {...props}
+            />
+          ),
           table: props => (
             <table css={{ gridColumn: 2, marginTop: "1rem" }} {...props} />
           ),
