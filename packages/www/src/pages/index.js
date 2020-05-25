@@ -135,9 +135,11 @@ export default props => {
             gridColumn: "2/4"
           }}
         >
-          I'm an independent consultant that works with startups built on OSS.
-          Here I write about JAMStack, Serverless, MDX, and more. This site is
-          built with ESModules,{" "}
+          <span>
+            I'm an independent consultant that works with startups built on OSS.
+            Here I write about JAMStack, Serverless, MDX, and more. This site is
+            built with ESModules,{" "}
+          </span>
           <a
             css={{
               backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
@@ -155,7 +157,7 @@ export default props => {
           >
             Toast
           </a>
-          , and MDX. The content is written in
+          <span>, and MDX. The content is written in </span>
           <a
             css={{
               backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
