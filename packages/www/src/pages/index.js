@@ -138,9 +138,42 @@ export default props => {
           I'm an independent consultant that works with startups built on OSS.
           Here I write about JAMStack, Serverless, MDX, and more. This site is
           built with ESModules,{" "}
-          <a href="https://twitter.com/toastdotdev">Toast</a>, and MDX. The
-          content is written in
-          <a href="https://twitter.com/sectortools">Sector</a>.
+          <a
+            css={{
+              backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
+              "&[href^='/']": {
+                backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
+              },
+              "-webkit-background-clip": `text`,
+              "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
+              display: "inline-block",
+              "&:hover": {
+                "-webkit-text-fill-color": `rgba(255,255,255,.1)`
+              }
+            }}
+            href="https://twitter.com/toastdotdev"
+          >
+            Toast
+          </a>
+          , and MDX. The content is written in
+          <a
+            css={{
+              backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
+              "&[href^='/']": {
+                backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
+              },
+              "-webkit-background-clip": `text`,
+              "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
+              display: "inline-block",
+              "&:hover": {
+                "-webkit-text-fill-color": `rgba(255,255,255,.1)`
+              }
+            }}
+            href="https://twitter.com/sectortools"
+          >
+            Sector
+          </a>
+          .
         </p>
         <ul
           css={{
