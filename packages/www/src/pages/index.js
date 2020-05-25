@@ -137,7 +137,9 @@ export default props => {
         >
           I'm an independent consultant that works with startups built on OSS.
           Here I write about JAMStack, Serverless, MDX, and more. This site is
-          built with ESModules, Snowpack, and MDX.
+          built with ESModules, [Toast](https://twitter.com/toastdotdev), and
+          MDX. The content is written in
+          [Sector](https://twitter.com/sectortools)
         </p>
         <ul
           css={{
