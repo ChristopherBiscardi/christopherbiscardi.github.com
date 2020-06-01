@@ -318,6 +318,11 @@ export default ({ children, ...props }) => {
   }
   return (
     <div>
+      <script
+        src="https://unpkg.com/i-stand/black-lives.js"
+        type="module"
+      ></script>
+      <black-lives></black-lives>
       <ProgressBar />
       <Global
         styles={{
