@@ -105,12 +105,14 @@ const labelSpanStyles = {
 };
 
 export default props => {
-  const [submitted, setSubmitted] = useState(false);
-  const successful = false;
-  const isSubmitting = false;
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setSubmitting] = useState(false);
+  const [successful, setSuccessful] = useState({});
+  console.log(successful);
   return (
     <RainbowBorder {...props}>
-      {!successful && (
+      {!successful.status && (
         <Fragment>
           <h2
             css={{
@@ -130,82 +132,121 @@ export default props => {
           </p>
         </Fragment>
       )}
-      <form
-        onSubmit={e => {
-          fetch(`https://app.convertkit.com/forms/${FORM_ID}/subscriptions`, {
-            method: "post",
-            body: JSON.stringify(values, null, 2),
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
+      {successful.status === "success" && (
+        <div>
+          <p>You've Subscribed! Thanks :D Check your email!</p>
+        </div>
+      )}
+      {successful.status !== "success" && (
+        <form
+          onSubmit={async e => {
+            e.preventDefault();
+            setSubmitting(true);
+            const res = await fetch(
+              `https://app.convertkit.com/forms/${FORM_ID}/subscriptions`,
+              {
+                method: "post",
+                body: JSON.stringify(
+                  {
+                    first_name: name,
+                    email_address: email
+                  },
+                  null,
+                  2
+                ),
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json"
+                }
+              }
+            ).then(r => r.json());
+            setSubmitting(false);
+            setSuccessful(res);
+            if (res.status === "failed") {
+              console.error(res);
             }
-          });
-        }}
-        css={{
-          color: "#e7e9ea",
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          alignItems: "flex-end",
-          "@media screen and (max-width: 800px)": {
-            flexDirection: "column",
-            flexWrap: "inherit",
-            alignItems: "inherit"
-          },
-          flexDirection: "row",
-          "& > * ": { marginTop: "1rem" },
-          "& .field-error": {
-            display: "block",
-            color: "red",
-            fontSize: "80%"
-          }
-        }}
-      >
-        <label htmlFor="first_name" css={labelStyles}>
-          <span css={labelSpanStyles}>Preferred name</span>
-          <input
-            aria-label="preferred name"
-            aria-required="true"
-            name="first_name"
-            placeholder="Jane"
-            type="text"
-            css={inputStyles}
-          />
-        </label>
-
-        <label htmlFor="email" css={labelStyles}>
-          <span css={labelSpanStyles}>Email address</span>
-          <input
-            aria-label="your email address"
-            aria-required="true"
-            name="email_address"
-            placeholder="jane@acme.com"
-            type="email"
-            css={inputStyles}
-          />
-        </label>
-
-        <button
-          data-element="submit"
-          type="submit"
-          disabled={isSubmitting}
+          }}
           css={{
-            cursor: "pointer",
-            boxSizing: "border-box",
-            height: "48px",
-            width: "140px",
-            borderRadius: "6px",
-            backgroundColor: "#28374A",
-            alignSelf: "flex-end",
-            color: "rgba(255,255,255,0.86)",
-            fontWeight: 600,
-            border: "2px solid #2B3748"
+            color: "#e7e9ea",
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            alignItems: "flex-end",
+            "@media screen and (max-width: 800px)": {
+              flexDirection: "column",
+              flexWrap: "inherit",
+              alignItems: "inherit"
+            },
+            flexDirection: "row",
+            "& > * ": { marginTop: "1rem" },
+            "& .field-error": {
+              display: "block",
+              color: "red",
+              fontSize: "80%"
+            }
           }}
         >
-          {!isSubmitting && "Subscribe"}
-          {isSubmitting && "Submitting..."}
-        </button>
-      </form>
+          <label htmlFor="first_name" css={labelStyles}>
+            <span css={labelSpanStyles}>Preferred name</span>
+            <input
+              aria-label="preferred name"
+              aria-required="true"
+              name="first_name"
+              placeholder="Jane"
+              type="text"
+              value={name}
+              css={inputStyles}
+              onChange={e => {
+                setName(e.target.value);
+              }}
+            />
+          </label>
+
+          <label htmlFor="email" css={labelStyles}>
+            <span css={labelSpanStyles}>Email address</span>
+            <input
+              aria-label="your email address"
+              aria-required="true"
+              name="email_address"
+              placeholder="jane@acme.com"
+              type="email"
+              value={email}
+              css={inputStyles}
+              onChange={e => {
+                setEmail(e.target.value);
+              }}
+            />
+          </label>
+
+          <button
+            data-element="submit"
+            type="submit"
+            disabled={isSubmitting}
+            css={{
+              cursor: "pointer",
+              boxSizing: "border-box",
+              height: "48px",
+              width: "140px",
+              borderRadius: "6px",
+              backgroundColor: "#28374A",
+              alignSelf: "flex-end",
+              color: "rgba(255,255,255,0.86)",
+              fontWeight: 600,
+              border: "2px solid #2B3748"
+            }}
+          >
+            {!isSubmitting && "Subscribe"}
+            {isSubmitting && "Submitting..."}
+          </button>
+          {successful.status === "failed" && (
+            <div>
+              {successful.errors.messages.map(str => (
+                <p>{str}</p>
+              ))}
+            </div>
+          )}
+        </form>
+      )}
     </RainbowBorder>
   );
 };
