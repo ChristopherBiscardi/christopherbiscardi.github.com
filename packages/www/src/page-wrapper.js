@@ -318,11 +318,6 @@ export default ({ children, ...props }) => {
   }
   return (
     <div>
-      <script
-        src="https://unpkg.com/i-stand/black-lives.js"
-        type="module"
-      ></script>
-      <black-lives></black-lives>
       <ProgressBar />
       <Global
         styles={{
@@ -850,6 +845,109 @@ export default ({ children, ...props }) => {
         <Fragment>{children}</Fragment>
       </MDXProvider>
       <div css={{ height: "5rem" }} />
+
+      <footer
+        css={{
+          background: "rgba(0,0,0,.1)",
+          display: "grid",
+          color: "rgba(255, 255, 255, 0.86)",
+          padding: "2rem 0 5rem 0",
+          gridTemplateColumns:
+            "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)",
+          "@media screen and (max-width: 800px)": {
+            gridTemplateColumns:
+              "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)"
+          }
+        }}
+      >
+        <div
+          css={{
+            gridColumn: "2/4",
+            display: "flex",
+            justifyContent: "space-between",
+            "& a": {
+              color: "#00DBDE",
+              fontSize: ".8rem",
+              fontWeight: 500,
+              textDecoration: "none"
+            }
+          }}
+        >
+          <div>
+            <h2
+              css={{
+                fontSize: "1rem",
+                fontFamily: "system-ui, sans-serif", // "InterDisplay var",
+                letterSpacing: "-1px",
+                color: "#eef1f7",
+                position: "relative",
+                borderBottom: "3px solid #eef1f7"
+              }}
+            >
+              Projects
+            </h2>
+            <ul css={{ listStyleType: "none" }}>
+              <li>
+                <a href="https://sector.tools">Sector Tools</a>
+              </li>
+              <li>
+                <a href="https://toast.dev">Toast</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2
+              css={{
+                fontSize: "1rem",
+                fontFamily: "system-ui, sans-serif", // "InterDisplay var",
+                letterSpacing: "-1px",
+                color: "#eef1f7",
+                position: "relative",
+                borderBottom: "3px solid #eef1f7"
+              }}
+            >
+              Social
+            </h2>
+            <ul css={{ listStyleType: "none" }}>
+              <li>
+                <a href="https://twitter.com/chrisbiscardi">Twitter</a>
+              </li>
+              <li>
+                <a href="https://github.com/christopherbiscardi">GitHub</a>
+              </li>
+              <li>
+                <a href="https://pages.convertkit.com/04c24646a3/c136f814fc">
+                  Newsletter
+                </a>
+              </li>
+              <li>
+                <a href="https://discord.gg/S9Gdagv">Discord</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2
+              css={{
+                fontSize: "1rem",
+                fontFamily: "system-ui, sans-serif", // "InterDisplay var",
+                letterSpacing: "-1px",
+                color: "#eef1f7",
+                position: "relative",
+                borderBottom: "3px solid #eef1f7"
+              }}
+            >
+              -
+            </h2>
+            <ul css={{ listStyleType: "none" }}>
+              <li>
+                <a href="https://blacklivesmatters.carrd.co/">
+                  Black Lives Matter
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

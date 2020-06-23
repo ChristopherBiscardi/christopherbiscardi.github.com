@@ -109,7 +109,6 @@ export default props => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
   const [successful, setSuccessful] = useState({});
-  console.log(successful);
   return (
     <RainbowBorder {...props}>
       {!successful.status && (
