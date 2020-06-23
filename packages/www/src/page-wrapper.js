@@ -852,6 +852,7 @@ export default ({ children, ...props }) => {
           display: "grid",
           color: "rgba(255, 255, 255, 0.86)",
           padding: "2rem 0 5rem 0",
+          borderTop: "1px solid rgba(51,183,255,.21)",
           gridTemplateColumns:
             "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)",
           "@media screen and (max-width: 800px)": {
@@ -866,7 +867,7 @@ export default ({ children, ...props }) => {
             display: "flex",
             justifyContent: "space-between",
             "& a": {
-              color: "#00DBDE",
+              color: "rgba(51,183,255,.91)",
               fontSize: ".8rem",
               fontWeight: 500,
               textDecoration: "none"
@@ -879,9 +880,10 @@ export default ({ children, ...props }) => {
                 fontSize: "1rem",
                 fontFamily: "system-ui, sans-serif", // "InterDisplay var",
                 letterSpacing: "-1px",
-                color: "#eef1f7",
+                color: "#add5eb",
                 position: "relative",
-                borderBottom: "3px solid #eef1f7"
+                borderBottom: "3px solid rgba(51,183,255,.21)",
+                paddingBottom: 3
               }}
             >
               Projects
@@ -901,9 +903,10 @@ export default ({ children, ...props }) => {
                 fontSize: "1rem",
                 fontFamily: "system-ui, sans-serif", // "InterDisplay var",
                 letterSpacing: "-1px",
-                color: "#eef1f7",
+                color: "#add5eb",
                 position: "relative",
-                borderBottom: "3px solid #eef1f7"
+                borderBottom: "3px solid rgba(51,183,255,.21)",
+                paddingBottom: 3
               }}
             >
               Social
@@ -931,9 +934,10 @@ export default ({ children, ...props }) => {
                 fontSize: "1rem",
                 fontFamily: "system-ui, sans-serif", // "InterDisplay var",
                 letterSpacing: "-1px",
-                color: "#eef1f7",
+                color: "#add5eb",
                 position: "relative",
-                borderBottom: "3px solid #eef1f7"
+                borderBottom: "3px solid rgba(51,183,255,.21)",
+                paddingBottom: 3
               }}
             >
               -
