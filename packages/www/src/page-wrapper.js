@@ -309,6 +309,62 @@ const CopyButton = props => {
   );
 };
 
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// `wait` milliseconds.
+const debounce = (func, wait) => {
+  let timeout;
+
+  return function executedFunction(...args) {
+    const later = () => {
+      timeout = null;
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
+const Tweetable = () => {
+  const [tweetableText, setTweetableText] = useState();
+  useEffect(() => {
+    // event fires for every selection change
+    document.onselectionchange = debounce(() => {
+      // toString on the Selection object gives you the selected text
+      const text = document.getSelection().toString();
+      setTweetableText(text);
+    }, 200);
+  });
+  return tweetableText ? (
+    <div
+      css={{
+        zIndex: 1,
+        position: "fixed",
+        top: "5px",
+        display: "flex",
+        flex: 1,
+        width: "100%",
+        background: "#10151e",
+        justifyContent: "center",
+        color: "#eef1f7",
+        borderBottom: "1px solid rgba(51,183,255,.21)"
+      }}
+    >
+      <div css={{ maxWidth: 400, display: "flex", flexDirection: "column" }}>
+        <p css={{ paddingTop: "1rem" }}>{tweetableText}</p>
+        <a
+          href={
+            "https://twitter.com/intent/tweet?text=" +
+            encodeURI(tweetableText + " " + window.location.href)
+          }
+          css={{ color: "#1DA1F2", alignSelf: "flex-end", padding: "1rem" }}
+        >
+          Tweet this
+        </a>
+      </div>
+    </div>
+  ) : null;
+};
 export default ({ children, ...props }) => {
   let title = "Chris Biscardi's Digital Garden";
   let description = "JAMStack, Serverless, MDX, and more";
@@ -319,6 +375,7 @@ export default ({ children, ...props }) => {
   return (
     <div>
       <ProgressBar />
+      <Tweetable />
       <Global
         styles={{
           "*": {
@@ -327,9 +384,16 @@ export default ({ children, ...props }) => {
             padding: 0,
             border: "0 solid #ffffff22"
           },
+
           html: {
+            fontSize: 20,
             background: "#19202c",
             fontFamily: "'Inter var', system-ui, sans-serif"
+          },
+          "@media (max-width: 959px)": {
+            html: {
+              fontSize: 17
+            }
           },
           body: {
             minHeight: "100vh"
