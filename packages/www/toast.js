@@ -5,6 +5,7 @@ const EggheadSource = require("fetch-eggheadio");
 const MDXPostsSource = require("./fetch-mdx-post-files");
 
 exports.sourceData = async ({ withCache, createPage }) => {
+  console.log("sourceData");
   return Promise.all([
     withCache(
       "sector",
