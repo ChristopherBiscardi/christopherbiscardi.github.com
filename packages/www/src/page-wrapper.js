@@ -182,7 +182,7 @@ const Header = props => (
 const headingStyles = {
   gridColumn: 2,
   marginTop: "2rem",
-  fontFamily: "system-ui, sans-serif", // "InterDisplay var",
+  fontFamily: "Inter, system-ui, sans-serif", // "InterDisplay var",
   letterSpacing: "-1px",
   fontWeight: 700,
   color: "#eef1f7",
@@ -388,7 +388,7 @@ export default ({ children, ...props }) => {
           html: {
             fontSize: 20,
             background: "#19202c",
-            fontFamily: "'Inter var', system-ui, sans-serif"
+            fontFamily: "Inter, system-ui, sans-serif"
           },
           "@media (max-width: 959px)": {
             html: {
@@ -431,6 +431,10 @@ export default ({ children, ...props }) => {
                   `https://opengraph.sector.tools/chris?title=Chris' Digital Garden`
                 )
           }
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap"
+          rel="stylesheet"
         />
         {/* <link rel="stylesheet" type="text/css" href="inter/inter.css" /> */}
         {/* <style>{`@font-face {
@@ -942,7 +946,7 @@ export default ({ children, ...props }) => {
             <h2
               css={{
                 fontSize: "1rem",
-                fontFamily: "system-ui, sans-serif", // "InterDisplay var",
+                fontFamily: "Inter, system-ui, sans-serif", // "InterDisplay var",
                 letterSpacing: "-1px",
                 color: "#add5eb",
                 position: "relative",
@@ -965,7 +969,7 @@ export default ({ children, ...props }) => {
             <h2
               css={{
                 fontSize: "1rem",
-                fontFamily: "system-ui, sans-serif", // "InterDisplay var",
+                fontFamily: "Inter, system-ui, sans-serif", // "InterDisplay var",
                 letterSpacing: "-1px",
                 color: "#add5eb",
                 position: "relative",
@@ -996,7 +1000,7 @@ export default ({ children, ...props }) => {
             <h2
               css={{
                 fontSize: "1rem",
-                fontFamily: "system-ui, sans-serif", // "InterDisplay var",
+                fontFamily: "Inter, system-ui, sans-serif", // "InterDisplay var",
                 letterSpacing: "-1px",
                 color: "#add5eb",
                 position: "relative",

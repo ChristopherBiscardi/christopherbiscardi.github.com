@@ -37,7 +37,7 @@ const List = ({ title, subtitle, secondary, ...props }) => (
     >
       <h2
         css={{
-          fontFamily: '"InterDisplay var", system-ui, sans-serif',
+          fontFamily: "Inter, system-ui, sans-serif",
           fontWeight: 600,
           color: "#eef1f7"
         }}
@@ -107,7 +107,7 @@ export default props => {
           css={{
             fontSize: "3rem",
             marginBottom: ".3em",
-            fontFamily: '"InterDisplay var", system-ui, sans-serif',
+            fontFamily: "Inter, system-ui, sans-serif",
             fontWeight: 700,
             color: "#eef1f7"
           }}
@@ -129,7 +129,7 @@ export default props => {
           css={{
             fontSize: "1.2rem",
             fontWeight: 300,
-            lineHeight: 1.8,
+            lineHeight: 1.5,
             maxWidth: "32em",
             color: "#eef1f7",
             gridColumn: "2/4"
