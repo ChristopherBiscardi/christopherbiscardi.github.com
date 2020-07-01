@@ -22,7 +22,7 @@
     "rehype-parse": "^7.0.1",
     "rehype-prism-mdx": "1.0.0",
     "rehype-slug": "^3.0.0",
-    "toast": "0.2.6",
+    "toast": "0.2.8",
     "unified": "^9.0.0"
   },
   "devDependencies": {
