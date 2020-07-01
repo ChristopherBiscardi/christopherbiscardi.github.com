@@ -3,7 +3,6 @@ const path = require("path");
 const SectorSource = require("fetch-sector-docs");
 const EggheadSource = require("fetch-eggheadio");
 const MDXPostsSource = require("./fetch-mdx-post-files");
-require("asfkjl.js");
 
 exports.sourceData = async ({ withCache, createPage }) => {
   console.log("sourceData");
