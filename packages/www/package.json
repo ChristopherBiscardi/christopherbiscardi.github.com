@@ -26,6 +26,7 @@
     "unified": "^9.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@sector/breadbox": "^0.0.4",
     "node-getpocket": "^1.0.0"
   },

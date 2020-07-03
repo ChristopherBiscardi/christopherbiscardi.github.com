@@ -1,9 +1,0 @@
-{
-  "name": "test-streamblitz",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "@stream-blitz/create-handler": "^0.0.2"
-  }
-}
