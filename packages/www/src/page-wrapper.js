@@ -457,8 +457,23 @@ export default ({ children, ...props }) => {
       </Helmet>
       <Header />
       {props.title && (
-        <div css={{ width: "57ch", margin: "2rem auto" }}>
-          <h1 css={{ color: "rgba(255, 255, 255, 0.95)", fontSize: 48 }}>
+        <div
+          css={{
+            maxWidth: "57ch",
+            margin: "auto",
+            "@media screen and (max-width: 57ch)": {
+              marginLeft: "1rem",
+              marginRight: "1rem"
+            }
+          }}
+        >
+          <h1
+            css={{
+              color: "rgba(255, 255, 255, 0.95)",
+              fontSize: 48,
+              marginTop: "2rem"
+            }}
+          >
             {props.title}
           </h1>
           <hr
@@ -717,7 +732,10 @@ export default ({ children, ...props }) => {
                 display: "grid",
                 color: "rgba(255, 255, 255, 0.86)",
                 gridTemplateColumns:
-                  "minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr)"
+                  "minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr)",
+                "& > *": {
+                  marginTop: "2rem"
+                }
               }}
             >
               {props.children}
@@ -761,8 +779,30 @@ export default ({ children, ...props }) => {
             />
           ),
           p: props => (
+            // <p
+            //   css={{ gridColumn: 2, paddingTop: "1rem", lineHeight: 1.75 }}
+            //   {...props}
+            // />
             <p
-              css={{ gridColumn: 2, paddingTop: "1rem", lineHeight: 1.75 }}
+              css={{
+                gridColumn: 2,
+
+                fontSize: "22px",
+                lineHeight: "32px",
+                padding: "0.05px 0",
+                ":before": {
+                  content: "''",
+                  marginTop: "-0.3659090909090909em",
+                  display: "block",
+                  height: 0
+                },
+                ":after": {
+                  content: "''",
+                  marginBottom: "-0.3659090909090909em",
+                  display: "block",
+                  height: 0
+                }
+              }}
               {...props}
             />
           ),
@@ -829,6 +869,7 @@ export default ({ children, ...props }) => {
               {...props}
             />
           ),
+          inlineCode: props => <code css={{ color: "#31b7fe" }} {...props} />,
           pre: props => {
             const lang =
               props.children.props.class &&
@@ -845,7 +886,6 @@ export default ({ children, ...props }) => {
                   background: "#11151d",
                   overflow: "auto",
                   borderRadius: 10,
-                  marginTop: "1rem",
                   position: "relative",
                   border: "1px solid rgba(51,183,255,.21)",
                   boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
@@ -894,7 +934,6 @@ export default ({ children, ...props }) => {
                 backgroundSize: "3px 100%",
                 backgroundRepeat: "no-repeat",
                 paddingLeft: "1rem",
-                marginTop: "1rem",
                 borderRight: `1px solid hsla(217, 28%, 26%, 1)`,
                 paddingTop: `1rem`,
                 paddingBottom: `1rem`,
@@ -906,7 +945,26 @@ export default ({ children, ...props }) => {
             />
           ),
           "blockquote.p": props => (
-            <p css={{ gridColumn: 2, lineHeight: 1.75 }} {...props} />
+            <p
+              css={{
+                fontSize: "22px",
+                lineHeight: "32px",
+                padding: "0.05px 0",
+                ":before": {
+                  content: "''",
+                  marginTop: "-0.3659090909090909em",
+                  display: "block",
+                  height: 0
+                },
+                ":after": {
+                  content: "''",
+                  marginBottom: "-0.3659090909090909em",
+                  display: "block",
+                  height: 0
+                }
+              }}
+              {...props}
+            />
           )
         }}
       >
