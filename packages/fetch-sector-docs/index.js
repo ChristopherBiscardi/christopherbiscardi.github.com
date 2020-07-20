@@ -4,6 +4,12 @@ const toJsx = require("./mdxast-to-jsx");
 const rehypePrism = require("rehype-prism-mdx");
 const rehypeSlug = require("rehype-slug");
 const rehypeLink = require("rehype-autolink-headings");
+const vm = require("vm");
+
+const {
+  // transformComponentForBrowser,
+  transformComponentForNode
+} = require("toast/src/transforms");
 
 exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
   if (!workspace) {
@@ -80,12 +86,18 @@ exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
         throw e;
       }
 
+      const component = await transformComponentForNode(jsx);
+      const context = { exports: {} };
+      vm.createContext(context);
+      const script = new vm.Script(component.code);
+      script.runInNewContext(context);
+      const { meta } = context.exports || {};
       const paths = await createPage({
         module: `/** @jsx mdx */
         import {mdx} from '@mdx-js/preact';
         ${jsx}`,
         slug,
-        data: { ...rest }
+        data: { ...rest, ...meta }
       });
       const createdAt = new Date(parseInt(rest.createdAt)).toISOString();
       const updatedAt = new Date(parseInt(rest.updatedAt)).toISOString();
@@ -98,7 +110,8 @@ exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
         ...rest,
         createdAt,
         updatedAt,
-        ...paths
+        ...paths,
+        meta: meta || {}
       };
     })
   );

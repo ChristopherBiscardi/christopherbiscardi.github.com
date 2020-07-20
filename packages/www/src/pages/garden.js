@@ -130,7 +130,7 @@ export default props => {
           marginTop: "2rem"
         }}
       >
-        {["Gatsby", "Go", "GraphQL", "MDX"].map(value => (
+        {["SwiftUI", "Rust", "MDX", "GraphQL", "Gatsby"].map(value => (
           <li>
             <button
               css={{

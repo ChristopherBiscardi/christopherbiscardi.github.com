@@ -200,7 +200,6 @@ module.exports = options => ast => {
             )
         )
       );
-      // console.log(highlightedCode);
       // render code to string
       tree.children = [
         {
@@ -208,10 +207,6 @@ module.exports = options => ast => {
           type: "text"
         }
       ];
-      // console.log(tree);
     }
-    // console.log(tree);
-    // tree.type = "codeblock";
   });
-  // return ast;
 };

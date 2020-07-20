@@ -30,12 +30,13 @@ exports.prepData = async ({ cacheDir, publicDir }) => {
   const mdxPostsData = require(path.resolve(cacheDir, "mdx-posts.json"));
 
   const allPostsData = sectorPageData
-    .map(({ title, createdAt, updatedAt, slug, contentType }) => ({
+    .map(({ title, createdAt, updatedAt, slug, contentType, meta }) => ({
       title,
       createdAt,
       updatedAt,
       slug,
-      contentType
+      contentType,
+      tags: meta.tags || []
     }))
     .concat(
       mdxPostsData.map(({ title, date, slug, tags }) => ({
