@@ -807,7 +807,15 @@ export default ({ children, ...props }) => {
             />
           ),
           img: props => (
-            <img css={{ gridColumn: 2, width: "100%" }} {...props} />
+            <img
+              css={{
+                gridColumn: 2,
+                display: "flex",
+                width: "fit-content",
+                margin: "auto"
+              }}
+              {...props}
+            />
           ),
           a: props => (
             <a
