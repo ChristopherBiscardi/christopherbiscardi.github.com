@@ -812,6 +812,7 @@ export default ({ children, ...props }) => {
                 gridColumn: 2,
                 display: "flex",
                 width: "fit-content",
+                maxWidth: "100%",
                 margin: "auto"
               }}
               {...props}
