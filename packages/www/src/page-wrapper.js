@@ -1036,7 +1036,11 @@ export default ({ children, ...props }) => {
       </MDXProvider>
       <div css={{ height: "5rem" }} />
       {props.title && (
-        <div class="rm-area-post-blog" dangerouslySetInnerHTML={{}} />
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `<div class="rm-area-post-blog"></div>`
+          }}
+        />
       )}
       <footer
         css={{
