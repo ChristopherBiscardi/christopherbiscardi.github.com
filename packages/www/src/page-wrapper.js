@@ -1038,7 +1038,7 @@ export default ({ children, ...props }) => {
       {props.title && (
         <div
           class="rm-area-post-blog"
-          dangerouslySetInnerHtml={{ __html: "" }}
+          dangerouslySetInnerHTML={{ __html: "" }}
         />
       )}
       <footer
