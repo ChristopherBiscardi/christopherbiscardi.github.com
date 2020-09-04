@@ -4,7 +4,8 @@ import Logo from "./components/logos/logo-full.js";
 import { Helmet } from "react-helmet";
 import { MDXProvider } from "@mdx-js/preact";
 import { Fragment } from "preact";
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
+import { forwardRef } from "preact/compat";
 // import Highlight, { defaultProps } from "prism-react-renderer";
 
 const maxWidth = "800px";
@@ -134,8 +135,9 @@ const prismTheme = {
   ]
 };
 
-const Header = props => (
+const Header = forwardRef((props, ref) => (
   <header
+    ref={ref}
     css={{
       display: "flex",
       height: "75px",
@@ -177,7 +179,7 @@ const Header = props => (
       </ul>
     </nav>
   </header>
-);
+));
 
 const gradientAnimation = keyframes`
   0%{background-position:0% 50%}
@@ -195,22 +197,22 @@ const headingStyles = {
   position: "relative"
 };
 
+// find the total height of window
+const getScrollHeight = () => {
+  // https://javascript.info/size-and-scroll-window#width-height-of-the-document
+  return Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.body.clientHeight,
+    document.documentElement.clientHeight
+  );
+};
+
 const ProgressBar = props => {
   const getIndicatorPercentageWidth = (currentPos, totalScroll) => {
     return (currentPos / totalScroll) * 100;
-  };
-
-  // find the total height of window
-  const getScrollHeight = () => {
-    // https://javascript.info/size-and-scroll-window#width-height-of-the-document
-    return Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.offsetHeight,
-      document.body.clientHeight,
-      document.documentElement.clientHeight
-    );
   };
 
   const [scrollPositionPecentage, setScrollPositionPercentage] = useState(0);
@@ -371,7 +373,94 @@ const Tweetable = () => {
     </div>
   ) : null;
 };
+const TitleArea = ({ scrollTargetRef, ...props }) => {
+  const [titleShouldHover, setHoverTitle] = useState(false);
+  const [fontSize, setFontSize] = useState(false);
+  useEffect(() => {
+    window.addEventListener(`scroll`, () => {
+      const currentPos = window.scrollY;
+
+      window.requestAnimationFrame(() => {
+        const titleOffset = scrollTargetRef.current.getBoundingClientRect().top;
+        console.log(titleOffset);
+        if (titleOffset < -50) {
+          setFontSize(18);
+        } else if (titleOffset < 0) {
+          // console.log(currentPos, titleOffset);
+          // TODO: calculate lock values for smooth scroll
+          setFontSize(33);
+        } else {
+          // reset with original style values, etc
+          setFontSize(48);
+        }
+        if (titleOffset < -75) {
+          setHoverTitle(true);
+        } else {
+          setHoverTitle(false);
+        }
+      });
+    });
+  }, [scrollTargetRef.current]);
+  return (
+    <div
+      style={
+        titleShouldHover
+          ? {
+              position: "fixed",
+              top: 0,
+              zIndex: 1,
+              width: "100%"
+            }
+          : {}
+      }
+      css={{
+        position: "relative",
+        marginTop: "0rem",
+        boxShadow: `inset 0 2.8px 2.2px rgba(0, 0, 0, 0.02), inset 0 6.7px 5.3px rgba(0, 0, 0, 0.028), inset 0 12.5px 10px rgba(0, 0, 0, 0.035), inset 0 22.3px 17.9px rgba(0, 0, 0, 0.042), inset 0 41.8px 33.4px rgba(0, 0, 0, 0.05), inset 0 100px 80px rgba(0, 0, 0, 0.07)`,
+        "&:before": {
+          animation: `${gradientAnimation} 15s ease infinite`,
+          background:
+            "linear-gradient( 124deg, #ff240011, #e81d1d11, #e8b71d11, #e3e81d11, #1de84011, #1ddde811, #2b1de811, #dd00f311, #dd00f311 )",
+          backgroundSize: "120% 120%",
+
+          content: "''",
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          top: 0,
+          zIndex: -1,
+          backdropFilter: "blur(5px)"
+        }
+      }}
+    >
+      <div
+        css={{
+          maxWidth: "57ch",
+          margin: "auto",
+          "@media screen and (max-width: 57ch)": {
+            marginLeft: "1rem",
+            marginRight: "1rem"
+          }
+        }}
+      >
+        <h1
+          css={{
+            transition: "font-size .2s",
+            color: "rgba(255, 255, 255, 0.85)",
+            fontSize: fontSize || 48,
+            textShadow: "2px 2px 20px black",
+            padding: ".5em 0"
+          }}
+        >
+          {props.title}
+        </h1>
+      </div>
+    </div>
+  );
+};
+
 export default ({ children, ...props }) => {
+  const headerRef = useRef(null);
   let title = "Chris Biscardi's Digital Garden";
   let description = "JAMStack, Serverless, MDX, and more";
   if (props.title) {
@@ -442,52 +531,11 @@ export default ({ children, ...props }) => {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap"
           rel="stylesheet"
         />
-        <script src="/amplify.js" type="text/javascript" />
+        {/* <script src="/amplify.js" type="text/javascript" /> */}
       </Helmet>
-      <Header />
+      <Header ref={headerRef} />
       {props.title && (
-        <div
-          css={{
-            position: "relative",
-            marginTop: "0rem",
-            paddingTop: "2rem",
-            paddingBottom: "2rem",
-            boxShadow: `inset 0 2.8px 2.2px rgba(0, 0, 0, 0.02), inset 0 6.7px 5.3px rgba(0, 0, 0, 0.028), inset 0 12.5px 10px rgba(0, 0, 0, 0.035), inset 0 22.3px 17.9px rgba(0, 0, 0, 0.042), inset 0 41.8px 33.4px rgba(0, 0, 0, 0.05), inset 0 100px 80px rgba(0, 0, 0, 0.07)`,
-            "&:before": {
-              animation: `${gradientAnimation} 15s ease infinite`,
-              background:
-                "linear-gradient( 124deg, #ff240011, #e81d1d11, #e8b71d11, #e3e81d11, #1de84011, #1ddde811, #2b1de811, #dd00f311, #dd00f311 )",
-              backgroundSize: "120% 120%",
-
-              content: "''",
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              top: 0
-            }
-          }}
-        >
-          <div
-            css={{
-              maxWidth: "57ch",
-              margin: "auto",
-              "@media screen and (max-width: 57ch)": {
-                marginLeft: "1rem",
-                marginRight: "1rem"
-              }
-            }}
-          >
-            <h1
-              css={{
-                color: "rgba(255, 255, 255, 0.85)",
-                fontSize: 48,
-                textShadow: "2px 2px 20px black"
-              }}
-            >
-              {props.title}
-            </h1>
-          </div>
-        </div>
+        <TitleArea title={props.title} scrollTargetRef={headerRef} />
       )}
       <svg
         xmlns="http://www.w3.org/2000/svg"
