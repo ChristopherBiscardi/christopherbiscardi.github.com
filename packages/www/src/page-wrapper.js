@@ -1035,7 +1035,12 @@ export default ({ children, ...props }) => {
         <Fragment>{children}</Fragment>
       </MDXProvider>
       <div css={{ height: "5rem" }} />
-      {props.title && <div class="rm-area-post-blog"></div>}
+      {props.title && (
+        <div
+          class="rm-area-post-blog"
+          dangerouslySetInnerHtml={{ __html: "" }}
+        />
+      )}
       <footer
         css={{
           background: "rgba(0,0,0,.1)",
