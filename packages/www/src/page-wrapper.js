@@ -419,17 +419,24 @@ const TitleArea = ({ scrollTargetRef, ...props }) => {
         boxShadow: `inset 0 2.8px 2.2px rgba(0, 0, 0, 0.02), inset 0 6.7px 5.3px rgba(0, 0, 0, 0.028), inset 0 12.5px 10px rgba(0, 0, 0, 0.035), inset 0 22.3px 17.9px rgba(0, 0, 0, 0.042), inset 0 41.8px 33.4px rgba(0, 0, 0, 0.05), inset 0 100px 80px rgba(0, 0, 0, 0.07)`,
         "&:before": {
           animation: `${gradientAnimation} 15s ease infinite`,
-          background:
-            "linear-gradient( 124deg, #ff240011, #e81d1d11, #e8b71d11, #e3e81d11, #1de84011, #1ddde811, #2b1de811, #dd00f311, #dd00f311 )",
-          backgroundSize: "120% 120%",
-
           content: "''",
           width: "100%",
           height: "100%",
           position: "absolute",
           top: 0,
           zIndex: -1,
-          backdropFilter: "blur(5px)"
+          backgroundColor: "#19202c",
+          backgroundImage:
+            "linear-gradient( 124deg,#ff2400,#e81d1d,#e8b71d,#e3e81d,#1de840,#1ddde8,#2b1de8,#dd00f3,#dd00f3 )",
+          backgroundBlendMode: "hue",
+          "@supports(backdrop-filter: blur(5px))": {
+            backgroundColor: "transparent",
+            backgroundImage:
+              "linear-gradient( 124deg, #ff240011, #e81d1d11, #e8b71d11, #e3e81d11, #1de84011, #1ddde811, #2b1de811, #dd00f311, #dd00f311 )",
+            backgroundSize: "120% 120%",
+            backdropFilter: "blur(5px)",
+            backgroundBlendMode: "normal"
+          }
         }
       }}
     >
