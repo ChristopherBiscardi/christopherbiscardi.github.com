@@ -46,7 +46,6 @@
       "@mdx-js/preact",
       "react-helmet",
       "preact/compat",
-      "amplify-esm-bundle",
       "@stripe/stripe-js"
     ]
   }
