@@ -20,6 +20,7 @@ const nav = [
     displayName: "Newsletter",
     url: "https://pages.convertkit.com/04c24646a3/c136f814fc"
   }
+  // { displayName: "Log in", url: "/app" }
 ];
 
 const navLinkStyles = {
@@ -538,7 +539,7 @@ export default ({ children, ...props }) => {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap"
           rel="stylesheet"
         />
-        {/* <script src="/amplify.js" type="text/javascript" /> */}
+        <script src="/amplify.js" type="text/javascript" />
       </Helmet>
       <Header ref={headerRef} />
       {props.title && (

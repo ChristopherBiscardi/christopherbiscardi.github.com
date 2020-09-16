@@ -1,0 +1,18 @@
+{
+  "name": "amplify-esm-bundle",
+  "version": "1.0.0",
+  "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT",
+  "source": "src/index.js",
+  "main": "dist/amplify-esm-bundle.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "@aws-amplify/api": "^3.2.3",
+    "@aws-amplify/auth": "^3.4.3",
+    "@purtuga/esm-webpack-plugin": "^1.2.1",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}
