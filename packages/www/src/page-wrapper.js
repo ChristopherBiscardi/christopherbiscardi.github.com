@@ -1051,10 +1051,10 @@ export default ({ children, ...props }) => {
           padding: "2rem 0 5rem 0",
           borderTop: "1px solid rgba(51,183,255,.21)",
           gridTemplateColumns:
-            "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)",
+            "minmax(1.2rem, 1fr) minmax(0, 400px) minmax(0, 400px) minmax(1.2rem, 1fr)",
           "@media screen and (max-width: 800px)": {
             gridTemplateColumns:
-              "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)"
+              "minmax(1.2rem, 1fr) minmax(0, 400px) minmax(0, 400px) minmax(1.2rem, 1fr)"
           }
         }}
       >

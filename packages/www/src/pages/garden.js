@@ -77,7 +77,7 @@ export default props => {
         display: "grid",
         gridGap: "1rem",
         gridTemplateColumns:
-          "minmax(1.2rem, 1fr) minmax(auto, 400px) minmax(auto, 400px) minmax(1.2rem, 1fr)"
+          "minmax(1.2rem, 1fr) minmax(0, 400px) minmax(0, 400px) minmax(1.2rem, 1fr)"
       }}
     >
       <Helmet>
