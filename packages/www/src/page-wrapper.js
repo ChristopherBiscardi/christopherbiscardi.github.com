@@ -787,7 +787,7 @@ export default ({ children, ...props }) => {
                 display: "grid",
                 color: "rgba(255, 255, 255, 0.86)",
                 gridTemplateColumns:
-                  "minmax(1.2rem, 1fr) minmax(auto, 57ch) minmax(1.2rem, 1fr)",
+                  "minmax(1.2rem, 1fr) minmax(0, 57ch) minmax(1.2rem, 1fr)",
                 "& > *": {
                   marginTop: "2rem"
                 }
