@@ -4,28 +4,31 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "toast incremental",
+    "build": "toast incremental .",
     "prepare": "breadbox --dest public/web_modules",
     "breadbox": "breadbox --dest public/web_modules",
     "develop": "babel --config-file=./sector-babel-config.js src/pages/ --out-dir public --watch",
     "develop-project-src": "babel --no-babelrc --presets=@babel/preset-react --plugins=@babel/plugin-proposal-class-properties,@snowpack/babel-plugin-package-import src/ --out-dir public"
   },
+  "type": "module",
   "dependencies": {
     "@babel/preset-react": "7.10.4",
-    "@emotion/core": "10.0.28",
-    "@mdx-js/preact": "1.5.7",
+    "@emotion/core": "^20",
+    "@mdx-js/preact": "2.0.0-next.8",
     "@sector/babel-plugin-package-import": "^0.3.0",
     "@stripe/stripe-js": "^1.9.0",
     "fetch-sector-docs": "^1.0.0",
+    "json5": "^2.1.3",
     "parse-numeric-range": "^1.2.0",
+    "patch-package": "^6.2.2",
     "prismjs": "^1.20.0",
-    "react-helmet": "^6.0.0-beta.2",
+    "react-helmet": "^6.1.0",
     "rehype-autolink-headings": "^3.0.0",
     "rehype-parse": "^7.0.1",
     "rehype-prism-mdx": "1.0.0",
     "rehype-slug": "^3.0.0",
     "remark-stringify": "^8.1.1",
-    "toast": "0.2.9",
+    "toastrs": "^0.0.11",
     "unified": "^9.0.0"
   },
   "devDependencies": {
@@ -34,6 +37,7 @@
     "node-getpocket": "^1.0.0"
   },
   "snowpack": {
+    "exclude": ["public/**/*", "toast.js", "fetch-mdx-post-files.js"],
     "installOptions": {
       "alias": {
         "react": "preact/compat"

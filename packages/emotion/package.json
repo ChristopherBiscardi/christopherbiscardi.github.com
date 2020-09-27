@@ -1,0 +1,8 @@
+{
+  "name": "@emotion/core",
+  "version": "20.0.0",
+  "main": "index.js",
+  "type": "module",
+  "author": "christopherbiscardi <chris@christopherbiscardi.com> (@chrisbiscardi)",
+  "license": "MIT"
+}

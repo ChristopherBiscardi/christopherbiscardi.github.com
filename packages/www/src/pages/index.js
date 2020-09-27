@@ -1,27 +1,29 @@
-/* @jsx jsx */
+/** @jsx jsx */
 import { Fragment } from "preact";
 import { jsx } from "@emotion/core";
-import Icon, { iconFromList } from "../components/small-icons/index.js";
+import Icon from "../components/small-icons/index.js"; //, { iconFromList }
 import SocialButton from "../components/social-button/index.js";
 import ConvertKitForm from "../components/convertkit-form/index.js";
-const maxWidth = "800px";
-const images = preval`
-  const fs = require('fs');
-  const path = require('path')
 
-  const nyanCatPath = path.resolve(__dirname, 'src/components/nyan-cat/nyan-cat-rainbow.webp')
-  const partyCorgiPath = path.resolve(__dirname, 'src/components/party-corgi.gif')
-  
-  module.exports = {
-    nyanCat: fs.readFileSync(nyanCatPath, 'base64'),
-    partyCorgi: fs.readFileSync(partyCorgiPath, 'base64')
-  }
-`;
+const maxWidth = "800px";
+// const images = preval`
+//   const fs = require('fs');
+//   const path = require('path')
+
+//   const nyanCatPath = path.resolve(__dirname, 'src/components/nyan-cat/nyan-cat-rainbow.webp')
+//   const partyCorgiPath = path.resolve(__dirname, 'src/components/party-corgi.gif')
+
+//   module.exports = {
+//     nyanCat: fs.readFileSync(nyanCatPath, 'base64'),
+//     partyCorgi: fs.readFileSync(partyCorgiPath, 'base64')
+//   }
+// `;
 
 const NyanCat = props => (
   <img
     {...props}
-    src={`data:image/webp;base64,${images.nyanCat}`}
+    // TODO
+    // src={`data:image/webp;base64,${images.nyanCat}`}
     alt="nyan cat rainbow animated"
   />
 );
@@ -121,7 +123,8 @@ export default props => {
               top: "12px",
               marginLeft: "1rem"
             }}
-            src={`data:image/gif;base64,${images.partyCorgi}`}
+            // TODO
+            // src={`data:image/gif;base64,${images.partyCorgi}`}
             alt="party corgi rainbow animated"
           />
         </h1>
@@ -248,7 +251,11 @@ export default props => {
         }
       >
         {data.recentPosts.map(({ id, title, slug, tags }) => (
-          <ListItem logo={iconFromList(tags)} to={slug} key={id}>
+          <ListItem
+            // logo={iconFromList(tags)}
+            to={slug}
+            key={id}
+          >
             {title}
           </ListItem>
         ))}
@@ -280,7 +287,11 @@ export default props => {
         }
       >
         {data.highlightedLessons.map(({ id, title, httpUrl: slug, tag }) => (
-          <ListItem logo={iconFromList(tag ? [tag] : [])} to={slug} key={id}>
+          <ListItem
+            // logo={iconFromList(tag ? [tag] : [])}
+            to={slug}
+            key={id}
+          >
             {title}
           </ListItem>
         ))}

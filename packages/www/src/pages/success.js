@@ -1,4 +1,4 @@
-/* @jsx jsx */
+/** @jsx jsx */
 import { Fragment } from "preact";
 import { jsx } from "@emotion/core";
 

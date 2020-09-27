@@ -82,9 +82,9 @@ const SocialButton = ({ href, icon, children }) => {
         ...socialStyles[icon]
       }}
     >
-      {/* <div css={{ height: "20px" }}> */}
-      <Icon width="auto" height="15px" css={{ width: "inherit" }} />
-      {/* </div> */}
+      <div css={{ height: "20px" }}>
+        <Icon width="auto" height="15px" css={{ width: "inherit" }} />
+      </div>
       <span css={{ marginLeft: ".5rem" }}>{children}</span>
     </a>
   );

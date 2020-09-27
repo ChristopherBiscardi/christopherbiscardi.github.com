@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { keyframes, jsx } from "@emotion/core";
+import { jsx, keyframes } from "@emotion/core";
 import { Fragment } from "preact";
 import { useState } from "preact/hooks";
 // import Message from "./message";

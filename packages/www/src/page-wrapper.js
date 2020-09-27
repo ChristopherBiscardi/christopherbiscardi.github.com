@@ -1,12 +1,12 @@
 /** @jsx jsx */
-import { keyframes, jsx, Global } from "@emotion/core";
-import Logo from "./components/logos/logo-full.js";
 import { Helmet } from "react-helmet";
 import { MDXProvider } from "@mdx-js/preact";
-import { Fragment } from "preact";
+import { Fragment, h } from "preact";
 import { useState, useEffect, useRef } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 // import Highlight, { defaultProps } from "prism-react-renderer";
+import { jsx, keyframes, Global } from "@emotion/core";
+import Logo from "./components/logos/logo-full.js";
 
 const maxWidth = "800px";
 const textColor = "rgba(255, 255, 255, 0.86)";
@@ -383,7 +383,7 @@ const TitleArea = ({ scrollTargetRef, ...props }) => {
 
       window.requestAnimationFrame(() => {
         const titleOffset = scrollTargetRef.current.getBoundingClientRect().top;
-        console.log(titleOffset);
+        // console.log(titleOffset);
         if (titleOffset < -50) {
           setFontSize(18);
         } else if (titleOffset < 0) {
@@ -475,8 +475,12 @@ export default ({ children, ...props }) => {
     title = props.title;
     description = "";
   }
+  // console.log(children);
+  // return <MDXProvider>{children}</MDXProvider>;
   return (
     <div>
+      {/* {children} */}
+      {/* <MDXProvider>{children}</MDXProvider> */}
       <ProgressBar />
       <Tweetable />
       <Global
@@ -781,21 +785,23 @@ export default ({ children, ...props }) => {
       </svg>
       <MDXProvider
         components={{
-          wrapper: props => (
-            <div
-              css={{
-                display: "grid",
-                color: "rgba(255, 255, 255, 0.86)",
-                gridTemplateColumns:
-                  "minmax(1.2rem, 1fr) minmax(0, 57ch) minmax(1.2rem, 1fr)",
-                "& > *": {
-                  marginTop: "2rem"
-                }
-              }}
-            >
-              {props.children}
-            </div>
-          ),
+          wrapper: function MyWrapper(props) {
+            return (
+              <div
+                css={{
+                  display: "grid",
+                  color: "rgba(255, 255, 255, 0.86)",
+                  gridTemplateColumns:
+                    "minmax(1.2rem, 1fr) minmax(0, 57ch) minmax(1.2rem, 1fr)",
+                  "& > *": {
+                    marginTop: "2rem"
+                  }
+                }}
+              >
+                {props.children}
+              </div>
+            );
+          },
           corgilink: props => (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -954,11 +960,11 @@ export default ({ children, ...props }) => {
                   position: "relative",
                   border: "1px solid rgba(51,183,255,.21)",
                   boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
-                      inset 0 6.7px 5.3px rgba(0,0,0,0.028),
-                      inset 0 12.5px 10px rgba(0,0,0,0.035),
-                      inset 0 22.3px 17.9px rgba(0,0,0,0.042),
-                      inset 0 41.8px 33.4px rgba(0,0,0,0.05),
-                      inset 0 100px 80px rgba(0,0,0,0.07)`
+                    inset 0 6.7px 5.3px rgba(0,0,0,0.028),
+                    inset 0 12.5px 10px rgba(0,0,0,0.035),
+                    inset 0 22.3px 17.9px rgba(0,0,0,0.042),
+                    inset 0 41.8px 33.4px rgba(0,0,0,0.05),
+                    inset 0 100px 80px rgba(0,0,0,0.07)`
                 }}
               >
                 <div
@@ -1033,7 +1039,7 @@ export default ({ children, ...props }) => {
           )
         }}
       >
-        <Fragment>{children}</Fragment>
+        {children}
       </MDXProvider>
       <div css={{ height: "5rem" }} />
       {props.title && (

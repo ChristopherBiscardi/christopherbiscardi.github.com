@@ -7,6 +7,7 @@ build: $(MAH_FILES)
 	# GOBIN=${PWD}/netlify-functions go install ./...
 
 packages/www/public/web_modules/import-map.json:
+	yarn patch-package
 	yarn workspace www breadbox
 
 clean:

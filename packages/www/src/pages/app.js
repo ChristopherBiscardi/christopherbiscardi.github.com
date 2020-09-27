@@ -1,9 +1,10 @@
 /** @jsx jsx */
-import { keyframes, jsx } from "@emotion/core";
+import { jsx, keyframes } from "@emotion/core";
 import { Helmet } from "react-helmet";
 import { useEffect, useState } from "preact/hooks";
 import { Fragment } from "preact";
-import { loadStripe } from "@stripe/stripe-js";
+import stripe from "@stripe/stripe-js";
+const { loadStripe } = stripe;
 
 const bgRoll = keyframes`
   0% { background-position: 0% 50% }
@@ -26,7 +27,9 @@ const awsconfig = {
         region: "us-west-2",
         custom_header: async () => {
           return {
-            Authorization: `Bearer ${(await window.AMPLIFY.Auth.currentSession())
+            Authorization: `Bearer ${(
+              await window.AMPLIFY.Auth.currentSession()
+            )
               .getIdToken()
               .getJwtToken()}`
           };
@@ -93,11 +96,15 @@ const SignupLoginForm = ({ setPostLoginEmailSent }) => {
     <Fragment>
       <div>
         <h1>The Edge Newsletter</h1>
-        <p css={{ marginTop: ".75rem" }}>
+        <p
+        //  css={{ marginTop: ".75rem" }}
+        >
           A weekly newsletter with curated infomation from the bleeding edge. I
           spend my week drinking from the firehose so you don't have to
         </p>
-        <p css={{ marginTop: ".75rem" }}>
+        <p
+        // css={{ marginTop: ".75rem" }}
+        >
           The newsletter covers topics from hard tech (Rust, SwiftUI, JS) to
           evolving indie business models
         </p>
@@ -371,7 +378,7 @@ export default props => {
             ) : (
               <SignupLoginForm setPostLoginEmailSent={setPostLoginEmailSent} />
             )}
-            {/* <form
+            <form
               css={{
                 justifyContent: "space-evenly",
                 alignSelf: "center",
@@ -469,7 +476,7 @@ export default props => {
                   account.
                 </p>
               </div>
-            </form> */}
+            </form>
             <div
               css={{
                 gridColumn: "1/3",

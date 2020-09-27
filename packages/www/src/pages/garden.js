@@ -1,11 +1,11 @@
-/* @jsx jsx */
-import { Fragment } from "preact";
+/** @jsx jsx */
 import { jsx } from "@emotion/core";
-import Icon, { iconFromList } from "../components/small-icons/index.js";
 import { Helmet } from "react-helmet";
 import { useReducer } from "preact/hooks";
 
+import Icon from "../components/small-icons/index.js"; //{ iconFromList }
 import ConvertKitForm from "../components/convertkit-form/index.js";
+
 const maxWidth = "800px";
 
 const List = ({ title, subtitle, secondary, ...props }) => (
@@ -69,7 +69,8 @@ const reducer = (state, action) => {
   }
 };
 
-export default props => {
+export default _ => {
+  const props = { posts: [] };
   const [filterState, filterDispatch] = useReducer(reducer, initialState);
   return (
     <div
@@ -229,7 +230,7 @@ export default props => {
           })
           .map(({ id, title, slug, tags, contentType }) => (
             <ListItem
-              logo={iconFromList(tags)}
+              // logo={iconFromList(tags)}
               to={slug}
               key={id}
               contentType={contentType}
