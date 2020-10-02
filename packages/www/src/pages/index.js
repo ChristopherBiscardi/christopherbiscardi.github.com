@@ -24,6 +24,7 @@ const NyanCat = props => (
     {...props}
     // TODO
     // src={`data:image/webp;base64,${images.nyanCat}`}
+    src="/img/nyan-cat-rainbow.webp"
     alt="nyan cat rainbow animated"
   />
 );
@@ -125,6 +126,7 @@ export default props => {
             }}
             // TODO
             // src={`data:image/gif;base64,${images.partyCorgi}`}
+            src="/img/party-corgi.gif"
             alt="party corgi rainbow animated"
           />
         </h1>
