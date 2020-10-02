@@ -79,10 +79,10 @@ const ListItem = ({ to, logo, children }) => {
 };
 
 export default props => {
-  const data = {
-    highlightedLessons: props.eggheadLessons || [],
-    recentPosts: props.posts || []
-  };
+  // const data = {
+  //   highlightedLessons: props.eggheadLessons || [],
+  //   recentPosts: props.posts || []
+  // };
   return (
     <main
       css={{
@@ -250,7 +250,7 @@ export default props => {
           </a>
         }
       >
-        {data.recentPosts.map(({ id, title, slug, tags }) => (
+        {props.recentPosts.map(({ id, title, slug, tags }) => (
           <ListItem
             // logo={iconFromList(tags)}
             to={slug}
@@ -286,7 +286,7 @@ export default props => {
           </a>
         }
       >
-        {data.highlightedLessons.map(({ id, title, httpUrl: slug, tag }) => (
+        {props.highlightedLessons.map(({ id, title, httpUrl: slug, tag }) => (
           <ListItem
             // logo={iconFromList(tag ? [tag] : [])}
             to={slug}
