@@ -69,8 +69,8 @@ const reducer = (state, action) => {
   }
 };
 
-export default _ => {
-  const props = { posts: [] };
+export default props => {
+  // const props = { posts: [] };
   const [filterState, filterDispatch] = useReducer(reducer, initialState);
   return (
     <div
