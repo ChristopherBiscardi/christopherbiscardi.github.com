@@ -5,3 +5,4 @@ netlify-functions
 public
 # Local Netlify folder
 .netlify
+node_modules
