@@ -238,8 +238,8 @@ const fetchCheckoutSessionId = () => {
 const App = props => {
   const [stripe, setStripe] = useState();
   useEffect(async () => {
-    console.log(process.env.STRIPE_PK);
-    const s = await loadStripe(process.env.STRIPE_PK);
+    console.log(process.env.TOAST_STRIPE_PK);
+    const s = await loadStripe(process.env.TOAST_STRIPE_PK);
     setStripe(s);
   }, []);
   return (

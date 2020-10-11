@@ -3,8 +3,6 @@ import fsReg from "fs";
 import json5 from "json5";
 import slugify from "@sindresorhus/slugify";
 import mdx from "@mdx-js/mdx";
-import util from "util";
-import vm from "vm";
 import rehypePrism from "rehype-prism-mdx";
 import rehypeSlug from "rehype-slug";
 import rehypeLink from "rehype-autolink-headings";
@@ -44,7 +42,7 @@ try {
   console.log(e);
 }
 
-export const sourceData = async ({ createPage, ...options }) => {
+export const sourceData = async ({ setDataForSlug, ...options }) => {
   // console.log("sourceData");
   const files = await fs.readdir("../../content/posts");
 
@@ -121,11 +119,13 @@ export const sourceData = async ({ createPage, ...options }) => {
           // console.log(meta.slug);
         }
 
-        await createPage({
-          module: `/** @jsx mdx */
-            import {mdx} from '@mdx-js/preact';
-            ${compiledMDX}`,
-          slug: meta.slug,
+        await setDataForSlug(meta.slug, {
+          component: {
+            mode: "source",
+            value: `/** @jsx mdx */
+import {mdx} from '@mdx-js/preact';
+${compiledMDX}`
+          },
           data: { ...meta }
         });
         // console.log(meta);

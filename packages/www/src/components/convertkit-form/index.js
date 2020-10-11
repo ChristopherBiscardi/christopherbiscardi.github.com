@@ -56,7 +56,7 @@ const RainbowBorder = ({ children, ...props }) => (
   </div>
 );
 
-const FORM_ID = process.env.GATSBY_CONVERTKIT_SIGNUP_FORM;
+const FORM_ID = process.env.TOAST_CONVERTKIT_SIGNUP_FORM;
 
 // const SubscribeSchema = Yup.object().shape({
 //   email_address: Yup.string()

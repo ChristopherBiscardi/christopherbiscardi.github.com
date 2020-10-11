@@ -4,14 +4,8 @@ const toJsx = require("./mdxast-to-jsx");
 const rehypePrism = require("rehype-prism-mdx");
 const rehypeSlug = require("rehype-slug");
 const rehypeLink = require("rehype-autolink-headings");
-const vm = require("vm");
 
-// const {
-//   // transformComponentForBrowser,
-//   transformComponentForNode
-// } = require("toast/src/transforms");
-
-exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
+exports.sourceNodes = async ({ workspace, setDataForSlug, ...options }) => {
   if (!workspace) {
     console.error(
       "fetch-sector-docs requires a `workspace` key in the options"
@@ -106,11 +100,13 @@ exports.sourceNodes = async ({ workspace, createPage, ...options }) => {
       // const script = new vm.Script(component.code);
       // script.runInNewContext(context);
       // const { meta } = context.exports || {};
-      const paths = await createPage({
-        module: `/** @jsx mdx */
-        import {mdx} from '@mdx-js/preact';
-        ${jsx}`,
-        slug,
+      const paths = await setDataForSlug(slug, {
+        component: {
+          mode: "source",
+          value: `/** @jsx mdx */
+import {mdx} from '@mdx-js/preact';
+${jsx}`
+        },
         data: { ...rest, ...meta }
       });
       const createdAt = new Date(parseInt(rest.createdAt)).toISOString();

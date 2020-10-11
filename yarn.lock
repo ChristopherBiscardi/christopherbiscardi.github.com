@@ -8885,16 +8885,17 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-toast@^0.3.4:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/toast/-/toast-0.3.4.tgz#879e7963b10e5e69a312df0e491ff3185b590c9a"
-  integrity sha512-zhAoMysZxiIQ9c5xmzURckpfHPkN4tMwhwqNc6+dMJhB4nful0gBJW1mhNvxA0gF6KbHGm+kkYzYG1da6zzLJw==
+toast@^0.3.15:
+  version "0.3.15"
+  resolved "https://registry.yarnpkg.com/toast/-/toast-0.3.15.tgz#474c2067f0da5480641df4bc13329de41191182c"
+  integrity sha512-ZKfSC7xiTy5cZXJQuYtu/EsPipSlB8f/KzXKUl7wWzU9sPOKEGSs6VgV5dXHzOQ43z3BrEVNa32fQ5tG6FxeQA==
   dependencies:
     "@mdx-js/preact" "2.0.0-next.8"
     "@svgr/cli" "^5.4.0"
     axios "^0.20.0"
     binary-install "^0.0.1"
     console.table "^0.10.0"
+    env-paths "^2.2.0"
     got "^11.6.2"
     module-alias "^2.2.2"
     preact "^10.4.8"
