@@ -3,6 +3,8 @@ import EggheadSource from "fetch-eggheadio";
 import * as MDXPostsSource from "./fetch-mdx-post-files.js";
 
 export const sourceData = async ({ setDataForSlug }) => {
+  console.log("before");
+  console.error("before-warn");
   const [sectorData, eggheadioData, mdxData] = await Promise.all([
     SectorSource.sourceNodes({
       setDataForSlug,
@@ -11,7 +13,8 @@ export const sourceData = async ({ setDataForSlug }) => {
     EggheadSource.sourceData(),
     MDXPostsSource.sourceData({ setDataForSlug })
   ]);
-
+  console.log("after");
+  console.warn("after-warn");
   const allPostsData = sectorData
     .map(({ title, createdAt, updatedAt, slug, contentType, meta }) => ({
       title,
