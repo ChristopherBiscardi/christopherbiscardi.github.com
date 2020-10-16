@@ -941,6 +941,57 @@ export default ({ children, ...props }) => {
             />
           ),
           inlineCode: props => <code css={{ color: "#31b7fe" }} {...props} />,
+          codeblock: props => {
+            const lang = props.class && props.class.split("-")[1];
+            const langMap = {
+              graphql: "GraphQL",
+              js: "JS"
+            };
+
+            return (
+              <div
+                css={{
+                  gridColumn: 2,
+                  background: "#11151d",
+                  overflow: "auto",
+                  borderRadius: 10,
+                  position: "relative",
+                  border: "1px solid rgba(51,183,255,.21)",
+                  boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
+                    inset 0 6.7px 5.3px rgba(0,0,0,0.028),
+                    inset 0 12.5px 10px rgba(0,0,0,0.035),
+                    inset 0 22.3px 17.9px rgba(0,0,0,0.042),
+                    inset 0 41.8px 33.4px rgba(0,0,0,0.05),
+                    inset 0 100px 80px rgba(0,0,0,0.07)`
+                }}
+              >
+                <div
+                  css={{
+                    fontSize: `12px`,
+                    display: `flex`,
+                    justifyContent: `space-between`,
+                    position: `sticky`,
+                    left: 0,
+                    borderBottom: "1px solid rgba(51,183,255,.21)"
+                  }}
+                >
+                  <span css={{ padding: "1rem" }}>{props.title}</span>
+                  <div css={{ display: "flex" }}>
+                    <span css={{ padding: "1rem" }}>
+                      {langMap[lang] || lang || ""}
+                    </span>
+                    <CopyButton content={props.codestring} />
+                  </div>
+                </div>
+                <div
+                  css={{ padding: "1rem 2rem" }}
+                  dangerouslySetInnerHTML={{
+                    __html: props.children
+                  }}
+                />
+              </div>
+            );
+          },
           pre: props => {
             const lang =
               props.children.props.class &&

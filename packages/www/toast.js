@@ -1,20 +1,22 @@
 import SectorSource from "fetch-sector-docs";
 import EggheadSource from "fetch-eggheadio";
+import { sourceMdx } from "@toastdotdev/mdx";
 import * as MDXPostsSource from "./fetch-mdx-post-files.js";
 
 export const sourceData = async ({ setDataForSlug }) => {
-  console.log("before");
-  console.error("before-warn");
   const [sectorData, eggheadioData, mdxData] = await Promise.all([
     SectorSource.sourceNodes({
       setDataForSlug,
       workspace: "516555bc-f69b-47f9-ae7e-48cfd880b34d"
     }),
     EggheadSource.sourceData(),
-    MDXPostsSource.sourceData({ setDataForSlug })
+    sourceMdx({
+      setDataForSlug,
+      directory: "../../content/posts",
+      slugPrefix: "/"
+    })
   ]);
-  console.log("after");
-  console.warn("after-warn");
+
   const allPostsData = sectorData
     .map(({ title, createdAt, updatedAt, slug, contentType, meta }) => ({
       title,
@@ -25,13 +27,15 @@ export const sourceData = async ({ setDataForSlug }) => {
       tags: meta.tags || []
     }))
     .concat(
-      mdxData.map(({ title, date, slug, tags }) => ({
-        title,
-        updatedAt: date,
-        slug,
-        tags,
-        contentType: "post"
-      }))
+      mdxData
+        .map(({ meta }) => meta)
+        .map(({ title, date, slug, tags }) => ({
+          title,
+          updatedAt: date,
+          slug,
+          tags,
+          contentType: "post"
+        }))
     );
   await setDataForSlug("/garden", { data: { posts: allPostsData } });
   const topEggheadData = eggheadioData
