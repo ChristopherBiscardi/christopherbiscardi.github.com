@@ -1,7 +1,6 @@
 import SectorSource from "fetch-sector-docs";
 import EggheadSource from "fetch-eggheadio";
 import { sourceMdx } from "@toastdotdev/mdx";
-import * as MDXPostsSource from "./fetch-mdx-post-files.js";
 
 export const sourceData = async ({ setDataForSlug }) => {
   const [sectorData, eggheadioData, mdxData] = await Promise.all([
