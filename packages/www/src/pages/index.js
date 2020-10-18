@@ -5,20 +5,6 @@ import Icon from "../components/small-icons/index.js"; //, { iconFromList }
 import SocialButton from "../components/social-button/index.js";
 import ConvertKitForm from "../components/convertkit-form/index.js";
 
-const maxWidth = "800px";
-// const images = preval`
-//   const fs = require('fs');
-//   const path = require('path')
-
-//   const nyanCatPath = path.resolve(__dirname, 'src/components/nyan-cat/nyan-cat-rainbow.webp')
-//   const partyCorgiPath = path.resolve(__dirname, 'src/components/party-corgi.gif')
-
-//   module.exports = {
-//     nyanCat: fs.readFileSync(nyanCatPath, 'base64'),
-//     partyCorgi: fs.readFileSync(partyCorgiPath, 'base64')
-//   }
-// `;
-
 const NyanCat = props => (
   <img
     {...props}
@@ -29,278 +15,353 @@ const NyanCat = props => (
   />
 );
 
-const List = ({ title, subtitle, secondary, ...props }) => (
-  <div css={{ maxWidth, marginBottom: "3rem", gridColumn: "2/4" }}>
-    <div
-      css={{
-        marginBottom: "1rem",
-        display: "flex",
-        justifyContent: "space-between"
-      }}
-    >
-      <h2
-        css={{
-          fontFamily: "Inter, system-ui, sans-serif",
-          fontWeight: 600,
-          color: "#eef1f7"
-        }}
-      >
-        {title}
-      </h2>
-      {secondary}
-    </div>
-    <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
-      {props.children}
-    </ul>
-  </div>
-);
-
-const ListItem = ({ to, logo, children }) => {
-  return (
-    <li>
-      <a
-        href={to}
-        css={{
-          color: "rgba(255,255,255,0.86)",
-          display: "flex",
-          borderRadius: "8px",
-          textDecoration: "none",
-          "&:hover": {
-            backgroundColor: "#2D3747"
-          },
-          padding: "1rem",
-          margin: "0 -1rem"
-        }}
-      >
-        <Icon icon={logo} />
-        <span css={{ marginLeft: "10px" }}>{children}</span>
-      </a>
-    </li>
-  );
-};
-
 export default props => {
-  // const data = {
-  //   highlightedLessons: props.eggheadLessons || [],
-  //   recentPosts: props.posts || []
-  // };
   return (
-    <main
-      css={{
-        display: "grid",
-        color: "rgba(255, 255, 255, 0.86)",
-        gridTemplateColumns:
-          "minmax(1.2rem, 1fr) minmax(0, 400px) minmax(0, 400px) minmax(1.2rem, 1fr)",
-        "@media screen and (max-width: 800px)": {
-          gridTemplateColumns:
-            "minmax(1.2rem, 1fr) minmax(0, 400px) minmax(0, 400px) minmax(1.2rem, 1fr)"
-        }
-      }}
-    >
-      {/* <SEO title="Chris Biscardi" /> */}
-
-      <div
-        css={{
-          maxWidth,
-          marginTop: "75px",
-          gridColumn: "2/4"
-        }}
-      >
-        <h1
-          css={{
-            fontSize: "3rem",
-            marginBottom: ".3em",
-            fontFamily: "Inter, system-ui, sans-serif",
-            fontWeight: 700,
-            color: "#eef1f7"
-          }}
-        >
-          Hey, I&rsquo;m Chris
-          <img
-            css={{
-              display: "inline",
-              height: "60px",
-              position: "relative",
-              top: "12px",
-              marginLeft: "1rem"
-            }}
-            // TODO
-            // src={`data:image/gif;base64,${images.partyCorgi}`}
-            src="/img/party-corgi.gif"
-            alt="party corgi rainbow animated"
-          />
-        </h1>
-        <p
-          css={{
-            fontSize: "1.2rem",
-            fontWeight: 300,
-            lineHeight: 1.5,
-            maxWidth: "32em",
-            color: "#eef1f7",
-            gridColumn: "2/4"
-          }}
-        >
-          <span>
-            I'm an independent consultant that works with startups built on OSS.
-            Here I write about JAMStack, Serverless, MDX, and more. This site is
-            built with ESModules,{" "}
-          </span>
-          <a
-            css={{
-              backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
-              "&[href^='/']": {
-                backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
-              },
-              "-webkit-background-clip": `text`,
-              "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
-              display: "inline-block",
-              "&:hover": {
-                "-webkit-text-fill-color": `rgba(255,255,255,.1)`
-              }
-            }}
-            href="https://twitter.com/toastdotdev"
-          >
-            Toast
-          </a>
-          <span>, and MDX. The content is written in </span>
-          <a
-            css={{
-              backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
-              "&[href^='/']": {
-                backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
-              },
-              "-webkit-background-clip": `text`,
-              "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
-              display: "inline-block",
-              "&:hover": {
-                "-webkit-text-fill-color": `rgba(255,255,255,.1)`
-              }
-            }}
-            href="https://twitter.com/sectortools"
-          >
-            Sector
-          </a>
-          .
-        </p>
-        <ul
-          css={{
-            margin: 0,
-            marginTop: "2.5rem",
-            marginBottom: "7rem",
-            padding: 0,
-            listStyleType: "none",
-            display: "flex",
-            flexWrap: "wrap",
-            gridColumn: "2/4",
-            "& > li": {
-              marginRight: ".5rem",
-              marginTop: ".5rem"
-            }
-          }}
-        >
-          <li>
-            <SocialButton
-              href="https://twitter.com/chrisbiscardi"
-              icon="twitter"
-            >
-              Twitter
-            </SocialButton>
-          </li>
-          <li>
-            <SocialButton
-              href="https://www.twitch.tv/chrisbiscardi"
-              icon="twitch"
-            >
-              Twitch
-            </SocialButton>
-          </li>
-          <li>
-            <SocialButton
-              href="https://www.youtube.com/channel/UCiSIL42pQRpc-8JNiYDFyzQ"
-              icon="youtube"
-            >
-              YouTube
-            </SocialButton>
-          </li>
-          <li>
-            <SocialButton
-              href="https://github.com/ChristopherBiscardi"
-              icon="github"
-            >
-              GitHub
-            </SocialButton>
-          </li>
-        </ul>
-      </div>
-      <List
-        title="Latest Posts"
-        secondary={
-          <a
-            href="/garden"
-            css={{
-              color: "rgba(255,255,255,0.86)",
-              textDecoration: "none",
-              // margin is to align baseline with heading
-              marginBottom: "2px",
-              alignSelf: "flex-end",
-              "&:hover": {
-                textDecoration: "underline"
-              }
-            }}
-          >
-            all posts
-          </a>
-        }
-      >
-        {props.recentPosts.map(({ id, title, slug, tags }) => (
-          <ListItem
-            // logo={iconFromList(tags)}
-            to={slug}
-            key={id}
-          >
-            {title}
-          </ListItem>
-        ))}
-      </List>
-      <div
-        css={{ display: "flex", justifyContent: "flex-end", gridColumn: "1/5" }}
-      >
-        <NyanCat css={{ height: "37px" }} />
-      </div>
-      <List
-        title="Latest Lessons"
-        subtitle="egghead.io"
-        secondary={
-          <a
-            href="https://egghead.io/instructors/chris-biscardi?af=7h4hd0"
-            css={{
-              color: "rgba(255,255,255,0.86)",
-              textDecoration: "none",
-              // margin is to align baseline with heading
-              marginBottom: "2px",
-              alignSelf: "flex-end",
-              "&:hover": {
-                textDecoration: "underline"
-              }
-            }}
-          >
-            all lessons
-          </a>
-        }
-      >
-        {props.highlightedLessons.map(({ id, title, httpUrl: slug, tag }) => (
-          <ListItem
-            // logo={iconFromList(tag ? [tag] : [])}
-            to={slug}
-            key={id}
-          >
-            {title}
-          </ListItem>
-        ))}
-      </List>
-      <div css={{ gridColumn: "2/4" }}>
-        <ConvertKitForm />
+    <main>
+      <Hero />
+      <Rust />
+      <Serverless />
+      <div class="flex">
+        <NyanCat style={{ height: "37px" }} />
       </div>
     </main>
   );
 };
+
+const LowerTilt = ({ color, flip, props }) => {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        width: "100%",
+        overflow: "hidden",
+        lineHeight: 0,
+        transform: `rotate(180deg)${flip ? " rotateY(180deg)" : ""}`
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1200 120"
+        preserveAspectRatio="none"
+        style={{
+          position: "relative",
+          display: "block",
+          width: "calc(100% + 1.3px)",
+          height: "150px",
+          transform: `rotateY(180deg)`
+        }}
+      >
+        <filter id="blurMe">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="5"></feGaussianBlur>
+        </filter>
+        <defs>
+          <linearGradient id="MyGradient" gradientTransform="rotate(130)">
+            <stop offset="0%" stop-color="white"></stop>
+            <stop offset="50%" stop-color="#ffffff00"></stop>
+          </linearGradient>
+        </defs>
+
+        <path
+          d="M1200 120L0 16.48 0 0 1200 0 1200 120z"
+          class="shape-fill"
+          style={{ fill: color || "#161e2e" }}
+        ></path>
+      </svg>
+    </div>
+  );
+};
+
+const Hero = props => (
+  <div
+    class="relative pb-16"
+    style={{
+      backgroundImage:
+        "repeating-linear-gradient(45deg, hsla(64,83%,54%,0.05) 0px, hsla(64,83%,54%,0.05) 1px,transparent 1px, transparent 11px,hsla(64,83%,54%,0.05) 11px, hsla(64,83%,54%,0.05) 12px,transparent 12px, transparent 32px),repeating-linear-gradient(90deg, hsla(64,83%,54%,0.05) 0px, hsla(64,83%,54%,0.05) 1px,transparent 1px, transparent 11px,hsla(64,83%,54%,0.05) 11px, hsla(64,83%,54%,0.05) 12px,transparent 12px, transparent 32px),repeating-linear-gradient(0deg, hsla(64,83%,54%,0.05) 0px, hsla(64,83%,54%,0.05) 1px,transparent 1px, transparent 11px,hsla(64,83%,54%,0.05) 11px, hsla(64,83%,54%,0.05) 12px,transparent 12px, transparent 32px),repeating-linear-gradient(135deg, hsla(64,83%,54%,0.05) 0px, hsla(64,83%,54%,0.05) 1px,transparent 1px, transparent 11px,hsla(64,83%,54%,0.05) 11px, hsla(64,83%,54%,0.05) 12px,transparent 12px, transparent 32px),linear-gradient( 124deg,#ff240012,#e81d1d12,#e8b71d12,#e3e81d12,#1de84012,#1ddde812,#2b1de812,#dd00f312,#dd00f312 )"
+    }}
+  >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-8">
+      <h1 class="text-4xl sm:text-6xl font-bold text-gray-100 flex items-center">
+        Hey, I&rsquo;m Chris
+        <img
+          style={{ height: "4rem" }}
+          class="sm:ml-4"
+          src="/img/party-corgi.gif"
+          alt="party corgi rainbow animated"
+        />
+      </h1>
+      <p class="text-2xl text-gray-100 max-w-3xl">
+        <span>
+          I'm an independent consultant that works with startups built on OSS.
+          Here I write about JAMStack, Serverless, MDX, and more. This site is
+          built with ESModules,{" "}
+        </span>
+        <a class="text-pink-400" href="https://twitter.com/toastdotdev">
+          Toast
+        </a>
+        <span>, and MDX. The content is written in </span>
+        <a class="text-teal-400" href="https://twitter.com/sectortools">
+          Sector
+        </a>
+        .
+      </p>
+      <ul class="flex py-4 gap-x-2 mt-4">
+        <li class="">
+          <SocialButton href="https://twitter.com/chrisbiscardi" icon="twitter">
+            Twitter
+          </SocialButton>
+        </li>
+        <li class="hidden sm:inline-block">
+          <SocialButton
+            href="https://www.twitch.tv/chrisbiscardi"
+            icon="twitch"
+          >
+            Twitch
+          </SocialButton>
+        </li>
+        <li class="hidden sm:inline-block">
+          <SocialButton
+            href="https://www.youtube.com/channel/UCiSIL22pQRpc-8JNiYDFyzQ"
+            icon="youtube"
+          >
+            YouTube
+          </SocialButton>
+        </li>
+        <li class="">
+          <SocialButton
+            href="https://github.com/ChristopherBiscardi"
+            icon="github"
+          >
+            GitHub
+          </SocialButton>
+        </li>
+      </ul>
+      <LowerTilt />
+    </div>
+  </div>
+);
+const Serverless = props => (
+  <div class="py-12 bg-indigo-200">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="lg:text-center">
+        <p class="text-base leading-6 text-teal-600 font-semibold tracking-wide uppercase">
+          Field Guide to
+        </p>
+        <h3 class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10">
+          Serverless
+        </h3>
+        <p class="mt-4 max-w-2xl text-xl leading-7 text-gray-500 lg:mx-auto">
+          Focus on your business logic by taking a path through the serverless
+          ecosystem.
+        </p>
+      </div>
+
+      <div class="mt-10">
+        <ul class="md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+          {[
+            {
+              title: "Compute",
+              content:
+                "From the basics with Netlify to change data capture and responding to Cognito hooks with AWS Lambda.",
+              icon: (
+                <svg
+                  class="h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                  />
+                </svg>
+              )
+            },
+            {
+              title: "Storage",
+              content:
+                "Take a dive into serverless-native approaches that scale forever like DynamoDB, Amazon Aurora Serverless, and FaunaDB.",
+              icon: (
+                <svg
+                  class="h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                  />
+                </svg>
+              )
+            },
+            {
+              title: "Test in Production",
+              content:
+                "Adopt modern approaches to software development like feature flags and continuous delivery with Serverless Framework CI and GitHub Actions.",
+              icon: (
+                <svg
+                  class="h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                  />
+                </svg>
+              )
+            },
+            {
+              title: "Mobile notifications",
+              content:
+                "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.",
+              icon: (
+                <svg
+                  class="h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                  />
+                </svg>
+              )
+            }
+          ].map(({ title, content, icon }) => (
+            <li>
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
+                    {icon}
+                  </div>
+                </div>
+                <div class="ml-4">
+                  <h4 class="text-lg leading-6 font-medium text-gray-900">
+                    {title}
+                  </h4>
+                  <p class="mt-2 text-base leading-6 text-gray-500">
+                    {content}
+                  </p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+);
+const Rust = props => (
+  <div class="bg-gray-900 relative pb-32">
+    <div class="max-w-screen-xl mx-auto py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
+      <div>
+        <h2 class="text-base leading-6 font-semibold text-teal-400 uppercase tracking-wide">
+          Field Guide to
+        </h2>
+        <p class="mt-2 text-3xl leading-9 font-extrabold text-gray-100">Rust</p>
+        <p class="mt-4 text-lg leading-7 text-gray-400 pr-4">
+          Build faster, safer, and more usable software with Rust.
+        </p>
+        <a
+          href="/rust"
+          class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-500 hover:bg-teal-400 focus:outline-none focus:bg-teal-400 transition duration-150 ease-in-out mt-4"
+        >
+          Learn more
+        </a>
+      </div>
+      <div class="mt-12 lg:mt-0 lg:col-span-2">
+        <dl class="space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:grid-rows-4 sm:grid-flow-col sm:gap-x-6 sm:gap-y-10 lg:gap-x-8">
+          {[
+            {
+              title: "Command Line Interfaces",
+              content:
+                "Build robust CLIs with structopt, assert_cmd, and indicatif."
+            },
+            {
+              title: "No Data Races",
+              content:
+                "A data race has Undefined Behavior, and is therefore impossible to perform in Safe Rust."
+            },
+            {
+              title: "No Garbage Collector",
+              content:
+                " With no runtime and no GC, Rust can power performance-critical services, run on embedded devices, and integrate with otherlanguages."
+            },
+            {
+              title: "Reliable",
+              content:
+                "You can trust Rust's type system and helpful compiler messages to point you in the right direction."
+            },
+            {
+              title: "Cargo",
+              content:
+                "A package manager and ecosystem that gives you the best of NPM and more, including testing, documentation, and benchmarks built-in."
+            },
+            {
+              title: "WASM",
+              content:
+                "Whether publishing to NPM or bundling with Webpack, Rust's WASM support is cutting edge."
+            },
+            {
+              title: "Community",
+              content:
+                "Built by core teams and working groups that *you* can take a part in."
+            },
+            {
+              title: "Mobile app",
+              content:
+                "Find what you need with advanced filters, bulk actions, and quick views."
+            }
+          ].map(({ title, content }) => (
+            <div class="flex space-x-3">
+              {/* <!-- Heroicon name: check --> */}
+              <svg
+                class="flex-shrink-0 h-6 w-6 text-green-500"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              <div class="space-y-2">
+                <dt class="text-lg leading-6 font-medium text-gray-100">
+                  {title}
+                </dt>
+                <dd class="flex space-x-3 lg:py-0 lg:pb-4">
+                  <span class="text-base leading-6 text-gray-400">
+                    {content}
+                  </span>
+                </dd>
+              </div>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+    <LowerTilt color="#cddbfe" flip />
+  </div>
+);

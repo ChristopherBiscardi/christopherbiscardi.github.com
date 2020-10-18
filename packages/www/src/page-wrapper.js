@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 // import Highlight, { defaultProps } from "prism-react-renderer";
 import { jsx, keyframes, Global } from "@emotion/core";
-import Logo from "./components/logos/logo-full.js";
+// import Logo from "./components/logos/logo-full.js";
 
 const maxWidth = "800px";
 const textColor = "rgba(255, 255, 255, 0.86)";
@@ -136,51 +136,714 @@ const prismTheme = {
   ]
 };
 
-const Header = forwardRef((props, ref) => (
-  <header
-    ref={ref}
-    css={{
-      display: "flex",
-      height: "75px",
-      maxWidth,
-      margin: "auto",
-      marginTop: "30px",
-      flexWrap: "wrap"
-    }}
-  >
-    <div>
-      <a href="/" css={{ display: "flex", flex: 1, marginTop: "7px" }}>
-        <Logo />
-      </a>
-    </div>
-    <nav css={{ display: "flex", flex: 1 }}>
-      <ul
-        css={{
-          listStyleType: "none",
-          display: "flex",
-          flex: 1,
-          justifyContent: "flex-end",
-          flexWrap: "wrap",
-          padding: 0,
-          marginTop: "-2px"
-        }}
-      >
-        {nav.map(({ displayName, url }) => {
-          return (
-            <li
-              key={displayName + url}
-              css={{ marginLeft: "2rem", marginTop: "18px" }}
+const Header = forwardRef((props, ref) => {
+  const [showSolutions, setShowSolutions] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const [showMobileMenu, setMobileMenu] = useState(false);
+  const toggleMobileMenu = () => setMobileMenu(!showMobileMenu);
+  return (
+    <div class="relative bg-gray-900">
+      <div class="flex justify-between items-center px-4 py-6 sm:px-6 md:justify-start md:space-x-10">
+        <div class="lg:w-0 lg:flex-1">
+          <a href="#" class="flex">
+            <img
+              class="h-8 w-auto sm:h-10"
+              src="/logos/logo-full.svg"
+              alt="Chris Biscardi"
+            />
+          </a>
+        </div>
+        <div class="-mr-2 -my-2 md:hidden">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-gray-300 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-300 transition duration-150 ease-in-out"
+            onClick={() => {
+              toggleMobileMenu();
+            }}
+          >
+            {/* <!-- Heroicon name: menu --> */}
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <a href={url} css={navLinkStyles}>
-                {displayName}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  </header>
-));
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+        <nav class="hidden md:flex space-x-10">
+          <div class="relative">
+            {/* <!-- Item active: "text-gray-100", Item inactive: "text-gray-300" --> */}
+            <button
+              type="button"
+              class="group text-gray-300 inline-flex items-center space-x-2 text-base leading-6 font-medium hover:text-gray-100 focus:outline-none focus:text-gray-100 transition ease-in-out duration-150"
+              onClick={() => {
+                setShowSolutions(true);
+              }}
+            >
+              <span>Solutions</span>
+              {/* <!--
+            Heroicon name: chevron-down
+
+            Item active: "text-gray-600", Item inactive: "text-gray-300"
+          --> */}
+              <svg
+                class="text-gray-300 h-5 w-5 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            {/* <!--
+          'Solutions' flyout menu, show/hide based on flyout menu state.
+
+          Entering: "transition ease-out duration-200"
+            From: "opacity-0 translate-y-1"
+            To: "opacity-100 translate-y-0"
+          Leaving: "transition ease-in duration-150"
+            From: "opacity-100 translate-y-0"
+            To: "opacity-0 translate-y-1"
+        --> */}
+            {showSolutions && (
+              <div class="absolute -ml-4 mt-3 transform w-screen max-w-md md:max-w-3xl lg:ml-0 lg:left-1/2 lg:-translate-x-1/2 z-50">
+                <div class="rounded-lg shadow-lg">
+                  <div class="rounded-lg shadow-xs overflow-hidden">
+                    <div class="z-20 relative grid gap-6 bg-gray-700 px-5 py-6 sm:gap-8 sm:p-8 lg:grid-cols-2">
+                      <a
+                        href="/serverless"
+                        class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                          {/* <!-- Heroicon name: variable --> */}
+                          <svg
+                            class="h-6 w-6"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.649 3.084A1 1 0 015.163 4.4 13.95 13.95 0 004 10c0 1.993.416 3.886 1.164 5.6a1 1 0 01-1.832.8A15.95 15.95 0 012 10c0-2.274.475-4.44 1.332-6.4a1 1 0 011.317-.516zM12.96 7a3 3 0 00-2.342 1.126l-.328.41-.111-.279A2 2 0 008.323 7H8a1 1 0 000 2h.323l.532 1.33-1.035 1.295a1 1 0 01-.781.375H7a1 1 0 100 2h.039a3 3 0 002.342-1.126l.328-.41.111.279A2 2 0 0011.677 14H12a1 1 0 100-2h-.323l-.532-1.33 1.035-1.295A1 1 0 0112.961 9H13a1 1 0 100-2h-.039zm1.874-2.6a1 1 0 011.833-.8A15.95 15.95 0 0118 10c0 2.274-.475 4.44-1.332 6.4a1 1 0 11-1.832-.8A13.949 13.949 0 0016 10c0-1.993-.416-3.886-1.165-5.6z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <div class="space-y-1">
+                          <p class="text-base leading-6 font-medium text-gray-100">
+                            Serverless
+                          </p>
+                          <p class="text-sm leading-5 text-gray-300">
+                            Get straight to the business logic with serverless
+                            architectures.
+                          </p>
+                        </div>
+                      </a>
+                      <a
+                        href="/rust"
+                        class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                          {/* <!-- Heroicon name: cursor-click --> */}
+                          <svg
+                            class="h-6 w-6"
+                            fill="currentColor"
+                            stroke="currentColor"
+                            viewBox="19 19 106 106"
+                            height={144}
+                            width={144}
+                          >
+                            <path d="M123.617 70.716l-4.394-2.72a59.613 59.613 0 00-.125-1.28l3.776-3.522c.384-.358.556-.888.452-1.401a1.506 1.506 0 00-.953-1.122l-4.827-1.805a56.156 56.156 0 00-.378-1.246l3.011-4.182a1.512 1.512 0 00-.984-2.377l-5.09-.828a42.893 42.893 0 00-.612-1.143l2.139-4.695a1.506 1.506 0 00-.118-1.468 1.504 1.504 0 00-1.31-.671l-5.166.18a40.822 40.822 0 00-.816-.99l1.187-5.032a1.512 1.512 0 00-1.819-1.82l-5.031 1.186a43.417 43.417 0 00-.992-.816l.181-5.166a1.51 1.51 0 00-2.138-1.429l-4.694 2.14a54.472 54.472 0 00-1.143-.613l-.83-5.091a1.513 1.513 0 00-2.376-.984l-4.185 3.011a45.914 45.914 0 00-1.244-.377l-1.805-4.828a1.509 1.509 0 00-2.522-.503l-3.522 3.779c-.425-.047-.853-.09-1.28-.125l-2.72-4.395a1.512 1.512 0 00-2.571 0l-2.72 4.395c-.428.035-.856.078-1.281.125l-3.523-3.779a1.51 1.51 0 00-2.522.503l-1.805 4.828c-.418.12-.832.247-1.245.377l-4.184-3.011a1.515 1.515 0 00-2.377.984l-.83 5.091c-.384.199-.764.404-1.143.613l-4.694-2.14a1.507 1.507 0 00-1.467.119c-.436.29-.691.787-.671 1.31l.18 5.166c-.334.267-.665.54-.992.816l-5.031-1.186a1.517 1.517 0 00-1.417.403 1.51 1.51 0 00-.403 1.417l1.185 5.032a48.63 48.63 0 00-.814.99l-5.166-.18a1.511 1.511 0 00-1.429 2.139l2.14 4.695a46.02 46.02 0 00-.613 1.143l-5.09.828a1.513 1.513 0 00-.984 2.377l3.011 4.182c-.131.413-.258.828-.378 1.246l-4.828 1.805a1.51 1.51 0 00-.501 2.523l3.777 3.522c-.047.425-.089.853-.125 1.28l-4.394 2.72a1.51 1.51 0 000 2.571l4.394 2.72c.036.428.078.855.125 1.28l-3.777 3.523a1.512 1.512 0 00.501 2.522l4.828 1.805c.12.418.247.833.378 1.246l-3.011 4.183a1.511 1.511 0 00.985 2.376l5.089.828c.199.386.403.766.613 1.145l-2.14 4.693a1.51 1.51 0 00.119 1.468c.292.437.789.692 1.31.671l5.164-.181c.269.336.54.665.816.992l-1.185 5.033c-.12.51.031 1.043.403 1.414.369.373.906.522 1.417.402l5.031-1.185c.327.278.658.548.992.814l-.18 5.167a1.51 1.51 0 002.138 1.428l4.694-2.139c.378.21.758.414 1.143.613l.83 5.088a1.515 1.515 0 002.377.986l4.182-3.013a47.2 47.2 0 001.246.379l1.805 4.826c.183.49.607.853 1.122.953a1.503 1.503 0 001.4-.452l3.523-3.777c.425.049.853.09 1.281.128l2.72 4.394a1.513 1.513 0 002.571 0l2.72-4.394a49.06 49.06 0 001.28-.128l3.522 3.777c.357.384.887.556 1.4.452a1.508 1.508 0 001.122-.953l1.805-4.826a47.2 47.2 0 001.246-.379l4.183 3.013a1.513 1.513 0 002.376-.986l.83-5.088c.384-.199.764-.406 1.143-.613l4.694 2.139a1.51 1.51 0 002.138-1.428l-.18-5.167c.334-.267.665-.536.991-.814l5.031 1.185a1.504 1.504 0 001.416-.402c.372-.371.523-.904.403-1.414l-1.185-5.033c.276-.327.548-.656.814-.992l5.166.181a1.505 1.505 0 001.31-.671c.292-.436.337-.991.118-1.468l-2.139-4.693c.209-.379.414-.759.612-1.145l5.09-.828a1.511 1.511 0 00.984-2.376l-3.011-4.183c.13-.413.257-.828.378-1.246l4.827-1.805c.491-.184.853-.607.953-1.122a1.503 1.503 0 00-.452-1.4l-3.776-3.523c.046-.425.088-.853.125-1.28l4.394-2.72a1.51 1.51 0 00.001-2.571zm-29.409 36.451a3.114 3.114 0 01-2.385-3.699 3.104 3.104 0 013.689-2.389 3.112 3.112 0 012.387 3.696 3.112 3.112 0 01-3.691 2.392zm-1.493-10.098a2.833 2.833 0 00-3.365 2.18l-1.56 7.28A38.104 38.104 0 0172 109.928a38.141 38.141 0 01-16.121-3.552l-1.559-7.28a2.832 2.832 0 00-3.364-2.179l-6.427 1.38a38.133 38.133 0 01-3.323-3.917h31.272c.354 0 .59-.064.59-.386V82.932c0-.322-.236-.386-.59-.386h-9.146v-7.012h9.892c.903 0 4.828.258 6.083 5.275.393 1.543 1.256 6.562 1.846 8.169.588 1.802 2.982 5.402 5.533 5.402h15.583c.177 0 .366-.02.565-.056a38.398 38.398 0 01-3.544 4.158l-6.575-1.413zm-43.252 9.946a3.107 3.107 0 01-3.691-2.389 3.115 3.115 0 012.386-3.699 3.114 3.114 0 011.305 6.088zM37.6 58.91a3.114 3.114 0 01-1.581 4.107 3.106 3.106 0 01-4.101-1.584 3.114 3.114 0 011.581-4.107A3.106 3.106 0 0137.6 58.91zm-3.646 8.643l6.695-2.975a2.838 2.838 0 001.441-3.744l-1.379-3.118h5.423V82.16H35.193a38.308 38.308 0 01-1.458-10.496c0-1.389.075-2.762.219-4.111zm29.38-2.374v-7.205h12.914c.667 0 4.71.771 4.71 3.794 0 2.51-3.101 3.41-5.651 3.41H63.334zm46.932 6.485c0 .956-.035 1.902-.105 2.841h-3.926c-.393 0-.551.258-.551.643v1.803c0 4.244-2.393 5.167-4.49 5.402-1.997.225-4.211-.836-4.484-2.058-1.178-6.626-3.141-8.041-6.241-10.486 3.847-2.443 7.85-6.047 7.85-10.871 0-5.209-3.571-8.49-6.005-10.099-3.415-2.251-7.196-2.702-8.216-2.702H43.495c5.506-6.145 12.968-10.498 21.408-12.082l4.786 5.021a2.83 2.83 0 004.006.092l5.355-5.122c11.221 2.089 20.721 9.074 26.196 18.657l-3.666 8.28a2.841 2.841 0 001.442 3.744l7.058 3.135c.122 1.253.186 2.519.186 3.802zm-40.575-41.88a3.105 3.105 0 014.394.101 3.115 3.115 0 01-.103 4.401 3.103 3.103 0 01-4.394-.102 3.116 3.116 0 01.103-4.4zm36.38 29.277a3.105 3.105 0 014.1-1.583 3.114 3.114 0 011.581 4.107 3.105 3.105 0 01-4.101 1.584 3.117 3.117 0 01-1.58-4.108z" />
+                          </svg>
+                        </div>
+                        <div class="space-y-1">
+                          <p class="text-base leading-6 font-medium text-gray-100">
+                            Rust
+                          </p>
+                          <p class="text-sm leading-5 text-gray-300">
+                            Write faster, safer concurrent code that can be
+                            called from JavaScript.
+                          </p>
+                        </div>
+                      </a>
+                      <a
+                        href="#"
+                        class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                          {/* <!-- Heroicon name: shield-check --> */}
+                          <svg
+                            class="h-6 w-6"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                            />
+                          </svg>
+                        </div>
+                        <div class="space-y-1">
+                          <p class="text-base leading-6 font-medium text-gray-100">
+                            The <span class="text-teal-300">Free </span>
+                            Newsletter
+                          </p>
+                          <p class="text-sm leading-5 text-gray-300">
+                            Essays and insights into what I'm working on. Sent
+                            when it's worth sending.
+                          </p>
+                        </div>
+                      </a>
+                      <a
+                        href="#"
+                        class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                          {/* <!-- Heroicon name: view-grid --> */}
+                          <svg
+                            class="h-6 w-6"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                            />
+                          </svg>
+                        </div>
+                        <div class="space-y-1">
+                          <p class="text-base leading-6 font-medium text-gray-100">
+                            The <span class="text-pink-300">Edge </span>
+                            Newsletter
+                          </p>
+                          <p class="text-sm leading-5 text-gray-300">
+                            I keep up to date with the bleeding edge of tech so
+                            you don't have to. Weekly.
+                          </p>
+                        </div>
+                      </a>
+                      <a
+                        href="#"
+                        class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                          {/* <!-- Heroicon name: refresh --> */}
+                          <svg
+                            class="h-6 w-6"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            />
+                          </svg>
+                        </div>
+                        <div class="space-y-1">
+                          <p class="text-base leading-6 font-medium text-gray-100">
+                            Refresh
+                          </p>
+                          <p class="text-sm leading-5 text-gray-300">Refresh</p>
+                        </div>
+                      </a>
+                      <a
+                        href="#"
+                        class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                          {/* <!-- Heroicon name: document-report --> */}
+                          <svg
+                            class="h-6 w-6"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                        </div>
+                        <div class="space-y-1">
+                          <p class="text-base leading-6 font-medium text-gray-100">
+                            Reports
+                          </p>
+                          <p class="text-sm leading-5 text-gray-300">
+                            Get detailed reports that will help you make more
+                            informed decisions
+                          </p>
+                        </div>
+                      </a>
+                    </div>
+                    <div class="p-5 bg-gray-800 sm:p-8">
+                      <a
+                        href="https://toast.dev"
+                        class="-m-3 p-3 flow-root space-y-1 rounded-md hover:bg-gray-900 transition ease-in-out duration-150"
+                      >
+                        <div class="flex items-center space-x-3">
+                          <div class="text-base leading-6 font-medium text-gray-100">
+                            Toast
+                          </div>
+                          <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium leading-5 bg-teal-100 text-teal-800">
+                            Beta
+                          </span>
+                        </div>
+                        <p class="text-sm leading-5 text-gray-300">
+                          Build faser and smaller static sites with incremental
+                          compilation, native ES Modules.
+                        </p>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <a
+            href="https://discord.gg/S9Gdagv"
+            class="text-base leading-6 font-medium text-gray-300 hover:text-gray-100 focus:outline-none focus:text-gray-100 transition ease-in-out duration-150"
+          >
+            Discord
+          </a>
+          <a
+            href="https://partycorgi.com/"
+            class="text-base leading-6 font-medium text-gray-300 hover:text-gray-100 focus:outline-none focus:text-gray-100 transition ease-in-out duration-150"
+          >
+            Party Corgi
+          </a>
+
+          <div class="relative">
+            {/* <!-- Item active: "text-gray-100", Item inactive: "text-gray-300" --> */}
+            <button
+              type="button"
+              class="group text-gray-300 inline-flex items-center space-x-2 text-base leading-6 font-medium hover:text-gray-100 focus:outline-none focus:text-gray-100 transition ease-in-out duration-150"
+              onClick={() => {
+                setShowMore(true);
+              }}
+            >
+              <span>More</span>
+              {/* <!--
+            Heroicon name: chevron-down
+
+            Item active: "text-gray-600", Item inactive: "text-gray-300"
+          --> */}
+              <svg
+                class="text-gray-300 h-5 w-5 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+            {/* <!--
+          'More' flyout menu, show/hide based on flyout menu state.
+
+          Entering: "transition ease-out duration-200"
+            From: "opacity-0 translate-y-1"
+            To: "opacity-100 translate-y-0"
+          Leaving: "transition ease-in duration-150"
+            From: "opacity-100 translate-y-0"
+            To: "opacity-0 translate-y-1"
+        --> */}
+            {showMore && (
+              <div class="absolute left-1/2 transform -translate-x-1/2 mt-3 px-2 w-screen max-w-xs sm:px-0 z-50">
+                <div class="rounded-lg shadow-lg">
+                  <div class="rounded-lg shadow-xs overflow-hidden">
+                    <div class="z-20 relative grid gap-6 bg-gray-700 px-5 py-6 sm:gap-8 sm:p-8">
+                      <a
+                        href="#"
+                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <p class="text-base leading-6 font-medium text-gray-100">
+                          Digital Garden
+                        </p>
+                        <p class="text-sm leading-5 text-gray-300">
+                          My notes, posts, and pieces, organized by topic
+                        </p>
+                      </a>
+                      <a
+                        href="#"
+                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <p class="text-base leading-6 font-medium text-gray-100">
+                          Help Center
+                        </p>
+                        <p class="text-sm leading-5 text-gray-300">
+                          Get all of your questions answered in our forums of
+                          contact support.
+                        </p>
+                      </a>
+                      <a
+                        href="#"
+                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <p class="text-base leading-6 font-medium text-gray-100">
+                          Guides
+                        </p>
+                        <p class="text-sm leading-5 text-gray-300">
+                          Learn how to maximize our platform to get the most out
+                          of it.
+                        </p>
+                      </a>
+                      <a
+                        href="#"
+                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <p class="text-base leading-6 font-medium text-gray-100">
+                          Events
+                        </p>
+                        <p class="text-sm leading-5 text-gray-300">
+                          Check out webinars with experts and learn about our
+                          annual conference.
+                        </p>
+                      </a>
+                      <a
+                        href="#"
+                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
+                      >
+                        <p class="text-base leading-6 font-medium text-gray-100">
+                          Security
+                        </p>
+                        <p class="text-sm leading-5 text-gray-300">
+                          Understand how we take your privacy seriously.
+                        </p>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </nav>
+        <div class="hidden md:flex items-center justify-end space-x-8 md:flex-1 lg:w-0">
+          <a
+            href="#"
+            class="whitespace-no-wrap text-base leading-6 font-medium text-gray-300 hover:text-gray-100 focus:outline-none focus:text-gray-100"
+          >
+            Sign in
+          </a>
+          <span class="inline-flex rounded-md shadow-sm">
+            <a
+              href="#"
+              class="whitespace-no-wrap inline-flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-600 hover:bg-teal-500 focus:outline-none focus:border-teal-700 focus:shadow-outline-teal active:bg-teal-700 transition ease-in-out duration-150"
+            >
+              Sign up
+            </a>
+          </span>
+        </div>
+      </div>
+
+      {/* <!--
+    Mobile menu, show/hide based on mobile menu state.
+
+    Entering: "duration-200 ease-out"
+      From: "opacity-0 scale-95"
+      To: "opacity-100 scale-100"
+    Leaving: "duration-100 ease-in"
+      From: "opacity-100 scale-100"
+      To: "opacity-0 scale-95"
+  --> */}
+      {showMobileMenu && (
+        <div class="absolute top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden z-50">
+          <div class="rounded-lg shadow-lg">
+            <div class="rounded-lg shadow-xs bg-gray-700 divide-y-2 divide-gray-900">
+              <div class="pt-5 pb-6 px-5 space-y-6">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <img
+                      class="h-8 w-auto"
+                      src="/logos/logo-full.svg"
+                      alt="Chris Biscardi"
+                    />
+                  </div>
+                  <div class="-mr-2">
+                    <button
+                      type="button"
+                      class="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-gray-300 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-300 transition duration-150 ease-in-out"
+                      onClick={() => {
+                        toggleMobileMenu();
+                      }}
+                    >
+                      {/* <!-- Heroicon name: x --> */}
+                      <svg
+                        class="h-6 w-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <nav class="grid grid-cols-1 gap-7">
+                    <a
+                      href="/serverless"
+                      class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                    >
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                        {/* <!-- Heroicon name: variable --> */}
+                        <svg
+                          class="h-6 w-6"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4.649 3.084A1 1 0 015.163 4.4 13.95 13.95 0 004 10c0 1.993.416 3.886 1.164 5.6a1 1 0 01-1.832.8A15.95 15.95 0 012 10c0-2.274.475-4.44 1.332-6.4a1 1 0 011.317-.516zM12.96 7a3 3 0 00-2.342 1.126l-.328.41-.111-.279A2 2 0 008.323 7H8a1 1 0 000 2h.323l.532 1.33-1.035 1.295a1 1 0 01-.781.375H7a1 1 0 100 2h.039a3 3 0 002.342-1.126l.328-.41.111.279A2 2 0 0011.677 14H12a1 1 0 100-2h-.323l-.532-1.33 1.035-1.295A1 1 0 0112.961 9H13a1 1 0 100-2h-.039zm1.874-2.6a1 1 0 011.833-.8A15.95 15.95 0 0118 10c0 2.274-.475 4.44-1.332 6.4a1 1 0 11-1.832-.8A13.949 13.949 0 0016 10c0-1.993-.416-3.886-1.165-5.6z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div class="text-base leading-6 font-medium text-gray-100">
+                        Serverless
+                      </div>
+                    </a>
+                    <a
+                      href="/rust"
+                      class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                    >
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                        {/* <!-- Heroicon name: cursor-click --> */}
+                        <svg
+                          class="h-6 w-6"
+                          fill="currentColor"
+                          stroke="currentColor"
+                          viewBox="19 19 106 106"
+                          height={144}
+                          width={144}
+                        >
+                          <path d="M123.617 70.716l-4.394-2.72a59.613 59.613 0 00-.125-1.28l3.776-3.522c.384-.358.556-.888.452-1.401a1.506 1.506 0 00-.953-1.122l-4.827-1.805a56.156 56.156 0 00-.378-1.246l3.011-4.182a1.512 1.512 0 00-.984-2.377l-5.09-.828a42.893 42.893 0 00-.612-1.143l2.139-4.695a1.506 1.506 0 00-.118-1.468 1.504 1.504 0 00-1.31-.671l-5.166.18a40.822 40.822 0 00-.816-.99l1.187-5.032a1.512 1.512 0 00-1.819-1.82l-5.031 1.186a43.417 43.417 0 00-.992-.816l.181-5.166a1.51 1.51 0 00-2.138-1.429l-4.694 2.14a54.472 54.472 0 00-1.143-.613l-.83-5.091a1.513 1.513 0 00-2.376-.984l-4.185 3.011a45.914 45.914 0 00-1.244-.377l-1.805-4.828a1.509 1.509 0 00-2.522-.503l-3.522 3.779c-.425-.047-.853-.09-1.28-.125l-2.72-4.395a1.512 1.512 0 00-2.571 0l-2.72 4.395c-.428.035-.856.078-1.281.125l-3.523-3.779a1.51 1.51 0 00-2.522.503l-1.805 4.828c-.418.12-.832.247-1.245.377l-4.184-3.011a1.515 1.515 0 00-2.377.984l-.83 5.091c-.384.199-.764.404-1.143.613l-4.694-2.14a1.507 1.507 0 00-1.467.119c-.436.29-.691.787-.671 1.31l.18 5.166c-.334.267-.665.54-.992.816l-5.031-1.186a1.517 1.517 0 00-1.417.403 1.51 1.51 0 00-.403 1.417l1.185 5.032a48.63 48.63 0 00-.814.99l-5.166-.18a1.511 1.511 0 00-1.429 2.139l2.14 4.695a46.02 46.02 0 00-.613 1.143l-5.09.828a1.513 1.513 0 00-.984 2.377l3.011 4.182c-.131.413-.258.828-.378 1.246l-4.828 1.805a1.51 1.51 0 00-.501 2.523l3.777 3.522c-.047.425-.089.853-.125 1.28l-4.394 2.72a1.51 1.51 0 000 2.571l4.394 2.72c.036.428.078.855.125 1.28l-3.777 3.523a1.512 1.512 0 00.501 2.522l4.828 1.805c.12.418.247.833.378 1.246l-3.011 4.183a1.511 1.511 0 00.985 2.376l5.089.828c.199.386.403.766.613 1.145l-2.14 4.693a1.51 1.51 0 00.119 1.468c.292.437.789.692 1.31.671l5.164-.181c.269.336.54.665.816.992l-1.185 5.033c-.12.51.031 1.043.403 1.414.369.373.906.522 1.417.402l5.031-1.185c.327.278.658.548.992.814l-.18 5.167a1.51 1.51 0 002.138 1.428l4.694-2.139c.378.21.758.414 1.143.613l.83 5.088a1.515 1.515 0 002.377.986l4.182-3.013a47.2 47.2 0 001.246.379l1.805 4.826c.183.49.607.853 1.122.953a1.503 1.503 0 001.4-.452l3.523-3.777c.425.049.853.09 1.281.128l2.72 4.394a1.513 1.513 0 002.571 0l2.72-4.394a49.06 49.06 0 001.28-.128l3.522 3.777c.357.384.887.556 1.4.452a1.508 1.508 0 001.122-.953l1.805-4.826a47.2 47.2 0 001.246-.379l4.183 3.013a1.513 1.513 0 002.376-.986l.83-5.088c.384-.199.764-.406 1.143-.613l4.694 2.139a1.51 1.51 0 002.138-1.428l-.18-5.167c.334-.267.665-.536.991-.814l5.031 1.185a1.504 1.504 0 001.416-.402c.372-.371.523-.904.403-1.414l-1.185-5.033c.276-.327.548-.656.814-.992l5.166.181a1.505 1.505 0 001.31-.671c.292-.436.337-.991.118-1.468l-2.139-4.693c.209-.379.414-.759.612-1.145l5.09-.828a1.511 1.511 0 00.984-2.376l-3.011-4.183c.13-.413.257-.828.378-1.246l4.827-1.805c.491-.184.853-.607.953-1.122a1.503 1.503 0 00-.452-1.4l-3.776-3.523c.046-.425.088-.853.125-1.28l4.394-2.72a1.51 1.51 0 00.001-2.571zm-29.409 36.451a3.114 3.114 0 01-2.385-3.699 3.104 3.104 0 013.689-2.389 3.112 3.112 0 012.387 3.696 3.112 3.112 0 01-3.691 2.392zm-1.493-10.098a2.833 2.833 0 00-3.365 2.18l-1.56 7.28A38.104 38.104 0 0172 109.928a38.141 38.141 0 01-16.121-3.552l-1.559-7.28a2.832 2.832 0 00-3.364-2.179l-6.427 1.38a38.133 38.133 0 01-3.323-3.917h31.272c.354 0 .59-.064.59-.386V82.932c0-.322-.236-.386-.59-.386h-9.146v-7.012h9.892c.903 0 4.828.258 6.083 5.275.393 1.543 1.256 6.562 1.846 8.169.588 1.802 2.982 5.402 5.533 5.402h15.583c.177 0 .366-.02.565-.056a38.398 38.398 0 01-3.544 4.158l-6.575-1.413zm-43.252 9.946a3.107 3.107 0 01-3.691-2.389 3.115 3.115 0 012.386-3.699 3.114 3.114 0 011.305 6.088zM37.6 58.91a3.114 3.114 0 01-1.581 4.107 3.106 3.106 0 01-4.101-1.584 3.114 3.114 0 011.581-4.107A3.106 3.106 0 0137.6 58.91zm-3.646 8.643l6.695-2.975a2.838 2.838 0 001.441-3.744l-1.379-3.118h5.423V82.16H35.193a38.308 38.308 0 01-1.458-10.496c0-1.389.075-2.762.219-4.111zm29.38-2.374v-7.205h12.914c.667 0 4.71.771 4.71 3.794 0 2.51-3.101 3.41-5.651 3.41H63.334zm46.932 6.485c0 .956-.035 1.902-.105 2.841h-3.926c-.393 0-.551.258-.551.643v1.803c0 4.244-2.393 5.167-4.49 5.402-1.997.225-4.211-.836-4.484-2.058-1.178-6.626-3.141-8.041-6.241-10.486 3.847-2.443 7.85-6.047 7.85-10.871 0-5.209-3.571-8.49-6.005-10.099-3.415-2.251-7.196-2.702-8.216-2.702H43.495c5.506-6.145 12.968-10.498 21.408-12.082l4.786 5.021a2.83 2.83 0 004.006.092l5.355-5.122c11.221 2.089 20.721 9.074 26.196 18.657l-3.666 8.28a2.841 2.841 0 001.442 3.744l7.058 3.135c.122 1.253.186 2.519.186 3.802zm-40.575-41.88a3.105 3.105 0 014.394.101 3.115 3.115 0 01-.103 4.401 3.103 3.103 0 01-4.394-.102 3.116 3.116 0 01.103-4.4zm36.38 29.277a3.105 3.105 0 014.1-1.583 3.114 3.114 0 011.581 4.107 3.105 3.105 0 01-4.101 1.584 3.117 3.117 0 01-1.58-4.108z" />
+                        </svg>
+                      </div>
+                      <div class="text-base leading-6 font-medium text-gray-100">
+                        Rust
+                      </div>
+                    </a>
+                    <a
+                      href="#"
+                      class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                    >
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                        {/* <!-- Heroicon name: shield-check --> */}
+                        <svg
+                          class="h-6 w-6"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                          />
+                        </svg>
+                      </div>
+                      <div class="text-base leading-6 font-medium text-gray-100">
+                        The <span class="text-teal-300">Free</span> Newsletter
+                      </div>
+                    </a>
+                    <a
+                      href="#"
+                      class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                    >
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                        {/* <!-- Heroicon name: view-grid --> */}
+                        <svg
+                          class="h-6 w-6"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                          />
+                        </svg>
+                      </div>
+                      <div class="text-base leading-6 font-medium text-gray-100">
+                        The <span class="text-pink-300">Edge</span> Newsletter
+                      </div>
+                    </a>
+                    <a
+                      href="#"
+                      class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                    >
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                        {/* <!-- Heroicon name: refresh --> */}
+                        <svg
+                          class="h-6 w-6"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          />
+                        </svg>
+                      </div>
+                      <div class="text-base leading-6 font-medium text-gray-100">
+                        Automations
+                      </div>
+                    </a>
+                    <a
+                      href="#"
+                      class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
+                    >
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                        {/* <!-- Heroicon name: document-report --> */}
+                        <svg
+                          class="h-6 w-6"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </div>
+                      <div class="text-base leading-6 font-medium text-gray-100">
+                        Reports
+                      </div>
+                    </a>
+                  </nav>
+                </div>
+              </div>
+              <div class="py-6 px-5 space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                  <a
+                    href="https://discord.gg/S9Gdagv"
+                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
+                  >
+                    Discord
+                  </a>
+                  <a
+                    href="https://partycorgi.com/"
+                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
+                  >
+                    Party Corgi
+                  </a>
+                  <a
+                    href="#"
+                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
+                  >
+                    Enterprise
+                  </a>
+                  <a
+                    href="#"
+                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
+                  >
+                    Blog
+                  </a>
+                  <a
+                    href="#"
+                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
+                  >
+                    Help Center
+                  </a>
+                  <a
+                    href="#"
+                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
+                  >
+                    Guides
+                  </a>
+                  <a
+                    href="#"
+                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
+                  >
+                    Security
+                  </a>
+                  <a
+                    href="#"
+                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
+                  >
+                    Events
+                  </a>
+                </div>
+                <div class="space-y-6">
+                  <span class="w-full flex rounded-md shadow-sm">
+                    <a
+                      href="#"
+                      class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-600 hover:bg-teal-500 focus:outline-none focus:border-teal-700 focus:shadow-outline-teal active:bg-teal-700 transition ease-in-out duration-150"
+                    >
+                      Sign up
+                    </a>
+                  </span>
+                  <p class="text-center text-base leading-6 font-medium text-gray-300">
+                    <span>Existing customer? </span>
+                    <a
+                      href="#"
+                      class="text-teal-300 hover:text-teal-200 transition ease-in-out duration-150"
+                    >
+                      Sign in
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+});
 
 const gradientAnimation = keyframes`
   0%{background-position:0% 50%}
@@ -475,38 +1138,11 @@ export default ({ children, ...props }) => {
     title = props.title;
     description = "";
   }
-  // console.log(children);
-  // return <MDXProvider>{children}</MDXProvider>;
-  return (
-    <div>
-      {/* {children} */}
-      {/* <MDXProvider>{children}</MDXProvider> */}
-      <ProgressBar />
-      <Tweetable />
-      <Global
-        styles={{
-          "*": {
-            boxSizing: "border-box",
-            margin: 0,
-            padding: 0,
-            border: "0 solid #ffffff22"
-          },
 
-          html: {
-            fontSize: 20,
-            background: "#19202c",
-            fontFamily: "Inter, system-ui, sans-serif"
-          },
-          "@media (max-width: 959px)": {
-            html: {
-              fontSize: 17
-            }
-          },
-          body: {
-            minHeight: "100vh"
-          }
-        }}
-      />
+  return (
+    <div className="bg-gray-900">
+      <ProgressBar />
+      {/* <Tweetable /> */}
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -543,6 +1179,7 @@ export default ({ children, ...props }) => {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap"
           rel="stylesheet"
         />
+        <link rel="stylesheet" href="/styles.css" />
         <script src="/amplify.js" type="text/javascript" />
       </Helmet>
       <Header ref={headerRef} />
@@ -1093,116 +1730,248 @@ export default ({ children, ...props }) => {
         {children}
       </MDXProvider>
       <div css={{ height: "5rem" }} />
-      {props.title && (
+      {props.title ? (
         <div
           dangerouslySetInnerHTML={{
             __html: `<div class="rm-area-post-blog"></div>`
           }}
         />
+      ) : (
+        <div class="bg-gray-800">
+          <div class="max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center">
+            <div class="lg:w-0 lg:flex-1">
+              <h2
+                class="text-3xl leading-9 font-extrabold tracking-tight text-white sm:text-4xl sm:leading-10"
+                id="newsletter-headline"
+              >
+                Sign up for my free newsletter
+              </h2>
+              <p class="mt-3 max-w-3xl text-lg leading-6 text-gray-300">
+                My newsletter is where you'll find exclusive content from me. I
+                write about technology, startups, and why you shouldn't call
+                yourself a junior engineer
+              </p>
+            </div>
+            <div class="mt-8 lg:mt-0 lg:ml-8 lg:w-1/4">
+              <form
+                class="flex flex-col gap-y-4"
+                aria-labelledby="newsletter-headline"
+              >
+                <div>
+                  <label
+                    for="name"
+                    class="block text-sm font-medium leading-5 text-gray-200"
+                  >
+                    Preferred Name
+                  </label>
+                  <div class="mt-1 rounded-md shadow-sm">
+                    <input
+                      id="name"
+                      type="name"
+                      class="form-input appearance-none w-full px-5 py-3 border border-transparent text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    for="email"
+                    class="block text-sm font-medium leading-5 text-gray-200"
+                  >
+                    Email address
+                  </label>
+                  <div class="mt-1 rounded-md shadow-sm">
+                    <input
+                      id="email"
+                      type="email"
+                      class="form-input appearance-none w-full px-5 py-3 border border-transparent text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out"
+                    />
+                  </div>
+                </div>
+                <div class="mt-3 rounded-md shadow sm:flex-shrink-0">
+                  <button class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-500 hover:bg-teal-400 focus:outline-none focus:bg-teal-400 transition duration-150 ease-in-out">
+                    Sign up
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       )}
-      <footer
-        css={{
-          background: "rgba(0,0,0,.1)",
-          display: "grid",
-          color: "rgba(255, 255, 255, 0.86)",
-          padding: "2rem 0 5rem 0",
-          borderTop: "1px solid rgba(51,183,255,.21)",
-          gridTemplateColumns:
-            "minmax(1.2rem, 1fr) minmax(0, 400px) minmax(0, 400px) minmax(1.2rem, 1fr)",
-          "@media screen and (max-width: 800px)": {
-            gridTemplateColumns:
-              "minmax(1.2rem, 1fr) minmax(0, 400px) minmax(0, 400px) minmax(1.2rem, 1fr)"
-          }
-        }}
-      >
-        <div
-          css={{
-            gridColumn: "2/4",
-            display: "flex",
-            justifyContent: "space-between",
-            "& a": {
-              color: "rgba(51,183,255,.91)",
-              fontSize: ".8rem",
-              fontWeight: 500,
-              textDecoration: "none"
-            }
-          }}
-        >
-          <div>
-            <h2
-              css={{
-                fontSize: "1rem",
-                fontFamily: "Inter, system-ui, sans-serif", // "InterDisplay var",
-                letterSpacing: "-1px",
-                color: "#add5eb",
-                position: "relative",
-                borderBottom: "3px solid rgba(51,183,255,.21)",
-                paddingBottom: 3
-              }}
-            >
-              Projects
-            </h2>
-            <ul css={{ listStyleType: "none" }}>
-              <li>
-                <a href="https://sector.tools">Sector Tools</a>
-              </li>
-              <li>
-                <a href="https://toast.dev">Toast</a>
-              </li>
-            </ul>
+      <footer class="bg-gray-800">
+        <div class="max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+          <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+            <div class="grid grid-cols-2 gap-8 xl:col-span-2">
+              <div class="md:grid md:grid-cols-2 md:gap-8">
+                <div>
+                  <h4 class="text-sm leading-5 font-semibold text-gray-400 tracking-wider uppercase">
+                    Solutions
+                  </h4>
+                  <ul class="mt-4 space-y-4">
+                    <li>
+                      <a
+                        href="/serverless"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Serverless
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="/rust"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Rust
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://pages.convertkit.com/04c24646a3/c136f814fc"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        The <span class="text-teal-300">Free</span> Newsletter
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        The <span class="text-pink-300">Edge</span> Newsletter
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="mt-12 md:mt-0">
+                  <h4 class="text-sm leading-5 font-semibold text-gray-400 tracking-wider uppercase">
+                    Products
+                  </h4>
+                  <ul class="mt-4 space-y-4">
+                    <li>
+                      <a
+                        href="https://toast.dev"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Toast
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://sector.tools/"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Sector Tools
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="md:grid md:grid-cols-2 md:gap-8">
+                <div>
+                  <h4 class="text-sm leading-5 font-semibold text-gray-400 tracking-wider uppercase">
+                    Company
+                  </h4>
+                  <ul class="mt-4 space-y-4">
+                    <li>
+                      <a
+                        href="#"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        About
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Blog
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Jobs
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Press
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Partners
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="mt-12 md:mt-0">
+                  <h4 class="text-sm leading-5 font-semibold text-gray-400 tracking-wider uppercase">
+                    -
+                  </h4>
+                  <ul class="mt-4 space-y-4">
+                    <li>
+                      <a
+                        href="https://blacklivesmatters.carrd.co/"
+                        class="text-base leading-6 text-gray-300 hover:text-white"
+                      >
+                        Black Lives Matter
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <h2
-              css={{
-                fontSize: "1rem",
-                fontFamily: "Inter, system-ui, sans-serif", // "InterDisplay var",
-                letterSpacing: "-1px",
-                color: "#add5eb",
-                position: "relative",
-                borderBottom: "3px solid rgba(51,183,255,.21)",
-                paddingBottom: 3
-              }}
-            >
-              Social
-            </h2>
-            <ul css={{ listStyleType: "none" }}>
-              <li>
-                <a href="https://twitter.com/chrisbiscardi">Twitter</a>
-              </li>
-              <li>
-                <a href="https://github.com/christopherbiscardi">GitHub</a>
-              </li>
-              <li>
-                <a href="https://pages.convertkit.com/04c24646a3/c136f814fc">
-                  Newsletter
-                </a>
-              </li>
-              <li>
-                <a href="https://discord.gg/S9Gdagv">Discord</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h2
-              css={{
-                fontSize: "1rem",
-                fontFamily: "Inter, system-ui, sans-serif", // "InterDisplay var",
-                letterSpacing: "-1px",
-                color: "#add5eb",
-                position: "relative",
-                borderBottom: "3px solid rgba(51,183,255,.21)",
-                paddingBottom: 3
-              }}
-            >
-              -
-            </h2>
-            <ul css={{ listStyleType: "none" }}>
-              <li>
-                <a href="https://blacklivesmatters.carrd.co/">
-                  Black Lives Matter
-                </a>
-              </li>
-            </ul>
+          <div class="mt-8 border-t border-gray-700 pt-8 md:flex md:items-center md:justify-between">
+            <div class="flex space-x-6 md:order-2">
+              <a
+                href="https://twitter.com/chrisbiscardi"
+                class="text-gray-400 hover:text-gray-300"
+              >
+                <span class="sr-only">Twitter</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                </svg>
+              </a>
+              <a
+                href="https://github.com/christopherbiscardi/"
+                class="text-gray-400 hover:text-gray-300"
+              >
+                <span class="sr-only">GitHub</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://dribbble.com/chrisbiscardi"
+                class="text-gray-400 hover:text-gray-300"
+              >
+                <span class="sr-only">Dribbble</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </a>
+            </div>
+            <p class="mt-8 text-base leading-6 text-gray-400 md:mt-0 md:order-1">
+              Built with Toast, Sector, and MDX
+            </p>
           </div>
         </div>
       </footer>

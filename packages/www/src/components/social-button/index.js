@@ -72,20 +72,11 @@ const SocialButton = ({ href, icon, children }) => {
   return (
     <a
       href={href}
-      css={{
-        display: "flex",
-        padding: " .4rem .8rem",
-        borderRadius: "3px",
-        textDecoration: "none",
-        fontSize: "1rem",
-        alignItems: "center",
-        ...socialStyles[icon]
-      }}
+      style={socialStyles[icon]}
+      class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center tracking-wide"
     >
-      <div css={{ height: "20px" }}>
-        <Icon width="auto" height="15px" css={{ width: "inherit" }} />
-      </div>
-      <span css={{ marginLeft: ".5rem" }}>{children}</span>
+      <Icon height="15px" class="fill-current w-4 h-4 mr-2" />
+      <span>{children}</span>
     </a>
   );
 };
