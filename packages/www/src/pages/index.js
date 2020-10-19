@@ -1,9 +1,7 @@
-/** @jsx jsx */
-import { Fragment } from "preact";
-import { jsx } from "@emotion/core";
+import { h } from "preact";
 import Icon from "../components/small-icons/index.js"; //, { iconFromList }
 import SocialButton from "../components/social-button/index.js";
-import ConvertKitForm from "../components/convertkit-form/index.js";
+// import ConvertKitForm from "../components/convertkit-form/index.js";
 
 const NyanCat = props => (
   <img
@@ -21,9 +19,13 @@ export default props => {
       <Hero />
       <Rust />
       <Serverless />
-      <div class="flex">
-        <NyanCat style={{ height: "37px" }} />
+      <div class="flex relative">
+        <NyanCat
+          class="absolute"
+          style={{ height: "37px", right: 0, top: -18 }}
+        />
       </div>
+      <Toast />
     </main>
   );
 };
@@ -158,7 +160,7 @@ const Serverless = props => (
       </div>
 
       <div class="mt-10">
-        <ul class="md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+        <ul class="md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10 space-y-4 md:space-y-0">
           {[
             {
               title: "Compute",
@@ -256,7 +258,7 @@ const Serverless = props => (
                   <h4 class="text-lg leading-6 font-medium text-gray-900">
                     {title}
                   </h4>
-                  <p class="mt-2 text-base leading-6 text-gray-500">
+                  <p class="mt-2 text-base leading-6 text-gray-600">
                     {content}
                   </p>
                 </div>
@@ -363,5 +365,26 @@ const Rust = props => (
       </div>
     </div>
     <LowerTilt color="#cddbfe" flip />
+  </div>
+);
+const Toast = props => (
+  <div class="bg-teal-700">
+    <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+      <h2 class="text-3xl leading-9 font-extrabold text-white sm:text-4xl sm:leading-10">
+        <span class="block">Start blogging.</span>
+        <span class="block">Build a site with Toast</span>
+      </h2>
+      <p class="mt-4 text-lg leading-6 text-teal-200">
+        Toast is a Jamstack framework built in Rust that can build 10k pages in
+        40 seconds while retaining the developer experience of building a React
+        site.
+      </p>
+      <a
+        href="https://toast.dev"
+        class="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-teal-600 bg-white hover:text-teal-500 hover:bg-teal-50 transition duration-150 ease-in-out sm:w-auto"
+      >
+        Get Started
+      </a>
+    </div>
   </div>
 );

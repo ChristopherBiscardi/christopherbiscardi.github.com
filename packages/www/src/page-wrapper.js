@@ -145,7 +145,7 @@ const Header = forwardRef((props, ref) => {
     <div class="relative bg-gray-900">
       <div class="flex justify-between items-center px-4 py-6 sm:px-6 md:justify-start md:space-x-10">
         <div class="lg:w-0 lg:flex-1">
-          <a href="#" class="flex">
+          <a href="/" class="flex">
             <img
               class="h-8 w-auto sm:h-10"
               src="/logos/logo-full.svg"
@@ -851,16 +851,6 @@ const gradientAnimation = keyframes`
   100%{background-position:0% 50%}
 `;
 
-const headingStyles = {
-  gridColumn: 2,
-  marginTop: "2rem",
-  fontFamily: "Inter, system-ui, sans-serif", // "InterDisplay var",
-  letterSpacing: "-1px",
-  fontWeight: 700,
-  color: "#eef1f7",
-  position: "relative"
-};
-
 // find the total height of window
 const getScrollHeight = () => {
   // https://javascript.info/size-and-scroll-window#width-height-of-the-document
@@ -997,46 +987,7 @@ const debounce = (func, wait) => {
     timeout = setTimeout(later, wait);
   };
 };
-const Tweetable = () => {
-  const [tweetableText, setTweetableText] = useState();
-  useEffect(() => {
-    // event fires for every selection change
-    document.onselectionchange = debounce(() => {
-      // toString on the Selection object gives you the selected text
-      const text = document.getSelection().toString();
-      setTweetableText(text);
-    }, 200);
-  });
-  return tweetableText ? (
-    <div
-      css={{
-        zIndex: 1,
-        position: "fixed",
-        top: "5px",
-        display: "flex",
-        flex: 1,
-        width: "100%",
-        background: "#10151e",
-        justifyContent: "center",
-        color: "#eef1f7",
-        borderBottom: "1px solid rgba(51,183,255,.21)"
-      }}
-    >
-      <div css={{ maxWidth: 400, display: "flex", flexDirection: "column" }}>
-        <p css={{ paddingTop: "1rem" }}>{tweetableText}</p>
-        <a
-          href={
-            "https://twitter.com/intent/tweet?text=" +
-            encodeURI(tweetableText + " " + window.location.href)
-          }
-          css={{ color: "#1DA1F2", alignSelf: "flex-end", padding: "1rem" }}
-        >
-          Tweet this
-        </a>
-      </div>
-    </div>
-  ) : null;
-};
+
 const TitleArea = ({ scrollTargetRef, ...props }) => {
   const [titleShouldHover, setHoverTitle] = useState(false);
   const [fontSize, setFontSize] = useState(false);
@@ -1134,15 +1085,14 @@ export default ({ children, ...props }) => {
   const headerRef = useRef(null);
   let title = "Chris Biscardi's Digital Garden";
   let description = "JAMStack, Serverless, MDX, and more";
-  if (props.title) {
-    title = props.title;
+  if (props.title || props.meta?.title) {
+    title = props.title || props.meta.title;
     description = "";
   }
-
+  const propsHasTitle = Boolean(props.title || props.meta?.title);
   return (
     <div className="bg-gray-900">
       <ProgressBar />
-      {/* <Tweetable /> */}
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1162,7 +1112,7 @@ export default ({ children, ...props }) => {
           content={
             props.title
               ? encodeURI(
-                  `https://opengraph.sector.tools/chris?title=${props.title}${
+                  `https://opengraph.sector.tools/chris?title=${title}${
                     props.tags ? "&tags=" + props.tags.join(",") : ""
                   }${
                     props.contentType && props.contentType === "note"
@@ -1183,8 +1133,22 @@ export default ({ children, ...props }) => {
         <script src="/amplify.js" type="text/javascript" />
       </Helmet>
       <Header ref={headerRef} />
-      {props.title && (
-        <TitleArea title={props.title} scrollTargetRef={headerRef} />
+      {propsHasTitle && (
+        <div
+          style={{
+            backgroundColor: "#19202c",
+            backgroundImage:
+              "linear-gradient(124deg,#ff2400,#e81d1d,#e8b71d,#e3e81d,#1de840,#1ddde8,#2b1de8,#dd00f3,#dd00f3)",
+            backgroundBlendMode: "hue"
+          }}
+          class="py-4 sm:py-10"
+        >
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-100 sm:text-4xl sm:leading-10">
+              {title}
+            </h1>
+          </div>
+        </div>
       )}
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -1424,17 +1388,7 @@ export default ({ children, ...props }) => {
         components={{
           wrapper: function MyWrapper(props) {
             return (
-              <div
-                css={{
-                  display: "grid",
-                  color: "rgba(255, 255, 255, 0.86)",
-                  gridTemplateColumns:
-                    "minmax(1.2rem, 1fr) minmax(0, 57ch) minmax(1.2rem, 1fr)",
-                  "& > *": {
-                    marginTop: "2rem"
-                  }
-                }}
-              >
+              <div class="max-w-2xl mx-auto px-4 pb-16 sm:px-6 lg:px-8 text-gray-100">
                 {props.children}
               </div>
             );
@@ -1451,59 +1405,41 @@ export default ({ children, ...props }) => {
             </svg>
           ),
           Aside: props => (
-            <div
-              {...props}
-              css={{
-                gridColumn: 2,
-                backgroundColor: "hsla(220, 26%, 18%, 1)",
-                borderLeft: "2px solid rgba(51,183,255,.41)",
-                padding: "1rem",
-                paddingTop: 0,
-                marginTop: "1rem",
-                borderRight: "1px solid rgba(51,183,255,.41)"
-              }}
-            />
+            <div class="rounded-md bg-blue-900 p-4 pt-0 mt-4">
+              <div class="flex">
+                <div class="flex-shrink-0 pt-4">
+                  {/* <!-- Heroicon name: information-circle --> */}
+                  <svg
+                    class="h-5 w-5 text-blue-300"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div class="ml-3 flex-1 md:flex md:justify-between text-sm leading-5 text-blue-200">
+                  {props.children}
+                </div>
+              </div>
+            </div>
           ),
           hr: props => (
             <hr
-              css={{
+              class="mt-4"
+              style={{
                 height: "3px",
-                marginTop: "2rem",
                 border: "none",
-                gridColumn: 2,
                 background:
-                  "linear-gradient(90deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%);"
+                  "linear-gradient(90deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)"
               }}
             />
           ),
-          p: props => (
-            // <p
-            //   css={{ gridColumn: 2, paddingTop: "1rem", lineHeight: 1.75 }}
-            //   {...props}
-            // />
-            <p
-              css={{
-                gridColumn: 2,
-
-                fontSize: "22px",
-                lineHeight: "32px",
-                padding: "0.05px 0",
-                ":before": {
-                  content: "''",
-                  marginTop: "-0.3659090909090909em",
-                  display: "block",
-                  height: 0
-                },
-                ":after": {
-                  content: "''",
-                  marginBottom: "-0.3659090909090909em",
-                  display: "block",
-                  height: 0
-                }
-              }}
-              {...props}
-            />
-          ),
+          p: props => <p class="font-sans text-lg pt-4" {...props} />,
           img: props => (
             <img
               css={{
@@ -1534,33 +1470,35 @@ export default ({ children, ...props }) => {
               {...props}
             />
           ),
-          h1: props => <h1 css={headingStyles} {...props} />,
-          h2: props => <h2 css={headingStyles} {...props} />,
-          h3: props => <h3 css={headingStyles} {...props} />,
-          h4: props => <h4 css={headingStyles} {...props} />,
-          h5: props => <h5 css={headingStyles} {...props} />,
-          h6: props => <h6 css={headingStyles} {...props} />,
+          h1: props => <h1 class="font-extrabold text-4xl mt-8" {...props} />,
+          h2: props => <h2 class="font-extrabold text-3xl mt-6" {...props} />,
+          h3: props => <h3 class="font-extrabold text-2xl mt-4" {...props} />,
+          h4: props => <h4 class="font-extrabold text-xl mt-4" {...props} />,
+          h5: props => <h5 class="font-extrabold text-lg mt-4" {...props} />,
+          h6: props => <h6 class="font-extrabold text-base mt-4" {...props} />,
           ul: props => (
             <ul
-              css={{
-                gridColumn: 2,
-                marginTop: `1rem`,
-                marginLeft: `calc(1rem + 4px)`,
-                lineHeight: 1.3
+              class="list-disc list-outside mt-2"
+              style={{
+                marginLeft: "calc(1rem + 2px)"
               }}
               {...props}
             />
           ),
+          "li.ul": props => (
+            <ul class="list-disc list-outside ml-6" {...props} />
+          ),
           ol: props => (
             <ol
-              css={{
-                gridColumn: 2,
-                marginTop: `1rem`,
-                marginLeft: `calc(1rem + 4px)`,
-                lineHeight: 1.3
+              class="list-decimal list-outside mt-2"
+              style={{
+                marginLeft: "calc(1rem + 2px)"
               }}
               {...props}
             />
+          ),
+          "li.ol": props => (
+            <ol class="list-decimal list-outside ml-6" {...props} />
           ),
           table: props => (
             <table css={{ gridColumn: 2, marginTop: "1rem" }} {...props} />
@@ -1577,7 +1515,7 @@ export default ({ children, ...props }) => {
               {...props}
             />
           ),
-          inlineCode: props => <code css={{ color: "#31b7fe" }} {...props} />,
+          inlineCode: props => <code style={{ color: "#31b7fe" }} {...props} />,
           codeblock: props => {
             const lang = props.class && props.class.split("-")[1];
             const langMap = {
@@ -1587,12 +1525,11 @@ export default ({ children, ...props }) => {
 
             return (
               <div
-                css={{
-                  gridColumn: 2,
+                class="mt-4 relative"
+                style={{
                   background: "#11151d",
                   overflow: "auto",
                   borderRadius: 10,
-                  position: "relative",
                   border: "1px solid rgba(51,183,255,.21)",
                   boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
                     inset 0 6.7px 5.3px rgba(0,0,0,0.028),
@@ -1603,25 +1540,21 @@ export default ({ children, ...props }) => {
                 }}
               >
                 <div
-                  css={{
-                    fontSize: `12px`,
-                    display: `flex`,
-                    justifyContent: `space-between`,
+                  class="flex justify-between left-0"
+                  style={{
                     position: `sticky`,
-                    left: 0,
                     borderBottom: "1px solid rgba(51,183,255,.21)"
                   }}
                 >
-                  <span css={{ padding: "1rem" }}>{props.title}</span>
-                  <div css={{ display: "flex" }}>
-                    <span css={{ padding: "1rem" }}>
-                      {langMap[lang] || lang || ""}
-                    </span>
+                  <span class="p-4">{props.title}</span>
+                  <div class="flex">
+                    <span class="p-4">{langMap[lang] || lang || ""}</span>
                     <CopyButton content={props.codestring} />
                   </div>
                 </div>
                 <div
-                  css={{ padding: "1rem 2rem" }}
+                  class="p-4"
+                  // css={{ padding: "1rem 2rem" }}
                   dangerouslySetInnerHTML={{
                     __html: props.children
                   }}
@@ -1686,40 +1619,15 @@ export default ({ children, ...props }) => {
           },
           blockquote: props => (
             <blockquote
-              css={{
-                gridColumn: 2,
+              class="p-4 mt-4 pt-0"
+              style={{
                 backgroundColor: "#1d2634",
                 backgroundImage: `linear-gradient(180deg,rgba(251,89,74,.5) 0%,rgba(251,89,74,.5) 25%,rgba(251,222,75,.5) 25%,rgba(251,222,75,.5) 50%,rgba(112,228,112,.5) 50%,rgba(112,228,112,.5) 75%,rgba(51,183,255,.5) 75%)`,
                 backgroundSize: "3px 100%",
                 backgroundRepeat: "no-repeat",
-                paddingLeft: "1rem",
                 borderRight: `1px solid hsla(217, 28%, 26%, 1)`,
-                paddingTop: `1rem`,
-                paddingBottom: `1rem`,
                 "&:hover": {
                   backgroundImage: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`
-                }
-              }}
-              {...props}
-            />
-          ),
-          "blockquote.p": props => (
-            <p
-              css={{
-                fontSize: "22px",
-                lineHeight: "32px",
-                padding: "0.05px 0",
-                ":before": {
-                  content: "''",
-                  marginTop: "-0.3659090909090909em",
-                  display: "block",
-                  height: 0
-                },
-                ":after": {
-                  content: "''",
-                  marginBottom: "-0.3659090909090909em",
-                  display: "block",
-                  height: 0
                 }
               }}
               {...props}
@@ -1729,8 +1637,8 @@ export default ({ children, ...props }) => {
       >
         {children}
       </MDXProvider>
-      <div css={{ height: "5rem" }} />
-      {props.title ? (
+
+      {propsHasTitle ? (
         <div
           dangerouslySetInnerHTML={{
             __html: `<div class="rm-area-post-blog"></div>`
