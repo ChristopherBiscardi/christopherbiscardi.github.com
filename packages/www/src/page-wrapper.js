@@ -1,140 +1,8 @@
-/** @jsx jsx */
 import { Helmet } from "react-helmet";
 import { MDXProvider } from "@mdx-js/preact";
 import { Fragment, h } from "preact";
 import { useState, useEffect, useRef } from "preact/hooks";
 import { forwardRef } from "preact/compat";
-// import Highlight, { defaultProps } from "prism-react-renderer";
-import { jsx, keyframes, Global } from "@emotion/core";
-// import Logo from "./components/logos/logo-full.js";
-
-const maxWidth = "800px";
-const textColor = "rgba(255, 255, 255, 0.86)";
-
-const nav = [
-  { displayName: "Garden", url: "/garden" },
-  { displayName: "Party Corgi", url: "https://partycorgi.com" },
-  // { displayName: "Tags", url: "/tags" },
-  { displayName: "Discord", url: "https://discord.gg/S9Gdagv" },
-  {
-    displayName: "Newsletter",
-    url: "https://pages.convertkit.com/04c24646a3/c136f814fc"
-  }
-  // { displayName: "Log in", url: "/app" }
-];
-
-const navLinkStyles = {
-  color: "#eef1f7",
-  fontWeight: 250,
-  fontSize: ".9rem",
-  textDecoration: "none"
-};
-
-const prismTheme = {
-  plain: {
-    color: "#d6deeb",
-    backgroundColor: "#011627"
-  },
-  styles: [
-    {
-      types: ["changed"],
-      style: {
-        color: "rgb(162, 191, 252)",
-        fontStyle: "italic"
-      }
-    },
-    {
-      types: ["deleted"],
-      style: {
-        color: "rgba(239, 83, 80, 0.56)",
-        fontStyle: "italic"
-      }
-    },
-    {
-      types: ["inserted", "attr-name"],
-      style: {
-        color: "rgb(173, 219, 103)",
-        fontStyle: "italic"
-      }
-    },
-    {
-      types: ["comment"],
-      style: {
-        color: "rgb(99, 119, 119)",
-        fontStyle: "italic"
-      }
-    },
-    {
-      types: ["string", "url"],
-      style: {
-        color: "rgb(173, 219, 103)"
-      }
-    },
-    {
-      types: ["variable"],
-      style: {
-        color: "rgb(214, 222, 235)"
-      }
-    },
-    {
-      types: ["number"],
-      style: {
-        color: "rgb(247, 140, 108)"
-      }
-    },
-    {
-      types: ["builtin", "char", "constant", "function"],
-      style: {
-        color: "rgb(130, 170, 255)"
-      }
-    },
-    {
-      // This was manually added after the auto-generation
-      // so that punctuations are not italicised
-      types: ["punctuation"],
-      style: {
-        color: "rgb(199, 146, 234)"
-      }
-    },
-    {
-      types: ["selector", "doctype"],
-      style: {
-        color: "rgb(199, 146, 234)",
-        fontStyle: "italic"
-      }
-    },
-    {
-      types: ["class-name"],
-      style: {
-        color: "rgb(255, 203, 139)"
-      }
-    },
-    {
-      types: ["tag", "operator", "keyword"],
-      style: {
-        color: "rgb(127, 219, 202)"
-      }
-    },
-    {
-      types: ["boolean"],
-      style: {
-        color: "rgb(255, 88, 116)"
-      }
-    },
-    {
-      types: ["property"],
-      style: {
-        color: "rgb(128, 203, 196)"
-      }
-    },
-    {
-      types: ["namespace"],
-      style: {
-        color: "rgb(178, 204, 214)"
-      }
-    }
-  ]
-};
 
 const Header = forwardRef((props, ref) => {
   const [showSolutions, setShowSolutions] = useState(false);
@@ -343,65 +211,6 @@ const Header = forwardRef((props, ref) => {
                           </p>
                         </div>
                       </a>
-                      <a
-                        href="#"
-                        class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
-                      >
-                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
-                          {/* <!-- Heroicon name: refresh --> */}
-                          <svg
-                            class="h-6 w-6"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                            />
-                          </svg>
-                        </div>
-                        <div class="space-y-1">
-                          <p class="text-base leading-6 font-medium text-gray-100">
-                            Refresh
-                          </p>
-                          <p class="text-sm leading-5 text-gray-300">Refresh</p>
-                        </div>
-                      </a>
-                      <a
-                        href="#"
-                        class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
-                      >
-                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
-                          {/* <!-- Heroicon name: document-report --> */}
-                          <svg
-                            class="h-6 w-6"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                          </svg>
-                        </div>
-                        <div class="space-y-1">
-                          <p class="text-base leading-6 font-medium text-gray-100">
-                            Reports
-                          </p>
-                          <p class="text-sm leading-5 text-gray-300">
-                            Get detailed reports that will help you make more
-                            informed decisions
-                          </p>
-                        </div>
-                      </a>
                     </div>
                     <div class="p-5 bg-gray-800 sm:p-8">
                       <a
@@ -550,7 +359,7 @@ const Header = forwardRef((props, ref) => {
           </div>
         </nav>
         <div class="hidden md:flex items-center justify-end space-x-8 md:flex-1 lg:w-0">
-          <a
+          {/* <a
             href="#"
             class="whitespace-no-wrap text-base leading-6 font-medium text-gray-300 hover:text-gray-100 focus:outline-none focus:text-gray-100"
           >
@@ -563,7 +372,7 @@ const Header = forwardRef((props, ref) => {
             >
               Sign up
             </a>
-          </span>
+          </span> */}
         </div>
       </div>
 
@@ -713,56 +522,6 @@ const Header = forwardRef((props, ref) => {
                         The <span class="text-pink-300">Edge</span> Newsletter
                       </div>
                     </a>
-                    <a
-                      href="#"
-                      class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
-                    >
-                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
-                        {/* <!-- Heroicon name: refresh --> */}
-                        <svg
-                          class="h-6 w-6"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                          />
-                        </svg>
-                      </div>
-                      <div class="text-base leading-6 font-medium text-gray-100">
-                        Automations
-                      </div>
-                    </a>
-                    <a
-                      href="#"
-                      class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
-                    >
-                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
-                        {/* <!-- Heroicon name: document-report --> */}
-                        <svg
-                          class="h-6 w-6"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                      </div>
-                      <div class="text-base leading-6 font-medium text-gray-100">
-                        Reports
-                      </div>
-                    </a>
                   </nav>
                 </div>
               </div>
@@ -781,43 +540,13 @@ const Header = forwardRef((props, ref) => {
                     Party Corgi
                   </a>
                   <a
-                    href="#"
+                    href="/garden"
                     class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
                   >
-                    Enterprise
-                  </a>
-                  <a
-                    href="#"
-                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
-                  >
-                    Blog
-                  </a>
-                  <a
-                    href="#"
-                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
-                  >
-                    Help Center
-                  </a>
-                  <a
-                    href="#"
-                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
-                  >
-                    Guides
-                  </a>
-                  <a
-                    href="#"
-                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
-                  >
-                    Security
-                  </a>
-                  <a
-                    href="#"
-                    class="text-base leading-6 font-medium text-gray-100 hover:text-gray-200 transition ease-in-out duration-150"
-                  >
-                    Events
+                    Garden
                   </a>
                 </div>
-                <div class="space-y-6">
+                {/* <div class="space-y-6">
                   <span class="w-full flex rounded-md shadow-sm">
                     <a
                       href="#"
@@ -835,7 +564,7 @@ const Header = forwardRef((props, ref) => {
                       Sign in
                     </a>
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -844,12 +573,6 @@ const Header = forwardRef((props, ref) => {
     </div>
   );
 });
-
-const gradientAnimation = keyframes`
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-`;
 
 // find the total height of window
 const getScrollHeight = () => {
@@ -906,41 +629,61 @@ const ProgressBar = props => {
   }, []);
 
   return (
-    <progress
-      css={{
-        zIndex: 1,
-        position: "fixed",
-        top: 0,
-        width: "100%",
-        left: 0,
-        height: 5,
-        appearance: "none",
-        background: "#11151da6",
-        // "linear-gradient(124deg,#ff24004a,#e81d1d4a,#e8b71d4a,#e3e81d4a,#1de8404a,#1ddde84a,#2b1de84a,#dd00f34a,#dd00f34a)",
-        opacity: 1,
-        "&::-webkit-progress-value": {
-          background:
-            "linear-gradient(124deg,#ff2400,#e81d1d,#e8b71d,#e3e81d,#1de840,#1ddde8,#2b1de8,#dd00f3,#dd00f3)",
-          backgroundSize: "100vw",
-          opacity: 0.4
-        },
-        "&::-webkit-progress-bar": {
-          // background: "#11151d",
-          background: "transparent",
-          opacity: 1
-        },
-        "&::-moz-progress-bar": {
-          background:
-            "linear-gradient(124deg,#ff2400,#e81d1d,#e8b71d,#e3e81d,#1de840,#1ddde8,#2b1de8,#dd00f3,#dd00f3)",
-          backgroundSize: "100vw",
-          opacity: 0.4
-        }
-      }}
-      value={scrollPositionPecentage}
-      max="100"
-    >
-      70 %
-    </progress>
+    <Fragment>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            #top-progress {
+              background: #11151da6;
+            }
+            #top-progress::-webkit-progress-value {
+              background: linear-gradient(
+                124deg,
+                #ff2400,
+                #e81d1d,
+                #e8b71d,
+                #e3e81d,
+                #1de840,
+                #1ddde8,
+                #2b1de8,
+                #dd00f3,
+                #dd00f3
+              );
+              background-size: 100vw;
+              opacity: 0.4;
+            }
+            #top-progress::-webkit-progress-bar {
+              background: transparent;
+              opacity: 1;
+            }
+            #top-progress::-moz-progress-bar {
+              background: linear-gradient(
+                124deg,
+                #ff2400,
+                #e81d1d,
+                #e8b71d,
+                #e3e81d,
+                #1de840,
+                #1ddde8,
+                #2b1de8,
+                #dd00f3,
+                #dd00f3
+              );
+              background-size: 100vw;
+              opacity: 0.4;
+            }
+          `
+        }}
+      />
+      <progress
+        id="top-progress"
+        class="z-50 fixed top-0 left-0 appearance-none w-full h-1 opacity-100"
+        value={scrollPositionPecentage}
+        max="100"
+      >
+        70 %
+      </progress>
+    </Fragment>
   );
 };
 
@@ -948,16 +691,7 @@ const CopyButton = props => {
   const [buttonText, setText] = useState("Copy");
   return (
     <button
-      css={{
-        color: textColor,
-        backgroundColor: "#11151da6",
-        transition: "background-color 1s cubic-bezier(.27,1.35,.83,.67)",
-        float: "right",
-        padding: "1rem",
-        "&:hover": {
-          backgroundColor: "rgba(51,183,255,.21)"
-        }
-      }}
+      class="text-gray-100 p-4 hover:bg-teal-400 hover:bg-opacity-25"
       onClick={e => {
         navigator.clipboard.writeText(props.content);
         setText("Done");
@@ -986,99 +720,6 @@ const debounce = (func, wait) => {
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
   };
-};
-
-const TitleArea = ({ scrollTargetRef, ...props }) => {
-  const [titleShouldHover, setHoverTitle] = useState(false);
-  const [fontSize, setFontSize] = useState(false);
-  useEffect(() => {
-    window.addEventListener(`scroll`, () => {
-      const currentPos = window.scrollY;
-
-      window.requestAnimationFrame(() => {
-        const titleOffset = scrollTargetRef.current.getBoundingClientRect().top;
-        // console.log(titleOffset);
-        if (titleOffset < -50) {
-          setFontSize(18);
-        } else if (titleOffset < 0) {
-          // console.log(currentPos, titleOffset);
-          // TODO: calculate lock values for smooth scroll
-          setFontSize(33);
-        } else {
-          // reset with original style values, etc
-          setFontSize(48);
-        }
-        if (titleOffset < -75) {
-          setHoverTitle(true);
-        } else {
-          setHoverTitle(false);
-        }
-      });
-    });
-  }, [scrollTargetRef.current]);
-  return (
-    <div
-      style={
-        titleShouldHover
-          ? {
-              position: "fixed",
-              top: 0,
-              zIndex: 1,
-              width: "100%"
-            }
-          : {}
-      }
-      css={{
-        position: "relative",
-        marginTop: "0rem",
-        boxShadow: `inset 0 2.8px 2.2px rgba(0, 0, 0, 0.02), inset 0 6.7px 5.3px rgba(0, 0, 0, 0.028), inset 0 12.5px 10px rgba(0, 0, 0, 0.035), inset 0 22.3px 17.9px rgba(0, 0, 0, 0.042), inset 0 41.8px 33.4px rgba(0, 0, 0, 0.05), inset 0 100px 80px rgba(0, 0, 0, 0.07)`,
-        "&:before": {
-          animation: `${gradientAnimation} 15s ease infinite`,
-          content: "''",
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-          top: 0,
-          zIndex: -1,
-          backgroundColor: "#19202c",
-          backgroundImage:
-            "linear-gradient( 124deg,#ff2400,#e81d1d,#e8b71d,#e3e81d,#1de840,#1ddde8,#2b1de8,#dd00f3,#dd00f3 )",
-          backgroundBlendMode: "hue",
-          "@supports(backdrop-filter: blur(5px))": {
-            backgroundColor: "transparent",
-            backgroundImage:
-              "linear-gradient( 124deg, #ff240011, #e81d1d11, #e8b71d11, #e3e81d11, #1de84011, #1ddde811, #2b1de811, #dd00f311, #dd00f311 )",
-            backgroundSize: "120% 120%",
-            backdropFilter: "blur(5px)",
-            backgroundBlendMode: "normal"
-          }
-        }
-      }}
-    >
-      <div
-        css={{
-          maxWidth: "57ch",
-          margin: "auto",
-          "@media screen and (max-width: 57ch)": {
-            marginLeft: "1rem",
-            marginRight: "1rem"
-          }
-        }}
-      >
-        <h1
-          css={{
-            transition: "font-size .2s",
-            color: "rgba(255, 255, 255, 0.85)",
-            fontSize: fontSize || 48,
-            textShadow: "2px 2px 20px black",
-            padding: ".5em 0"
-          }}
-        >
-          {props.title}
-        </h1>
-      </div>
-    </div>
-  );
 };
 
 export default ({ children, ...props }) => {
@@ -1154,7 +795,7 @@ export default ({ children, ...props }) => {
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 500 510"
-        css={{ display: "none" }}
+        class="hidden"
       >
         <defs>
           <g id="corgi">
@@ -1399,7 +1040,7 @@ export default ({ children, ...props }) => {
               fill="none"
               viewBox="0 0 500 510"
               class="corgi"
-              css={{ width: 30 }}
+              style={{ width: 30 }}
             >
               <use href="#corgi" />
             </svg>
@@ -1440,33 +1081,23 @@ export default ({ children, ...props }) => {
             />
           ),
           p: props => <p class="font-sans text-lg pt-4" {...props} />,
-          img: props => (
-            <img
-              css={{
-                gridColumn: 2,
-                display: "flex",
-                width: "fit-content",
-                maxWidth: "100%",
-                margin: "auto"
-              }}
-              {...props}
-            />
-          ),
+          img: props => <img class="m-auto" {...props} />,
           a: props => (
             <a
-              css={{
-                wordWrap: "break-word",
-                backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
-                "&[href^='/']": {
-                  backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
-                },
-                "-webkit-background-clip": `text`,
-                "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
-                display: "inline-block",
-                "&:hover": {
-                  "-webkit-text-fill-color": `rgba(255,255,255,.1)`
-                }
-              }}
+              class="text-teal-400 bg-clip-text hover:text-transparent bg-gradient-to-r from-teal-400 hover:to-pink-400"
+              // css={{
+              //   wordWrap: "break-word",
+              //   // backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
+              //   "&[href^='/']": {
+              //     backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
+              //   },
+              //   "-webkit-background-clip": `text`,
+              //   "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
+              //   // display: "inline-block",
+              //   "&:hover": {
+              //     "-webkit-text-fill-color": `rgba(255,255,255,.1)`
+              //   }
+              // }}
               {...props}
             />
           ),
@@ -1500,21 +1131,10 @@ export default ({ children, ...props }) => {
           "li.ol": props => (
             <ol class="list-decimal list-outside ml-6" {...props} />
           ),
-          table: props => (
-            <table css={{ gridColumn: 2, marginTop: "1rem" }} {...props} />
-          ),
-          thead: props => (
-            <thead css={{ background: "#ffffff12" }} {...props} />
-          ),
-          th: props => (
-            <th css={{ padding: ".5rem", textAlign: "left" }} {...props} />
-          ),
-          td: props => (
-            <td
-              css={{ padding: ".5rem", borderBottom: "1px solid #ffffff22" }}
-              {...props}
-            />
-          ),
+          table: props => <table class="mt-4" {...props} />,
+          thead: props => <thead class="bg-white bg-opacity-25" {...props} />,
+          th: props => <th class="p-2 text-left" {...props} />,
+          td: props => <td class="p2 border-b-1" {...props} />,
           inlineCode: props => <code style={{ color: "#31b7fe" }} {...props} />,
           codeblock: props => {
             const lang = props.class && props.class.split("-")[1];
@@ -1554,7 +1174,6 @@ export default ({ children, ...props }) => {
                 </div>
                 <div
                   class="p-4"
-                  // css={{ padding: "1rem 2rem" }}
                   dangerouslySetInnerHTML={{
                     __html: props.children
                   }}
@@ -1573,43 +1192,35 @@ export default ({ children, ...props }) => {
 
             return (
               <div
-                css={{
-                  gridColumn: 2,
+                class="mt-4 relative"
+                style={{
                   background: "#11151d",
                   overflow: "auto",
                   borderRadius: 10,
-                  position: "relative",
                   border: "1px solid rgba(51,183,255,.21)",
                   boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
-                    inset 0 6.7px 5.3px rgba(0,0,0,0.028),
-                    inset 0 12.5px 10px rgba(0,0,0,0.035),
-                    inset 0 22.3px 17.9px rgba(0,0,0,0.042),
-                    inset 0 41.8px 33.4px rgba(0,0,0,0.05),
-                    inset 0 100px 80px rgba(0,0,0,0.07)`
+                  inset 0 6.7px 5.3px rgba(0,0,0,0.028),
+                  inset 0 12.5px 10px rgba(0,0,0,0.035),
+                  inset 0 22.3px 17.9px rgba(0,0,0,0.042),
+                  inset 0 41.8px 33.4px rgba(0,0,0,0.05),
+                  inset 0 100px 80px rgba(0,0,0,0.07)`
                 }}
               >
                 <div
-                  css={{
-                    fontSize: `12px`,
-                    display: `flex`,
-                    justifyContent: `space-between`,
+                  class="flex justify-between left-0"
+                  style={{
                     position: `sticky`,
-                    left: 0,
                     borderBottom: "1px solid rgba(51,183,255,.21)"
                   }}
                 >
-                  <span css={{ padding: "1rem" }}>
-                    {props.children.props.title}
-                  </span>
-                  <div css={{ display: "flex" }}>
-                    <span css={{ padding: "1rem" }}>
-                      {langMap[lang] || lang || ""}
-                    </span>
+                  <span class="p-4">{props.children.props.title}</span>
+                  <div class="flex">
+                    <span class="p-4">{langMap[lang] || lang || ""}</span>
                     <CopyButton content={props.children.props.codestring} />
                   </div>
                 </div>
                 <div
-                  css={{ padding: "1rem 2rem" }}
+                  class="p-4"
                   dangerouslySetInnerHTML={{
                     __html: props.children.props.children
                   }}
@@ -1774,53 +1385,6 @@ export default ({ children, ...props }) => {
                 </div>
               </div>
               <div class="md:grid md:grid-cols-2 md:gap-8">
-                <div>
-                  <h4 class="text-sm leading-5 font-semibold text-gray-400 tracking-wider uppercase">
-                    Company
-                  </h4>
-                  <ul class="mt-4 space-y-4">
-                    <li>
-                      <a
-                        href="#"
-                        class="text-base leading-6 text-gray-300 hover:text-white"
-                      >
-                        About
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        class="text-base leading-6 text-gray-300 hover:text-white"
-                      >
-                        Blog
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        class="text-base leading-6 text-gray-300 hover:text-white"
-                      >
-                        Jobs
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        class="text-base leading-6 text-gray-300 hover:text-white"
-                      >
-                        Press
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        class="text-base leading-6 text-gray-300 hover:text-white"
-                      >
-                        Partners
-                      </a>
-                    </li>
-                  </ul>
-                </div>
                 <div class="mt-12 md:mt-0">
                   <h4 class="text-sm leading-5 font-semibold text-gray-400 tracking-wider uppercase">
                     -
