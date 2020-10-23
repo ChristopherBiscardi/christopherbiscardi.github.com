@@ -254,12 +254,10 @@ export default props => (
           <div class="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:gap-8 lg:items-center">
             <div class="lg:col-start-2">
               <h4 class="text-2xl leading-8 font-extrabold text-gray-900 tracking-tight sm:text-3xl sm:leading-9">
-                Always in the loop
+                Rustlings
               </h4>
               <p class="mt-3 text-lg leading-7 text-gray-500">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit
-                ex obcaecati natus eligendi delectus, cum deleniti sunt in
-                labore nihil quod quibusdam expedita nemo.
+                Take a guided tour of the Rust programming language from
               </p>
 
               <ul class="mt-10">

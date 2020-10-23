@@ -3,12 +3,11 @@ import EggheadSource from "fetch-eggheadio";
 import { sourceMdx } from "@toastdotdev/mdx";
 
 export const sourceData = async ({ setDataForSlug }) => {
-  const [sectorData, eggheadioData, mdxData] = await Promise.all([
+  const [sectorData, mdxData] = await Promise.all([
     SectorSource.sourceNodes({
       setDataForSlug,
       workspace: "516555bc-f69b-47f9-ae7e-48cfd880b34d"
     }),
-    EggheadSource.sourceData(),
     sourceMdx({
       setDataForSlug,
       directory: "../../content/posts",
@@ -37,21 +36,6 @@ export const sourceData = async ({ setDataForSlug }) => {
         }))
     );
   await setDataForSlug("/garden", { data: { posts: allPostsData } });
-  const topEggheadData = eggheadioData
-    .sort((b, a) => {
-      const da = new Date(a.publishedAt).getTime();
-      const db = new Date(b.publishedAt).getTime();
-      if (da < db) return -1;
-      if (da === db) return 0;
-      if (da > db) return 1;
-    })
-    .slice(0, 5)
-    .map(({ id, title, primaryTag, httpUrl }) => ({
-      id,
-      title,
-      tag: (primaryTag && primaryTag.name) || undefined,
-      httpUrl
-    }));
 
   const topPostsData = allPostsData
     .sort((b, a) => {
@@ -65,7 +49,7 @@ export const sourceData = async ({ setDataForSlug }) => {
     .slice(0, 5);
   await setDataForSlug("/", {
     data: {
-      highlightedLessons: topEggheadData,
+      highlightedLessons: [],
       recentPosts: topPostsData
     }
   });
