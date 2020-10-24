@@ -1,5 +1,5 @@
 import SectorSource from "fetch-sector-docs";
-import EggheadSource from "fetch-eggheadio";
+// import EggheadSource from "fetch-eggheadio";
 import { sourceMdx } from "@toastdotdev/mdx";
 
 export const sourceData = async ({ setDataForSlug }) => {

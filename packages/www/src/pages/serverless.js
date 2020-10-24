@@ -707,43 +707,28 @@ const ListedLinks = ({ links }) => (
 
 const CardGrid = ({ links }) => (
   <div class="overflow-hidden sm:rounded-md">
-    <ul class="grid grid-cols-3 gap-4">
-      {links.map(({ title, description, tags, href }, i) => (
+    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {links.map(({ title, description, tag, tagHref, href }, i) => (
         <li class="bg-white shadow rounded">
           <a
             href={href}
-            class="block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out"
+            class="block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out h-full align-start"
           >
             <div class="px-4 py-4 flex items-center sm:px-6">
               <div class="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                  <div class="text-xl leading-5 font-medium text-gray-800">
-                    {title}
-                  </div>
-                  <p class="text-gray-700 mt-4">{description}</p>
-                  <div class="mt-2 flex">
-                    <div class="flex items-center text-sm leading-5 text-gray-500">
-                      {/* <!-- Heroicon name: calendar --> */}
-                      <svg
-                        class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                      <span>
-                        {tags.map(v => (
-                          <span class="bg-transparent hover:bg-teal-500 text-teal-700 font-semibold hover:text-white py-1 px-2  rounded">
-                            {v}
-                          </span>
-                        ))}
-                      </span>
-                    </div>
+                <div class="flex-1">
+                  <p class="text-sm leading-5 font-medium text-teal-600">
+                    <a href={tagHref} class="hover:underline">
+                      {tag}
+                    </a>
+                  </p>
+                  <div>
+                    <h3 class="mt-2 text-xl leading-7 font-semibold text-gray-900">
+                      {title}
+                    </h3>
+                    <p class="mt-3 text-base leading-6 text-gray-500">
+                      {description}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -772,40 +757,38 @@ const CardGrid = ({ links }) => (
 
 const integrationCards = [
   {
-    title: "Choosing an authentication provider",
+    title: "Using Netlify Identity with AWS Lambda Custom Authorizers",
     description:
-      "Netlify Identity? Firebase Auth? Auth0? AWS Cognito? Will you outgrow your simple solution and regret your decisions? Which one should you even pick in the first place?",
-    href: "",
-    tags: []
+      "Netlify Identity is an integrated authorization solution for Netlify that allows users to sign up, log in, and also provides the verified user object inside of Netlify Functions.",
+    href: "/post/using-netlify-identity-with-aws-lambda-custom-authorizers",
+    tag: "Auth",
+    tagHref: "/garden"
   },
   {
-    title: "Taking advantage of the Stripe Billing Portal",
+    title: "Getting started with Netlify functions and go modules",
     description:
-      "You don't want to write billing logic from scratch. With serverless functions and Stripe Checkout, the Billing Portal enables you to get back to what you love doing.",
-    href: "",
-    tags: []
+      "When building Jamstack sites we don't run a server, so to use any dynamic logic we can take advantage of serverless functions. In our case we'll deploy on Netlify and that means we'll go with golang for our functions.",
+    href: "/post/getting-started-with-netlify-functions-and-go-modules",
+    tag: "Netlify Functions",
+    tagHref: "/garden"
   },
   {
-    title: "Taking advantage of the Stripe Billing Portal",
+    title:
+      "Building a Serverless JAMStack Todo app with Netlify, Gatsby, GraphQL, and FaunaDB",
     description:
-      "You don't want to write billing logic from scratch. With serverless functions and Stripe Checkout, the Billing Portal enables you to get back to what you love doing.",
-    href: "",
-    tags: []
-  },
-  {
-    title: "Taking advantage of the Stripe Billing Portal",
-    description:
-      "You don't want to write billing logic from scratch. With serverless functions and Stripe Checkout, the Billing Portal enables you to get back to what you love doing.",
-    href: "",
-    tags: []
+      "Take a guided tour through your first Jamstack and serverless product using Netlify Functions.",
+    href:
+      "https://egghead.io/playlists/building-a-serverless-jamstack-todo-app-with-netlify-gatsby-graphql-and-faunadb-53bb",
+    tag: "Netlify",
+    tagHref: "/garden"
   }
 ];
 const Integrations = props => (
   <Fragment>
-    <div class="bg-teal-50">
+    <div class="bg-purple-50">
       <div class="max-w-screen-xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
         <div class="text-center">
-          <h1 class="text-base leading-6 font-semibold text-indigo-600 tracking-wide uppercase">
+          <h1 class="text-base leading-6 font-semibold text-teal-600 tracking-wide uppercase">
             Integrations
           </h1>
           <p class="mt-1 text-4xl leading-10 font-extrabold text-gray-900 sm:text-5xl sm:leading-none sm:tracking-tight lg:text-6xl">
@@ -818,7 +801,7 @@ const Integrations = props => (
         </div>
       </div>
     </div>
-    <div class="bg-teal-50 pb-32">
+    <div class="bg-purple-50 pb-32">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <CardGrid links={integrationCards} />
       </div>
