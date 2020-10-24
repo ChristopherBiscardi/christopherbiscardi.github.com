@@ -3,21 +3,28 @@ import { h } from "preact";
 const images = {
   default: "/old-icon-logos/default.png",
   css: "/old-icon-logos/css.png",
+  discord: "/old-icon-logos/discord.png",
+  docker: "/old-icon-logos/docker.png",
   emotion: "/old-icon-logos/emotion.png",
+  fauna: "/old-icon-logos/fauna.png",
+  figma: "/old-icon-logos/figma.png",
   gatsby: "/old-icon-logos/gatsby.png",
+  github: "/old-icon-logos/github.png",
   go: "/old-icon-logos/go.png",
   graphql: "/old-icon-logos/graphql.png",
   js: "/old-icon-logos/js.png",
-  mdx: "/old-icon-logos/mdx.png",
-  fauna: "/old-icon-logos/fauna.png",
-  github: "/old-icon-logos/github.png"
+  k8s: "/old-icon-logos/k8s.png",
+  mdx: "/old-icon-logos/mdx.svg",
+  rust: "/old-icon-logos/rust.png",
+  swiftui: "/old-icon-logos/swiftui.png"
 };
 
 const aliases = {
   golang: "go",
   "gatsby-themes": "gatsby",
   javascript: "js",
-  faunadb: "fauna"
+  faunadb: "fauna",
+  kubernetes: "k8s"
 };
 
 const aliasKeys = Object.keys(aliases);
