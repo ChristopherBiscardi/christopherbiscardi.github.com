@@ -191,7 +191,7 @@ const Header = forwardRef((props, ref) => {
                         </div>
                       </a>
                       <a
-                        href="#"
+                        href="/free-newsletter"
                         class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                       >
                         <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
@@ -623,7 +623,6 @@ const ProgressBar = props => {
 
     setScrollPositionPercentage(indicatorWidth);
   }, []);
-
   return (
     <Fragment>
       <style
@@ -674,7 +673,7 @@ const ProgressBar = props => {
       <progress
         id="top-progress"
         class="z-50 fixed top-0 left-0 appearance-none w-full h-1 opacity-100"
-        value={scrollPositionPecentage}
+        value={isNaN(scrollPositionPecentage) ? 100 : scrollPositionPecentage}
         max="100"
       >
         70 %
