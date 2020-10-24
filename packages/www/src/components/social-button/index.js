@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { h } from "preact";
 
 const socialStyles = {
   twitter: { backgroundColor: "#00aced", color: "#eef1f7" },

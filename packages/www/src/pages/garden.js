@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { h } from "preact";
 import { Helmet } from "react-helmet";
 import { useReducer } from "preact/hooks";
 
@@ -65,11 +64,8 @@ export default props => {
               Select tags and search to filter posts
             </p>
           </div>
-          <div class="mt-10 w-full max-w-xs">
-            <a
-              href="/what-is-a-digital-garden"
-              css={{ fontSize: 16, color: "#3981fe" }}
-            >
+          <div class="mt-10 w-full max-w-xs hidden sm:block">
+            <a href="/what-is-a-digital-garden" class="text-teal-400">
               What is this?
             </a>
           </div>
