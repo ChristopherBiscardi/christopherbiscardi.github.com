@@ -4,11 +4,54 @@ import { Fragment, h } from "preact";
 import { useState, useEffect, useRef } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 
+const TopBanner = props => (
+  <div class="relative bg-teal-600">
+    <div class="max-w-screen-xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
+      <div class="pr-16 sm:text-center sm:px-16">
+        <p class="font-medium text-white">
+          <span class="md:hidden">Toast is in Beta!</span>
+          <span class="hidden md:inline">Big news! Toast is in Beta!</span>
+          <span class="block sm:ml-2 sm:inline-block">
+            <a href="https://toast.dev" class="text-white font-bold underline">
+              Learn more &rarr;
+            </a>
+          </span>
+        </p>
+      </div>
+      <div class="absolute inset-y-0 right-0 pt-1 pr-1 flex items-start sm:pt-1 sm:pr-2 sm:items-start">
+        {/* <button type="button" class="flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500 transition ease-in-out duration-150" aria-label="Dismiss">
+      <!-- Heroicon name: x -->
+      <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button> */}
+      </div>
+    </div>
+  </div>
+);
+function outsideClick(event, ref) {
+  if (ref.current) {
+    if (event.target == ref.current || ref.current.contains(event.target)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
 const Header = forwardRef((props, ref) => {
   const [showSolutions, setShowSolutions] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [showMobileMenu, setMobileMenu] = useState(false);
   const toggleMobileMenu = () => setMobileMenu(!showMobileMenu);
+  const menus = useRef();
+  useEffect(() => {
+    window.addEventListener("click", function(e) {
+      if (outsideClick(e, menus)) {
+        setShowSolutions(false);
+        setShowMore(false);
+      }
+    });
+  }, []);
   return (
     <div class="relative bg-gray-900">
       <div class="flex justify-between items-center px-4 py-6 sm:px-6 md:justify-start md:space-x-10">
@@ -46,7 +89,7 @@ const Header = forwardRef((props, ref) => {
             </svg>
           </button>
         </div>
-        <nav class="hidden md:flex space-x-10">
+        <nav class="hidden md:flex space-x-10" ref={menus}>
           <div class="relative">
             {/* <!-- Item active: "text-gray-100", Item inactive: "text-gray-300" --> */}
             <button
@@ -294,7 +337,7 @@ const Header = forwardRef((props, ref) => {
                   <div class="rounded-lg shadow-xs overflow-hidden">
                     <div class="z-20 relative grid gap-6 bg-gray-700 px-5 py-6 sm:gap-8 sm:p-8">
                       <a
-                        href="#"
+                        href="/garden"
                         class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
                       >
                         <p class="text-base leading-6 font-medium text-gray-100">
@@ -302,53 +345,6 @@ const Header = forwardRef((props, ref) => {
                         </p>
                         <p class="text-sm leading-5 text-gray-300">
                           My notes, posts, and pieces, organized by topic
-                        </p>
-                      </a>
-                      <a
-                        href="#"
-                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
-                      >
-                        <p class="text-base leading-6 font-medium text-gray-100">
-                          Help Center
-                        </p>
-                        <p class="text-sm leading-5 text-gray-300">
-                          Get all of your questions answered in our forums of
-                          contact support.
-                        </p>
-                      </a>
-                      <a
-                        href="#"
-                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
-                      >
-                        <p class="text-base leading-6 font-medium text-gray-100">
-                          Guides
-                        </p>
-                        <p class="text-sm leading-5 text-gray-300">
-                          Learn how to maximize our platform to get the most out
-                          of it.
-                        </p>
-                      </a>
-                      <a
-                        href="#"
-                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
-                      >
-                        <p class="text-base leading-6 font-medium text-gray-100">
-                          Events
-                        </p>
-                        <p class="text-sm leading-5 text-gray-300">
-                          Check out webinars with experts and learn about our
-                          annual conference.
-                        </p>
-                      </a>
-                      <a
-                        href="#"
-                        class="-m-3 p-3 block space-y-1 rounded-md hover:bg-gray-800 transition ease-in-out duration-150"
-                      >
-                        <p class="text-base leading-6 font-medium text-gray-100">
-                          Security
-                        </p>
-                        <p class="text-sm leading-5 text-gray-300">
-                          Understand how we take your privacy seriously.
                         </p>
                       </a>
                     </div>
@@ -734,6 +730,7 @@ export default ({ children, ...props }) => {
   return (
     <div className="bg-gray-900">
       <ProgressBar />
+      <TopBanner />
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

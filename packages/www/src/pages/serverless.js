@@ -673,7 +673,7 @@ const ListedLinks = ({ links }) => (
                       </svg>
                       <span>
                         {tags.map(v => (
-                          <span class="bg-transparent hover:bg-teal-500 text-teal-700 font-semibold hover:text-white py-1 px-2  rounded">
+                          <span class="bg-transparent text-teal-700 font-semibold py-1 px-2">
                             {v}
                           </span>
                         ))}
