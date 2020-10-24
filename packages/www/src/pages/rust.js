@@ -284,12 +284,12 @@ export default props => (
                     </div>
                     <div class="ml-4">
                       <h5 class="text-lg leading-6 font-medium text-gray-900">
-                        Mobile notifications
+                        Learn the basics
                       </h5>
                       <p class="mt-2 text-base leading-6 text-gray-500">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Maiores impedit perferendis suscipit eaque, iste
-                        dolor cupiditate blanditiis ratione.
+                        Rust can be a very familiar langauge to people coming
+                        from JavaScript based backgrounds. Rustlings covers what
+                        you'll need to know to get up and running quickly.
                       </p>
                     </div>
                   </div>
@@ -317,12 +317,12 @@ export default props => (
                     </div>
                     <div class="ml-4">
                       <h5 class="text-lg leading-6 font-medium text-gray-900">
-                        Reminder emails
+                        Advanced Rust
                       </h5>
                       <p class="mt-2 text-base leading-6 text-gray-500">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Maiores impedit perferendis suscipit eaque, iste
-                        dolor cupiditate blanditiis ratione.
+                        Rustlings also touches on more advanced concepts such as
+                        threading that developers in other langauges might not
+                        have been familiar with before.
                       </p>
                     </div>
                   </div>
@@ -507,7 +507,15 @@ const postCards = [
     title: "Concatenating two string slices &str in Rust",
     description:
       "Using format! to concatenate two strings is idomatic Rust, even though it's not the absolute fastest way.",
-    href: "/concatenating-two-string-slices-and-str-in-rust"
+    href: "/concatenating-two-string-slices-and-str-in-rust",
+    tag: "idiomatic",
+    tagHref: "/garden"
+  },
+  {
+    title: "Processing realtime tweets from twitter in Rust",
+    description:
+      "Using egg_mode and the tokio runtime enables us to use streams and futures to pull in and process tweets.",
+    href: "/processing-realtime-tweets-from-twitter-in-rust"
   }
 ];
 const Posts = props => (
