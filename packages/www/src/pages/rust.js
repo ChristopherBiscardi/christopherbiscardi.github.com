@@ -77,7 +77,7 @@ export default props => (
               <li>
                 <div class="flex">
                   <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
                       {/* <!-- Heroicon name: globe-alt --> */}
                       <svg
                         class="h-6 w-6"
@@ -110,7 +110,7 @@ export default props => (
               <li class="mt-10">
                 <div class="flex">
                   <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
                       {/* <!-- Heroicon name: scale --> */}
                       <svg
                         class="h-6 w-6"
@@ -142,7 +142,7 @@ export default props => (
               <li class="mt-10">
                 <div class="flex">
                   <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
                       {/* <!-- Heroicon name: lightning-bolt --> */}
                       <svg
                         class="h-6 w-6"
@@ -264,7 +264,7 @@ export default props => (
                 <li>
                   <div class="flex">
                     <div class="flex-shrink-0">
-                      <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                      <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
                         {/* <!-- Heroicon name: annotation --> */}
                         <svg
                           class="h-6 w-6"
@@ -297,7 +297,7 @@ export default props => (
                 <li class="mt-10">
                   <div class="flex">
                     <div class="flex-shrink-0">
-                      <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                      <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
                         {/* <!-- Heroicon name: mail --> */}
                         <svg
                           class="h-6 w-6"
@@ -733,7 +733,7 @@ const Discord = props => (
             <li>
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
                     {/* <!-- Heroicon name: globe-alt --> */}
                     <svg
                       class="h-6 w-6"
@@ -766,7 +766,7 @@ const Discord = props => (
             <li class="mt-10">
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
                     {/* <!-- Heroicon name: scale --> */}
                     <svg
                       class="h-6 w-6"
@@ -799,7 +799,7 @@ const Discord = props => (
             <li class="mt-10">
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
                     {/* <!-- Heroicon name: lightning-bolt --> */}
                     <svg
                       class="h-6 w-6"
