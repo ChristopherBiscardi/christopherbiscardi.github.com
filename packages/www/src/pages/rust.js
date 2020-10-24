@@ -584,6 +584,21 @@ const rustlingsLinks = [
     tags: ["macros"]
   }
 ];
+const swcLinks = [
+  {
+    title: "Compiling a single JavaScript file from Rust with swc",
+    location: "garden",
+    href: "/compiling-a-single-java-script-file-from-rust-with-swc",
+    tags: ["toast", "swc"]
+  },
+  {
+    title: "Enabling features in Rust crates installed from GitHub like SWC",
+    location: "garden",
+    href:
+      "http://localhost:63916/enabling-features-in-rust-crates-installed-from-git-hub-like-swc",
+    tags: "swc"
+  }
+];
 const ListedLinks = ({ links }) => (
   <div class="bg-white shadow overflow-hidden sm:rounded-md">
     <ul>
