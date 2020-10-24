@@ -3,48 +3,7 @@ import { jsx } from "@emotion/core";
 import { Helmet } from "react-helmet";
 import { useReducer } from "preact/hooks";
 
-import Icon from "../components/small-icons/index.js"; //{ iconFromList }
-import ConvertKitForm from "../components/convertkit-form/index.js";
-
-const maxWidth = "800px";
-
-const List = ({ title, subtitle, secondary, ...props }) => (
-  <div css={{ marginTop: "1rem", gridColumn: "2/4" }}>
-    <ul css={{ listStyleType: "none", margin: 0, padding: 0 }}>
-      {props.children}
-    </ul>
-  </div>
-);
-
-const ListItem = ({ to, logo, contentType, children }) => {
-  return (
-    <li>
-      <a
-        to={to}
-        href={to}
-        css={{
-          color: "rgba(255,255,255,0.86)",
-          display: "flex",
-          borderRadius: "16px",
-          textDecoration: "none",
-          "&:hover,&:focus": {
-            backgroundColor: "#2D3747",
-            outline: "none"
-          },
-          padding: "1rem",
-          margin: "0 -1rem",
-          borderLeft:
-            contentType === "blog-post" || contentType === "post"
-              ? "1px solid #3981fe"
-              : "none"
-        }}
-      >
-        <Icon icon={logo} />
-        <span css={{ marginLeft: "10px" }}>{children}</span>
-      </a>
-    </li>
-  );
-};
+import Icon, { iconFromList } from "../components/small-icons/index.js"; //{ iconFromList }
 
 const initialState = {
   tags: [],
@@ -73,14 +32,7 @@ export default props => {
   // const props = { posts: [] };
   const [filterState, filterDispatch] = useReducer(reducer, initialState);
   return (
-    <div
-      css={{
-        display: "grid",
-        gridGap: "1rem",
-        gridTemplateColumns:
-          "minmax(1.2rem, 1fr) minmax(0, 400px) minmax(0, 400px) minmax(1.2rem, 1fr)"
-      }}
-    >
+    <div>
       <Helmet>
         <meta charSet="utf-8" />
         <title>All Chris' Writing</title>
@@ -102,147 +54,162 @@ export default props => {
           )}
         />
       </Helmet>
-      <h1
-        css={{
-          fontFamily: '"InterDisplay var", system-ui, sans-serif',
-          fontWeight: 600,
-          color: "#e7e9ea",
-          gridColumn: "2/4",
-          marginTop: "3rem",
-          fontSize: "48px"
-        }}
-      >
-        Digital Garden{" "}
-        <a
-          href="/what-is-a-digital-garden"
-          css={{ fontSize: 16, color: "#3981fe" }}
-        >
-          What is this?
-        </a>
-      </h1>
-      <ul
-        css={{
-          display: "flex",
-          listStyleType: "none",
-          gridColumn: "2/4",
-          "& > li:not(:first-of-type)": {
-            marginLeft: "1rem"
-          },
-          marginTop: "2rem"
-        }}
-      >
-        {["SwiftUI", "Rust", "MDX", "GraphQL", "Gatsby"].map(value => (
-          <li>
-            <button
-              css={{
-                padding: "10px 16px",
-                backgroundColor: filterState.tags.includes(value)
-                  ? "#3981fe"
-                  : "#10151e",
-                color: filterState.tags.includes(value) ? "#eef1f7" : "#3981fe",
-                border: "none",
-                fontWeight: "600",
-                fontSize: "15px",
-                borderRadius: "10px",
-                border: "1px solid transparent",
-                boxShadow: `inset 0 2.8px 2.2px rgba(0, 0, 0, 0.02),
+      <div class="bg-gray-900">
+        <div class="max-w-screen-xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 lg:flex lg:justify-between">
+          <div class="max-w-xl">
+            <h2 class="text-4xl leading-10 font-extrabold text-white sm:text-5xl sm:leading-none sm:tracking-tight lg:text-6xl">
+              Digital Garden
+            </h2>
+
+            <p class="mt-5 text-xl leading-7 text-gray-400">
+              Select tags and search to filter posts
+            </p>
+          </div>
+          <div class="mt-10 w-full max-w-xs">
+            <a
+              href="/what-is-a-digital-garden"
+              css={{ fontSize: 16, color: "#3981fe" }}
+            >
+              What is this?
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ul class="flex space-x-4 flex-wrap -mt-4">
+          {["Rust", "Serverless", "SwiftUI", "MDX", "GraphQL", "Gatsby"].map(
+            value => (
+              <li class="mt-4">
+                <button
+                  class={`font-bold py-2 px-4 border border-teal-900 rounded text-white ${
+                    filterState.tags.includes(value)
+                      ? "bg-teal-800"
+                      : "bg-gray-900 hover:bg-teal-800"
+                  }`}
+                  style={{
+                    // backgroundColor: filterState.tags.includes(value)
+                    //   ? "#3981fe"
+                    //   : "#10151e",
+                    // color: filterState.tags.includes(value)
+                    //   ? "#eef1f7"
+                    //   : "#3981fe",
+                    boxShadow: `inset 0 2.8px 2.2px rgba(0, 0, 0, 0.02),
                 inset 0 6.7px 5.3px rgba(0, 0, 0, 0.028),
                 inset 0 12.5px 10px rgba(0, 0, 0, 0.035),
                 inset 0 22.3px 17.9px rgba(0, 0, 0, 0.042),
                 inset 0 41.8px 33.4px rgba(0, 0, 0, 0.05),
-                inset 0 100px 80px rgba(0, 0, 0, 0.07)`,
-                "&:focus": {
-                  borderColor: "#3981fe",
-                  outline: "none"
-                }
-              }}
-              onClick={() => {
-                if (filterState.tags.includes(value)) {
-                  filterDispatch({ type: "removeTag", payload: value });
-                } else {
-                  filterDispatch({ type: "addTag", payload: value });
-                }
-              }}
-            >
-              {value}
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div css={{ gridColumn: "2/4" }}>
+                inset 0 100px 80px rgba(0, 0, 0, 0.07)`
+                  }}
+                  onClick={() => {
+                    if (filterState.tags.includes(value)) {
+                      filterDispatch({ type: "removeTag", payload: value });
+                    } else {
+                      filterDispatch({ type: "addTag", payload: value });
+                    }
+                  }}
+                >
+                  {value}
+                </button>
+              </li>
+            )
+          )}
+        </ul>
+      </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <input
+          class="form-input block w-full sm:text-sm sm:leading-5 bg-gray-900 text-teal-400 border-gray-700 focus:border-teal-400"
           placeholder="Type here to filter posts..."
           onChange={e => {
             filterDispatch({ type: "filterBy", payload: e.target.value });
           }}
-          css={{
-            width: "100%",
-            background: "#10151e",
-            padding: "16px",
-            flex: 1,
-            fontSize: "16px",
-            border: "1px solid #2f3542",
-            borderRadius: "10px",
-            color: "#eef1f7",
-            "&:focus": {
-              borderColor: "#3981fe",
-              outline: "none"
-            }
-          }}
         />
       </div>
-      <List
-        title="All Posts"
-        secondary={
-          <a
-            to="/post"
-            css={{
-              color: "rgba(255,255,255,0.86)",
-              textDecoration: "none",
-              // margin is to align baseline with heading
-              marginBottom: "2px",
-              alignSelf: "flex-end",
-              "&:hover": {
-                textDecoration: "underline"
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <ul>
+          {props.posts
+            .filter(({ tags = [], ...etc }) => {
+              if (filterState.tags.length === 0) {
+                return true;
               }
-            }}
-          >
-            all posts
-          </a>
-        }
-      >
-        {props.posts
-          .filter(({ tags = [], ...etc }) => {
-            if (filterState.tags.length === 0) {
-              return true;
-            }
-            return filterState.tags.some(tag =>
-              tags.includes(tag.toLowerCase())
-            );
-          })
-          .filter(({ title }) =>
-            title.toLowerCase().includes(filterState.filter.toLowerCase())
-          )
-          .sort((aPost, bPost) => {
-            const a = new Date(aPost.updatedAt);
-            const b = new Date(bPost.updatedAt);
-            return a > b ? -1 : a < b ? 1 : 0;
-          })
-          .map(({ id, title, slug, tags, contentType }) => (
-            <ListItem
-              // logo={iconFromList(tags)}
-              to={slug}
-              key={id}
-              contentType={contentType}
-            >
-              {title}
-            </ListItem>
-          ))}
-      </List>
-
-      <div css={{ gridColumn: "2/4", marginBottom: "3rem", marginTop: "1rem" }}>
-        <ConvertKitForm />
+              return filterState.tags.some(tag =>
+                tags.includes(tag.toLowerCase())
+              );
+            })
+            .filter(({ title }) =>
+              title.toLowerCase().includes(filterState.filter.toLowerCase())
+            )
+            .sort((aPost, bPost) => {
+              const a = new Date(aPost.updatedAt);
+              const b = new Date(bPost.updatedAt);
+              return a > b ? -1 : a < b ? 1 : 0;
+            })
+            .map(({ id, title, slug, tags = [], contentType }) => (
+              <Post
+                logo={iconFromList(tags)}
+                to={slug}
+                key={id}
+                contentType={contentType}
+                tags={tags}
+              >
+                {title}
+              </Post>
+            ))}
+        </ul>
       </div>
     </div>
   );
 };
+
+const Post = ({ to, logo, tags, children }) => (
+  <li>
+    <a
+      href={to}
+      class="block hover:bg-gray-800 focus:outline-none focus:bg-gray-800 transition duration-150 ease-in-out rounded-lg"
+    >
+      <div class="flex items-center px-4 py-4 sm:px-6">
+        <div class="min-w-0 flex-1 flex items-center">
+          <div class="flex-shrink-0 h-8 w-8">
+            <Icon icon={logo} />
+          </div>
+          <div class="min-w-0 flex-1 px-4">
+            <div>
+              <div class="text-lg leading-5 font-medium text-teal-300 flex">
+                {children}
+              </div>
+              <div class="mt-2 flex items-center text-sm leading-5 text-gray-500">
+                <svg
+                  class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>{tags.join(", ")}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          {/* <!-- Heroicon name: chevron-right --> */}
+          <svg
+            class="h-5 w-5 text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+      </div>
+    </a>
+  </li>
+);
