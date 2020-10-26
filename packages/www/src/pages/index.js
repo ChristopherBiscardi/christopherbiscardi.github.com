@@ -155,7 +155,13 @@ const Serverless = props => (
         </h3>
         <p class="mt-4 max-w-2xl text-xl leading-7 text-gray-500 lg:mx-auto">
           Focus on your business logic by taking a path through the serverless
-          ecosystem.
+          ecosystem.{" "}
+          <a
+            href="/serverless"
+            class="text-teal-500 font-bold hover:text-teal-600"
+          >
+            Learn more...
+          </a>
         </p>
       </div>
 
