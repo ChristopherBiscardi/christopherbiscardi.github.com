@@ -222,12 +222,12 @@ const Header = forwardRef((props, ref) => {
                           </p>
                         </div>
                       </a>
-                      <a
+                      {/* <a
                         href="#"
                         class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                       >
                         <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
-                          {/* <!-- Heroicon name: view-grid --> */}
+                          <!-- Heroicon name: view-grid -->
                           <svg
                             class="h-6 w-6"
                             xmlns="http://www.w3.org/2000/svg"
@@ -253,7 +253,7 @@ const Header = forwardRef((props, ref) => {
                             you don't have to. Weekly.
                           </p>
                         </div>
-                      </a>
+                      </a> */}
                     </div>
                     <div class="p-5 bg-gray-800 sm:p-8">
                       <a
@@ -493,12 +493,12 @@ const Header = forwardRef((props, ref) => {
                         The <span class="text-teal-300">Free</span> Newsletter
                       </div>
                     </a>
-                    <a
+                    {/* <a
                       href="#"
                       class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                     >
                       <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
-                        {/* <!-- Heroicon name: view-grid --> */}
+                        <!-- Heroicon name: view-grid -->
                         <svg
                           class="h-6 w-6"
                           xmlns="http://www.w3.org/2000/svg"
@@ -517,7 +517,7 @@ const Header = forwardRef((props, ref) => {
                       <div class="text-base leading-6 font-medium text-gray-100">
                         The <span class="text-pink-300">Edge</span> Newsletter
                       </div>
-                    </a>
+                    </a> */}
                   </nav>
                 </div>
               </div>
@@ -1288,14 +1288,14 @@ export default ({ children, ...props }) => {
                         The <span class="text-teal-300">Free</span> Newsletter
                       </a>
                     </li>
-                    <li>
+                    {/* <li>
                       <a
                         href="#"
                         class="text-base leading-6 text-gray-300 hover:text-white"
                       >
                         The <span class="text-pink-300">Edge</span> Newsletter
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
                 <div class="mt-12 md:mt-0">
