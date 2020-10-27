@@ -108,7 +108,7 @@ const Hero = props => (
         </a>
         .
       </p>
-      <ul class="flex py-4 gap-x-2 mt-4">
+      <ul class="flex py-4 gap-x-2 mt-4 relative z-10">
         <li class="">
           <SocialButton href="https://twitter.com/chrisbiscardi" icon="twitter">
             Twitter
