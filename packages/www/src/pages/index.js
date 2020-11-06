@@ -1,6 +1,7 @@
 import { h } from "preact";
 import Icon from "../components/small-icons/index.js"; //, { iconFromList }
 import SocialButton from "../components/social-button/index.js";
+import { Helmet } from "react-helmet";
 // import ConvertKitForm from "../components/convertkit-form/index.js";
 
 const NyanCat = props => (
@@ -16,6 +17,12 @@ const NyanCat = props => (
 export default props => {
   return (
     <main>
+      <Helmet>
+        <meta
+          name="twitter:image"
+          content="https://christopherbiscardi.com/img/main-opengraph-image.png"
+        />
+      </Helmet>
       <Hero />
       <Rust />
       <Serverless />
