@@ -1,23 +1,12 @@
 import { h, Fragment } from "preact";
+import Hero from "../components/field-guides/hero.js";
 
 export default props => (
   <div>
-    <div class="bg-gray-900">
-      <div class="max-w-screen-xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <p class="text-base leading-6 font-semibold text-teal-400 tracking-wide uppercase">
-            Field Guide
-          </p>
-          <h1 class="mt-1 text-4xl leading-10 font-extrabold text-gray-100 sm:text-5xl sm:leading-none sm:tracking-tight lg:text-6xl">
-            Serverless
-          </h1>
-          <p class="max-w-xl mt-5 mx-auto text-xl leading-7 text-gray-400">
-            Focus on operationalizing your core business instead of managing
-            infrastructure.
-          </p>
-        </div>
-      </div>
-    </div>
+    <Hero
+      title="Serverless"
+      description="Focus on operationalizing your core business instead of managing infrastructure."
+    />
     <div class="py-16 bg-gray-50 overflow-hidden lg:py-24">
       <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-screen-xl">
         <div class="relative">
