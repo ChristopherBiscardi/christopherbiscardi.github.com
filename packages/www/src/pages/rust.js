@@ -1,5 +1,6 @@
 import { h, Fragment } from "preact";
 import { Helmet } from "react-helmet";
+import Hero from "../components/field-guides/hero.js";
 
 export default props => (
   <div>
