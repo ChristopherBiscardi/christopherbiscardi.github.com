@@ -35,7 +35,7 @@
     "rehype-slug": "^3.0.0",
     "remark-stringify": "^8.1.1",
     "tailwindcss": "^1.9.3",
-    "toast": "^0.3.17",
+    "toast": "^0.3.30",
     "unified": "^9.0.0"
   },
   "devDependencies": {

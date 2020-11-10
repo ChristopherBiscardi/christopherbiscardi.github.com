@@ -9507,10 +9507,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-toast@^0.3.17:
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/toast/-/toast-0.3.17.tgz#47093196b7dd2a8150a7ede77981e35bf941bc57"
-  integrity sha512-EsAwmpB1yrmjCHlxlGd/C7CTRyOLGjbWBhrNbJy8OKZQIGlE65VRDYpBuzP1+SeK6F6U2VGT85x+4cu3jfOh4Q==
+toast@^0.3.30:
+  version "0.3.30"
+  resolved "https://registry.yarnpkg.com/toast/-/toast-0.3.30.tgz#29fcd91d089c1ba27634c0979eb90347bf4828b9"
+  integrity sha512-7lg1gh/c5VsfS1I40p+U4HlvO7kKXkR5kC2OQ4g7XwI0Jb6xFTVinOYEh0beakY5z6DERHo5MwNVdV3g3FuhqQ==
   dependencies:
     "@mdx-js/preact" "2.0.0-next.8"
     "@svgr/cli" "^5.4.0"
