@@ -6,7 +6,7 @@ export default props => (
     <Helmet>
       <meta
         name="twitter:image"
-        content="https://christopherbiscardi.com/opengraph-field-guide-rust.png"
+        content="https://christopherbiscardi.com/opengraph/opengraph-field-guide-rust.png"
       />
     </Helmet>
     <div class="bg-gray-900">
