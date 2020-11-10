@@ -3,10 +3,17 @@ import Hero from "../components/field-guides/hero.js";
 
 export default props => (
   <div>
+    <Helmet>
+      <meta
+        name="twitter:image"
+        content="https://christopherbiscardi.com/opengraph-field-guide-serverless.png"
+      />
+    </Helmet>
     <Hero
       title="Serverless"
       description="Focus on operationalizing your core business instead of managing infrastructure."
     />
+
     <div class="py-16 bg-gray-50 overflow-hidden lg:py-24">
       <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-screen-xl">
         <div class="relative">

@@ -1,7 +1,14 @@
 import { h, Fragment } from "preact";
+import { Helmet } from "react-helmet";
 
 export default props => (
   <div>
+    <Helmet>
+      <meta
+        name="twitter:image"
+        content="https://christopherbiscardi.com/opengraph-field-guide-rust.png"
+      />
+    </Helmet>
     <div class="bg-gray-900">
       <div class="max-w-screen-xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
         <div class="text-center">
