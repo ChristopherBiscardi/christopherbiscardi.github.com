@@ -719,12 +719,14 @@ const debounce = (func, wait) => {
 
 export default ({ children, ...props }) => {
   const headerRef = useRef(null);
-  let title = "Chris Biscardi's Digital Garden";
-  let description = "JAMStack, Serverless, MDX, and more";
-  if (props.title || props.meta?.title) {
-    title = props.title || props.meta.title;
-    description = "";
-  }
+  const title =
+    props.title || props.meta?.title || "Chris Biscardi's Digital Garden";
+  const description =
+    props.description ||
+    props.meta?.description ||
+    "JAMStack, Serverless, MDX, and more";
+  const tags = props.tags || props.meta?.tags || [];
+
   const propsHasTitle = Boolean(props.title || props.meta?.title);
   return (
     <div className="bg-gray-900">
@@ -747,10 +749,10 @@ export default ({ children, ...props }) => {
         <meta
           name="twitter:image"
           content={
-            props.title
+            propsHasTitle
               ? encodeURI(
                   `https://opengraph.sector.tools/chris?title=${title}${
-                    props.tags ? "&tags=" + props.tags.join(",") : ""
+                    tags ? "&tags=" + tags.join(",") : ""
                   }${
                     props.contentType && props.contentType === "note"
                       ? "&budding=true"
