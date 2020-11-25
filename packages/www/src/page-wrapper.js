@@ -1,8 +1,24 @@
 import { Helmet } from "react-helmet";
 import { MDXProvider } from "@mdx-js/preact";
-import { Fragment, h } from "preact";
-import { useState, useEffect, useRef } from "preact/hooks";
-import { forwardRef } from "preact/compat";
+import { Fragment, h, toChildArray } from "preact";
+import { useState, useEffect, useContext, useRef } from "preact/hooks";
+import { createPortal, forwardRef, createContext } from "preact/compat";
+
+export const useMedia = (query = "(min-width: 641px)") => {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const mediaListener = () => setMatches(media.matches);
+
+    media.addListener(mediaListener);
+    mediaListener();
+
+    return () => media.removeListener(mediaListener);
+  }, [query]);
+
+  return matches;
+};
 
 const TopBanner = props => (
   <div class="relative bg-teal-600">
@@ -700,23 +716,61 @@ const CopyButton = props => {
   );
 };
 
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// `wait` milliseconds.
-const debounce = (func, wait) => {
-  let timeout;
-
-  return function executedFunction(...args) {
-    const later = () => {
-      timeout = null;
-      func(...args);
-    };
-
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
+const ScrollyContext = createContext({});
+const ScrollyProvider = props => {
+  const [environment, setEnv] = useState();
+  const [content, setContent] = useState();
+  return (
+    <ScrollyContext.Provider
+      value={{ environment, content, setContent, setEnv }}
+    >
+      {props.children}
+    </ScrollyContext.Provider>
+  );
 };
-
+function RenderPortal(props) {
+  const scrollyState = useContext(ScrollyContext);
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: props.children || scrollyState.content
+      }}
+    ></div>
+  );
+}
+function Partition(props) {
+  const ref = useRef();
+  const [isActive, setActive] = useState(false);
+  const { setContent } = useContext(ScrollyContext);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries, observer) => {
+        if (entries.some(v => v.isIntersecting)) {
+          const child = props.children.find(({ props }) => {
+            return !!props.codestring && !!props.insertAs;
+          });
+          const content = child.props.codestring;
+          setContent(content);
+          setActive(true);
+        } else {
+          setActive(false);
+          // console.log("not setting content");
+        }
+      },
+      {
+        root: null,
+        rootMargin: "0px",
+        threshold: [0.4] //buildThresholdList()
+      }
+    );
+    observer.observe(ref.current);
+  }, []);
+  return (
+    <div ref={ref} class={`min-h-screen`}>
+      {props.children}
+    </div>
+  );
+}
 export default ({ children, ...props }) => {
   const headerRef = useRef(null);
   const title =
@@ -769,6 +823,8 @@ export default ({ children, ...props }) => {
           rel="stylesheet"
         />
         <link rel="stylesheet" href="/styles.css" />
+        {/* <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script> */}
+        {/* <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script> */}
         <script src="/amplify.js" type="text/javascript" />
       </Helmet>
       <Header ref={headerRef} />
@@ -1023,230 +1079,328 @@ export default ({ children, ...props }) => {
           </clipPath>
         </defs>
       </svg>
-      <MDXProvider
-        components={{
-          wrapper: function MyWrapper(props) {
-            return (
-              <div class="max-w-2xl mx-auto px-4 pb-16 sm:px-6 lg:px-8 text-gray-100">
-                {props.children}
-              </div>
-            );
-          },
-          corgilink: props => (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 500 510"
-              class="corgi"
-              style={{ width: 30 }}
-            >
-              <use href="#corgi" />
-            </svg>
-          ),
-          Aside: props => (
-            <div class="rounded-md bg-blue-900 p-4 pt-0 mt-4">
-              <div class="flex">
-                <div class="flex-shrink-0 pt-4">
-                  {/* <!-- Heroicon name: information-circle --> */}
-                  <svg
-                    class="h-5 w-5 text-blue-300"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
+      <ScrollyProvider>
+        <MDXProvider
+          components={{
+            wrapper: function MyWrapper({ children, ...props }) {
+              const portalRef = useRef();
+              // const [portalContent, setPortalContent] = useState();
+              const [mountNode, setMountNode] = useState();
+              const scrollyState = useContext(ScrollyContext);
+              const match = useMedia();
+              if (props.meta?.type === "scrollytelling") {
+                const childPartitions = toChildArray(children).reduce(
+                  (acc, cur) => {
+                    // remove ScrollyBreaks from the children,
+                    // they're an indication that we're going
+                    // into a new partition, not a renderable element
+                    if (cur.props?.mdxType === "ScrollyBreak") {
+                      return [...acc, []];
+                    }
+                    acc[acc.length - 1].push(cur);
+                    return acc;
+                  },
+                  [[]]
+                );
+                return (
+                  <div className={!match ? "" : "flex"}>
+                    <div className="max-w-2xl px-4 pb-16 sm:px-6 lg:px-8 text-gray-100">
+                      {childPartitions.map(child => (
+                        <Partition>{child}</Partition>
+                      ))}
+                    </div>
+                    <div
+                      className={`flex flex-1 bg-gray-500 ${
+                        !match ? "hidden" : ""
+                      }`}
+                    >
+                      <div className="flex w-full sticky top-0 h-screen justify-center items-center">
+                        {scrollyState.environment && (
+                          <iframe
+                            ref={portalRef}
+                            srcdoc={scrollyState.environment}
+                            onLoad={() => {
+                              setMountNode(
+                                portalRef?.current?.contentWindow?.document
+                                  ?.body
+                              );
+                            }}
+                          >
+                            {mountNode &&
+                              createPortal(<RenderPortal />, mountNode)}
+                          </iframe>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else {
+                return (
+                  <div class="max-w-2xl mx-auto px-4 pb-16 sm:px-6 lg:px-8 text-gray-100">
+                    {children}
+                  </div>
+                );
+              }
+            },
+            corgilink: props => (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 500 510"
+                class="corgi"
+                style={{ width: 30 }}
+              >
+                <use href="#corgi" />
+              </svg>
+            ),
+            Aside: props => (
+              <div class="rounded-md bg-blue-900 p-4 pt-0 mt-4">
+                <div class="flex">
+                  <div class="flex-shrink-0 pt-4">
+                    {/* <!-- Heroicon name: information-circle --> */}
+                    <svg
+                      class="h-5 w-5 text-blue-300"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div class="ml-3 flex-1 md:flex md:justify-between text-sm leading-5 text-blue-200">
+                    {props.children}
+                  </div>
                 </div>
-                <div class="ml-3 flex-1 md:flex md:justify-between text-sm leading-5 text-blue-200">
-                  {props.children}
-                </div>
               </div>
-            </div>
-          ),
-          hr: props => (
-            <hr
-              class="mt-4"
-              style={{
-                height: "3px",
-                border: "none",
-                background:
-                  "linear-gradient(90deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)"
-              }}
-            />
-          ),
-          p: props => <p class="font-sans text-lg pt-4" {...props} />,
-          img: props => <img class="m-auto" {...props} />,
-          a: props => (
-            <a
-              class="text-teal-400 bg-clip-text hover:text-transparent bg-gradient-to-r from-teal-400 hover:to-pink-400"
-              // css={{
-              //   wordWrap: "break-word",
-              //   // backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
-              //   "&[href^='/']": {
-              //     backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
-              //   },
-              //   "-webkit-background-clip": `text`,
-              //   "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
-              //   // display: "inline-block",
-              //   "&:hover": {
-              //     "-webkit-text-fill-color": `rgba(255,255,255,.1)`
-              //   }
-              // }}
-              {...props}
-            />
-          ),
-          h1: props => <h1 class="font-extrabold text-4xl mt-8" {...props} />,
-          h2: props => <h2 class="font-extrabold text-3xl mt-6" {...props} />,
-          h3: props => <h3 class="font-extrabold text-2xl mt-4" {...props} />,
-          h4: props => <h4 class="font-extrabold text-xl mt-4" {...props} />,
-          h5: props => <h5 class="font-extrabold text-lg mt-4" {...props} />,
-          h6: props => <h6 class="font-extrabold text-base mt-4" {...props} />,
-          ul: props => (
-            <ul
-              class="list-disc list-outside mt-2"
-              style={{
-                marginLeft: "calc(1rem + 2px)"
-              }}
-              {...props}
-            />
-          ),
-          "li.ul": props => (
-            <ul class="list-disc list-outside ml-6" {...props} />
-          ),
-          ol: props => (
-            <ol
-              class="list-decimal list-outside mt-2"
-              style={{
-                marginLeft: "calc(1rem + 2px)"
-              }}
-              {...props}
-            />
-          ),
-          "li.ol": props => (
-            <ol class="list-decimal list-outside ml-6" {...props} />
-          ),
-          table: props => <table class="mt-4" {...props} />,
-          thead: props => <thead class="bg-white bg-opacity-25" {...props} />,
-          th: props => <th class="p-2 text-left" {...props} />,
-          td: props => <td class="p2 border-b-1" {...props} />,
-          inlineCode: props => <code style={{ color: "#31b7fe" }} {...props} />,
-          codeblock: props => {
-            const lang = props.class && props.class.split("-")[1];
-            const langMap = {
-              graphql: "GraphQL",
-              js: "JS"
-            };
-
-            return (
-              <div
-                class="mt-4 relative"
+            ),
+            hr: props => (
+              <hr
+                class="mt-4"
                 style={{
-                  background: "#11151d",
-                  overflow: "auto",
-                  borderRadius: 10,
-                  border: "1px solid rgba(51,183,255,.21)",
-                  boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
+                  height: "3px",
+                  border: "none",
+                  background:
+                    "linear-gradient(90deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)"
+                }}
+              />
+            ),
+            p: props => <p class="font-sans text-lg pt-4" {...props} />,
+            img: props => <img class="m-auto" {...props} />,
+            a: props => (
+              <a
+                class="text-teal-400 bg-clip-text hover:text-transparent bg-gradient-to-r from-teal-400 hover:to-pink-400"
+                // css={{
+                //   wordWrap: "break-word",
+                //   // backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
+                //   "&[href^='/']": {
+                //     backgroundImage: `linear-gradient(90deg, rgba(251,89,74,1) 0%, rgba(251,222,75,1) 25%, rgba(112,228,112,1) 50%, rgba(51,183,255,1) 75%)`
+                //   },
+                //   "-webkit-background-clip": `text`,
+                //   "-webkit-text-fill-color": `rgba(255,255,255,0.46)`,
+                //   // display: "inline-block",
+                //   "&:hover": {
+                //     "-webkit-text-fill-color": `rgba(255,255,255,.1)`
+                //   }
+                // }}
+                {...props}
+              />
+            ),
+            h1: props => <h1 class="font-extrabold text-4xl mt-8" {...props} />,
+            h2: props => <h2 class="font-extrabold text-3xl mt-6" {...props} />,
+            h3: props => <h3 class="font-extrabold text-2xl mt-4" {...props} />,
+            h4: props => <h4 class="font-extrabold text-xl mt-4" {...props} />,
+            h5: props => <h5 class="font-extrabold text-lg mt-4" {...props} />,
+            h6: props => (
+              <h6 class="font-extrabold text-base mt-4" {...props} />
+            ),
+            ul: props => (
+              <ul
+                class="list-disc list-outside mt-2"
+                style={{
+                  marginLeft: "calc(1rem + 2px)"
+                }}
+                {...props}
+              />
+            ),
+            "li.ul": props => (
+              <ul class="list-disc list-outside ml-6" {...props} />
+            ),
+            ol: props => (
+              <ol
+                class="list-decimal list-outside mt-2"
+                style={{
+                  marginLeft: "calc(1rem + 2px)"
+                }}
+                {...props}
+              />
+            ),
+            "li.ol": props => (
+              <ol class="list-decimal list-outside ml-6" {...props} />
+            ),
+            table: props => <table class="mt-4" {...props} />,
+            thead: props => <thead class="bg-white bg-opacity-25" {...props} />,
+            th: props => <th class="p-2 text-left" {...props} />,
+            td: props => <td class="p2 border-b-1" {...props} />,
+            inlineCode: props => (
+              <code style={{ color: "#31b7fe" }} {...props} />
+            ),
+            codeblock: props => {
+              const portalRef = useRef();
+              const [mountNode, setMountNode] = useState();
+              const codeblockRef = useRef();
+              const [isActive, setActive] = useState(false);
+              const match = useMedia();
+              const scrollyState = useContext(ScrollyContext);
+
+              useEffect(() => {
+                if (props.type === "environment") {
+                  return;
+                }
+              }, []);
+              if (props.type === "environment") {
+                scrollyState.setEnv(props.codestring);
+                return null;
+              }
+
+              const lang = props.class && props.class.split("-")[1];
+              const langMap = {
+                graphql: "GraphQL",
+                js: "JS"
+              };
+
+              return (
+                <Fragment>
+                  <div
+                    ref={codeblockRef}
+                    class={`mt-4 relative`}
+                    style={{
+                      background: "#11151d",
+                      overflow: "auto",
+                      borderRadius: 10,
+                      border: !isActive
+                        ? "1px solid rgba(51,183,255,.21)"
+                        : "1px solid pink",
+                      boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
                     inset 0 6.7px 5.3px rgba(0,0,0,0.028),
                     inset 0 12.5px 10px rgba(0,0,0,0.035),
                     inset 0 22.3px 17.9px rgba(0,0,0,0.042),
                     inset 0 41.8px 33.4px rgba(0,0,0,0.05),
                     inset 0 100px 80px rgba(0,0,0,0.07)`
-                }}
-              >
-                <div
-                  class="flex justify-between left-0"
-                  style={{
-                    position: `sticky`,
-                    borderBottom: "1px solid rgba(51,183,255,.21)"
-                  }}
-                >
-                  <span class="p-4">{props.title}</span>
-                  <div class="flex">
-                    <span class="p-4">{langMap[lang] || lang || ""}</span>
-                    <CopyButton content={props.codestring} />
+                    }}
+                  >
+                    <div
+                      class="flex justify-between left-0"
+                      style={{
+                        position: `sticky`,
+                        borderBottom: "1px solid rgba(51,183,255,.21)"
+                      }}
+                    >
+                      <span class="p-4">{props.title}</span>
+                      <div class="flex">
+                        <span class="p-4">{langMap[lang] || lang || ""}</span>
+                        <CopyButton content={props.codestring} />
+                      </div>
+                    </div>
+                    <div
+                      class="p-4"
+                      dangerouslySetInnerHTML={{
+                        __html: props.children
+                      }}
+                    />
                   </div>
-                </div>
-                <div
-                  class="p-4"
-                  dangerouslySetInnerHTML={{
-                    __html: props.children
-                  }}
-                />
-              </div>
-            );
-          },
-          pre: props => {
-            const lang =
-              props.children.props.class &&
-              props.children.props.class.split("-")[1];
-            const langMap = {
-              graphql: "GraphQL",
-              js: "JS"
-            };
+                  {!match && scrollyState.environment && (
+                    <iframe
+                      ref={portalRef}
+                      srcdoc={scrollyState.environment}
+                      class="mt-4 w-full bg-gray-500"
+                      onLoad={() => {
+                        setMountNode(
+                          portalRef?.current?.contentWindow?.document?.body
+                        );
+                      }}
+                    >
+                      {mountNode &&
+                        createPortal(
+                          <RenderPortal>{props.codestring}</RenderPortal>,
+                          mountNode
+                        )}
+                    </iframe>
+                  )}
+                </Fragment>
+              );
+            },
+            pre: props => {
+              const lang =
+                props.children.props.class &&
+                props.children.props.class.split("-")[1];
+              const langMap = {
+                graphql: "GraphQL",
+                js: "JS"
+              };
 
-            return (
-              <div
-                class="mt-4 relative"
-                style={{
-                  background: "#11151d",
-                  overflow: "auto",
-                  borderRadius: 10,
-                  border: "1px solid rgba(51,183,255,.21)",
-                  boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
+              return (
+                <div
+                  class="mt-4 relative"
+                  style={{
+                    background: "#11151d",
+                    overflow: "auto",
+                    borderRadius: 10,
+                    border: "1px solid rgba(51,183,255,.21)",
+                    boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
                   inset 0 6.7px 5.3px rgba(0,0,0,0.028),
                   inset 0 12.5px 10px rgba(0,0,0,0.035),
                   inset 0 22.3px 17.9px rgba(0,0,0,0.042),
                   inset 0 41.8px 33.4px rgba(0,0,0,0.05),
                   inset 0 100px 80px rgba(0,0,0,0.07)`
-                }}
-              >
-                <div
-                  class="flex justify-between left-0"
-                  style={{
-                    position: `sticky`,
-                    borderBottom: "1px solid rgba(51,183,255,.21)"
                   }}
                 >
-                  <span class="p-4">{props.children.props.title}</span>
-                  <div class="flex">
-                    <span class="p-4">{langMap[lang] || lang || ""}</span>
-                    <CopyButton content={props.children.props.codestring} />
+                  <div
+                    class="flex justify-between left-0"
+                    style={{
+                      position: `sticky`,
+                      borderBottom: "1px solid rgba(51,183,255,.21)"
+                    }}
+                  >
+                    <span class="p-4">{props.children.props.title}</span>
+                    <div class="flex">
+                      <span class="p-4">{langMap[lang] || lang || ""}</span>
+                      <CopyButton content={props.children.props.codestring} />
+                    </div>
                   </div>
+                  <div
+                    class="p-4"
+                    dangerouslySetInnerHTML={{
+                      __html: props.children.props.children
+                    }}
+                  />
                 </div>
-                <div
-                  class="p-4"
-                  dangerouslySetInnerHTML={{
-                    __html: props.children.props.children
-                  }}
-                />
-              </div>
-            );
-          },
-          blockquote: props => (
-            <blockquote
-              class="p-4 mt-4 pt-0"
-              style={{
-                backgroundColor: "#1d2634",
-                backgroundImage: `linear-gradient(180deg,rgba(251,89,74,.5) 0%,rgba(251,89,74,.5) 25%,rgba(251,222,75,.5) 25%,rgba(251,222,75,.5) 50%,rgba(112,228,112,.5) 50%,rgba(112,228,112,.5) 75%,rgba(51,183,255,.5) 75%)`,
-                backgroundSize: "3px 100%",
-                backgroundRepeat: "no-repeat",
-                borderRight: `1px solid hsla(217, 28%, 26%, 1)`,
-                "&:hover": {
-                  backgroundImage: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`
-                }
-              }}
-              {...props}
-            />
-          )
-        }}
-      >
-        {children}
-      </MDXProvider>
-
+              );
+            },
+            blockquote: props => (
+              <blockquote
+                class="p-4 mt-4 pt-0"
+                style={{
+                  backgroundColor: "#1d2634",
+                  backgroundImage: `linear-gradient(180deg,rgba(251,89,74,.5) 0%,rgba(251,89,74,.5) 25%,rgba(251,222,75,.5) 25%,rgba(251,222,75,.5) 50%,rgba(112,228,112,.5) 50%,rgba(112,228,112,.5) 75%,rgba(51,183,255,.5) 75%)`,
+                  backgroundSize: "3px 100%",
+                  backgroundRepeat: "no-repeat",
+                  borderRight: `1px solid hsla(217, 28%, 26%, 1)`,
+                  "&:hover": {
+                    backgroundImage: `linear-gradient(180deg,rgba(251,89,74,1) 0%, rgba(251,89,74,1) 25%,rgba(251,222,75,1) 25%, rgba(251,222,75,1) 50%,rgba(112,228,112,1) 50%, rgba(112,228,112,1) 75%,rgba(51,183,255,1) 75%)`
+                  }
+                }}
+                {...props}
+              />
+            )
+          }}
+        >
+          {children}
+        </MDXProvider>
+      </ScrollyProvider>
       {propsHasTitle ? (
         <div
           dangerouslySetInnerHTML={{
