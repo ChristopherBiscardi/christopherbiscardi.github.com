@@ -730,6 +730,9 @@ const ScrollyProvider = props => {
 };
 function RenderPortal(props) {
   const scrollyState = useContext(ScrollyContext);
+  useEffect(() => {
+    props.onRender?.();
+  }, [scrollyState]);
   return (
     <div
       dangerouslySetInnerHTML={{
@@ -1087,6 +1090,10 @@ export default ({ children, ...props }) => {
               // const [portalContent, setPortalContent] = useState();
               const [mountNode, setMountNode] = useState();
               const scrollyState = useContext(ScrollyContext);
+              const [frameSize, setFrameSize] = useState({
+                width: 400,
+                height: 200
+              });
               const match = useMedia();
               if (props.meta?.type === "scrollytelling") {
                 const childPartitions = toChildArray(children).reduce(
@@ -1119,6 +1126,8 @@ export default ({ children, ...props }) => {
                           <iframe
                             ref={portalRef}
                             srcdoc={scrollyState.environment}
+                            width={frameSize.width}
+                            height={frameSize.height}
                             onLoad={() => {
                               setMountNode(
                                 portalRef?.current?.contentWindow?.document
@@ -1127,7 +1136,21 @@ export default ({ children, ...props }) => {
                             }}
                           >
                             {mountNode &&
-                              createPortal(<RenderPortal />, mountNode)}
+                              createPortal(
+                                <RenderPortal
+                                  onRender={() => {
+                                    setFrameSize({
+                                      width:
+                                        portalRef.current.contentWindow
+                                          ?.document.body.scrollWidth,
+                                      height:
+                                        portalRef.current.contentWindow
+                                          ?.document.body.scrollHeight
+                                    });
+                                  }}
+                                />,
+                                mountNode
+                              )}
                           </iframe>
                         )}
                       </div>
