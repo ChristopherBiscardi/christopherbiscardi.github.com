@@ -33,6 +33,7 @@ export default props => {
         />
       </div>
       <Toast />
+      <Podcasts />
     </main>
   );
 };
@@ -147,6 +148,75 @@ const Hero = props => (
         </li>
       </ul>
       <LowerTilt />
+    </div>
+  </div>
+);
+
+const Podcasts = props => (
+  <div class="py-16 mx-auto max-w-7xl px-4 sm:py-24 sm:px-6 bg-white">
+    <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+      <div class="text-center lg:col-span-12">
+        <h2 class="font-bold text-2xl">Appearances</h2>
+        <p>
+          Curated group of shows and podcasts I've been invited to. Excludes
+          anything I've hosted myself and conference talks.
+        </p>
+      </div>
+      <div class="sm:text-center lg:col-span-12 lg:text-left">
+        <h2>
+          <span class="block text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base">
+            egghead.io developer chats
+          </span>
+        </h2>
+        <iframe
+          height="200px"
+          width="100%"
+          frameborder="no"
+          scrolling="no"
+          seamless
+          src="https://player.simplecast.com/1b2cfa9c-2a0d-4ba1-a28a-b0a59b8d4b05?dark=false"
+        ></iframe>
+      </div>
+      <a
+        href="https://www.heavybit.com/library/podcasts/jamstack-radio/ep-57-jsx-in-markdown-with-chris-biscardi/"
+        class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+      >
+        <h3 class="font-semibold block">Jamstack Radio</h3>
+        <p class="block">
+          <span>
+            In episode of 57 of JAMstack Radio, Brian talks with Chris Biscardi,
+            an independent engineer and startup consultant. They discuss MDX,
+            the struggles of website migration, and why more projects are
+            adopting JAMstack.
+          </span>
+        </p>
+      </a>
+      <a
+        href="https://www.learnwithjason.dev/build-a-toast-site-using-mdx-tailwind"
+        class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+      >
+        <h3 class="font-semibold block">Learn with Jason</h3>
+        <p class="block">
+          <span>
+            Toast lets us build static sites using modern workflows, creating
+            less complex, super fast websites & apps. Chris Biscardi returns to
+            teach us how to build an MDX & Tailwind-powered Toast blog!
+          </span>
+        </p>
+      </a>
+      <a
+        href="https://www.software-engineering-unlocked.com/success-community-building/"
+        class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+      >
+        <h3 class="font-semibold block">Software Engineering Unlocked</h3>
+        <p class="block">
+          <span>
+            In this episode, I talk to Chris Biscardi, an independent software
+            consultant about how he became successful through open source and
+            community building.
+          </span>
+        </p>
+      </a>
     </div>
   </div>
 );
