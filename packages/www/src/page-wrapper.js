@@ -69,12 +69,12 @@ const Header = forwardRef((props, ref) => {
     });
   }, []);
   return (
-    <div class="relative bg-gray-900">
-      <div class="flex justify-between items-center px-4 py-6 sm:px-6 md:justify-start md:space-x-10">
+    <div class="sticky bg-gray-900 top-0 z-10">
+      <div class="flex justify-between items-center px-4 py-4 sm:px-6 md:justify-start md:space-x-10">
         <div class="lg:w-0 lg:flex-1">
           <a href="/" class="flex">
             <img
-              class="h-8 w-auto sm:h-10"
+              class="h-8 w-auto sm:h-8"
               src="/logos/logo-full.svg"
               alt="Chris Biscardi"
             />
@@ -1117,7 +1117,7 @@ export default ({ children, ...props }) => {
                       ))}
                     </div>
                     <div
-                      className={`flex flex-1 bg-gradient-to-r from-gray-900  to-teal-900 ${
+                      className={`flex flex-1 bg-gradient-to-r from-gray-900 to-teal-900 ${
                         !match ? "hidden" : ""
                       }`}
                     >

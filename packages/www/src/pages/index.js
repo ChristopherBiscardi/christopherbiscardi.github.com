@@ -88,10 +88,10 @@ const Hero = props => (
     class="relative pb-16"
     style={{
       backgroundImage:
-        "repeating-linear-gradient(45deg, hsla(64,83%,54%,0.05) 0px, hsla(64,83%,54%,0.05) 1px,transparent 1px, transparent 11px,hsla(64,83%,54%,0.05) 11px, hsla(64,83%,54%,0.05) 12px,transparent 12px, transparent 32px),repeating-linear-gradient(90deg, hsla(64,83%,54%,0.05) 0px, hsla(64,83%,54%,0.05) 1px,transparent 1px, transparent 11px,hsla(64,83%,54%,0.05) 11px, hsla(64,83%,54%,0.05) 12px,transparent 12px, transparent 32px),repeating-linear-gradient(0deg, hsla(64,83%,54%,0.05) 0px, hsla(64,83%,54%,0.05) 1px,transparent 1px, transparent 11px,hsla(64,83%,54%,0.05) 11px, hsla(64,83%,54%,0.05) 12px,transparent 12px, transparent 32px),repeating-linear-gradient(135deg, hsla(64,83%,54%,0.05) 0px, hsla(64,83%,54%,0.05) 1px,transparent 1px, transparent 11px,hsla(64,83%,54%,0.05) 11px, hsla(64,83%,54%,0.05) 12px,transparent 12px, transparent 32px),linear-gradient( 124deg,#ff240012,#e81d1d12,#e8b71d12,#e3e81d12,#1de84012,#1ddde812,#2b1de812,#dd00f312,#dd00f312 )"
+        "linear-gradient(153deg, rgba(152, 152, 152, 0.03) 0%, rgba(152, 152, 152, 0.03) 9%,rgba(197, 197, 197, 0.03) 9%, rgba(197, 197, 197, 0.03) 21%,rgba(106, 106, 106, 0.03) 21%, rgba(106, 106, 106, 0.03) 32%,rgba(222, 222, 222, 0.03) 32%, rgba(222, 222, 222, 0.03) 72%,rgba(16, 16, 16, 0.03) 72%, rgba(16, 16, 16, 0.03) 92%,rgba(181, 181, 181, 0.03) 92%, rgba(181, 181, 181, 0.03) 97%,rgba(130, 130, 130, 0.03) 97%, rgba(130, 130, 130, 0.03) 100%),linear-gradient(39deg, rgba(237, 237, 237, 0.03) 0%, rgba(237, 237, 237, 0.03) 22%,rgba(126, 126, 126, 0.03) 22%, rgba(126, 126, 126, 0.03) 55%,rgba(196, 196, 196, 0.03) 55%, rgba(196, 196, 196, 0.03) 61%,rgba(121, 121, 121, 0.03) 61%, rgba(121, 121, 121, 0.03) 71%,rgba(133, 133, 133, 0.03) 71%, rgba(133, 133, 133, 0.03) 84%,rgba(132, 132, 132, 0.03) 84%, rgba(132, 132, 132, 0.03) 97%,rgba(185, 185, 185, 0.03) 97%, rgba(185, 185, 185, 0.03) 100%),linear-gradient(124deg, rgba(168, 168, 168, 0.03) 0%, rgba(168, 168, 168, 0.03) 7%,rgba(169, 169, 169, 0.03) 7%, rgba(169, 169, 169, 0.03) 19%,rgba(73, 73, 73, 0.03) 19%, rgba(73, 73, 73, 0.03) 50%,rgba(150, 150, 150, 0.03) 50%, rgba(150, 150, 150, 0.03) 67%,rgba(68, 68, 68, 0.03) 67%, rgba(68, 68, 68, 0.03) 81%,rgba(111, 111, 111, 0.03) 81%, rgba(111, 111, 111, 0.03) 91%,rgba(191, 191, 191, 0.03) 91%, rgba(191, 191, 191, 0.03) 100%),linear-gradient(95deg, rgba(147, 147, 147, 0.03) 0%, rgba(147, 147, 147, 0.03) 17%,rgba(79, 79, 79, 0.03) 17%, rgba(79, 79, 79, 0.03) 27%,rgba(28, 28, 28, 0.03) 27%, rgba(28, 28, 28, 0.03) 45%,rgba(27, 27, 27, 0.03) 45%, rgba(27, 27, 27, 0.03) 56%,rgba(228, 228, 228, 0.03) 56%, rgba(228, 228, 228, 0.03) 64%,rgba(38, 38, 38, 0.03) 64%, rgba(38, 38, 38, 0.03) 72%,rgba(42, 42, 42, 0.03) 72%, rgba(42, 42, 42, 0.03) 100%),linear-gradient(346deg, rgba(59, 59, 59, 0.03) 0%, rgba(59, 59, 59, 0.03) 16%,rgba(66, 66, 66, 0.03) 16%, rgba(66, 66, 66, 0.03) 20%,rgba(236, 236, 236, 0.03) 20%, rgba(236, 236, 236, 0.03) 41%,rgba(244, 244, 244, 0.03) 41%, rgba(244, 244, 244, 0.03) 55%,rgba(106, 106, 106, 0.03) 55%, rgba(106, 106, 106, 0.03) 61%,rgba(220, 220, 220, 0.03) 61%, rgba(220, 220, 220, 0.03) 63%,rgba(209, 209, 209, 0.03) 63%, rgba(209, 209, 209, 0.03) 100%),linear-gradient(124deg, rgba(255, 36, 0, 0.17), rgba(232, 29, 29, 0.17), rgba(232, 183, 29, 0.17), rgba(227, 232, 29, 0.17), rgba(29, 232, 64, 0.17), rgba(29, 221, 232, 0.17), rgba(43, 29, 232, 0.17), rgba(221, 0, 243, 0.17), rgba(221, 0, 243, 0.17))"
     }}
   >
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-8">
+    <div class="max-w-7xl mx-auto px-42 sm:px-6 lg:px-8 py-16 sm:py-8">
       <h1 class="text-4xl sm:text-6xl font-bold text-gray-100 flex items-center">
         Hey, I&rsquo;m Chris
         <img
@@ -153,70 +153,72 @@ const Hero = props => (
 );
 
 const Podcasts = props => (
-  <div class="py-16 mx-auto max-w-7xl px-4 sm:py-24 sm:px-6 bg-white">
-    <div class="lg:grid lg:grid-cols-12 lg:gap-8">
-      <div class="text-center lg:col-span-12">
-        <h2 class="font-bold text-2xl">Appearances</h2>
-        <p>
-          Curated group of shows and podcasts I've been invited to. Excludes
-          anything I've hosted myself and conference talks.
-        </p>
+  <div class="bg-white">
+    <div class="py-16 mx-auto max-w-7xl px-4 sm:py-24 sm:px-6 ">
+      <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+        <div class="text-center lg:col-span-12">
+          <h2 class="font-bold text-2xl">Appearances</h2>
+          <p>
+            Curated group of shows and podcasts I've been invited to. Excludes
+            anything I've hosted myself and conference talks.
+          </p>
+        </div>
+        <div class="sm:text-center lg:col-span-12 lg:text-left">
+          <h2>
+            <span class="block text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base">
+              egghead.io developer chats
+            </span>
+          </h2>
+          <iframe
+            height="200px"
+            width="100%"
+            frameborder="no"
+            scrolling="no"
+            seamless
+            src="https://player.simplecast.com/1b2cfa9c-2a0d-4ba1-a28a-b0a59b8d4b05?dark=false"
+          ></iframe>
+        </div>
+        <a
+          href="https://www.heavybit.com/library/podcasts/jamstack-radio/ep-57-jsx-in-markdown-with-chris-biscardi/"
+          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+        >
+          <h3 class="font-semibold block">Jamstack Radio</h3>
+          <p class="block">
+            <span>
+              In episode of 57 of JAMstack Radio, Brian talks with Chris
+              Biscardi, an independent engineer and startup consultant. They
+              discuss MDX, the struggles of website migration, and why more
+              projects are adopting JAMstack.
+            </span>
+          </p>
+        </a>
+        <a
+          href="https://www.learnwithjason.dev/build-a-toast-site-using-mdx-tailwind"
+          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+        >
+          <h3 class="font-semibold block">Learn with Jason</h3>
+          <p class="block">
+            <span>
+              Toast lets us build static sites using modern workflows, creating
+              less complex, super fast websites & apps. Chris Biscardi returns
+              to teach us how to build an MDX & Tailwind-powered Toast blog!
+            </span>
+          </p>
+        </a>
+        <a
+          href="https://www.software-engineering-unlocked.com/success-community-building/"
+          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+        >
+          <h3 class="font-semibold block">Software Engineering Unlocked</h3>
+          <p class="block">
+            <span>
+              In this episode, I talk to Chris Biscardi, an independent software
+              consultant about how he became successful through open source and
+              community building.
+            </span>
+          </p>
+        </a>
       </div>
-      <div class="sm:text-center lg:col-span-12 lg:text-left">
-        <h2>
-          <span class="block text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base">
-            egghead.io developer chats
-          </span>
-        </h2>
-        <iframe
-          height="200px"
-          width="100%"
-          frameborder="no"
-          scrolling="no"
-          seamless
-          src="https://player.simplecast.com/1b2cfa9c-2a0d-4ba1-a28a-b0a59b8d4b05?dark=false"
-        ></iframe>
-      </div>
-      <a
-        href="https://www.heavybit.com/library/podcasts/jamstack-radio/ep-57-jsx-in-markdown-with-chris-biscardi/"
-        class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
-      >
-        <h3 class="font-semibold block">Jamstack Radio</h3>
-        <p class="block">
-          <span>
-            In episode of 57 of JAMstack Radio, Brian talks with Chris Biscardi,
-            an independent engineer and startup consultant. They discuss MDX,
-            the struggles of website migration, and why more projects are
-            adopting JAMstack.
-          </span>
-        </p>
-      </a>
-      <a
-        href="https://www.learnwithjason.dev/build-a-toast-site-using-mdx-tailwind"
-        class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
-      >
-        <h3 class="font-semibold block">Learn with Jason</h3>
-        <p class="block">
-          <span>
-            Toast lets us build static sites using modern workflows, creating
-            less complex, super fast websites & apps. Chris Biscardi returns to
-            teach us how to build an MDX & Tailwind-powered Toast blog!
-          </span>
-        </p>
-      </a>
-      <a
-        href="https://www.software-engineering-unlocked.com/success-community-building/"
-        class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
-      >
-        <h3 class="font-semibold block">Software Engineering Unlocked</h3>
-        <p class="block">
-          <span>
-            In this episode, I talk to Chris Biscardi, an independent software
-            consultant about how he became successful through open source and
-            community building.
-          </span>
-        </p>
-      </a>
     </div>
   </div>
 );
