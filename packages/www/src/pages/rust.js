@@ -13,6 +13,7 @@ export default props => (
     <Hero
       title="Rust"
       description="A language empowering everyone to build reliable and efficient software."
+      backgroundColor="#e43a25"
     />
     <div class="pt-16 bg-gray-50 overflow-hidden lg:pt-24">
       <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-screen-xl">
