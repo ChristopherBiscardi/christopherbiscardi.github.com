@@ -787,6 +787,33 @@ export default ({ children, ...props }) => {
   const propsHasTitle = Boolean(props.title || props.meta?.title);
   return (
     <div className="bg-gray-900">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            .rainbow-borders {
+              border-image-source: linear-gradient(
+                90deg,
+                rgba(251, 89, 74, 0.3) 0%,
+                rgba(251, 222, 75, 0.3) 25%,
+                rgba(112, 228, 112, 0.3) 50%,
+                rgba(51, 183, 255, 0.3) 75%
+              );
+
+              border-bottom-width: 2px;
+              border-image-slice: 1;
+            }
+            .rainbow-borders:hover {
+              border-image-source: linear-gradient(
+                90deg,
+                rgba(251, 89, 74, 1) 0%,
+                rgba(251, 222, 75, 1) 25%,
+                rgba(112, 228, 112, 1) 50%,
+                rgba(51, 183, 255, 1) 75%
+              );
+            }
+          `
+        }}
+      />
       <ProgressBar />
       <TopBanner />
       <Helmet>
@@ -1215,7 +1242,7 @@ export default ({ children, ...props }) => {
             img: props => <img class="m-auto" {...props} />,
             a: props => (
               <a
-                class="text-teal-400 bg-clip-text hover:text-transparent bg-gradient-to-r from-teal-400 hover:to-pink-400"
+                class="rainbow-borders text-teal-400"
                 // css={{
                 //   wordWrap: "break-word",
                 //   // backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
