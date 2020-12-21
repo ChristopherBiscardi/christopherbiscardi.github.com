@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "prepare": "breadbox --dest public/web_modules",
-    "breadbox": "breadbox --dest public/web_modules",
+    "prepare": "./postinstall.js",
+    "postinstall": "./postinstall.js",
     "build": "yarn run build:css && yarn run build:site",
     "build:css": "postcss --config postcss-config index.css -o public/styles.css",
     "build:site": "toast incremental ."
@@ -17,10 +17,10 @@
     "@emotion/core": "^20",
     "@mdx-js/preact": "2.0.0-next.8",
     "@sector/babel-plugin-package-import": "^0.3.0",
-    "@sector/breadbox": "^0.0.4",
     "@stripe/stripe-js": "^1.9.0",
     "@tailwindcss/ui": "^0.6.2",
     "@toastdotdev/mdx": "^0.1.3",
+    "esinstall": "^0.5.2",
     "fetch-sector-docs": "^1.0.0",
     "gsap": "^3.5.1",
     "json5": "^2.1.3",
@@ -28,6 +28,7 @@
     "patch-package": "^6.2.2",
     "postcss": "^8.1.1",
     "postcss-cli": "^8.1.0",
+    "pretty-bytes": "^5.4.1",
     "prismjs": "^1.20.0",
     "react-helmet": "^6.1.0",
     "rehype-autolink-headings": "^3.0.0",
@@ -41,23 +42,5 @@
   },
   "devDependencies": {
     "node-getpocket": "^1.0.0"
-  },
-  "snowpack": {
-    "exclude": ["public/**/*", "toast.js", "fetch-mdx-post-files.js"],
-    "installOptions": {
-      "alias": {
-        "react": "preact/compat"
-      }
-    },
-    "knownEntrypoints": [
-      "preact",
-      "preact/hooks",
-      "@emotion/core",
-      "@mdx-js/preact",
-      "react-helmet",
-      "preact/compat",
-      "@stripe/stripe-js",
-      "gsap"
-    ]
   }
 }
