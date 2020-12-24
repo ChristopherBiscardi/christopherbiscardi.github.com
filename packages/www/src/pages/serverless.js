@@ -656,12 +656,31 @@ const ListedLinks = ({ links }) => (
 
 const CardGrid = ({ links }) => (
   <div class="overflow-hidden sm:rounded-md">
-    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
+          .integration-item:before {
+            background: #ffffff77;
+            content: "";
+            border-image-source: linear-gradient(#ffffff33, #ffffff55);
+            border-width: 1px;
+            border-image-repeat: stretch;
+            border-image-slice: 1;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            z-index: -1;
+            border-radius: 0.25rem;
+          }
+        `
+      }}
+    />
+    <ul class="grid grid-cols-1 gap-4">
       {links.map(({ title, description, tag, tagHref, href }, i) => (
-        <li class="bg-white shadow rounded">
+        <li class="shadow rounded integration-item relative z-0">
           <a
             href={href}
-            class="block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out h-full align-start"
+            class="block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out h-full align-start rounded"
           >
             <div class="px-4 py-4 flex items-center sm:px-6">
               <div class="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
@@ -675,7 +694,7 @@ const CardGrid = ({ links }) => (
                     <h3 class="mt-2 text-xl leading-7 font-semibold text-gray-900">
                       {title}
                     </h3>
-                    <p class="mt-3 text-base leading-6 text-gray-500">
+                    <p class="mt-3 text-base leading-6 text-gray-800">
                       {description}
                     </p>
                   </div>
