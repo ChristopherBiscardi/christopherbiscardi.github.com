@@ -781,7 +781,7 @@ export default ({ children, ...props }) => {
   const description =
     props.description ||
     props.meta?.description ||
-    "JAMStack, Serverless, MDX, and more";
+    "Rust, Serverless, and the Jamstack";
   const tags = props.tags || props.meta?.tags || [];
 
   const propsHasTitle = Boolean(props.title || props.meta?.title);
