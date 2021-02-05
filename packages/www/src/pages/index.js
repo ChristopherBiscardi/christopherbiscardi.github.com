@@ -48,7 +48,8 @@ const LowerTilt = ({ color, flip, props }) => {
         width: "100%",
         overflow: "hidden",
         lineHeight: 0,
-        transform: `rotate(180deg)${flip ? " rotateY(180deg)" : ""}`
+        transform: `rotate(180deg)${flip ? " rotateY(180deg)" : ""}`,
+        pointerEvents: "none"
       }}
     >
       <svg
