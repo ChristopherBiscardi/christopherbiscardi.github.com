@@ -1,0 +1,17 @@
+diff --git a/node_modules/@mdx-js/preact/dist/mdx-preact.modern.js b/node_modules/@mdx-js/preact/dist/mdx-preact.modern.mjs
+similarity index 100%
+rename from node_modules/@mdx-js/preact/dist/mdx-preact.modern.js
+rename to node_modules/@mdx-js/preact/dist/mdx-preact.modern.mjs
+diff --git a/node_modules/@mdx-js/preact/package.json b/node_modules/@mdx-js/preact/package.json
+index 1fa896c..1ee9b56 100644
+--- a/node_modules/@mdx-js/preact/package.json
++++ b/node_modules/@mdx-js/preact/package.json
+@@ -24,7 +24,7 @@
+   "module": "dist/mdx-preact.es.js",
+   "types": "types/index.d.ts",
+   "exports": {
+-    "import": "./dist/mdx-preact.modern.js",
++    "import": "./dist/mdx-preact.modern.mjs",
+     "require": "./dist/mdx-preact.js"
+   },
+   "files": [
