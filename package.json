@@ -10,12 +10,13 @@
     "test": "jest",
     "develop": "yarn workspace www develop",
     "build": "yarn workspace www build",
-    "update-sens8": "git subtree pull --prefix sens8 git@github.com:ChristopherBiscardi/sens8.git master --squash"
+    "update-sens8": "git subtree pull --prefix sens8 git@github.com:ChristopherBiscardi/sens8.git master --squash",
+    "postinstall": "patch-package"
   },
   "private": true,
   "workspaces": ["packages/*", "vendor/*"],
   "lint-staged": {
-    "*.{js,jsx}": ["prettier --parser flow --write", "git add"],
+    "*.{js,jsx}": ["prettier --parser babel --write", "git add"],
     "*.json": ["prettier --parser json --write", "git add"],
     "*.{graphql,gql}": ["prettier --parser graphql --write", "git add"],
     "*.{md,markdown}": ["prettier --parser markdown --write", "git add"],
@@ -26,7 +27,7 @@
     "husky": "^1.2.0",
     "jest": "^25.1.0",
     "lint-staged": "^8.1.0",
-    "patch-package": "^6.2.2",
+    "patch-package": "^6.4.7",
     "prettier": "^1.15.3"
   },
   "husky": {
@@ -38,7 +39,7 @@
     "testPathIgnorePatterns": ["vendor"]
   },
   "resolutions": {
-    "@mdx-js/mdx": "2.0.0-next.8",
-    "@mdx-js/preact": "2.0.0-next.8"
+    "@mdx-js/mdx": "2.0.0-next.9",
+    "@mdx-js/preact": "2.0.0-next.9"
   }
 }
