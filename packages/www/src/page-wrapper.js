@@ -1378,57 +1378,58 @@ export default ({ children, ...props }) => {
                 </Fragment>
               );
             },
-            // pre: props => {
-            //   console.log(props);
-            //   const lang = props.className.match(/language-([a-z]*)/)?.[1];
-            //   if (!!lang) {
-            //   }
-            //   // const lang =
-            //   //   props.children.props.className &&
-            //   //   props.children.props.className.split("-")[1];
-            //   const langMap = {
-            //     graphql: "GraphQL",
-            //     js: "JS"
-            //   };
 
-            //   return (
-            //     <div
-            //       class="mt-4 relative"
-            //       style={{
-            //         background: "#11151d",
-            //         overflow: "auto",
-            //         borderRadius: 10,
-            //         border: "1px solid rgba(51,183,255,.21)",
-            //         boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
-            //       inset 0 6.7px 5.3px rgba(0,0,0,0.028),
-            //       inset 0 12.5px 10px rgba(0,0,0,0.035),
-            //       inset 0 22.3px 17.9px rgba(0,0,0,0.042),
-            //       inset 0 41.8px 33.4px rgba(0,0,0,0.05),
-            //       inset 0 100px 80px rgba(0,0,0,0.07)`
-            //       }}
-            //     >
-            //       <div
-            //         class="flex justify-between left-0"
-            //         style={{
-            //           position: `sticky`,
-            //           borderBottom: "1px solid rgba(51,183,255,.21)"
-            //         }}
-            //       >
-            //         <span class="p-4">{props.children.props.title}</span>
-            //         <div class="flex">
-            //           <span class="p-4">{langMap[lang] || lang || ""}</span>
-            //           <CopyButton content={props.children.props.codestring} />
-            //         </div>
-            //       </div>
-            //       <div
-            //         class="p-4"
-            //         dangerouslySetInnerHTML={{
-            //           __html: props.children.props.children
-            //         }}
-            //       />
-            //     </div>
-            //   );
-            // },
+            pre: props => {
+              if (typeof props?.children?.props?.children !== "string") {
+                return <pre {...props} />;
+              } else {
+                const lang =
+                  props.children.props.className &&
+                  props.children.props.className.split("-")[1];
+                const langMap = {
+                  graphql: "GraphQL",
+                  js: "JS"
+                };
+
+                return (
+                  <div
+                    class="mt-4 relative"
+                    style={{
+                      background: "#11151d",
+                      overflow: "auto",
+                      borderRadius: 10,
+                      border: "1px solid rgba(51,183,255,.21)",
+                      boxShadow: `inset 0 2.8px 2.2px rgba(0,0,0,0.02),
+                  inset 0 6.7px 5.3px rgba(0,0,0,0.028),
+                  inset 0 12.5px 10px rgba(0,0,0,0.035),
+                  inset 0 22.3px 17.9px rgba(0,0,0,0.042),
+                  inset 0 41.8px 33.4px rgba(0,0,0,0.05),
+                  inset 0 100px 80px rgba(0,0,0,0.07)`
+                    }}
+                  >
+                    <div
+                      class="flex justify-between left-0"
+                      style={{
+                        position: `sticky`,
+                        borderBottom: "1px solid rgba(51,183,255,.21)"
+                      }}
+                    >
+                      <span class="p-4">{props.children.props.title}</span>
+                      <div class="flex">
+                        <span class="p-4">{langMap[lang] || lang || ""}</span>
+                        <CopyButton content={props.children.props.codestring} />
+                      </div>
+                    </div>
+                    <div
+                      class="p-4"
+                      dangerouslySetInnerHTML={{
+                        __html: props.children.props.children
+                      }}
+                    />
+                  </div>
+                );
+              }
+            },
             blockquote: props => (
               <blockquote
                 class="p-4 mt-4 pt-0"
