@@ -22,6 +22,10 @@ export default props => {
           name="twitter:image"
           content="https://christopherbiscardi.com/img/main-opengraph-image.png"
         />
+        <meta
+          name="description"
+          content="Chris teaches people how to write Rust, work with Serverlesss, and take advantage of the Jamstack. He is an independent consultant with two major products (Toast and Sector) whose talks can be viewed at a variety of conferences such as qcon, gophercon, and more. Chris runs the Party Corgi Network, a community of practice and is an MDX maintainer."
+        />
       </Helmet>
       <Hero />
       <Rust />
