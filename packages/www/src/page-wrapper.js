@@ -1355,12 +1355,7 @@ export default ({ children, ...props }) => {
                         <CopyButton content={props.codestring} />
                       </div>
                     </div>
-                    <div
-                      class="p-4"
-                      dangerouslySetInnerHTML={{
-                        __html: props.children
-                      }}
-                    />
+                    <div class="p-4" {...props} />
                   </div>
                   {!match && scrollyState.environment && (
                     <iframe
