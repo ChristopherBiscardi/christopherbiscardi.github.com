@@ -17,9 +17,11 @@
     "@emotion/core": "^20",
     "@sector/babel-plugin-package-import": "^0.3.0",
     "@stripe/stripe-js": "^1.9.0",
-    "@tailwindcss/ui": "^0.6.2",
+    "@tailwindcss/aspect-ratio": "^0.2.1",
+    "@tailwindcss/forms": "^0.3.3",
+    "@tailwindcss/typography": "^0.4.1",
     "@toastdotdev/mdx": "^0.2.4",
-    "esinstall": "^0.5.2",
+    "esinstall": "^1.1.6",
     "feed": "^4.2.1",
     "fetch-sector-docs": "^1.0.0",
     "gsap": "^3.5.1",
@@ -36,11 +38,12 @@
     "rehype-prism-mdx": "1.0.0",
     "rehype-slug": "^3.0.0",
     "remark-stringify": "^8.1.1",
-    "tailwindcss": "^1.9.3",
+    "tailwindcss": "^2.2.4",
     "toast": "^0.3.30",
     "unified": "^9.0.0"
   },
   "devDependencies": {
+    "autoprefixer": "^10.2.6",
     "node-getpocket": "^1.0.0"
   }
 }

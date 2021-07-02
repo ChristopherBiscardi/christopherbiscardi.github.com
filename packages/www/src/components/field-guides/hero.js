@@ -18,7 +18,7 @@ export default function Hero({ title, description, backgroundColor }) {
       </Helmet>
       <div class="max-w-screen-xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
         <div class="text-center">
-          <p class="text-base leading-6 font-semibold text-teal-400 tracking-wide uppercase">
+          <p class="text-base leading-6 font-semibold text-blue-400 tracking-wide uppercase">
             Field Guide
           </p>
           <h1 class="mt-1 text-4xl leading-10 font-extrabold text-gray-100 sm:text-5xl sm:leading-none sm:tracking-tight lg:text-6xl">

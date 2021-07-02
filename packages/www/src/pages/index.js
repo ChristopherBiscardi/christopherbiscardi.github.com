@@ -90,14 +90,14 @@ const LowerTilt = ({ color, flip, props }) => {
 
 const Hero = props => (
   <div
-    class="relative pb-16"
+    class="relative"
     style={{
       backgroundImage:
         "linear-gradient(153deg, rgba(152, 152, 152, 0.03) 0%, rgba(152, 152, 152, 0.03) 9%,rgba(197, 197, 197, 0.03) 9%, rgba(197, 197, 197, 0.03) 21%,rgba(106, 106, 106, 0.03) 21%, rgba(106, 106, 106, 0.03) 32%,rgba(222, 222, 222, 0.03) 32%, rgba(222, 222, 222, 0.03) 72%,rgba(16, 16, 16, 0.03) 72%, rgba(16, 16, 16, 0.03) 92%,rgba(181, 181, 181, 0.03) 92%, rgba(181, 181, 181, 0.03) 97%,rgba(130, 130, 130, 0.03) 97%, rgba(130, 130, 130, 0.03) 100%),linear-gradient(39deg, rgba(237, 237, 237, 0.03) 0%, rgba(237, 237, 237, 0.03) 22%,rgba(126, 126, 126, 0.03) 22%, rgba(126, 126, 126, 0.03) 55%,rgba(196, 196, 196, 0.03) 55%, rgba(196, 196, 196, 0.03) 61%,rgba(121, 121, 121, 0.03) 61%, rgba(121, 121, 121, 0.03) 71%,rgba(133, 133, 133, 0.03) 71%, rgba(133, 133, 133, 0.03) 84%,rgba(132, 132, 132, 0.03) 84%, rgba(132, 132, 132, 0.03) 97%,rgba(185, 185, 185, 0.03) 97%, rgba(185, 185, 185, 0.03) 100%),linear-gradient(124deg, rgba(168, 168, 168, 0.03) 0%, rgba(168, 168, 168, 0.03) 7%,rgba(169, 169, 169, 0.03) 7%, rgba(169, 169, 169, 0.03) 19%,rgba(73, 73, 73, 0.03) 19%, rgba(73, 73, 73, 0.03) 50%,rgba(150, 150, 150, 0.03) 50%, rgba(150, 150, 150, 0.03) 67%,rgba(68, 68, 68, 0.03) 67%, rgba(68, 68, 68, 0.03) 81%,rgba(111, 111, 111, 0.03) 81%, rgba(111, 111, 111, 0.03) 91%,rgba(191, 191, 191, 0.03) 91%, rgba(191, 191, 191, 0.03) 100%),linear-gradient(95deg, rgba(147, 147, 147, 0.03) 0%, rgba(147, 147, 147, 0.03) 17%,rgba(79, 79, 79, 0.03) 17%, rgba(79, 79, 79, 0.03) 27%,rgba(28, 28, 28, 0.03) 27%, rgba(28, 28, 28, 0.03) 45%,rgba(27, 27, 27, 0.03) 45%, rgba(27, 27, 27, 0.03) 56%,rgba(228, 228, 228, 0.03) 56%, rgba(228, 228, 228, 0.03) 64%,rgba(38, 38, 38, 0.03) 64%, rgba(38, 38, 38, 0.03) 72%,rgba(42, 42, 42, 0.03) 72%, rgba(42, 42, 42, 0.03) 100%),linear-gradient(346deg, rgba(59, 59, 59, 0.03) 0%, rgba(59, 59, 59, 0.03) 16%,rgba(66, 66, 66, 0.03) 16%, rgba(66, 66, 66, 0.03) 20%,rgba(236, 236, 236, 0.03) 20%, rgba(236, 236, 236, 0.03) 41%,rgba(244, 244, 244, 0.03) 41%, rgba(244, 244, 244, 0.03) 55%,rgba(106, 106, 106, 0.03) 55%, rgba(106, 106, 106, 0.03) 61%,rgba(220, 220, 220, 0.03) 61%, rgba(220, 220, 220, 0.03) 63%,rgba(209, 209, 209, 0.03) 63%, rgba(209, 209, 209, 0.03) 100%),linear-gradient(124deg, rgba(255, 36, 0, 0.17), rgba(232, 29, 29, 0.17), rgba(232, 183, 29, 0.17), rgba(227, 232, 29, 0.17), rgba(29, 232, 64, 0.17), rgba(29, 221, 232, 0.17), rgba(43, 29, 232, 0.17), rgba(221, 0, 243, 0.17), rgba(221, 0, 243, 0.17))"
     }}
   >
-    <div class="max-w-7xl mx-auto px-42 sm:px-6 lg:px-8 py-16 sm:py-8">
-      <h1 class="text-4xl sm:text-6xl font-bold text-gray-100 flex items-center">
+    <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
+      <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl flex">
         Hey, I&rsquo;m Chris
         <img
           style={{ height: "4rem" }}
@@ -106,17 +106,20 @@ const Hero = props => (
           alt="party corgi rainbow animated"
         />
       </h1>
-      <p class="text-2xl text-gray-100 max-w-3xl">
+      <p class="mt-6 text-xl text-indigo-100 max-w-3xl">
         <span>
-          I'm an independent consultant that works with startups built on OSS.
-          Here I write about JAMStack, Serverless, MDX, and more. This site is
-          built with ESModules,{" "}
+          I teach{" "}
+          <a class="text-red-400" href="/rust">
+            Rust
+          </a>{" "}
+          and JavaScript, often focusing on Jamstack, Serverless, and Game
+          development. This site is built with ESModules,{" "}
         </span>
         <a class="text-pink-400" href="https://twitter.com/toastdotdev">
           Toast
         </a>
         <span>, and MDX. The content is written in </span>
-        <a class="text-teal-400" href="https://twitter.com/sectortools">
+        <a class="text-blue-400" href="https://twitter.com/sectortools">
           Sector
         </a>
         .
@@ -127,15 +130,15 @@ const Hero = props => (
             Twitter
           </SocialButton>
         </li>
-        <li class="hidden sm:inline-block">
+        {/* <li class="hidden sm:inline-block">
           <SocialButton
             href="https://www.twitch.tv/chrisbiscardi"
             icon="twitch"
           >
             Twitch
           </SocialButton>
-        </li>
-        <li class="hidden sm:inline-block">
+        </li> */}
+        <li class="">
           <SocialButton
             href="https://www.youtube.com/channel/UCiSIL22pQRpc-8JNiYDFyzQ"
             icon="youtube"
@@ -143,16 +146,16 @@ const Hero = props => (
             YouTube
           </SocialButton>
         </li>
-        <li class="">
+        {/* <li class="">
           <SocialButton
             href="https://github.com/ChristopherBiscardi"
             icon="github"
           >
             GitHub
           </SocialButton>
-        </li>
+        </li> */}
       </ul>
-      <LowerTilt />
+      {/* <LowerTilt /> */}
     </div>
   </div>
 );
@@ -185,7 +188,7 @@ const Podcasts = props => (
         </div>
         <a
           href="https://www.heavybit.com/library/podcasts/jamstack-radio/ep-57-jsx-in-markdown-with-chris-biscardi/"
-          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-blue-400"
         >
           <h3 class="font-semibold block">Jamstack Radio</h3>
           <p class="block">
@@ -199,7 +202,7 @@ const Podcasts = props => (
         </a>
         <a
           href="https://www.learnwithjason.dev/build-a-toast-site-using-mdx-tailwind"
-          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-blue-400"
         >
           <h3 class="font-semibold block">Learn with Jason</h3>
           <p class="block">
@@ -212,7 +215,7 @@ const Podcasts = props => (
         </a>
         <a
           href="https://www.software-engineering-unlocked.com/success-community-building/"
-          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-teal-400"
+          class="p-4 rounded border mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-4 hover:border-blue-400"
         >
           <h3 class="font-semibold block">Software Engineering Unlocked</h3>
           <p class="block">
@@ -231,7 +234,7 @@ const Serverless = props => (
   <div class="py-12 bg-indigo-200">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:text-center">
-        <p class="text-base leading-6 text-teal-600 font-semibold tracking-wide uppercase">
+        <p class="text-base leading-6 text-blue-600 font-semibold tracking-wide uppercase">
           Field Guide to
         </p>
         <h3 class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10">
@@ -242,7 +245,7 @@ const Serverless = props => (
           ecosystem.{" "}
           <a
             href="/serverless"
-            class="text-teal-500 font-bold hover:text-teal-600"
+            class="text-blue-500 font-bold hover:text-blue-600"
           >
             Learn more...
           </a>
@@ -276,7 +279,7 @@ const Serverless = props => (
             {
               title: "Storage",
               content:
-                "Take a dive into serverless-native approaches that scale forever like DynamoDB, Amazon Aurora Serverless, and FaunaDB.",
+                "Take a dive into serverless-native approaches that scale forever like DynamoDB, Amazon Aurora Serverless, and PlanetScale.",
               icon: (
                 <svg
                   class="h-6 w-6"
@@ -297,28 +300,7 @@ const Serverless = props => (
             {
               title: "Test in Production",
               content:
-                "Adopt modern approaches to software development like feature flags and continuous delivery with Serverless Framework CI and GitHub Actions.",
-              icon: (
-                <svg
-                  class="h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                  />
-                </svg>
-              )
-            },
-            {
-              title: "Mobile notifications",
-              content:
-                "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.",
+                "Adopt modern approaches to software development like feature flags and continuous delivery with GitHub Actions.",
               icon: (
                 <svg
                   class="h-6 w-6"
@@ -340,7 +322,7 @@ const Serverless = props => (
             <li>
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
+                  <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
                     {icon}
                   </div>
                 </div>
@@ -364,7 +346,7 @@ const Rust = props => (
   <div class="bg-gray-900 relative pb-32">
     <div class="max-w-screen-xl mx-auto py-16 px-4 sm:px-6 lg:py-24 lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
       <div>
-        <h2 class="text-base leading-6 font-semibold text-teal-400 uppercase tracking-wide">
+        <h2 class="text-base leading-6 font-semibold text-blue-400 uppercase tracking-wide">
           Field Guide to
         </h2>
         <p class="mt-2 text-3xl leading-9 font-extrabold text-gray-100">Rust</p>
@@ -373,7 +355,7 @@ const Rust = props => (
         </p>
         <a
           href="/rust"
-          class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-500 hover:bg-teal-400 focus:outline-none focus:bg-teal-400 transition duration-150 ease-in-out mt-4"
+          class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-500 hover:bg-blue-400 focus:outline-none focus:bg-blue-400 transition duration-150 ease-in-out mt-4"
         >
           Learn more
         </a>
@@ -415,17 +397,12 @@ const Rust = props => (
               title: "Community",
               content:
                 "Built by core teams and working groups that *you* can take a part in."
-            },
-            {
-              title: "Mobile app",
-              content:
-                "Find what you need with advanced filters, bulk actions, and quick views."
             }
           ].map(({ title, content }) => (
             <div class="flex space-x-3">
               {/* <!-- Heroicon name: check --> */}
               <svg
-                class="flex-shrink-0 h-6 w-6 text-green-500"
+                class="flex-shrink-0 h-6 w-6 text-blue-500"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -454,12 +431,12 @@ const Rust = props => (
         </dl>
       </div>
     </div>
-    <LowerTilt color="#cddbfe" flip />
+    {/* <LowerTilt color="#cddbfe" flip /> */}
   </div>
 );
 const Toast = props => (
   <div
-    class="bg-teal-700"
+    class="bg-blue-700"
     style={{
       backgroundImage: `linear-gradient(153deg, rgba(152, 152, 152, 0.03) 0%, rgba(152, 152, 152, 0.03) 9%, rgba(197, 197, 197, 0.03) 9%, rgba(197, 197, 197, 0.03) 21%, rgba(106, 106, 106, 0.03) 21%, rgba(106, 106, 106, 0.03) 32%, rgba(222, 222, 222, 0.03) 32%, rgba(222, 222, 222, 0.03) 72%, rgba(16, 16, 16, 0.03) 72%, rgba(16, 16, 16, 0.03) 92%, rgba(181, 181, 181, 0.03) 92%, rgba(181, 181, 181, 0.03) 97%, rgba(130, 130, 130, 0.03) 97%, rgba(130, 130, 130, 0.03) 100%), linear-gradient(39deg, rgba(237, 237, 237, 0.03) 0%, rgba(237, 237, 237, 0.03) 22%, rgba(126, 126, 126, 0.03) 22%, rgba(126, 126, 126, 0.03) 55%, rgba(196, 196, 196, 0.03) 55%, rgba(196, 196, 196, 0.03) 61%, rgba(121, 121, 121, 0.03) 61%, rgba(121, 121, 121, 0.03) 71%, rgba(133, 133, 133, 0.03) 71%, rgba(133, 133, 133, 0.03) 84%, rgba(132, 132, 132, 0.03) 84%, rgba(132, 132, 132, 0.03) 97%, rgba(185, 185, 185, 0.03) 97%, rgba(185, 185, 185, 0.03) 100%), linear-gradient(124deg, rgba(168, 168, 168, 0.03) 0%, rgba(168, 168, 168, 0.03) 7%, rgba(169, 169, 169, 0.03) 7%, rgba(169, 169, 169, 0.03) 19%, rgba(73, 73, 73, 0.03) 19%, rgba(73, 73, 73, 0.03) 50%, rgba(150, 150, 150, 0.03) 50%, rgba(150, 150, 150, 0.03) 67%, rgba(68, 68, 68, 0.03) 67%, rgba(68, 68, 68, 0.03) 81%, rgba(111, 111, 111, 0.03) 81%, rgba(111, 111, 111, 0.03) 91%, rgba(191, 191, 191, 0.03) 91%, rgba(191, 191, 191, 0.03) 100%), linear-gradient(95deg, rgba(147, 147, 147, 0.03) 0%, rgba(147, 147, 147, 0.03) 17%, rgba(79, 79, 79, 0.03) 17%, rgba(79, 79, 79, 0.03) 27%, rgba(28, 28, 28, 0.03) 27%, rgba(28, 28, 28, 0.03) 45%, rgba(27, 27, 27, 0.03) 45%, rgba(27, 27, 27, 0.03) 56%, rgba(228, 228, 228, 0.03) 56%, rgba(228, 228, 228, 0.03) 64%, rgba(38, 38, 38, 0.03) 64%, rgba(38, 38, 38, 0.03) 72%, rgba(42, 42, 42, 0.03) 72%, rgba(42, 42, 42, 0.03) 100%), linear-gradient(346deg, rgba(59, 59, 59, 0.03) 0%, rgba(59, 59, 59, 0.03) 16%, rgba(66, 66, 66, 0.03) 16%, rgba(66, 66, 66, 0.03) 20%, rgba(236, 236, 236, 0.03) 20%, rgba(236, 236, 236, 0.03) 41%, rgba(244, 244, 244, 0.03) 41%, rgba(244, 244, 244, 0.03) 55%, rgba(106, 106, 106, 0.03) 55%, rgba(106, 106, 106, 0.03) 61%, rgba(220, 220, 220, 0.03) 61%, rgba(220, 220, 220, 0.03) 63%, rgba(209, 209, 209, 0.03) 63%, rgba(209, 209, 209, 0.03) 100%), linear-gradient(124deg, rgba(255, 36, 0, 0.17), rgba(232, 29, 29, 0.17), rgba(232, 183, 29, 0.17), rgba(227, 232, 29, 0.17), rgba(29, 232, 64, 0.17), rgba(29, 221, 232, 0.17), rgba(43, 29, 232, 0.17), rgba(221, 0, 243, 0.17), rgba(221, 0, 243, 0.17))`
     }}
@@ -476,7 +453,7 @@ const Toast = props => (
       </p>
       <a
         href="https://toast.dev"
-        class="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-teal-600 bg-white hover:text-teal-500 hover:bg-teal-50 transition duration-150 ease-in-out sm:w-auto"
+        class="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-blue-600 bg-white hover:text-blue-500 hover:bg-blue-50 transition duration-150 ease-in-out sm:w-auto"
       >
         Get Started
       </a>

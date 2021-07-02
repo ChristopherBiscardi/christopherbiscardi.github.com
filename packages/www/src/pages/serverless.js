@@ -104,7 +104,7 @@ export default props => (
               <li class="mt-10">
                 <div class="flex">
                   <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
                       {/* <!-- Heroicon name: lightning-bolt --> */}
                       <svg
                         class="h-6 w-6"
@@ -205,7 +205,7 @@ export default props => (
                     <div class="flex-shrink-0">
                       <div>
                         <svg
-                          class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white"
+                          class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white"
                           viewBox="0 0 80 80"
                           {...props}
                         >
@@ -266,7 +266,7 @@ export default props => (
           </div>
           <div class="mt-10 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:col-span-2 lg:mt-0">
             <div>
-              <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
+              <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
                 <svg
                   viewBox="0 0 85 95"
                   class="h-6 w-6"
@@ -298,7 +298,7 @@ export default props => (
             <div class="mt-10 sm:mt-0">
               <div>
                 <svg
-                  class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white"
+                  class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white"
                   viewBox="0 0 80 80"
                   {...props}
                 >
@@ -343,7 +343,7 @@ export default props => (
               <div>
                 <svg
                   viewBox="0 0 80 80"
-                  class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white"
+                  class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white"
                   {...props}
                 >
                   <defs>
@@ -384,7 +384,7 @@ export default props => (
               </div>
             </div>
             <div class="mt-10 sm:mt-0">
-              <div class="flex items-center justify-center h-12 w-12 rounded-md bg-teal-500 text-white">
+              <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
                 {/* <!-- Heroicon name: mail --> */}
                 <svg
                   class="h-6 w-6"
@@ -622,7 +622,7 @@ const ListedLinks = ({ links }) => (
                       </svg>
                       <span>
                         {tags.map(v => (
-                          <span class="bg-transparent text-teal-700 font-semibold py-1 px-2">
+                          <span class="bg-transparent text-blue-700 font-semibold py-1 px-2">
                             {v}
                           </span>
                         ))}
@@ -685,7 +685,7 @@ const CardGrid = ({ links }) => (
             <div class="px-4 py-4 flex items-center sm:px-6">
               <div class="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                 <div class="flex-1">
-                  <p class="text-sm leading-5 font-medium text-teal-600">
+                  <p class="text-sm leading-5 font-medium text-blue-600">
                     <a href={tagHref} class="hover:underline">
                       {tag}
                     </a>
@@ -756,7 +756,7 @@ const Integrations = props => (
     <div class="">
       <div class="max-w-screen-xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
         <div class="text-center">
-          <h1 class="text-base leading-6 font-semibold text-teal-600 tracking-wide uppercase">
+          <h1 class="text-base leading-6 font-semibold text-blue-600 tracking-wide uppercase">
             Integrations
           </h1>
           <p class="mt-1 text-4xl leading-10 font-extrabold text-gray-900 sm:text-5xl sm:leading-none sm:tracking-tight lg:text-6xl">

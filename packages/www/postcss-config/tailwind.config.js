@@ -1,10 +1,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
-  future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true
-  },
+  mode: "jit",
   purge: ["./src/**/*.js"],
   theme: {
     extend: {
@@ -14,5 +11,9 @@ module.exports = {
     }
   },
   variants: {},
-  plugins: [require("@tailwindcss/ui")]
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/aspect-ratio")
+  ]
 };

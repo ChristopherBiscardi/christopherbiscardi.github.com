@@ -65,7 +65,7 @@ export default props => {
             </p>
           </div>
           <div class="mt-10 w-full max-w-xs hidden sm:block">
-            <a href="/what-is-a-digital-garden" class="text-teal-400">
+            <a href="/what-is-a-digital-garden" class="text-blue-400">
               What is this?
             </a>
           </div>
@@ -77,10 +77,10 @@ export default props => {
             value => (
               <li class="mt-4">
                 <button
-                  class={`font-bold py-2 px-4 border border-teal-900 rounded text-white ${
+                  class={`font-bold py-2 px-4 border border-blue-900 rounded text-white ${
                     filterState.tags.includes(value)
-                      ? "bg-teal-800"
-                      : "bg-gray-900 hover:bg-teal-800"
+                      ? "bg-blue-800"
+                      : "bg-gray-900 hover:bg-blue-800"
                   }`}
                   style={{
                     // backgroundColor: filterState.tags.includes(value)
@@ -113,7 +113,7 @@ export default props => {
       </div>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <input
-          class="form-input block w-full sm:text-sm sm:leading-5 bg-gray-900 text-teal-400 border-gray-700 focus:border-teal-400"
+          class="form-input block w-full sm:text-sm sm:leading-5 bg-gray-900 text-blue-400 border-gray-700 focus:border-blue-400"
           placeholder="Type here to filter posts..."
           onChange={e => {
             filterDispatch({ type: "filterBy", payload: e.target.value });
@@ -169,7 +169,7 @@ const Post = ({ to, logo, tags, children }) => (
           </div>
           <div class="min-w-0 flex-1 px-4">
             <div>
-              <div class="text-lg leading-5 font-medium text-teal-300 flex">
+              <div class="text-lg leading-5 font-medium text-blue-300 flex">
                 {children}
               </div>
               <div class="mt-2 flex items-center text-sm leading-5 text-gray-500">

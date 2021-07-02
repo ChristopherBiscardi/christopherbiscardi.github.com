@@ -20,31 +20,31 @@ export const useMedia = (query = "(min-width: 641px)") => {
   return matches;
 };
 
-const TopBanner = props => (
-  <div class="relative bg-teal-600">
-    <div class="max-w-screen-xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
-      <div class="pr-16 sm:text-center sm:px-16">
-        <p class="font-medium text-white">
-          <span class="md:hidden">Toast is in Beta!</span>
-          <span class="hidden md:inline">Big news! Toast is in Beta!</span>
-          <span class="block sm:ml-2 sm:inline-block">
-            <a href="https://toast.dev" class="text-white font-bold underline">
-              Learn more &rarr;
-            </a>
-          </span>
-        </p>
-      </div>
-      <div class="absolute inset-y-0 right-0 pt-1 pr-1 flex items-start sm:pt-1 sm:pr-2 sm:items-start">
-        {/* <button type="button" class="flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500 transition ease-in-out duration-150" aria-label="Dismiss">
-      <!-- Heroicon name: x -->
-      <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button> */}
-      </div>
-    </div>
-  </div>
-);
+// const TopBanner = props => (
+//   <div class="relative bg-blue-600">
+//     <div class="max-w-screen-xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
+//       <div class="pr-16 sm:text-center sm:px-16">
+//         <p class="font-medium text-white">
+//           <span class="md:hidden">Toast is in Beta!</span>
+//           <span class="hidden md:inline">Big news! Toast is in Beta!</span>
+//           <span class="block sm:ml-2 sm:inline-block">
+//             <a href="https://toast.dev" class="text-white font-bold underline">
+//               Learn more &rarr;
+//             </a>
+//           </span>
+//         </p>
+//       </div>
+//       <div class="absolute inset-y-0 right-0 pt-1 pr-1 flex items-start sm:pt-1 sm:pr-2 sm:items-start">
+//         {/* <button type="button" class="flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-500 transition ease-in-out duration-150" aria-label="Dismiss">
+//       <!-- Heroicon name: x -->
+//       <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+//       </svg>
+//     </button> */}
+//       </div>
+//     </div>
+//   </div>
+// );
 function outsideClick(event, ref) {
   if (ref.current) {
     if (event.target == ref.current || ref.current.contains(event.target)) {
@@ -154,7 +154,7 @@ const Header = forwardRef((props, ref) => {
                         href="/serverless"
                         class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                       >
-                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-blue-500 text-white sm:h-12 sm:w-12">
                           {/* <!-- Heroicon name: variable --> */}
                           <svg
                             class="h-6 w-6"
@@ -183,7 +183,7 @@ const Header = forwardRef((props, ref) => {
                         href="/rust"
                         class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                       >
-                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-blue-500 text-white sm:h-12 sm:w-12">
                           {/* <!-- Heroicon name: cursor-click --> */}
                           <svg
                             class="h-6 w-6"
@@ -210,7 +210,7 @@ const Header = forwardRef((props, ref) => {
                         href="/free-newsletter"
                         class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                       >
-                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-blue-500 text-white sm:h-12 sm:w-12">
                           {/* <!-- Heroicon name: shield-check --> */}
                           <svg
                             class="h-6 w-6"
@@ -229,7 +229,7 @@ const Header = forwardRef((props, ref) => {
                         </div>
                         <div class="space-y-1">
                           <p class="text-base leading-6 font-medium text-gray-100">
-                            The <span class="text-teal-300">Free </span>
+                            The <span class="text-blue-300">Free </span>
                             Newsletter
                           </p>
                           <p class="text-sm leading-5 text-gray-300">
@@ -242,7 +242,7 @@ const Header = forwardRef((props, ref) => {
                         href="#"
                         class="-m-3 p-3 flex items-start space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                       >
-                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white sm:h-12 sm:w-12">
+                        <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-blue-500 text-white sm:h-12 sm:w-12">
                           <!-- Heroicon name: view-grid -->
                           <svg
                             class="h-6 w-6"
@@ -280,7 +280,7 @@ const Header = forwardRef((props, ref) => {
                           <div class="text-base leading-6 font-medium text-gray-100">
                             Toast
                           </div>
-                          <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium leading-5 bg-teal-100 text-teal-800">
+                          <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium leading-5 bg-blue-100 text-blue-800">
                             Beta
                           </span>
                         </div>
@@ -380,7 +380,7 @@ const Header = forwardRef((props, ref) => {
           <span class="inline-flex rounded-md shadow-sm">
             <a
               href="#"
-              class="whitespace-no-wrap inline-flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-600 hover:bg-teal-500 focus:outline-none focus:border-teal-700 focus:shadow-outline-teal active:bg-teal-700 transition ease-in-out duration-150"
+              class="whitespace-no-wrap inline-flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150"
             >
               Sign up
             </a>
@@ -444,7 +444,7 @@ const Header = forwardRef((props, ref) => {
                       href="/serverless"
                       class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                     >
-                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-blue-500 text-white">
                         {/* <!-- Heroicon name: variable --> */}
                         <svg
                           class="h-6 w-6"
@@ -467,7 +467,7 @@ const Header = forwardRef((props, ref) => {
                       href="/rust"
                       class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                     >
-                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-blue-500 text-white">
                         {/* <!-- Heroicon name: cursor-click --> */}
                         <svg
                           class="h-6 w-6"
@@ -488,7 +488,7 @@ const Header = forwardRef((props, ref) => {
                       href="#"
                       class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                     >
-                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-blue-500 text-white">
                         {/* <!-- Heroicon name: shield-check --> */}
                         <svg
                           class="h-6 w-6"
@@ -506,14 +506,14 @@ const Header = forwardRef((props, ref) => {
                         </svg>
                       </div>
                       <div class="text-base leading-6 font-medium text-gray-100">
-                        The <span class="text-teal-300">Free</span> Newsletter
+                        The <span class="text-blue-300">Free</span> Newsletter
                       </div>
                     </a>
                     {/* <a
                       href="#"
                       class="-m-3 p-3 flex items-center space-x-4 rounded-lg hover:bg-gray-800 transition ease-in-out duration-150"
                     >
-                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-teal-500 text-white">
+                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md bg-blue-500 text-white">
                         <!-- Heroicon name: view-grid -->
                         <svg
                           class="h-6 w-6"
@@ -562,7 +562,7 @@ const Header = forwardRef((props, ref) => {
                   <span class="w-full flex rounded-md shadow-sm">
                     <a
                       href="#"
-                      class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-600 hover:bg-teal-500 focus:outline-none focus:border-teal-700 focus:shadow-outline-teal active:bg-teal-700 transition ease-in-out duration-150"
+                      class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150"
                     >
                       Sign up
                     </a>
@@ -571,7 +571,7 @@ const Header = forwardRef((props, ref) => {
                     <span>Existing customer? </span>
                     <a
                       href="#"
-                      class="text-teal-300 hover:text-teal-200 transition ease-in-out duration-150"
+                      class="text-blue-300 hover:text-blue-200 transition ease-in-out duration-150"
                     >
                       Sign in
                     </a>
@@ -702,7 +702,7 @@ const CopyButton = props => {
   const [buttonText, setText] = useState("Copy");
   return (
     <button
-      class="text-gray-100 p-4 hover:bg-teal-400 hover:bg-opacity-25"
+      class="text-gray-100 p-4 hover:bg-blue-400 hover:bg-opacity-25"
       onClick={e => {
         navigator.clipboard.writeText(props.content);
         setText("Done");
@@ -815,7 +815,7 @@ export default ({ children, ...props }) => {
         }}
       />
       <ProgressBar />
-      <TopBanner />
+      {/* <TopBanner /> */}
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1144,7 +1144,7 @@ export default ({ children, ...props }) => {
                       ))}
                     </div>
                     <div
-                      className={`flex flex-1 bg-gradient-to-r from-gray-900 to-teal-900 ${
+                      className={`flex flex-1 bg-gradient-to-r from-gray-900 to-blue-900 ${
                         !match ? "hidden" : ""
                       }`}
                     >
@@ -1242,7 +1242,7 @@ export default ({ children, ...props }) => {
             img: props => <img class="m-auto" {...props} />,
             a: props => (
               <a
-                class="rainbow-borders text-teal-400"
+                class="rainbow-borders text-blue-400"
                 // css={{
                 //   wordWrap: "break-word",
                 //   // backgroundImage: `linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%)`,
@@ -1496,7 +1496,7 @@ export default ({ children, ...props }) => {
                           href="https://pages.convertkit.com/04c24646a3/c136f814fc"
                           class="text-base leading-6 text-gray-300 hover:text-white"
                         >
-                          The <span class="text-teal-300">Free</span> Newsletter
+                          The <span class="text-blue-300">Free</span> Newsletter
                         </a>
                       </li>
                       {/* <li>
@@ -1696,7 +1696,7 @@ const ConvertKitForm = props => {
                     id="name"
                     type="name"
                     name="name"
-                    class="form-input appearance-none w-full px-5 py-3 border border-transparent text-base leading-6 rounded-md text-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out bg-gray-900 border-gray-700 focus:border-teal-400"
+                    class="form-input appearance-none w-full px-5 py-3 border border-transparent text-base leading-6 rounded-md text-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out bg-gray-900 border-gray-700 focus:border-blue-400"
                   />
                 </div>
               </div>
@@ -1712,12 +1712,12 @@ const ConvertKitForm = props => {
                     id="email"
                     type="email"
                     name="email"
-                    class="form-input appearance-none w-full px-5 py-3 border border-transparent text-base leading-6 rounded-md text-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out bg-gray-900 border-gray-700 focus:border-teal-400"
+                    class="form-input appearance-none w-full px-5 py-3 border border-transparent text-base leading-6 rounded-md text-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 transition duration-150 ease-in-out bg-gray-900 border-gray-700 focus:border-blue-400"
                   />
                 </div>
               </div>
               <div class="mt-3 rounded-md shadow sm:flex-shrink-0">
-                <button class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-teal-500 hover:bg-teal-400 focus:outline-none focus:bg-teal-400 transition duration-150 ease-in-out">
+                <button class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-500 hover:bg-blue-400 focus:outline-none focus:bg-blue-400 transition duration-150 ease-in-out">
                   Sign up
                 </button>
               </div>
