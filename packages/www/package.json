@@ -12,6 +12,7 @@
   },
   "type": "module",
   "dependencies": {
+    "autoprefixer": "^10.2.6",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/preset-react": "7.10.4",
     "@emotion/core": "^20",
@@ -43,7 +44,6 @@
     "unified": "^9.0.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.2.6",
     "node-getpocket": "^1.0.0"
   }
 }
