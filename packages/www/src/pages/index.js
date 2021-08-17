@@ -376,7 +376,7 @@ const Rust = props => (
             {
               title: "No Garbage Collector",
               content:
-                " With no runtime and no GC, Rust can power performance-critical services, run on embedded devices, and integrate with otherlanguages."
+                " With no runtime and no GC, Rust can power performance-critical services, run on embedded devices, and integrate with other languages."
             },
             {
               title: "Reliable",
