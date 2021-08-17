@@ -140,7 +140,7 @@ const Hero = props => (
         </li> */}
         <li class="">
           <SocialButton
-            href="https://www.youtube.com/channel/UCiSIL22pQRpc-8JNiYDFyzQ"
+            href="https://www.youtube.com/channel/UCiSIL42pQRpc-8JNiYDFyzQ"
             icon="youtube"
           >
             YouTube
