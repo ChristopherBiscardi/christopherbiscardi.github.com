@@ -507,7 +507,7 @@ const postCards = [
   {
     title: "Concatenating two string slices &str in Rust",
     description:
-      "Using format! to concatenate two strings is idomatic Rust, even though it's not the absolute fastest way.",
+      "Using format! to concatenate two strings is idiomatic Rust, even though it's not the absolute fastest way.",
     href: "/concatenating-two-string-slices-and-str-in-rust",
     tag: "idiomatic",
     tagHref: "/garden"
