@@ -48,8 +48,7 @@ pub fn Sidebar(
                     {}
                     <div class="relative mr-16 flex w-full max-w-xs flex-1">
 
-                        {}
-                        <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
+                        {} <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
                             <button type="button" class="-m-2.5 p-2.5">
                                 <span class="sr-only">Close sidebar</span>
                                 <svg
@@ -131,6 +130,7 @@ pub fn Sidebar(
                                                     }
                                                 }
                                             />
+
                                         </ul>
                                     </li>
                                     <li class="-mx-6 mt-auto">

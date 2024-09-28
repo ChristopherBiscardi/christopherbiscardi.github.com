@@ -175,7 +175,7 @@ pub fn IndexPage() -> impl IntoView {
                                     bg=content.bg
                                     speed=content.speed
                                     image_header=content.image_header
-                                    animation_offset={0.1 * index as f64}
+                                    animation_offset=0.1 * index as f64
                                 >
                                     <p class=format!(
                                         "text-2xl font-bold leading-7 text-ctp-text sm:truncate sm:text-3xl sm:tracking-tight {}",
@@ -333,8 +333,8 @@ pub fn Hero() -> impl IntoView {
                 // icon="twitter">
                 // Twitter
                 // </Button>
-                <ul class="flex py-4 gap-x-2 mt-4">// </li>
-                // <li class="">
+                // </li>
+                <ul class="flex py-4 gap-x-2 mt-4">// <li class="">
                 // <Button
                 // href="https://www.youtube.com/channel/UCiSIL42pQRpc-8JNiYDFyzQ"
                 // color=ButtonColor::YOUTUBE
