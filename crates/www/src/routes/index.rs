@@ -175,7 +175,7 @@ pub fn IndexPage() -> impl IntoView {
                                     bg=content.bg
                                     speed=content.speed
                                     image_header=content.image_header
-                                    animation_offset={(0.1 * index as f64)}
+                                    animation_offset={0.1 * index as f64}
                                 >
                                     <p class=format!(
                                         "text-2xl font-bold leading-7 text-ctp-text sm:truncate sm:text-3xl sm:tracking-tight {}",
