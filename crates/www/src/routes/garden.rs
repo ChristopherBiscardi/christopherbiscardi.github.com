@@ -1,6 +1,4 @@
-use crate::components::{
-    sidebar::{Header, Sidebar},
-};
+use crate::components::sidebar::{Header, Sidebar};
 use leptos::prelude::*;
 // use sens8::button::*;
 
