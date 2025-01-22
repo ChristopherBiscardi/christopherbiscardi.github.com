@@ -33,9 +33,9 @@ jobs:
           # default: empty
           # shared-key: ""
       - name: "Install cargo-leptos"
-        run: curl --proto '=https' --tlsv1.2 -LsSf https://leptos-rs.artifacts.axodotdev.host/cargo-leptos/v0.2.20/cargo-leptos-installer.sh | sh
+        run: curl --proto '=https' --tlsv1.2 -LsSf https://leptos-rs.artifacts.axodotdev.host/cargo-leptos/v0.2.26/cargo-leptos-installer.sh | sh
       - name: "install wasm-bindgen"
-        run: cargo install -f wasm-bindgen-cli --version 0.2.93
+        run: cargo install -f wasm-bindgen-cli --version 0.2.100
       - run: cargo leptos test --project www
       - run: cargo leptos build --release --project www
         env:
