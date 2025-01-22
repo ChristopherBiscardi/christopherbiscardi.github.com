@@ -1,4 +1,4 @@
-use crate::components::sidebar::{Header, Sidebar};
+use crate::components::sidebar::Sidebar;
 use leptos::prelude::*;
 // use sens8::button::*;
 
@@ -6,9 +6,7 @@ use leptos::prelude::*;
 pub fn GardenPage() -> impl IntoView {
     view! {
         <Sidebar>
-            <Header slot>
-                <Hero/>
-            </Header>
+            <Hero/>
             <div class="grid grid-cols-3 gap-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-14">posts</div>
         </Sidebar>
     }

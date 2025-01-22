@@ -1,6 +1,9 @@
 use crate::{
     components::*,
-    routes::{garden::GardenPage, index::IndexPage},
+    routes::{
+        garden::GardenPage, index::IndexPage,
+        slug::SlugPage,
+    },
 };
 use leptos::prelude::*;
 use leptos_meta::{
@@ -8,7 +11,7 @@ use leptos_meta::{
 };
 use leptos_router::{
     components::{Route, Router, Routes},
-    StaticSegment,
+    path, StaticSegment,
 };
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
@@ -16,7 +19,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
         panic!("Must set CDN_PATH env var")
     };
     view! {
-        <!DOCTYPE html> 
+        <!DOCTYPE html>
         <html lang="en" class="h-full bg-slate-50 dark:bg-slate-950">
             <head>
                 <meta charset="utf-8"/>
@@ -53,6 +56,7 @@ pub fn App() -> impl IntoView {
             <Routes fallback=|| "Page not found.".into_view()>
                 <Route path=StaticSegment("") view=IndexPage/>
                 <Route path=StaticSegment("/garden") view=GardenPage/>
+                <Route path=path!("/:slug") view=SlugPage />
             </Routes>
         </Router>
     }

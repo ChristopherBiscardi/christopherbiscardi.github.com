@@ -1,3 +1,4 @@
+pub mod api;
 pub mod app;
 mod components;
 mod routes;

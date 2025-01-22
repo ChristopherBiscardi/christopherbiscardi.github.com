@@ -1,4 +1,4 @@
-use crate::components::sidebar::{Header, Sidebar};
+use crate::components::sidebar::Sidebar;
 use leptos::{either::Either, prelude::*};
 // use sens8::button::*;
 
@@ -152,9 +152,9 @@ pub fn IndexPage() -> impl IntoView {
     );
     view! {
         <Sidebar>
-            <Header slot>
+            // <Header slot>
                 <Hero/>
-            </Header>
+            // </Header>
             <div class="grid grid-cols-3 gap-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-14">
                 <For
                     // a function that returns the items we're iterating over; a signal is fine

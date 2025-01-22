@@ -1,5 +1,7 @@
 use crate::components::Footer;
+use leptos::logging::log;
 use leptos::prelude::*;
+use serde::{Deserialize, Serialize};
 
 struct MenuItem<'a> {
     url: &'a str,
@@ -24,32 +26,40 @@ const MENU_ITEMS: [MenuItem; 3] = [
     },
 ];
 
-#[slot]
-pub struct Header {
-    children: ChildrenFn,
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum SidebarStatus {
+    Open,
+    Closed,
 }
 
-#[component]
+#[island]
 pub fn Sidebar(
-    #[prop(optional)] header: Option<Header>,
+    // #[prop(optional)] header: Option<Header>,
     children: Children,
 ) -> impl IntoView {
+    let (status, set_status) =
+        signal(SidebarStatus::Closed);
+
     view! {
         <div>
 
-            {} <div class="relative z-50 xl:hidden" role="dialog" aria-modal="true">
-
-                {}
-
+             <div
+                class=move || format!("relative z-50 xl:hidden {}", match status() {
+                    SidebarStatus::Open => "",
+                    SidebarStatus::Closed => "hidden"
+                })
+                role="dialog"
+                aria-modal="true"
+             >
                 <div class="fixed inset-0 bg-slate-900/80" aria-hidden="true"></div>
-
                 <div class="fixed inset-0 flex">
-
-                    {}
                     <div class="relative mr-16 flex w-full max-w-xs flex-1">
-
-                        {} <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
-                            <button type="button" class="-m-2.5 p-2.5">
+                         <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
+                            <button
+                                type="button"
+                                class="-m-2.5 p-2.5"
+                                on:click=move |_| set_status.set(SidebarStatus::Closed)
+                            >
                                 <span class="sr-only">Close sidebar</span>
                                 <svg
                                     class="h-6 w-6 text-white"
@@ -67,7 +77,6 @@ pub fn Sidebar(
                                 </svg>
                             </button>
                         </div>
-                        {}
                         <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-900 px-6 ring-1 ring-white/10">
                             <a href="/" class="flex h-16 shrink-0 items-center">
                                 <img
@@ -81,8 +90,6 @@ pub fn Sidebar(
                                     <li>
                                         <ul role="list" class="-mx-2 space-y-1">
                                             <li>
-
-                                                {}
                                                 <a
                                                     href="/garden"
                                                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -115,8 +122,6 @@ pub fn Sidebar(
                                                 children=move |item| {
                                                     view! {
                                                         <li>
-
-                                                            {}
                                                             <a
                                                                 href=item.url
                                                                 class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -153,10 +158,10 @@ pub fn Sidebar(
                     </div>
                 </div>
             </div>
-            {}
+
             <div class="hidden xl:fixed xl:inset-y-0 xl:z-50 xl:flex xl:w-72 xl:flex-col">
 
-                {}
+
                 <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-950/10 px-6 ring-1 ring-white/5">
                     <a href="/" class="flex h-16 shrink-0 items-center">
                         <img class="h-8 w-auto" src="/logos/logo-full.svg" alt="Chris Biscardi"/>
@@ -167,7 +172,7 @@ pub fn Sidebar(
                                 <ul role="list" class="-mx-2 space-y-1">
                                     <li>
 
-                                        {}
+
                                         <a
                                             href="/garden"
                                             class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -201,7 +206,7 @@ pub fn Sidebar(
                                             view! {
                                                 <li>
 
-                                                    {}
+
                                                     <a
                                                         href=item.url
                                                         class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -237,10 +242,10 @@ pub fn Sidebar(
                 </div>
             </div>
             <div class="xl:pl-72 flex flex-col">
-
-                {}
                 <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-6 border-b border-white/5 bg-slate-900 px-4 shadow-sm sm:px-6 lg:px-8">
-                    <button type="button" class="-m-2.5 p-2.5 text-white xl:hidden">
+                    <button type="button" class="-m-2.5 p-2.5 text-white xl:hidden"
+                        on:click=move |_| set_status.set(SidebarStatus::Open)
+                    >
                         <span class="sr-only">Open sidebar</span>
                         <svg
                             class="h-5 w-5"
@@ -286,9 +291,10 @@ pub fn Sidebar(
                     </div>
                 </div>
                 <main class="relative textured-bg flex-1">
-                    {header.map(|header_inner| (header_inner.children)())} {children()}
-                </main> <Footer/>
-
+                    // {header.map(|header_inner| (header_inner.children)())}
+                    {children()}
+                </main>
+                <Footer/>
             </div>
         </div>
     }

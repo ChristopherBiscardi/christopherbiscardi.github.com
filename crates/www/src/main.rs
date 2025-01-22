@@ -5,7 +5,7 @@
 #[tokio::main]
 async fn main() {
     use axum::Router;
-    use leptos::prelude::*;
+    use leptos::{logging::log, prelude::*};
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use www::app::*;
 
@@ -43,3 +43,99 @@ pub fn main() {
     // Trunk for pure client-side testing
     // see lib.rs for hydration function instead
 }
+
+// #[cfg(feature = "ssr")]
+// pub fn file_and_error_handler<S, IV>(
+//     shell: fn(LeptosOptions) -> IV,
+// ) -> impl Fn(
+//     Uri,
+//     State<S>,
+//     Request<Body>,
+// ) -> Pin<
+//     Box<
+//         dyn Future<Output = Response<Body>>
+//             + Send
+//             + 'static,
+//     >,
+// > + Clone
+//        + Send
+//        + 'static
+// where
+//     IV: IntoView + 'static,
+//     S: Send + 'static,
+//     LeptosOptions: FromRef<S>,
+// {
+//     // use axum::http::Uri;
+//     // use axum::{
+//     //     body::{Body, Bytes},
+//     //     extract::{
+//     //         FromRef, FromRequestParts,
+// MatchedPath,     // State,     },
+//     //     http::{
+//     //         header::{
+//     //             self, HeaderName,
+// HeaderValue,     // ACCEPT,
+// LOCATION, REFERER,     //         },
+//     //         request::Parts,
+//     //         HeaderMap, Method, Request,
+// Response,     //         StatusCode,
+//     //     },
+//     //     response::IntoResponse,
+//     //     routing::{delete, get, patch, post,
+// put},     // };
+
+//     // use dashmap::DashMap;
+//     // use futures::{
+//     //     stream::once, Future, Stream,
+// StreamExt,     // };
+//     // use hydration_context::SsrSharedContext;
+//     // use leptos::{
+//     //     config::LeptosOptions,
+//     //     context::{provide_context,
+// use_context},     //     prelude::*,
+//     //     reactive::{computed::ScopedFuture,
+//     // owner::Owner},     IntoView,
+//     // };
+//     // use leptos_integration_utils::{
+//     //     BoxedFnOnce, ExtendResponse,
+// PinnedFuture,     //     PinnedStream,
+//     // };
+//     // use leptos_meta::ServerMetaContext;
+
+//     // use
+// leptos_router::static_routes::ResolvedStaticPath;
+//     // use leptos_router::{
+//     //     components::provide_server_redirect,
+//     //     location::RequestUrl,
+//     //     static_routes::{RegenerationFn,
+//     // StaticParamsMap},     PathSegment,
+//     // RouteList, RouteListing, SsrMode, };
+
+//     // use server_fn::{
+//     //     redirect::REDIRECT_HEADER,
+// ServerFnError,     // };
+
+//     // use std::path::Path;
+//     // use std::{fmt::Debug, io, pin::Pin,
+// sync::Arc};
+
+//     // use tower::util::ServiceExt;
+
+//     // use tower_http::services::ServeDir;
+
+//     move |uri: Uri,
+//           State(options): State<S>,
+//           req: Request<Body>| {
+//         Box::pin(async move {
+//             let options =
+// LeptosOptions::from_ref(&options);
+// let res = leptos_axum::get_static_file(
+//                 uri,
+//                 &options.site_root,
+//             );
+//             let res = res.await.unwrap();
+
+//             res.into_response()
+//         })
+//     }
+// }
