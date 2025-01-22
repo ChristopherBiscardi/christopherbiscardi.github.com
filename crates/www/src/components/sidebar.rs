@@ -1,7 +1,6 @@
 use crate::components::Footer;
 use leptos::logging::log;
 use leptos::prelude::*;
-use serde::{Deserialize, Serialize};
 
 struct MenuItem<'a> {
     url: &'a str,
