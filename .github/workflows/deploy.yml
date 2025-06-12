@@ -23,7 +23,7 @@ jobs:
         with:
           # args: deploy --dir=target/site --prod
           # temporarily use preview deploy and alias
-          args: deploy --dir=target/site --alias wasm-cdn
+          args: deploy --dir=target/site --alias wasm-cdn --no-build
         env:
           NETLIFY_SITE_ID: b635e6d9-900c-4c21-993d-11191073ff32
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
