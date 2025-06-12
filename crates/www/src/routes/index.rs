@@ -34,7 +34,13 @@ fn BentoBox<'a>(
             <div style=style class="bento-box h-full">
 
                 {if let Some(src) = image_header {
-                    Either::Left(view! { <img class="img-header" src=src/> })
+                    Either::Left(view! {
+                        <div
+                        class="h-full w-full absolute bg-center bg-cover img-header"
+                        style=format!("
+                            background-image: url({});
+                        ", src)></div>
+                    })
                 } else {
                     Either::Right(view! { "" })
                 }}
@@ -178,12 +184,12 @@ pub fn IndexPage() -> impl IntoView {
                                     animation_offset=0.1 * index as f64
                                 >
                                     <p class=format!(
-                                        "text-2xl font-bold leading-7 text-ctp-text sm:truncate sm:text-3xl sm:tracking-tight {}",
+                                        "text-2xl font-bold leading-7 text-indigo-100 sm:truncate sm:text-3xl sm:tracking-tight {}",
                                         if content.center_title { "text-center" } else { "" },
                                     )>{content.title}</p>
 
                                     {if content.content == "svg-art" {
-                                        view! { <span class="text-ctp-text">wgpu and wgsl</span> }
+                                        view! { <span class="text-indigo-100">wgpu and wgsl</span> }
                                             .into_any()
                                     } else if content.content == "svg-hex" {
                                         view! {
@@ -318,42 +324,50 @@ pub fn Hero() -> impl IntoView {
                     />
                 </h1>
                 <p class="mt-6 text-xl text-indigo-100 max-w-3xl">
-                    I write about {" "} <a class="text-red-400" href="/rust">
-                        Rust
-                    </a> {", "} JavaScript, and occassionally other languages.
-                    This site is built with Leptos and Wasm.
-                    The content is written in
-                    <a class="text-blue-400" href="https://twitter.com/sectortools">
-                        Sector
-                    </a> .
+                    I am an independent Software Engineer specializing in
+                    <a class="text-red-400" href="/rust">Rust</a> and
+                    <span class="text-[#EAD54D]">JavaScript</span>, programming communicator, educator, and a
+                    <a href="https://www.youtube.com/@chrisbiscardi" class="text-[#ff0000]">YouTuber</a>.
                 </p>
-                // <li class="">
-                // <Button href="https://twitter.com/chrisbiscardi"
-                // color=ButtonColor::TWITTER
-                // icon="twitter">
-                // Twitter
-                // </Button>
-                // </li>
-                <ul class="flex py-4 gap-x-2 mt-4">// <li class="">
-                // <Button
-                // href="https://www.youtube.com/channel/UCiSIL42pQRpc-8JNiYDFyzQ"
-                // color=ButtonColor::YOUTUBE
-                // icon="youtube"
-                // >
-                // YouTube
-                // </Button>
-                // </li>
-                // <li class="">
-                // <SocialButton
-                // href="https://github.com/ChristopherBiscardi"
-                // icon="github"
-                // >
-                // GitHub
-                // </SocialButton>
-                // </li>
-                </ul>
+                <p class="mt-6 text-large text-indigo-100 max-w-3xl">
+                    I maintain <a href="https://www.rustadventure.dev/" class="text-red-400">Rust Adventure</a>:
+                    a collection of workshops and practical projects you can use to learn Rust
+                    and <a href="https://thisweekinbevy.com/" class="text-sky-400">This Week in Bevy</a>,
+                     a curated roundup covering week-to-week activity in the Bevy ecosystem.
+                </p>
+                <p class="mt-6 text-large text-indigo-100 max-w-3xl">
+                    You can reach me for educational and software development services via email:<br/> <code>chris at christopherbiscardi.com</code>
+                </p>
+                <p class="mt-6 text-large text-indigo-100 max-w-3xl">
+                    This site is built with <a href="" class="text-[#F04948]">Leptos</a> and
+                    <a href="" class="text-[#a598f6]">Wasm</a>.
+                </p>
+                <ul class="flex py-4 gap-x-2 mt-4">
+                    <li>
+                        <a
+                            href="https://bsky.app/profile/chrisbiscardi.bsky.social"
+                            class="inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm ring-1 ring-inset ring-[#0085FF] hover:bg-[#0085ff24]">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="10"
+                                viewBox="0 0 600 520"
+                                class="-ml-0.5 size-5"
+                                ><path fill="#1185fe" d="M135.72 44.03C202.216 93.951 273.74 195.17 300 249.49c26.262-54.316 97.782-155.54 164.28-205.46C512.26 8.009 590-19.862 590 68.825c0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.38-3.69-10.832-3.708-7.896-.017-2.936-1.193.516-3.707 7.896-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.45-163.25-81.433C20.15 217.613 9.997 86.535 9.997 68.825c0-88.687 77.742-60.816 125.72-24.795z"/></svg>
+                            <span>Bluesky</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.youtube.com/@chrisbiscardi"
+                            class="inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm ring-1 ring-inset ring-[#ff0000] hover:bg-[#ff000024]">
 
-                {}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="15px" viewBox="0 0 23 17"
+                            class="-ml-0.5 size-5"
+                            ><path fill="#ff0000" d="M11.6907099,0.0578178602 C12.6060128,0.0605977646 16.7071801,0.0845049419 19.5514615,0.290106667 C20.0010348,0.343730208 20.981381,0.348267917 21.8559848,1.26434354 C22.5455679,1.96230729 22.770321,3.54726604 22.770321,3.54726604 C22.770321,3.54726604 23,5.4085075 23,7.26974417 L23,7.26974417 L23,9.01466312 C23,10.8758806 22.7703258,12.7371221 22.7703258,12.7371221 C22.7703258,12.7371221 22.5455727,14.3220856 21.8559896,15.0200494 C20.9813858,15.936125 20.0010348,15.9406531 19.5514663,15.9942862 C16.5574858,16.2107047 12.1665218,16.232102 11.5684023,16.2340342 L11.4899859,16.2341208 C11.2176094,16.2315455 5.47631882,16.1754125 3.68008625,16.00317 C3.16820688,15.9071594 2.01894,15.936125 1.14401521,15.0200494 C0.4544225,14.3220904 0.230019167,12.7371221 0.230019167,12.7371221 C0.230019167,12.7371221 0,10.8758806 0,9.01466312 L0.000994600165,7.05509197 C0.0160444711,5.41104868 0.197244917,3.82302118 0.226140669,3.57945865 L0.230014375,3.54726604 C0.230014375,3.54726604 0.454417708,1.96230729 1.14401042,1.26434354 C2.01893521,0.348267917 2.99893167,0.343730208 3.44853375,0.290106667 C6.29290408,0.0845049419 10.3940069,0.0605977646 11.3092935,0.0578178602 Z M9.12446896,4.66678625 L9.12552313,11.1291777 L15.3391744,7.90924 L9.12446896,4.66678625 Z"></path></svg>
+                            <span>YouTube</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     }

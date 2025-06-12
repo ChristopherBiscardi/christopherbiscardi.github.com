@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* catppuccin variables */
 .ctp-latte {
   --ctp-rosewater: rgb(220, 138, 120);
@@ -281,10 +283,10 @@
 .bento-box:hover .visible-on-hover {
   visibility: visible;
 }
-.bento-box .img-header::after {
+/* .bento-box .img-header::after {
   background: #1fa9f4;
   content: "";
-}
+} */
 
 .rainbow-borders {
   border-image-source: linear-gradient(
@@ -330,6 +332,7 @@
   height: 100%;
   background: url(/textures/cubes.png), var(--ctp-base);
   background-blend-mode: multiply;
+  z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use crate::components::sidebar::Sidebar;
 use leptos::prelude::*;
 // use sens8::button::*;
@@ -7,7 +9,85 @@ pub fn GardenPage() -> impl IntoView {
     view! {
         <Sidebar>
             <Hero/>
-            <div class="grid grid-cols-3 gap-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-14">posts</div>
+            <div class="pb-24 sm:pb-32">
+                <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+                    <Article
+                    title="Something about Rust".to_string()
+                    image_url="/test-images/01JKC777W14S7H92HS5KJVKAAS.avif".to_string()
+                    tags=vec![
+                        Tag {
+                            display_name: "Rust".to_string(),
+                            label: "rust".to_string(),
+                        }
+                    ]
+                    />
+                    <Article
+                    title="A Bevy application".to_string()
+                    image_url="/test-images/01JMVAV66K6AR15Q7F0EFM1H0N.avif".to_string()
+                    tags=vec![
+                        Tag{
+                            display_name: "Rust".to_string(),
+                            label: "rust".to_string(),
+                        },
+                        Tag{
+                            display_name: "Bevy".to_string(),
+                            label: "bevy".to_string(),
+                        }
+                    ]/>
+                    <Article
+                    title="Communicating between JS and Rust/Wasm".to_string()
+                    image_url="/test-images/01JNDKF68NC1T06KD14Z503JAG.avif".to_string()
+                    tags=vec![Tag{
+                        display_name: "Rust".to_string(),
+                        label: "rust".to_string(),
+                    },
+                    Tag{
+                        display_name: "Wasm".to_string(),
+                        label: "wasm".to_string(),
+                    }]/>
+                    <Article
+                    title="Something about Rust".to_string()
+                    image_url="/test-images/01JKC777W14S7H92HS5KJVKAAS.avif".to_string()
+                    tags=vec![
+                    ]
+                    />
+                    <Article
+                    title="A Bevy application".to_string()
+                    image_url="/test-images/01JMVAV66K6AR15Q7F0EFM1H0N.avif".to_string()
+                    tags=vec![
+                        Tag{
+                            display_name: "Rust".to_string(),
+                            label: "rust".to_string(),
+                        },
+                        Tag{
+                            display_name: "Bevy".to_string(),
+                            label: "bevy".to_string(),
+                        },
+                        Tag{
+                            display_name: "Advent of Code".to_string(),
+                            label: "advent-of-code".to_string(),
+                        },
+                        Tag{
+                            display_name: "Parser Combinators".to_string(),
+                            label: "parser-combinators".to_string(),
+                        }
+                    ]/>
+                    <Article
+                    title="Communicating between JS and Rust/Wasm".to_string()
+                    image_url="/test-images/01JNDKF68NC1T06KD14Z503JAG.avif".to_string()
+                    tags=vec![Tag{
+                        display_name: "Rust".to_string(),
+                        label: "rust".to_string(),
+                    },
+                    Tag{
+                        display_name: "Wasm".to_string(),
+                        label: "wasm".to_string(),
+                    }]/>
+                    </div>
+                </div>
+            </div>
+
         </Sidebar>
     }
 }
@@ -29,8 +109,82 @@ pub fn Hero() -> impl IntoView {
                         alt="party corgi rainbow animated"
                     />
                 </h1>
-                <p class="mt-6 text-xl text-indigo-100 max-w-3xl">This is all of my posts</p>
+                <p class="mt-6 text-xl text-indigo-100 max-w-3xl">
+                    This is my digital garden, where I often build up new content. Some posts are sketches or in-progress while others are complete.
+                </p>
             </div>
         </div>
+    }
+}
+
+#[component]
+fn Article(
+    title: String,
+    image_url: String,
+    tags: Vec<Tag>,
+) -> impl IntoView {
+    view! {
+        <article class="flex flex-col items-start justify-start">
+        <div class="relative w-full">
+        <img src={image_url} alt="" class="aspect-video w-full rounded bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[16/9]"/>
+        <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
+        </div>
+        <div class="max-w-xl">
+        <div class="mt-8 flex flex-wrap items-center gap-4 text-xs">
+            // <time datetime="2020-03-16" class="text-gray-500">Mar 16, 2020</time>
+            {
+                tags.iter().map(|tag| view!{
+                    <Tag tag=tag.clone() />
+                }).collect_view()
+            }
+        </div>
+        <div class="group relative">
+            <h3 class="mt-3 text-lg/6 font-semibold text-indigo-100 group-hover:text-slate-100">
+            <a href="#">
+                <span class="absolute inset-0"></span>
+                {title.clone()}
+            </a>
+            </h3>
+            <p class="mt-5 line-clamp-3 text-sm/6 text-slate-100">Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.</p>
+        </div>
+        </div>
+    </article>
+    }
+}
+
+#[derive(Clone)]
+struct Tag {
+    display_name: String,
+    label: String,
+}
+
+impl Tag {
+    fn color_ring(&self) -> &str {
+        match self.label.deref() {
+            "rust" => "ring-red-400",
+            "bevy" => "ring-sky-400",
+            "wasm" => "ring-indigo-400",
+            _ => "ring-gray-800",
+        }
+    }
+    fn color_fill(&self) -> &str {
+        match self.label.deref() {
+            "rust" => "fill-red-400",
+            "bevy" => "fill-sky-400",
+            "wasm" => "fill-indigo-400",
+            _ => "fill-gray-800",
+        }
+    }
+}
+
+#[component]
+fn tag(tag: Tag) -> impl IntoView {
+    view! {
+        <span class=format!("inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset {}", tag.color_ring())>
+            <svg class=format!("size-1.5 {}", tag.color_fill()) viewBox="0 0 6 6" aria-hidden="true">
+                <circle cx="3" cy="3" r="3" />
+            </svg>
+            {tag.display_name.clone()}
+        </span>
     }
 }
