@@ -3,14 +3,14 @@ use leptos::{either::Either, prelude::*};
 // use sens8::button::*;
 
 #[component]
-fn BentoBox<'a>(
-    #[prop(optional)] border_gradient: &'a str,
-    bg: Option<&'a str>,
-    image_header: Option<&'a str>,
+fn BentoBox(
+    #[prop(optional)] border_gradient: &'static str,
+    bg: Option<&'static str>,
+    image_header: Option<&'static str>,
     #[prop(default = 2.)] speed: f64,
     #[prop(default = 0.)] animation_offset: f64,
     children: Children,
-) -> impl IntoView + 'a {
+) -> impl IntoView {
     let mut style = "".to_string();
     if !border_gradient.is_empty() {
         style.push_str("--border-gradient: ");
@@ -33,17 +33,15 @@ fn BentoBox<'a>(
         <div style=container_style class="bento-container h-full">
             <div style=style class="bento-box h-full">
 
-                {if let Some(src) = image_header {
-                    Either::Left(view! {
+                {image_header.map(|src|{
+                    view! {
                         <div
-                        class="h-full w-full absolute bg-center bg-cover img-header"
-                        style=format!("
-                            background-image: url({});
-                        ", src)></div>
-                    })
-                } else {
-                    Either::Right(view! { "" })
-                }}
+                            class="h-full w-full absolute bg-center bg-cover img-header"
+                            style=format!("
+                                background-image: url({});
+                            ", src)></div>
+                    }
+                })}
 
                 {children()}
             </div>
