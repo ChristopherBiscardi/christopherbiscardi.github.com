@@ -1,0 +1,14 @@
+/post/codeblocks,-mdx,-and-mdx-utils                            /post/codeblocks-mdx-and-mdx-utils
+/post/design-systems-people,-processes,-and-emergent-behavior   /post/design-systems-people-processes-and-emergent-behavior
+/post/gatsby-themes,-webpack-loaders,-and-npm-packages          /post/gatsby-themes-webpack-loaders-and-npm-packages
+/post/kafka,-kube,-and-statefulsets-on-gke                      /post/kafka-kube-and-statefulsets-on-gke
+/post/notes-on-parsing-the-graph-ql-sdl                         /post/notes-on-parsing-the-graphql-sdl                          
+/posts                                                          /post
+/post/manipulating-gatsby-page-context-with-on-create-page      /post/manipulating-gatsby-page-context-with-oncreatepage
+/post/a-first-look-at-fauna-db                                  /post/a-first-look-at-faunadb
+/post/using-mdxp-rovider-host-elements-in-react-live-scope      /post/using-mdxprovider-host-elements-in-react-live-scope
+/post/creating-mdx-nodes-from-raw-strings                       /post/creating-mdx-nodes-from-raw-strings-and-nodes
+/post/if-you-can-t-delete-code-then-you-re-stuck-with-it        /post/if-you-cant-delete-code-then-youre-stuck-with-it
+/post/shipping-multi-package-repos-with-git-hub-actions-changesets-and-lerna /post/shipping-multipackage-repos-with-github-actions-changesets-and-lerna
+/feed                                                           /rss.xml
+/rss                                                            /rss.xml

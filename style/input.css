@@ -1,0 +1,437 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+/* make things better and solve puzzles */
+
+/* catppuccin variables */
+.ctp-latte {
+  --ctp-rosewater: rgb(220, 138, 120);
+  --ctp-flamingo: rgb(221, 120, 120);
+  --ctp-pink: rgb(234, 118, 203);
+  --ctp-mauve: rgb(136, 57, 239);
+  --ctp-red: rgb(210, 15, 57);
+  --ctp-maroon: rgb(230, 69, 83);
+  --ctp-peach: rgb(254, 100, 11);
+  --ctp-yellow: rgb(223, 142, 29);
+  --ctp-green: rgb(64, 160, 43);
+  --ctp-teal: rgb(23, 146, 153);
+  --ctp-sky: rgb(4, 165, 229);
+  --ctp-sapphire: rgb(32, 159, 181);
+  --ctp-blue: rgb(30, 102, 245);
+  --ctp-lavender: rgb(114, 135, 253);
+  --ctp-text: rgb(76, 79, 105);
+  --ctp-subtext1: rgb(92, 95, 119);
+  --ctp-subtext0: rgb(108, 111, 133);
+  --ctp-overlay2: rgb(124, 127, 147);
+  --ctp-overlay1: rgb(140, 143, 161);
+  --ctp-overlay0: rgb(156, 160, 176);
+  --ctp-surface2: rgb(172, 176, 190);
+  --ctp-surface1: rgb(188, 192, 204);
+  --ctp-surface0: rgb(204, 208, 218);
+  --ctp-base: rgb(239, 241, 245);
+  --ctp-mantle: rgb(230, 233, 239);
+  --ctp-crust: rgb(220, 224, 232);
+}
+.ctp-frappe {
+  --ctp-rosewater: rgb(242, 213, 207);
+  --ctp-flamingo: rgb(238, 190, 190);
+  --ctp-pink: rgb(244, 184, 228);
+  --ctp-mauve: rgb(202, 158, 230);
+  --ctp-red: rgb(231, 130, 132);
+  --ctp-maroon: rgb(234, 153, 156);
+  --ctp-peach: rgb(239, 159, 118);
+  --ctp-yellow: rgb(229, 200, 144);
+  --ctp-green: rgb(166, 209, 137);
+  --ctp-teal: rgb(129, 200, 190);
+  --ctp-sky: rgb(153, 209, 219);
+  --ctp-sapphire: rgb(133, 193, 220);
+  --ctp-blue: rgb(140, 170, 238);
+  --ctp-lavender: rgb(186, 187, 241);
+  --ctp-text: rgb(198, 208, 245);
+  --ctp-subtext1: rgb(181, 191, 226);
+  --ctp-subtext0: rgb(165, 173, 206);
+  --ctp-overlay2: rgb(148, 156, 187);
+  --ctp-overlay1: rgb(131, 139, 167);
+  --ctp-overlay0: rgb(115, 121, 148);
+  --ctp-surface2: rgb(98, 104, 128);
+  --ctp-surface1: rgb(81, 87, 109);
+  --ctp-surface0: rgb(65, 69, 89);
+  --ctp-base: rgb(48, 52, 70);
+  --ctp-mantle: rgb(41, 44, 60);
+  --ctp-crust: rgb(35, 38, 52);
+}
+.ctp-macchiato {
+  --ctp-rosewater: rgb(244, 219, 214);
+  --ctp-flamingo: rgb(240, 198, 198);
+  --ctp-pink: rgb(245, 189, 230);
+  --ctp-mauve: rgb(198, 160, 246);
+  --ctp-red: rgb(237, 135, 150);
+  --ctp-maroon: rgb(238, 153, 160);
+  --ctp-peach: rgb(245, 169, 127);
+  --ctp-yellow: rgb(238, 212, 159);
+  --ctp-green: rgb(166, 218, 149);
+  --ctp-teal: rgb(139, 213, 202);
+  --ctp-sky: rgb(145, 215, 227);
+  --ctp-sapphire: rgb(125, 196, 228);
+  --ctp-blue: rgb(138, 173, 244);
+  --ctp-lavender: rgb(183, 189, 248);
+  --ctp-text: rgb(202, 211, 245);
+  --ctp-subtext1: rgb(184, 192, 224);
+  --ctp-subtext0: rgb(165, 173, 203);
+  --ctp-overlay2: rgb(147, 154, 183);
+  --ctp-overlay1: rgb(128, 135, 162);
+  --ctp-overlay0: rgb(110, 115, 141);
+  --ctp-surface2: rgb(91, 96, 120);
+  --ctp-surface1: rgb(73, 77, 100);
+  --ctp-surface0: rgb(54, 58, 79);
+  --ctp-base: rgb(36, 39, 58);
+  --ctp-mantle: rgb(30, 32, 48);
+  --ctp-crust: rgb(24, 25, 38);
+}
+.ctp-mocha {
+  --ctp-rosewater: rgb(245, 224, 220);
+  --ctp-flamingo: rgb(242, 205, 205);
+  --ctp-pink: rgb(245, 194, 231);
+  --ctp-mauve: rgb(203, 166, 247);
+  --ctp-red: rgb(243, 139, 168);
+  --ctp-maroon: rgb(235, 160, 172);
+  --ctp-peach: rgb(250, 179, 135);
+  --ctp-yellow: rgb(249, 226, 175);
+  --ctp-green: rgb(166, 227, 161);
+  --ctp-teal: rgb(148, 226, 213);
+  --ctp-sky: rgb(137, 220, 235);
+  --ctp-sapphire: rgb(116, 199, 236);
+  --ctp-blue: rgb(137, 180, 250);
+  --ctp-lavender: rgb(180, 190, 254);
+  --ctp-text: rgb(205, 214, 244);
+  --ctp-subtext1: rgb(186, 194, 222);
+  --ctp-subtext0: rgb(166, 173, 200);
+  --ctp-overlay2: rgb(147, 153, 178);
+  --ctp-overlay1: rgb(127, 132, 156);
+  --ctp-overlay0: rgb(108, 112, 134);
+  --ctp-surface2: rgb(88, 91, 112);
+  --ctp-surface1: rgb(69, 71, 90);
+  --ctp-surface0: rgb(49, 50, 68);
+  --ctp-base: rgb(30, 30, 46);
+  --ctp-mantle: rgb(24, 24, 37);
+  --ctp-crust: rgb(17, 17, 27);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ctp-rosewater: rgb(220, 138, 120);
+  --ctp-flamingo: rgb(221, 120, 120);
+  --ctp-pink: rgb(234, 118, 203);
+  --ctp-mauve: rgb(136, 57, 239);
+  --ctp-red: rgb(210, 15, 57);
+  --ctp-maroon: rgb(230, 69, 83);
+  --ctp-peach: rgb(254, 100, 11);
+  --ctp-yellow: rgb(223, 142, 29);
+  --ctp-green: rgb(64, 160, 43);
+  --ctp-teal: rgb(23, 146, 153);
+  --ctp-sky: rgb(4, 165, 229);
+  --ctp-sapphire: rgb(32, 159, 181);
+  --ctp-blue: rgb(30, 102, 245);
+  --ctp-lavender: rgb(114, 135, 253);
+  --ctp-text: rgb(76, 79, 105);
+  --ctp-subtext1: rgb(92, 95, 119);
+  --ctp-subtext0: rgb(108, 111, 133);
+  --ctp-overlay2: rgb(124, 127, 147);
+  --ctp-overlay1: rgb(140, 143, 161);
+  --ctp-overlay0: rgb(156, 160, 176);
+  --ctp-surface2: rgb(172, 176, 190);
+  --ctp-surface1: rgb(188, 192, 204);
+  --ctp-surface0: rgb(204, 208, 218);
+  --ctp-base: rgb(239, 241, 245);
+  --ctp-mantle: rgb(230, 233, 239);
+  --ctp-crust: rgb(220, 224, 232);
+
+  --offset: 0s;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ctp-rosewater: rgb(245, 224, 220);
+    --ctp-flamingo: rgb(242, 205, 205);
+    --ctp-pink: rgb(245, 194, 231);
+    --ctp-mauve: rgb(203, 166, 247);
+    --ctp-red: rgb(243, 139, 168);
+    --ctp-maroon: rgb(235, 160, 172);
+    --ctp-peach: rgb(250, 179, 135);
+    --ctp-yellow: rgb(249, 226, 175);
+    --ctp-green: rgb(166, 227, 161);
+    --ctp-teal: rgb(148, 226, 213);
+    --ctp-sky: rgb(137, 220, 235);
+    --ctp-sapphire: rgb(116, 199, 236);
+    --ctp-blue: rgb(137, 180, 250);
+    --ctp-lavender: rgb(180, 190, 254);
+    --ctp-text: rgb(205, 214, 244);
+    --ctp-subtext1: rgb(186, 194, 222);
+    --ctp-subtext0: rgb(166, 173, 200);
+    --ctp-overlay2: rgb(147, 153, 178);
+    --ctp-overlay1: rgb(127, 132, 156);
+    --ctp-overlay0: rgb(108, 112, 134);
+    --ctp-surface2: rgb(88, 91, 112);
+    --ctp-surface1: rgb(69, 71, 90);
+    --ctp-surface0: rgb(49, 50, 68);
+    --ctp-base: rgb(30, 30, 46);
+    --ctp-mantle: rgb(24, 24, 37);
+    --ctp-crust: rgb(17, 17, 27);
+  }
+}
+
+/* Bento Boxes */
+@property --angle {
+  inherits: true;
+  initial-value: 0deg;
+  syntax: "<angle>";
+}
+
+.bento-container {
+  --border-width: 1;
+  --border-radius: 5;
+  --border-speed: 2;
+  --angle: 0;
+  animation: rotate-gradient calc(var(--border-speed, 2) * 1s) infinite linear;
+  animation-play-state: paused;
+  --gradient: conic-gradient(
+    from calc(180deg + var(--angle)) at 50% 70%,
+    #ff240055,
+    #e81d1d55,
+    #e8b71d55,
+    #e3e81d55,
+    #1de84055,
+    #1ddde855,
+    #2b1de855,
+    #dd00f355,
+    #dd00f355
+  );
+}
+.bento-container:hover {
+  animation-play-state: running;
+  --alpha: 0;
+}
+@keyframes rotate-gradient {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+.bento-box {
+  animation: fade-in 0.6s linear var(--offset) both;
+  --bg: #0f172a;
+  --bg-grad: linear-gradient(-45deg, #1e293b, #0f172a) padding-box;
+  --border-gradient: var(--gradient) border-box;
+  background: var(--bg-grad); /*, var(--border-gradient);*/
+  border: calc(var(--border-width, 2) * 1px) solid transparent;
+  padding: 2rem;
+  border-radius: calc(var(--border-radius, 8) * 1px);
+  position: relative;
+  transform: translate3d(0, 0, 0);
+  transition: background 0.1s;
+  box-shadow: 0px 8px 16px 0px rgba(17, 17, 27, 0.24),
+    0px 0px 4px 0px rgba(17, 17, 27, 0.04),
+    rgba(205, 214, 244, 0.235) 0px 0px 1px 0px inset;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+.bento-box:hover {
+  background: var(--bg-grad), var(--border-gradient);
+  background-size: 110%;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+
+.bento-box::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--border-width) * -1px);
+  border-radius: calc(var(--border-radius) * 1px);
+  background: #1e293b;
+  opacity: var(--alpha, 0.5);
+  transition: opacity 0.2s;
+}
+
+.bento-box .img-header {
+  transition: all 0.1s ease-out;
+  margin: -2rem;
+  position: absolute;
+  z-index: -1;
+}
+.bento-box:hover .img-header {
+  filter: blur(5px);
+  transform: scale3d(1.15, 1.15, 1.15);
+}
+.bento-box .visible-on-hover {
+  visibility: hidden;
+}
+.bento-box:hover .visible-on-hover {
+  visibility: visible;
+}
+/* .bento-box .img-header::after {
+  background: #1fa9f4;
+  content: "";
+} */
+
+.rainbow-borders {
+  border-image-source: linear-gradient(
+    90deg,
+    rgba(251, 89, 74, 0.3) 0%,
+    rgba(251, 222, 75, 0.3) 25%,
+    rgba(112, 228, 112, 0.3) 50%,
+    rgba(51, 183, 255, 0.3) 75%
+  );
+
+  border-bottom-width: 2px;
+  border-image-slice: 1;
+}
+.rainbow-borders:hover {
+  border-image-source: linear-gradient(
+    90deg,
+    rgba(251, 89, 74, 1) 0%,
+    rgba(251, 222, 75, 1) 25%,
+    rgba(112, 228, 112, 1) 50%,
+    rgba(51, 183, 255, 1) 75%
+  );
+}
+
+.outfit-900 {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+}
+
+@media (prefers-color-scheme: light) {
+  .main-header-darken {
+    background: #555;
+  }
+}
+
+.textured-bg:before {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: url(/textures/cubes.png), var(--ctp-base);
+  background-blend-mode: multiply;
+  z-index: -1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .textured-bg:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: url(/textures/3px-tile.png), #020617;
+    background-blend-mode: luminosity;
+  }
+}
+
+.prose li:nth-child(1)::marker {
+  color: var(--ctp-mauve);
+}
+.prose li:nth-child(2)::marker {
+  color: var(--ctp-red);
+}
+.prose li:nth-child(3)::marker {
+  color: var(--ctp-yellow);
+}
+.prose li:nth-child(4)::marker {
+  color: var(--ctp-green);
+}
+.prose li:nth-child(5)::marker {
+  color: var(--ctp-sky);
+}
+.prose li:nth-child(6)::marker {
+  color: var(--ctp-lavender);
+}
+.prose li:nth-child(7)::marker {
+  color: var(--ctp-flamingo);
+}
+
+.prose a,
+.rainbow-borders {
+  border-image-source: linear-gradient(
+    90deg,
+    rgba(251, 89, 74, 0.3) 0%,
+    rgba(251, 222, 75, 0.3) 25%,
+    rgba(112, 228, 112, 0.3) 50%,
+    rgba(51, 183, 255, 0.3) 75%
+  );
+
+  border-bottom-width: 2px;
+  border-image-slice: 1;
+  text-decoration: none;
+}
+.prose a:hover,
+.rainbow-borders:hover {
+  border-image-source: linear-gradient(
+    90deg,
+    rgba(251, 89, 74, 1) 0%,
+    rgba(251, 222, 75, 1) 25%,
+    rgba(112, 228, 112, 1) 50%,
+    rgba(51, 183, 255, 1) 75%
+  );
+}
+
+.prose li {
+  list-style-image: url(/logos/logo-list-item.svg);
+}
+
+.prose hr {
+  height: 3px;
+  border: none;
+  background: linear-gradient(
+    90deg,
+    rgb(251, 89, 74) 0%,
+    rgb(251, 89, 74) 25%,
+    rgb(251, 222, 75) 25%,
+    rgb(251, 222, 75) 50%,
+    rgb(112, 228, 112) 50%,
+    rgb(112, 228, 112) 75%,
+    rgb(51, 183, 255) 75%
+  );
+}
+
+.prose blockquote {
+  /* background-color: rgb(29, 38, 52); */
+  /* wish border-inline worked with gradients */
+  /* border-inline-start: 30px solid red; */
+  border-inline-start-width: 0;
+  background-image: linear-gradient(
+    rgba(251, 89, 74, 0.5) 0%,
+    rgba(251, 89, 74, 0.5) 25%,
+    rgba(251, 222, 75, 0.5) 25%,
+    rgba(251, 222, 75, 0.5) 50%,
+    rgba(112, 228, 112, 0.5) 50%,
+    rgba(112, 228, 112, 0.5) 75%,
+    rgba(51, 183, 255, 0.5) 75%
+  );
+  background-size: 3px 100%;
+  background-repeat: no-repeat;
+  /* border-right: 1px solid; */
+  border-inline-end: 1px solid rgb(48, 62, 85);
+}
