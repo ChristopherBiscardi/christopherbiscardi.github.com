@@ -1,5 +1,5 @@
 use crate::components::Footer;
-use leptos::{logging::log, prelude::*};
+use leptos::prelude::*;
 
 struct MenuItem<'a> {
     url: &'a str,

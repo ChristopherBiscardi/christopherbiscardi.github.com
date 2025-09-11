@@ -1,5 +1,4 @@
 use crate::{api::markdown::ContentMetadata, Tag, TAGS};
-use std::ops::Deref;
 
 use crate::components::sidebar::Sidebar;
 use leptos::{logging::error, prelude::*};

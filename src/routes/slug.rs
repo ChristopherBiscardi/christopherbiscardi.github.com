@@ -6,7 +6,6 @@ use leptos::prelude::*;
 use leptos_meta::{Link, Meta, Title};
 use leptos_router::{hooks::*, params::Params};
 use serde::{Deserialize, Serialize};
-use std::ops::Deref;
 use thiserror::Error;
 // use sens8::button::*;
 

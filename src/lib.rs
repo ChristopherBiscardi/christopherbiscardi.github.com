@@ -1,7 +1,6 @@
 #![recursion_limit = "256"]
 
 use phf::phf_map;
-use std::collections::HashMap;
 mod api;
 pub mod app;
 mod components;

@@ -14,7 +14,7 @@ use leptos_router::{
     components::{Route, Router, Routes},
     path,
     static_routes::StaticRoute,
-    SsrMode, StaticSegment,
+    SsrMode,
 };
 use std::path::Path;
 
