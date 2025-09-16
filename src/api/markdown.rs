@@ -56,6 +56,7 @@ pub fn compile(input: &str) -> String {
     options.extension.front_matter_delimiter =
         Some("---".to_owned());
     options.extension.multiline_block_quotes = true;
+    options.extension.alerts = true;
 
     markdown_to_html_with_plugins(input, &options, &plugins)
 }

@@ -171,12 +171,17 @@ fn Article(
         </div>
         <div class="group relative">
             <h3 class="mt-3 text-lg/6 font-semibold text-sky-900 group-hover:text-slate-950 dark:text-sky-100 dark:group-hover:text-slate-100">
-            <a href=format!("/{slug}")>
+            <a
+                href=format!("/{slug}")
+                style=format!("view-transition-name: article-{slug}")
+            >
                 <span class="absolute inset-0"></span>
                 {title.clone()}
             </a>
             </h3>
-            <p class="mt-5 line-clamp-3 text-sm/6 text-slate-900 dark:text-slate-100">{description}</p>
+            <p class="mt-5 line-clamp-3 text-sm/6 text-slate-900 dark:text-slate-100"
+            style=format!("view-transition-name: article-byline-{slug}")
+            >{description}</p>
         </div>
         </div>
     </article>

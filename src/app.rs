@@ -57,7 +57,9 @@ pub fn App() -> impl IntoView {
         <ProgressBar/>
 
         <Router>
-            <Routes fallback=|| "Page not found.".into_view()>
+            <Routes fallback=|| "Page not found.".into_view()
+            transition=true
+            >
                 <Route
                     path=path!("/")
                     view=IndexPage
@@ -154,12 +156,24 @@ pub async fn list_slugs(
                 return None;
             }
 
-            let slug = path
-                .file_name()
-                .and_then(|n| n.to_str())
-                .unwrap_or_default()
-                .replace(".md", "");
-            Some(slug)
+            use crate::api::markdown::{
+                compile, parse_frontmatter,
+            };
+
+            println!("list_slugs ./content/{path:?}.md");
+            let content =
+                std::fs::read_to_string(&path).ok()?;
+
+            let content_metadata =
+                parse_frontmatter(&content)
+                    .ok()
+                    .and_then(|(_, doc)| doc)?;
+
+            if content_metadata.published.is_some() {
+                content_metadata.slug
+            } else {
+                None
+            }
         })
         .collect()
         .await)
