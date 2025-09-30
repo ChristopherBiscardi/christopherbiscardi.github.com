@@ -291,3 +291,67 @@ I'll elide a list here so as to not pollute suggestions, but if you are currentl
 
 There's a decent amount of solid foundation to have a Bevy components extension and also some open questions to solve before making a proposal.
 In the meantime Skein is the testing ground for the functionality and I'm pushing forward the functionality I talk about here.
+
+## 2025/09/29 - Multiple Scene Postprocessors
+
+Avian components like `ColliderConstructor` can result in heavy deferred collider construction.
+Thus it would be nice if Avian had some sort of `SceneCollidersReady` event.
+To achieve this, the most straightforward solution is to pre-process the scene before it is spawned, and insert a new `ColliderStatus` component.
+Then `SceneColliderConstructor` processing can fire events as the colliders are constructed, storing updated status in any of these components.
+
+```rust
+#[derive(Component)]
+struct SceneColliderStatus(HashMap<Entity, ProcessedState>);
+
+enum ProcessedState {
+  Untouched,
+  Processing,
+  Done
+}
+```
+
+Unfortunately if Skein wants to insert using `On<Add, GltfExtras>`, that means that `ColliderConstructor`s can be inserted _after_ Avian processes the scene, rendering the processing incorrect.
+So Skein needs to move processing back up the chain _towards_ the `GltfLoader`.
+Right now the furthest back it can be pushed without forking bevy_gltf is `AssetEvent::Add` for `Scene`s.
+
+So the order needs to be
+
+1. Skein inserts Components
+2. Avian Preprocesses the Scene
+
+and in today's Bevy, there's only one way to allow this ordering between two crates that don't know about each other.
+
+1. Skein inserts on `AssetEvent::Add` for `Scene`
+2. Avian Preprocesses on `AssetEvent::LoadedWithDependencies`
+
+> [!NOTE]
+>
+> TODO: validate this statement (basically: can hooks fire in scene world)
+>
+> This process will unfortunately miss preprocessing for any components that have hooks that insert new ColliderConstructors.
+
+This works for two crates, but its pretty obvious that it would be better if Skein's processing was done in the loader.
+
+Using `GltfExtras` in a `Scene` pre-processing in `AssetEvent::Add` means having to make decisions about what to do with the contents of those strings.
+
+- Do we parse-and-re-insert `GltfExtras` with skein keys removed?
+- Do we remove the `GltfExtras` components after processing?
+  - Answer: no, because that would prevent others from using the data for application-specific purposes
+- If `GltfExtras` exists and the `On<Add, GltfExtras>` observer exists, then we're either parsing strings doubly even though they don't have content the second time, we're re-inserting components we've already inserted, or...
+- We remove `On<Add, GltfExtras>` processing, and that _also_ removes the ability to use sub-assets with `GltfExtras`.
+  - If you're not aware, glTF files end up as the `Gltf` asset, which has many sub-assets that can be used individually. `Animation`, `Material`, `GltfMesh`, etc. Any of the `Gltf*` types have the extras components [created and ready to go](https://docs.rs/bevy/0.16.1/bevy/gltf/struct.GltfMesh.html) for sub-asset usage. (while, somewhat weirdly, materials don't have the same because Bevy doesn't have a slot for a `StandardMaterial` to have associated components. So those live inside the `GltfPrimitive` that _uses_ a material as `material_extras`.)
+
+Furthermore, using glTF extras presents a challenge because while the loader could process and remove the skein
+
+## Associating Components with Assets
+
+The "materials don't have associated components" problem from earlier is an interesting one to think about, especially in the context of recent conversations about removing sub-assets.
+There are clearly extras associated with materials in glTF, but Bevy has no concept of "extra information associated with a Material", or generalizing that, "extra information associated with an Asset".
+This means that
+
+- `Handle<StandardMaterial>` and `Handle<AnimationClip>` don't have a slot for extra metadata
+- `GltfPrimitive` _is_ the holder of this metadata for a `Handle<Mesh>`/`Handle<StandardMaterial>` pair even though the extras are really supposed to be attached to the `Handle<Mesh>` and `Handle<StandardMaterial>` individually
+- `Handle<Scene>` actually contains these components _inside_ the `Scene` on the root node of the world
+- `GltfSkin` _is_ the holder of this metadata for a `joints`(`Handle<GltfNode>`)/`SkinnedMeshInverseBindposes` pairing.
+
+So to solve the "metadata associated with an `Asset`" problem (by which in this case we mean effectively `Bundle`s or `Vec<Component>`), there likely needs to be a `HashMap<UntypedHandle, impl Bundle>` type structure that gets filled in for any processed glTF, but more generically, any processed asset that can have Components associated with it.

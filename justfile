@@ -5,7 +5,8 @@ deploy:
 watch:
     CDN_PATH="" cargo leptos watch --features serve
 build:
-    CDN_PATH="" cargo leptos serve -r
+    CDN_PATH="" cargo leptos build -r
+    CDN_PATH="" ./target/release/cb_site
 # lint and fix anything that can be fixed automatically
 fix-all: fmt-cargo fix-cargo fix-clippy fmt-leptos
 

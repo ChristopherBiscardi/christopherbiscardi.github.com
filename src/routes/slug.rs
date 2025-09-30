@@ -99,7 +99,7 @@ pub fn SlugPage() -> impl IntoView {
                     />
                 // </Header>
                 <div class="grid grid-cols-3 gap-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-14 text-slate-950 dark:text-white">
-                    <div class=format!("col-span-full {PROSE}") inner_html={content.html}/>
+                    <div class=format!("col-span-full {PROSE} prose-smol") inner_html={content.html}/>
                     </div>
                     // <Title text=post.title/>
                     // <Meta name="description" content=post.content/>
