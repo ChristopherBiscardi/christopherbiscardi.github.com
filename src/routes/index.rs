@@ -343,7 +343,7 @@ pub fn Hero() -> impl IntoView {
                     <img
                         style="height: 4rem"
                         class="sm:ml-4"
-                        src="https://wasm-cdn--solicitor-seal-13462.netlify.app/img/party-corgi.gif"
+                        src="/img/party-corgi.gif"
                         alt="party corgi rainbow animated"
                     />
                 </h1>
