@@ -1,0 +1,18 @@
+complementary-shaders:
+  type: Misc
+  title: Complementary Shaders | Official Site
+  author: https://github.com/ComplementaryDevelopment
+  date: 2025-11
+  url: https://www.complementary.dev/shaders/
+bib:yt:typst:
+  type: misc
+  title: "Typst: The LaTeX alternative in Rust - YouTube"
+  author: Biscardi, Chris
+  date: 2023-04
+  url: https://www.youtube.com/watch?v=sWmlbMh3ol8
+bib:thewickedwitchoftheeast:
+  type: misc
+  title: "THE WICKED WITCH OF THE EAST, BRO!"
+  author: "@austinparrish5255"
+  date: 2018-04
+  url: https://www.youtube.com/shorts/uznUlgpKBzE

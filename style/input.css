@@ -120,9 +120,13 @@
   --ctp-crust: rgb(17, 17, 27);
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* blegh why doesn't theme work */
+.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  /* @theme { */
+  --tw-prose-pre-bg: #011627;
+}
 
 :root {
   --ctp-rosewater: rgb(220, 138, 120);
@@ -401,7 +405,7 @@
   );
 }
 
-.prose li {
+.prose ul > li {
   list-style-image: url(/logos/logo-list-item.svg);
 }
 
@@ -436,8 +440,21 @@
   );
   background-size: 3px 100%;
   background-repeat: no-repeat;
+  padding-right: 0.5rem;
   /* border-right: 1px solid; */
   border-inline-end: 1px solid rgb(48, 62, 85);
+}
+
+.prose blockquote + p {
+  /* border-left: 12px solid var(--color-slate-700); */
+  border: 1px solid rgb(48, 62, 85);
+  border-left-width: 3px;
+  border-top: none;
+  /* margin-top is a hardcoded inverse of the blockquote margin-bottom */
+  margin-top: -1.6em;
+  /* padding is copied from the blockquote padding and should match */
+  padding-left: calc(var(--spacing) * 5) !important;
+  padding-right: calc(var(--spacing) * 5) !important;
 }
 
 @media (max-width: 40rem) {

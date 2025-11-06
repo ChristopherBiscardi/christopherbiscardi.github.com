@@ -191,29 +191,57 @@ pub struct Content {
 async fn fetch_content(
     slug: String,
 ) -> Result<Option<Content>, ServerFnError> {
-    use crate::api::markdown::{
-        compile, parse_frontmatter,
+    use crate::api::{
+        markdown::{compile, parse_frontmatter},
+        typst,
     };
 
-    println!("reading ./content/{slug}.md");
-    let content = tokio::fs::read_to_string(&format!(
-        "./content/{slug}.md"
-    ))
-    .await?;
+    let file_markdown = tokio::fs::read_to_string(
+        &format!("./content/{slug}.md"),
+    )
+    .await;
 
-    let Some(content_metadata) =
-        parse_frontmatter(&content)
-            .ok()
-            .and_then(|(_, doc)| doc)
-    else {
-        return Ok(Some(Content {
-            meta: ContentMetadata::default(),
-            html: "".to_string(),
-        }));
-    };
+    if let Ok(content) = file_markdown {
+        println!("fetch_content ./content/{slug}.md");
 
-    Ok(Some(Content {
-        meta: content_metadata,
-        html: compile(&content),
-    }))
+        let Some(content_metadata) =
+            parse_frontmatter(&content)
+                .ok()
+                .and_then(|(_, doc)| doc)
+        else {
+            return Ok(Some(Content {
+                meta: ContentMetadata::default(),
+                html: "".to_string(),
+            }));
+        };
+
+        Ok(Some(Content {
+            meta: content_metadata,
+            html: compile(&content),
+        }))
+    } else {
+        println!("no markdown file; checking for ./content/{slug}/main.typ");
+        // find typst file
+        let content = tokio::fs::read_to_string(&format!(
+            "./content/{slug}/main.typ"
+        ))
+        .await?;
+        println!(
+            "fetch_content::found ./content/{slug}/main.typ"
+        );
+
+        let Some(content_metadata) =
+            typst::parse_frontmatter(&content)
+        else {
+            return Ok(Some(Content {
+                meta: ContentMetadata::default(),
+                html: "".to_string(),
+            }));
+        };
+
+        Ok(Some(Content {
+            meta: content_metadata,
+            html: typst::compile(&content).unwrap(),
+        }))
+    }
 }

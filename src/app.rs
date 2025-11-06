@@ -1,4 +1,5 @@
 use crate::{
+    api::markdown::ContentMetadata,
     components::*,
     routes::{
         garden::GardenPage, index::IndexPage,
@@ -6,7 +7,10 @@ use crate::{
     },
 };
 use futures::{channel::mpsc, Stream};
-use leptos::prelude::*;
+use leptos::{
+    logging::{error, warn},
+    prelude::*,
+};
 use leptos_meta::{
     provide_meta_context, HashedStylesheet, MetaTags, Title,
 };
@@ -86,7 +90,7 @@ pub fn App() -> impl IntoView {
                             })
                             .regenerate(|params| {
                                 let slug = params.get("slug").unwrap();
-                                watch_path(Path::new(&format!("./content/{slug}.md")))
+                                watch_path(Path::new(&format!("./content/{slug}/main.typ")))
                             }),
                     )
                 />
@@ -141,40 +145,88 @@ pub async fn list_slugs(
         wrappers::ReadDirStream, StreamExt,
     };
 
-    let files = ReadDirStream::new(
+    let mut files = ReadDirStream::new(
         fs::read_dir("./content").await?,
     );
-    Ok(files
-        .filter_map(|entry| {
-            let entry = entry.ok()?;
-            let path = entry.path();
-            if !path.is_file() {
-                return None;
-            }
-            let extension = path.extension()?;
-            if extension != "md" {
-                return None;
-            }
 
-            use crate::api::markdown::{
-                compile, parse_frontmatter,
+    let mut published_posts: Vec<ContentMetadata> = vec![];
+
+    while let Ok(Some(entry)) = files.try_next().await {
+        // if entry is a directory, check for typst files
+        // otherwise assume markdown
+        if entry
+            .file_type()
+            .await
+            .is_ok_and(|file_type| file_type.is_dir())
+        {
+            // is a dir, probably typst
+            let path = entry.path().join("main.typ");
+
+            let Ok(raw_file) =
+                fs::read_to_string(&path).await
+            else {
+                error!("failed to read {:?}", path);
+                continue;
             };
 
-            println!("list_slugs ./content/{path:?}.md");
-            let content =
-                std::fs::read_to_string(&path).ok()?;
+            let Some(meta) =
+                crate::api::typst::parse_frontmatter(
+                    &raw_file,
+                )
+            else {
+                // No metadata, dropping
+                warn!("failed to parse metadata for typst file: {}", path.display());
+                continue;
+            };
 
-            let content_metadata =
-                parse_frontmatter(&content)
-                    .ok()
-                    .and_then(|(_, doc)| doc)?;
+            published_posts.push(meta);
+        } else {
+            // is a file, probably markdown.
+            let path = entry.path();
 
-            if content_metadata.published.is_some() {
-                content_metadata.slug
-            } else {
-                None
+            // if extension isn't .md, continue
+            if path
+                .extension()
+                .is_some_and(|ext| ext != "md")
+            {
+                continue;
             }
+
+            let Ok(raw_file) =
+                fs::read_to_string(&path).await
+            else {
+                error!("tried to read {:?}", path);
+                continue;
+            };
+
+            if let Ok((_, output)) =
+                crate::api::markdown::parse_frontmatter(
+                    &raw_file,
+                )
+            {
+                if let Some(output) = output {
+                    published_posts.push(output);
+                } else {
+                    warn!("content metadata for X was empty, skipping");
+                }
+            } else {
+                warn!("failed to parse frontmatter for markdown file: {}", path.display());
+                continue;
+            }
+        };
+    }
+    for post_meta in published_posts
+        .extract_if(.., |meta| meta.published.is_none())
+    {
+        println!("removing {:?} because it does not have a publish date", post_meta.slug)
+    }
+
+    Ok(published_posts
+        .iter()
+        .filter_map(|meta| {
+            meta.published
+                .as_ref()
+                .and_then(|_| meta.slug.clone())
         })
-        .collect()
-        .await)
+        .collect())
 }

@@ -1,21 +1,39 @@
----
-title "Bevy Observer Filters"
-slug "bevy-observer-filters"
-tags "bevy" "rust"
-byline "Using On<Event, Filter> for fun and profit"
-image_url "/opengraph/bevy-observer-filters.webp"
-published "2024-10-17"
----
+#import "/lib.typ": template, highlight, note
 
-Let's say you have a `HealthPointsPlugin` that provides an `Hp` component.
-This plugin automatically fires `Death` events for an entity when hp is lowered to 0.
+#metadata((
+  "title": "Bevy Observer Filters",
+  "slug": "bevy-observer-filters",
+  "tags": ("bevy", "rust"),
+  "byline": "Using On<Event, Filter> for fun and profit",
+  "image_url": "/opengraph/bevy-observer-filters.webp",
+  "published": "2025-10-17",
+)) <frontmatter>
 
-Let's also say you have a bunch of different enemy types. Blobs, Zombies, etc, that all despawn on `Death`, but also a `PracticeEnemy` that lives in the lobby before a game.
-This `PracticeEnemy` has different logic `On<Death>` as it just refills its health meter (or maybe another enemy splits into two enemies, etc. Specific logic is the point.)
+#show: doc => template(
+  "Bevy Observer Filters",
+  [#doc]
+)
 
-It seems straightforward to use a global observer and a `match` to dispatch/execute `On<Death>` logic, but what if you want to encapsulate `PracticeEnemy` in its own `Plugin`?
 
-How would an observer be written such that a user can `commands.trigger(Death{entity})` and listen for what people think is `On<Death, PracticeEnemy>`.
+
+Let's say you have a `HealthPointsPlugin` that provides an `Hp`
+component. This plugin automatically fires `Death` events for an entity
+when hp is lowered to 0.
+
+Let's also say you have a bunch of different enemy types. Blobs,
+Zombies, etc, that all despawn on `Death`, but also a `PracticeEnemy`
+that lives in the lobby before a game. This `PracticeEnemy` has
+different logic `On<Death>` as it just refills its health meter (or
+maybe another enemy splits into two enemies, etc. Specific logic is the
+point.)
+
+It seems straightforward to use a global observer and a `match` to
+dispatch/execute `On<Death>` logic, but what if you want to encapsulate
+`PracticeEnemy` in its own `Plugin`?
+
+How would an observer be written such that a user can
+`commands.trigger(Death{entity})` and listen for what people think is
+`On<Death, PracticeEnemy>`.
 
 Given an `HpPlugin` that looks vaguely like this:
 
@@ -92,24 +110,25 @@ struct Death {
 
 We have a few options:
 
-## Option 1: Entity Observers
-
-Add new observer to every entity (entity observers)
-This works; but why are we adding new observers when every type has "one handler" each.
+== Option 1: Entity Observers
+<option-1-entity-observers>
+Add new observer to every entity (entity observers) This works; but why
+are we adding new observers when every type has "one handler" each.
 
 ```rust
 fn practice_enemy_death(death: On<Death>) {}
 fn generic_death(death: On<Death>) {}
 ```
 
-## Option 2: A global observer
-
+== Option 2: A global observer
+<option-2-a-global-observer>
 This requires the observer filter all components.
 
-downsides include it being application-level logic that therefore doesn't fit in a well-scoped Plugin
+downsides include it being application-level logic that therefore
+doesn't fit in a well-scoped Plugin
 
-On the upside: 1 observer, can handle everything in one place.
-Good for application-wide style code.
+On the upside: 1 observer, can handle everything in one place. Good for
+application-wide style code.
 
 ```rust
 fn all_deaths(
@@ -123,11 +142,13 @@ fn all_deaths(
 }
 ```
 
-## Option 3: Dedicated Events
-
-Dedicated events per type work, but require a user to know which one to fire for which entity.
-Alternatively, they can be dispatched from a global "routing" observer.
-This means requiring a general `Death` event, an application-level router, and specific `PracticeEnemyDeath` observers in plugins.
+== Option 3: Dedicated Events
+<option-3-dedicated-events>
+Dedicated events per type work, but require a user to know which one to
+fire for which entity. Alternatively, they can be dispatched from a
+global "routing" observer. This means requiring a general `Death` event,
+an application-level router, and specific `PracticeEnemyDeath` observers
+in plugins.
 
 ```rust
 #[derive(EntityEvent)]
@@ -140,16 +161,20 @@ struct GenericDeath {
 }
 ```
 
-## The Goal
-
-Ideally this would fit into its own plugin that decides what happens to itself when it dies.
-`HpPlugin` would be a generic system firing `Death` events, but the functionality for reacting to death, etc is "opt in".
+== The Goal
+<the-goal>
+Ideally this would fit into its own plugin that decides what happens to
+itself when it dies. `HpPlugin` would be a generic system firing `Death`
+events, but the functionality for reacting to death, etc is "opt in".
 
 current downsides to this next codeblock:
 
-- Death triggers all observers for all entities; filtering happens afterwards
-- "generic" Death observer is now invalid, since the "PracticeEnemy observer" is trying to override its behavior
-- this results in the "global death observer" needing to filter out PracticeEnemy, or running additionally, causing two Death handlers
+- Death triggers all observers for all entities; filtering happens
+  afterwards
+- "generic" Death observer is now invalid, since the "PracticeEnemy
+  observer" is trying to override its behavior
+- this results in the "global death observer" needing to filter out
+  PracticeEnemy, or running additionally, causing two Death handlers
 
 ```rust
 struct PracticeEnemyPlugin;
@@ -171,24 +196,26 @@ fn practice_enemy_death_observer(
 }
 ```
 
-## The Option Everyone Reaches For
-
-Something I've seen people try to do an observer that "filters" on existing components.
-This does not work as expected... but could it?
+== The Option Everyone Reaches For
+<the-option-everyone-reaches-for>
+Something I've seen people try to do an observer that "filters" on
+existing components. This does not work as expected… but could it?
 
 ```rust
 fn fake_filtered_observer(death: On<Death, PracticeEnemy>) {
 }
 ```
 
-## The Working Code
+== The Working Code
+<the-working-code>
+Which brings us to the implementation. Here's an example application
+that filters `Death` events and only fires them for the components that
+are actually on an entity. This allows the definition of filtered
+`On<Death, Player>` observers.
 
-Which brings us to the implementation.
-Here's an example application that filters `Death` events and only fires them for the components that are actually on an entity.
-This allows the definition of filtered `On<Death, Player>` observers.
-
-It's a decent amount of code, but maybe that could be improved ergonomically.
-This example is just proving the feasibility, not the ideal end-user api.
+It's a decent amount of code, but maybe that could be improved
+ergonomically. This example is just proving the feasibility, not the
+ideal end-user api.
 
 That said, the end-user api once implemented is
 
@@ -209,7 +236,8 @@ fn death(death: On<Death, PracticeEnemy>) {
 }
 ```
 
-Which is pretty close to the original goal, even though it doesn't quite "fit" in the Observers `.trigger` sense.
+Which is pretty close to the original goal, even though it doesn't quite
+"fit" in the Observers `.trigger` sense.
 
 ```rust
 use bevy::prelude::*;

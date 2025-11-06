@@ -1,7 +1,10 @@
 use crate::{api::markdown::ContentMetadata, Tag, TAGS};
 
 use crate::components::sidebar::Sidebar;
-use leptos::{logging::error, prelude::*};
+use leptos::{
+    logging::{error, warn},
+    prelude::*,
+};
 use leptos_meta::{Link, Meta, Title};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -208,38 +211,82 @@ pub async fn list_articles(
         wrappers::ReadDirStream, StreamExt,
     };
 
-    let files = ReadDirStream::new(
+    let mut files = ReadDirStream::new(
         fs::read_dir("./content").await?,
     );
-    let mut published_posts: Vec<ContentMetadata> = files
-        .filter_map(|entry| {
-            let entry = entry.ok()?;
+
+    let mut published_posts: Vec<ContentMetadata> = vec![];
+
+    while let Ok(Some(entry)) = files.try_next().await {
+        // if entry is a directory, check for typst files
+        // otherwise assume markdown
+        if entry
+            .file_type()
+            .await
+            .is_ok_and(|file_type| file_type.is_dir())
+        {
+            // is a dir, probably typst
+            let path = entry.path().join("main.typ");
+
+            let Ok(raw_file) =
+                fs::read_to_string(&path).await
+            else {
+                error!("failed to read {:?}", path);
+                continue;
+            };
+
+            let Some(meta) =
+                crate::api::typst::parse_frontmatter(
+                    &raw_file,
+                )
+            else {
+                // No metadata, dropping
+                warn!("failed to parse metadata for typst file: {}", path.display());
+                continue;
+            };
+
+            published_posts.push(meta);
+        } else {
+            // is a file, probably markdown.
             let path = entry.path();
-            if !path.is_file() {
-                return None;
-            }
-            let extension = path.extension()?;
-            if extension != "md" {
-                return None;
+
+            // if extension isn't .md, continue
+            if path
+                .extension()
+                .is_some_and(|ext| ext != "md")
+            {
+                continue;
             }
 
             let Ok(raw_file) =
-                std::fs::read_to_string(&path)
+                fs::read_to_string(&path).await
             else {
                 error!("tried to read {:?}", path);
-                return None;
+                continue;
             };
 
-            crate::api::markdown::parse_frontmatter(
-                &raw_file,
-            )
-            .ok()
-            .and_then(|(_, output)| output)
-        })
-        // TODO: cfg flag to enable "unpublished" posts
-        .filter(|meta| meta.published.is_some())
-        .collect()
-        .await;
+            if let Ok((_, output)) =
+                crate::api::markdown::parse_frontmatter(
+                    &raw_file,
+                )
+            {
+                if let Some(output) = output {
+                    published_posts.push(output);
+                } else {
+                    warn!("content metadata for X was empty, skipping");
+                }
+            } else {
+                warn!("failed to parse frontmatter for markdown file: {}", path.display());
+                continue;
+            }
+        };
+    }
+    // TODO: cfg flag to enable "unpublished" posts
+    for post_meta in published_posts
+        .extract_if(.., |meta| meta.published.is_none())
+    {
+        println!("removing {:?} because it does not have a publish date", post_meta.slug)
+    }
 
     published_posts.sort_by(|a, b| {
         let format = time::macros::format_description!(
