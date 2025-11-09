@@ -4,15 +4,80 @@ complementary-shaders:
   author: https://github.com/ComplementaryDevelopment
   date: 2025-11
   url: https://www.complementary.dev/shaders/
-bib:yt:typst:
-  type: misc
-  title: "Typst: The LaTeX alternative in Rust - YouTube"
-  author: Biscardi, Chris
-  date: 2023-04
-  url: https://www.youtube.com/watch?v=sWmlbMh3ol8
 bib:thewickedwitchoftheeast:
   type: misc
   title: "THE WICKED WITCH OF THE EAST, BRO!"
   author: "@austinparrish5255"
   date: 2018-04
   url: https://www.youtube.com/shorts/uznUlgpKBzE
+bib:fabrik:slides:
+  type: article
+  title: "{FABRIK}: {A} fast, iterative solver for the Inverse Kinematics problem"
+  author:
+    - Aristidou, Andreas
+    - Lasenby, Joan
+  date: 2011-09
+  page-range: 243-260
+  url: http://dx.doi.org/10.1016/j.gmod.2011.05.003
+  serial-number:
+    doi: 10.1016/j.gmod.2011.05.003
+    issn: 1524-0703
+  parent:
+    type: periodical
+    title: Graph. Models
+    publisher:
+      name: Academic Press Professional, Inc.
+      location: San Diego, CA, USA
+    issue: 5
+    volume: 73
+bib:fabrik:
+  type: article
+  title:
+    value: "{FABRIK}: {A} fast, iterative solver for the {Inverse} {Kinematics} problem"
+    short: "{FABRIK}"
+  author:
+    - Aristidou, Andreas
+    - Lasenby, Joan
+  date: 2011-09
+  page-range: 243-260
+  url:
+    value: https://linkinghub.elsevier.com/retrieve/pii/S1524070311000178
+    date: 2025-11-08
+  serial-number:
+    doi: 10.1016/j.gmod.2011.05.003
+    issn: "15240703"
+  abstract: Inverse Kinematics is deﬁned as the problem of determining a set of appropriate joint conﬁgurations for which the end effectors move to desired positions as smoothly, rapidly, and as accurately as possible. However, many of the currently available methods suffer from high computational cost and production of unrealistic poses. In this paper, a novel heuristic method, called Forward And Backward Reaching Inverse Kinematics (FABRIK), is described and compared with some of the most popular existing methods regarding reliability, computational cost and conversion criteria. FABRIK avoids the use of rotational angles or matrices, and instead ﬁnds each joint position via locating a point on a line. Thus, it converges in few iterations, has low computational cost and produces visually realistic poses. Constraints can easily be incorporated within FABRIK and multiple chains with multiple end effectors are also supported.
+  parent:
+    type: periodical
+    title: Graphical Models
+    issue: 5
+    volume: 73
+bib:fabrik:extending-with-model-constraints:
+  type: article
+  title: Extending {FABRIK} with model constraints
+  author:
+    - Aristidou, Andreas
+    - Chrysanthou, Yiorgos
+    - Lasenby, Joan
+  date: 2016-01
+  page-range: 35-57
+  url:
+    value: https://onlinelibrary.wiley.com/doi/10.1002/cav.1630
+    date: 2025-11-09
+  serial-number:
+    doi: 10.1002/cav.1630
+    issn: 1546-4261, 1546-427X
+  abstract: Forward and Backward Reaching Inverse Kinematics (FABRIK) is a recent iterative inverse kinematics solver that became very popular because of its simplicity, convergence speed and control performance, especially in models with multiple end effectors. In this paper, we extend and/or adjust FABRIK to be used in problems with leaf joints and closed-loop chains and to control a ﬁxed inter-joint distance in a kinetic chain with unsteady data. In addition, we provide optimisation solutions when the target is unreachable and a proof of convergence when a solution is available. We also present various techniques for constraining anthropometric and robotic joint models using FABRIK and provide clariﬁcations and solutions to many questions raised since the ﬁrst publication of FABRIK. Finally, a human-like model that has been structured hierarchically and sequentially using FABRIK is presented, utilising most of the suggested joint models; it can efﬁciently trace targets in real time, without oscillations or discontinuities, verifying the effectiveness of FABRIK. Copyright © 2015 John Wiley & Sons, Ltd.
+  parent:
+    type: periodical
+    title: Computer Animation and Virtual Worlds
+    issue: 1
+    volume: 27
+
+# YouTube Videos
+bib:yt:typst:
+  type: misc
+  title: "Typst: The LaTeX alternative in Rust - YouTube"
+  author: Biscardi, Chris
+  date: 2023-04
+  url: https://www.youtube.com/watch?v=sWmlbMh3ol8

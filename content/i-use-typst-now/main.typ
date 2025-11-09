@@ -34,7 +34,7 @@ For a long time I've been searching for a writing format that suits a variety of
 
 I first came across Typst a number of years ago #cite(<bib:yt:typst>), around the time it launched and it has been on my radar ever since.
 
-For a long time now, Typst has made great strides in being a modern LaTeX competitor, which means I've been using it to write book-length content in directory on my laptop all that time.
+For a long time now, Typst has made great strides in being a modern LaTeX competitor, which means I've been using it to write book-length content in a directory on my laptop all that time.
 More recently they've expanded their sights to be more general, "*The new foundation for documents*", and I think it's a good direction.
 
 == What do I like about Typst? <what-do-i-like-about-typst>
@@ -191,7 +191,7 @@ My sites are typically built in #link("https://leptos.dev/")[Leptos] and content
 This means I get a fully functional, modern, frontend framework that can be deployed as a client-side webapp, a static site, or a full stack server/client hybrid deployment.
 Islands also means I get to deploy as little WASM as possible.
 
-With all of that, hot-relod for a website is ready-to-go anytime I need it... but sometimes its nice to have a non-site-specific content authoring workflow.
+With all of that, hot-reload for a website is ready-to-go anytime I need it... but sometimes its nice to have a non-site-specific content authoring workflow.
 
 Typst comes with its own PDF and HTML target hot-reload server.
 This means I can write, save, and view in milliseconds regardless of where the content is going to end up.
@@ -200,11 +200,11 @@ This means I can write, save, and view in milliseconds regardless of where the c
 
 It's not all sunshine and rainbows, and probably not even *for* everyone right now.
 I write a lot, and I need a format that can keep up, so I'm willing to be an early adopter of say, the HTML target, and hit some issues.
-Most people probably want to want for the HTML target to stabilize.
+Most people probably want to wait for the HTML target to stabilize.
 
 === Experimental HTML Target <experimental-html-target>
 
-The HTML target is experimental, and as such has big warning signs all over it saying that its incomplete and that you shouldn't use it in production.
+The HTML target is experimental, and as such has big warning signs all over it saying that it's incomplete and that you shouldn't use it in production.
 
 whoops.
 
@@ -217,7 +217,7 @@ For example,
 
 I'm not really sure this is a downside, but I've taken to storing all customizations in a `lib.typ` file which I then use to handle the differing needs for large-scale layout, target (PDF/HTML/etc), bibliography inclusion, and provide functions that I can use for rendering, like this note function:
 
-#note [
+#note[
   This is a note that can come in a variety of flavors.
 ]
 
