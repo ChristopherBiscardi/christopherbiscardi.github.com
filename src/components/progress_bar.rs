@@ -50,68 +50,61 @@ fn get_indicator_percentage_width(
     (current_pos / total_scroll) * 100.
 }
 
-#[component]
+#[island]
 pub fn ProgressBar() -> impl IntoView {
     let scroll_position_percentage = RwSignal::new(0.);
 
     #[cfg(not(feature = "ssr"))]
-    Effect::watch(
-        move || {},
-        move |_, _, _| {
-            let _ = use_event_listener(
-                use_window(),
-                leptos::ev::scroll,
-                move |_| {
-                    log!("click from element");
+    Effect::new(move || {
+        let _ = use_event_listener(
+            use_window(),
+            leptos::ev::scroll,
+            move |_| {
+                let Some(ref window) = *use_window() else {
+                    return;
+                };
 
-                    let Some(ref window) = *use_window()
-                    else {
-                        return;
-                    };
+                let current_pos =
+                    window.scroll_y().unwrap();
+                let inner_height = window
+                    .inner_height()
+                    .unwrap()
+                    .as_f64()
+                    .unwrap_or(0.);
+                let scroll_height = get_scroll_height();
+                let scroll_distance =
+                    scroll_height as f64 - inner_height;
 
-                    let current_pos =
-                        window.scroll_y().unwrap();
-                    let inner_height = window
-                        .inner_height()
-                        .unwrap()
-                        .as_f64()
-                        .unwrap_or(0.);
-                    let scroll_height = get_scroll_height();
-                    let scroll_distance =
-                        scroll_height as f64 - inner_height;
+                let indicator_width =
+                    get_indicator_percentage_width(
+                        current_pos,
+                        scroll_distance,
+                    );
 
-                    let indicator_width =
-                        get_indicator_percentage_width(
-                            current_pos,
-                            scroll_distance,
-                        );
+                scroll_position_percentage
+                    .set(indicator_width);
+            },
+        );
 
-                    scroll_position_percentage
-                        .set(indicator_width);
-                },
+        let win = use_window();
+        let window = win.as_ref().unwrap();
+
+        let inner_height = window
+            .inner_height()
+            .unwrap()
+            .as_f64()
+            .unwrap_or(0.);
+        let scroll_height = get_scroll_height();
+        let scroll_distance =
+            scroll_height as f64 - inner_height;
+        let indicator_width =
+            get_indicator_percentage_width(
+                window.scroll_y().unwrap(),
+                scroll_distance,
             );
 
-            let win = use_window();
-            let window = win.as_ref().unwrap();
-
-            let inner_height = window
-                .inner_height()
-                .unwrap()
-                .as_f64()
-                .unwrap_or(0.);
-            let scroll_height = get_scroll_height();
-            let scroll_distance =
-                scroll_height as f64 - inner_height;
-            let indicator_width =
-                get_indicator_percentage_width(
-                    window.scroll_y().unwrap(),
-                    scroll_distance,
-                );
-
-            scroll_position_percentage.set(indicator_width);
-        },
-        false,
-    );
+        scroll_position_percentage.set(indicator_width);
+    });
 
     view! {
         <>
