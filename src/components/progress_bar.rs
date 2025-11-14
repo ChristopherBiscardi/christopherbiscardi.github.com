@@ -1,4 +1,4 @@
-use leptos::{logging::log, prelude::*};
+use leptos::prelude::*;
 #[cfg(not(feature = "ssr"))]
 use leptos_use::{use_event_listener, use_window};
 

@@ -122,10 +122,26 @@
 
 @import "tailwindcss";
 
+@theme {
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+body {
+  /* font-size-adjust for Outfit */
+  font-size-adjust: 0.475;
+}
+body pre code {
+  /* font-size-adjust for Fira Code in code blocks */
+  font-size-adjust: 0.526;
+}
 /* blegh why doesn't theme work */
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   /* @theme { */
   --tw-prose-pre-bg: #011627;
+  border: 1px solid #1fa9f422;
 }
 
 :root {
