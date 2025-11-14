@@ -1,4 +1,4 @@
-use crate::{api::markdown::ContentMetadata, Tag, TAGS};
+use crate::{api::markdown::ContentMetadata, Tag};
 
 use crate::components::sidebar::Sidebar;
 use leptos::{
@@ -50,8 +50,8 @@ pub fn GardenPage() -> impl IntoView {
                             title=meta.title.unwrap_or("TEST".to_string()).to_string()
                             slug=meta.slug.unwrap_or("nope".to_string())
                             image_url=meta.image_url.unwrap_or("/opengraph/main-opengraph-image.png".to_string())
-                            tags=meta.tags.iter().filter_map(|id| {
-                                TAGS.get(id)
+                            tags=meta.tags.iter().map(|id| {
+                                Tag::from_id(id)
                             }).collect()
                             description=meta.byline.unwrap_or("".to_string())
                             />
@@ -151,7 +151,7 @@ pub fn Hero() -> impl IntoView {
 fn Article(
     title: String,
     image_url: String,
-    tags: Vec<&'static Tag>,
+    tags: Vec<Tag>,
     slug: String,
     description: String,
 ) -> impl IntoView {
@@ -159,15 +159,17 @@ fn Article(
         <article class="flex flex-col items-start justify-start">
 
                 <div class="relative w-full">
+                <a
+                href=format!("/{slug}")>
                 <img src={image_url.clone()} alt="" class="aspect-video w-full rounded bg-gray-100 dark:bg-slate-950 object-cover sm:aspect-[2/1] lg:aspect-[16/9]"/>
-                <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-50/10 dark:ring-gray-900/10"></div>
+                </a>
                 </div>
 
         <div class="max-w-xl">
         <div class="mt-8 flex flex-wrap items-center gap-4 text-xs">
             // <time datetime="2020-03-16" class="text-gray-500">Mar 16, 2020</time>
             {
-                tags.iter().map(|tag| view!{
+                tags.into_iter().map(|tag| view!{
                     <TagItem tag=tag />
                 }).collect_view()
             }
@@ -192,14 +194,22 @@ fn Article(
 }
 
 #[component]
-fn TagItem(tag: &'static Tag) -> impl IntoView {
+fn TagItem(tag: Tag) -> impl IntoView {
+    // let id = tag.id;
+    let color_ring = tag.color_ring();
+    let color_fill = tag.color_fill();
+    let display_name = tag.display_name.clone();
+
     view! {
-        <span class=format!("inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-slate-950 dark:text-white ring-1 ring-inset {}", tag.color_ring())>
-            <svg class=format!("size-1.5 {}", tag.color_fill()) viewBox="0 0 6 6" aria-hidden="true">
+        // <a href=format!("/{}", &tag.id)
+        <span
+         class=format!("inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-slate-950 dark:text-white ring-1 ring-inset {}", color_ring)>
+            <svg class=format!("size-1.5 {}", color_fill) viewBox="0 0 6 6" aria-hidden="true">
                 <circle cx="3" cy="3" r="3" />
             </svg>
-            {tag.display_name}
-        </span>
+            {display_name}
+            </span>
+        // </a>
     }
 }
 
