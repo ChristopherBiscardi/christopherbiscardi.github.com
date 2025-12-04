@@ -110,7 +110,7 @@ struct Death {
 
 We have a few options:
 
-== Option 1: Entity Observers
+= Option 1 Entity Observers
 <option-1-entity-observers>
 Add new observer to every entity (entity observers) This works; but why
 are we adding new observers when every type has "one handler" each.
@@ -120,7 +120,7 @@ fn practice_enemy_death(death: On<Death>) {}
 fn generic_death(death: On<Death>) {}
 ```
 
-== Option 2: A global observer
+= Option 2 A global observer
 <option-2-a-global-observer>
 This requires the observer filter all components.
 
@@ -142,7 +142,7 @@ fn all_deaths(
 }
 ```
 
-== Option 3: Dedicated Events
+= Option 3 Dedicated Events
 <option-3-dedicated-events>
 Dedicated events per type work, but require a user to know which one to
 fire for which entity. Alternatively, they can be dispatched from a
@@ -161,7 +161,7 @@ struct GenericDeath {
 }
 ```
 
-== The Goal
+= The Goal
 <the-goal>
 Ideally this would fit into its own plugin that decides what happens to
 itself when it dies. `HpPlugin` would be a generic system firing `Death`

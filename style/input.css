@@ -129,6 +129,17 @@
     Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+/*
+heading offsets to account for the sticky header
+when users click the Outline/TableOfContents links
+*/
+:target::before {
+  content: "";
+  display: block;
+  height: 80px; /* fixed header height*/
+  margin: -80px 0 0; /* negative fixed header height */
+}
+
 body {
   /* font-size-adjust for Outfit */
   font-size-adjust: 0.475;

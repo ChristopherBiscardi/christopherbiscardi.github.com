@@ -1,6 +1,8 @@
 use crate::{
-    api::markdown::ContentMetadata,
-    components::sidebar::Sidebar,
+    api::{
+        markdown::ContentMetadata, typst::TypstHeadingEntry,
+    },
+    components::{outline::Outline, sidebar::Sidebar},
 };
 use leptos::prelude::*;
 use leptos_meta::{Link, Meta, Title};
@@ -99,8 +101,11 @@ pub fn SlugPage() -> impl IntoView {
                     />
                 // </Header>
                 <div class="grid grid-cols-3 gap-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-14 text-slate-950 dark:text-white">
-                    <div class=format!("col-span-full {PROSE} prose-smol") inner_html={content.html}/>
+                    <div class=format!("col-span-3 xl:col-span-2 {PROSE} prose-smol") inner_html={content.html}/>
+                    <div class="hidden xl:col-span-1 xl:flex">
+                        <Outline outline={content.outline}/>
                     </div>
+                </div>
                     // <Title text=post.title/>
                     // <Meta name="description" content=post.content/>
                 })
@@ -183,6 +188,7 @@ pub fn Hero(
     Clone, Debug, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub struct Content {
+    pub outline: Vec<TypstHeadingEntry>,
     pub meta: ContentMetadata,
     pub html: String,
 }
@@ -193,7 +199,7 @@ async fn fetch_content(
 ) -> Result<Option<Content>, ServerFnError> {
     use crate::api::{
         markdown::{compile, parse_frontmatter},
-        typst,
+        typst::{self, parse_outline},
     };
 
     let file_markdown = tokio::fs::read_to_string(
@@ -210,12 +216,14 @@ async fn fetch_content(
                 .and_then(|(_, doc)| doc)
         else {
             return Ok(Some(Content {
+                outline: vec![],
                 meta: ContentMetadata::default(),
                 html: "".to_string(),
             }));
         };
 
         Ok(Some(Content {
+            outline: vec![],
             meta: content_metadata,
             html: compile(&content),
         }))
@@ -234,12 +242,14 @@ async fn fetch_content(
             typst::parse_frontmatter(&content)
         else {
             return Ok(Some(Content {
+                outline: parse_outline(&content),
                 meta: ContentMetadata::default(),
                 html: "".to_string(),
             }));
         };
 
         Ok(Some(Content {
+            outline: parse_outline(&content),
             meta: content_metadata,
             html: typst::compile(&content).unwrap(),
         }))

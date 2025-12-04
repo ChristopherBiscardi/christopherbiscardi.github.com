@@ -25,6 +25,6 @@
   #image("assets/logos/logo-full-light.svg", width: 40%)
 ]
 
-
+#outline()
 
 #include sys.inputs.post_path

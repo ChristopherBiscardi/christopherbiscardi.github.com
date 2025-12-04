@@ -13,14 +13,12 @@
   [#doc]
 )
 
-#outline()
-
 Its #link("https://bevyengine.org/news/bevys-fourth-birthday/")[Bevy's 4th birthday] and while I've been around for a couple of previous birthday posts I've never written something myself.
 
 This year I chose to step up into some additional maintainer duties on ecosystem crates like #link("https://github.com/StarArawn/bevy_ecs_tilemap")[`bevy_ecs_tilemap`], which I consider foundational and important to update to new versions, and I started #link("https://thisweekinbevy.com/")[This Week in Bevy],
 which I'll talk about a bit more later.
 
-== Why Bevy? <why-bevy>
+= Why Bevy? <why-bevy>
 
 The overriding reason I started writing Rust in the first place is that it expanded the kinds of programs I could write.
 Game development falls into that category, so I started working with Bevy a number of years ago, before there were regular releases, but really ramped up when #link("https://bevyengine.org/news/bevy-0-8/#new-material-system")[0.8 introduced the Material APIs] which really inspired me to dig deeper into rendering, and feel like this year was another "up another notch" for my personal involvement.

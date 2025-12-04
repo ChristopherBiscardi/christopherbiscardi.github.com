@@ -30,7 +30,7 @@ glTF data, and reflecting component values.
   I've #link("https://youtu.be/cYxHxQcWGfI")[covered] the bevy_gltf crate if you want a deep dive into the loader mechanics
 ]
 
-== The Format
+= The Format
 <the-format>
 
 Bevy defines components like this:
@@ -56,7 +56,7 @@ need the full type path.
 }
 ```
 
-== Deserialization
+= Deserialization
 <deserialization>
 
 This data can be given directly to Bevy's reflection infrastructure,
@@ -74,7 +74,7 @@ commands.entity(entity).insert_reflect(reflect_value);
 Bevy's reflection support has made this data processing exceedingly
 simple.
 
-== Data in glTF
+= Data in glTF
 <data-in-gltf>
 
 In a glTF file there's basically two places to put data:
@@ -129,7 +129,7 @@ component later in the list, then delete one or the other later.
 }
 ```
 
-== Challenges
+= Challenges
 <challenges>
 
 Altogether this workflow works quite well but there are a few more
@@ -141,7 +141,7 @@ hurdles to pass, some of which should block a proposal for a
   + Allowing arbitrary glTF extensions in Bevy's glTF Loader
 + `Handle`s
 
-=== Relationship Components
+== Relationship Components
 <relationship-components>
 
 Relationships in Bevy are `Component`s which store the `Entity` value of another `Entity`.
@@ -235,7 +235,7 @@ things in Blender would have to convert to either identifiers or indices
 for the `.gltf` file
 ]
 
-=== glTF Extras vs Extensions
+== glTF Extras vs Extensions
 <gltf-extras-vs-extensions>
 glTF has roughly two places for handling extra data: extras and
 extensions. glTF extras was a practical, works today, approach chosen
@@ -247,7 +247,7 @@ for Skein because Bevy has great support for them through the
 - #link("https://docs.rs/bevy/latest/bevy/gltf/struct.GltfSceneExtras.html")[`GltfSceneExtras`]
 - #link("https://docs.rs/bevy/latest/bevy/gltf/struct.GltfMaterialExtras.html")[`GltfMaterialExtras`]
 
-==== Extras
+=== Extras
 <extras>
 This encodes a few really nice properties:
 
@@ -287,7 +287,7 @@ which get stored in the `extras` glTF field. This can be done manually
 #link("https://youtu.be/HfQatgUyFYc")[as I've shown here] with Avian,
 which will always be a potential path.
 
-==== Extensions
+=== Extensions
 <extensions>
 In the glTF spec, extras are described as "Application-specific data",
 which to me means "Bevy App specific".
@@ -329,7 +329,7 @@ would be the easier path, but implementing "extension support" would be
 more useful and allow others to implement unrelated extensions.
 ]
 
-=== Handles
+== Handles
 <handles>
 Components, especially rendering related, can often hold `Handle`s to
 something. One example is `FogVolume`, which it is easy to image being a
@@ -373,7 +373,7 @@ In theory we could store a mapping between `texture.index()` and `Handle` to use
 Images aren't the only handles in use, so using handles like this needs
 some discovery, but images are the biggest contributor to the impact.
 
-== Collaboration with other editors
+= Collaboration with other editors
 <collaboration-with-other-editors>
 Specialized editors like Trenchbroom also sustain the component data in
 their usage of gltf. Since they don't mutate glTF assets being placed;
@@ -388,7 +388,7 @@ set of workflows, including any glTF is used in.
 - reading/writing of component data by arbitrary user scripts or
   programs
 
-== Supporting other applications
+= Supporting other applications
 <supporting-other-applications>
 Skein supports Blender using an addon, but there are other applications
 which can produce glTF, and some of them are likely worth supporting. At
@@ -398,7 +398,7 @@ suggestions, but if you are currently using software like Blender that
 produces glTF please reach out and let me know you'd like to see support
 for components.
 
-== Last Thoughts
+= Last Thoughts
 <last-thoughts>
 There's a decent amount of solid foundation to have a Bevy components
 extension and also some open questions to solve before making a
@@ -406,7 +406,7 @@ proposal. In the meantime Skein is the testing ground for the
 functionality and I'm pushing forward the functionality I talk about
 here.
 
-== 2025/09/29 - Multiple Scene Postprocessors
+== 2025-09-29 - Multiple Scene Postprocessors
 <multiple-scene-postprocessors>
 Avian components like `ColliderConstructor` can result in heavy deferred
 collider construction. Thus it would be nice if Avian had some sort of

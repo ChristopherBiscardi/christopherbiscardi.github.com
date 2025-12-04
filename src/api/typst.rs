@@ -12,6 +12,9 @@ use std::{error::Error, io::Cursor, path::Path};
 use crate::api::markdown::ContentMetadata;
 
 #[cfg(feature = "ssr")]
+pub mod slugify;
+
+#[cfg(feature = "ssr")]
 const NIGHT_OWL: &[u8; 27913] =
     include_bytes!("../night_owl/night-owlish.tmtheme");
 
@@ -186,4 +189,186 @@ struct TypstFrontmatter {
     byline: String,
     image_url: Option<String>,
     published: Option<String>,
+}
+
+#[derive(
+    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
+)]
+pub struct HeadingBody {
+    pub text: String,
+}
+
+#[derive(
+    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
+)]
+#[serde(tag = "func", rename_all = "lowercase")]
+pub enum BodyTypes {
+    Text(HeadingBody),
+    Sequence(BodyItems), // Sequence(serde_json::Value),
+}
+
+#[derive(
+    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
+)]
+struct BodyItems {
+    children: Vec<Item>,
+}
+
+#[derive(
+    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
+)]
+#[serde(tag = "func", rename_all = "lowercase")]
+enum Item {
+    Text { text: String },
+    Space,
+}
+
+#[derive(
+    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
+)]
+pub struct TypstHeadingEntry {
+    pub level: u32,
+    pub depth: u32,
+    pub offset: u32,
+    // numbering: Option<>
+    pub outlined: bool,
+    pub bookmarked: String,
+    // todo: could be text or sequence
+    pub body: BodyTypes,
+    pub label: Option<String>,
+    pub processed_label: Option<String>,
+}
+impl TypstHeadingEntry {
+    #[cfg(feature = "ssr")]
+    fn slugify_label(&mut self) {
+        if let Some(label) = &self.label {
+            self.processed_label = Some(label.clone());
+            return;
+        }
+
+        match &self.body {
+            BodyTypes::Text(heading_body) => {
+                self.processed_label = Some(
+                    heading_body.text.replace(" ", "-"),
+                );
+            }
+            BodyTypes::Sequence(seq) => {
+                let mut label = seq
+                    .children
+                    .iter()
+                    .map(|item| match item {
+                        Item::Text { text } => text,
+                        Item::Space => "-",
+                    })
+                    .collect::<String>();
+                for x in slugify::CHAR_MAP.iter() {
+                    label = label.replace(x.0, x.1);
+                }
+                label = label
+                    .replace(" ", "-")
+                    // .replace(regex(`[^\w\s$*_+~.\\\\(\)'\
+                    // "!\-:@]+`.text), "")
+                    .replace(",", "")
+                    .replace("@", "")
+                    .replace(":", "")
+                    .replace("!", "")
+                    .replace(".", "")
+                    .replace(")", "")
+                    .replace("(", "")
+                    .to_lowercase();
+                self.processed_label = Some(label);
+            }
+        }
+    }
+}
+// } else if it.body.fields().keys().contains("
+// text") { slugify(lower(it.body.text).
+// replace(regex("\s+"), "-")) } else {
+// str(it.body.children.len())
+// it.body.pairs().fold("", (acc, x) => x.)
+// slugify(it.body.children.fold("", (acc, x) => {
+//     if x.func() == text {
+//     lower(acc + x.text)
+//     } else {
+//     acc
+//     }
+// }))
+// .replace(regex("\s+"), "-")
+// .replace(regex(`[^\w\s$*_+~.\\\\(\)'\"!\-:@]+`.
+// text), "") .replace(`)`.text, "-")
+// .replace(`(`.text, "-")
+
+//     }
+// }
+
+#[cfg(feature = "ssr")]
+pub fn parse_outline(
+    input: &str,
+) -> Vec<TypstHeadingEntry> {
+    print!("parse_outline");
+    use owo_colors::OwoColorize;
+    let Ok(typst_io) = cmd!(
+        "typst",
+        "query",
+        "--features",
+        "html",
+        "--target",
+        "html",
+        "-",
+        "heading",
+    )
+    .dir(std::env::current_dir().unwrap())
+    .stdin_bytes(input)
+    .stderr_capture()
+    .stdout_capture()
+    .unchecked()
+    .run()
+    .inspect_err(|err| {
+        leptos::logging::error!("{:?}", err.red());
+    }) else {
+        use leptos::logging::warn;
+
+        warn!("outline query cli failed");
+        return vec![];
+    };
+
+    // Temporary solution to hide the Typst "html is
+    // experimental" warning
+    match str::from_utf8(&typst_io.stderr) {
+        Ok(stderr) => {
+            let trimmed_error = stderr
+                .trim_start_matches(HTML_WARNING)
+                .trim();
+            if !trimmed_error.is_empty() {
+                eprintln!("test {}", trimmed_error.red());
+            }
+        }
+        Err(err) => {
+            eprintln!(
+                "typst file encountered an error {err:?}"
+            );
+        }
+    };
+
+    if !typst_io.status.success() {
+        // typst command wasn't successful, Probably a
+        // failure instead of a None tbh
+
+        use leptos::logging::warn;
+        warn!("typst headings query was unsuccessful");
+        return vec![];
+    }
+
+    let result: Vec<TypstHeadingEntry> =
+        serde_json::from_reader(typst_io.stdout.as_slice())
+            .unwrap();
+    // dbg!(&result);
+
+    result
+        .into_iter()
+        .map(|mut m| {
+            m.slugify_label();
+            m
+        })
+        .collect()
 }

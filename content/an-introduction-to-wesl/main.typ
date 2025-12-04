@@ -15,6 +15,5 @@
   [#doc]
 )
 
-#outline()
 
 = WESL is Great!

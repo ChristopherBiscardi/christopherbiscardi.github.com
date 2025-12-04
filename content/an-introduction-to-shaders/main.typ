@@ -14,10 +14,6 @@
   [#doc]
 )
 
-#outline()
-
-= An Introduction to Shaders
-
 If you search for shaders right now, the first result is probably going to be Minecraft shaders.
 and with that comes what most people think of as shaders: the things that make a game look pretty.
 

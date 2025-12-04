@@ -24,7 +24,7 @@ Substance Designer does not make what kind of data you're dealing with obvious w
 
 Both will hand you pngs (or .exr, or a couple of other formats, but not .ktx), so what do we do with them?
 
-== Kram
+= Kram
 <kram>
 
 There are a number of tools that can take you from .png to .ktx, including #link("https://github.khronos.org/KTX-Software/ktxtools/index.html")[ktx tools], #link("https://github.com/BinomialLLC/basis_universal")[basisu], GUI applications like #link("https://developer.nvidia.com/texture-tools-exporter")[NVidia Texture Tools], and more. Sometimes you'll even have to use multiple tools, like `ktx create` to pack some pngs into a ktx, then another tool to compress.
@@ -32,7 +32,7 @@ There are a number of tools that can take you from .png to .ktx, including #link
 We're going to use #link("https://github.com/alecazam/kram")[kram] because it is both the easiest to get right and produces good results.
 You will likely have to download kram from GitHub. Let's start off with a description of the end-state of our files.
 
-=== kram info
+== kram info
 <kram-info>
 
 `kram info` gives us some insight into what we're about to do. Here's
@@ -137,6 +137,7 @@ codec:
 
 == Review
 <review>
+
 - .ktx is a file format. It is a container that can hold various kinds
   of data
 - Texures are more complicated than images and have different access

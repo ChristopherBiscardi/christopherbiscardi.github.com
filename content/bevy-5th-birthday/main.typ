@@ -13,13 +13,12 @@
   [#doc]
 )
 
-#outline()
 
 Another year, another #link("https://bevy.org/news/bevys-fifth-birthday/")[Bevy Birthday].
 This year I released #link("https://bevyskein.dev/")[Skein], a Bevy/Blender integration crate + Blender addon, and continued a full year of #link("https://thisweekinbevy.com/")[This Week in Bevy].
 I'll start by going over what I was excited about #link("/bevy-4th-birthday")[last year].
 
-== Skein <skein>
+= Skein <skein>
 
 In last year's birthday post I said I was excited about #link("https://github.com/kaosat-dev/Blenvy")[blenvy], which was an approach to integrating Blender and Bevy.
 Unfortunately life happens and a few Bevy releases have gone by without a corresponding Blenvy release.
@@ -58,35 +57,35 @@ People are using and happy with it, but there could be better UX, migration tool
 
 There's a lot of conversation about "the Bevy editor" but to be honest, I don't feel that pain point as much because of Skein and Blender.
 
-== Nannou <nannou>
+= Nannou <nannou>
 
 Last year I said I was excited about #link("https://nannou.cc/")[Nannou]. I still am, and the project #link("https://www.charlotte.fyi/posts/bevys-fifth-bday#Nannou")[has seen major progress].
 
 I'm excited to see high level support for compute shaders and using Nannou APIs in Bevy. Nannou underwent a major rewrite to align with Bevy and I'm #emph[very] excited to see it launch this year.
 
-== WESL <wesl>
+= WESL <wesl>
 
 #link("https://wesl-lang.dev/")[WESL] is the name for the next generation of wgsl tooling, and it has been progressing quite a bit! 
 I'm very hopeful that we'll start seeing migrations of Bevy shader code to wesl in the near future and the teams seem to be collaborating well. 
 I'm very excited that there's the potential for a wider-usage version of wgsl in play.
 
-== What am I excited about? <what-am-i-excited-about>
+= What am I excited about? <what-am-i-excited-about>
 
-=== The Bevy CLI <the-bevy-cli>
+== The Bevy CLI <the-bevy-cli>
 
 The Bevy CLI working group has been hard at work building a wonderful tool for scaffolding, building, linting, and running Bevy applications.
 It makes it far easier to run on the web without needing to be a web-configuration-knowledgable person.
 
-== Bevy Audio <bevy-audio> 
+= Bevy Audio <bevy-audio> 
 
 bevy\_seedling and Firewheel are poised to be the next big thing in Bevy's audio story.
 The audio working group has been making steady, fairly quiet, progress for a long time now.
 
-=== BSN <bsn>
+== BSN <bsn>
 
 BSN seems like it will land in some form in 0.18. There's a #link("https://github.com/bevyengine/bevy/pull/20158")[draft PR] up with some implementation and its really exciting to see people already figuring out how to use it.
 I don't know when the BSN asset format will come into existence, but even seeing a `bsn!` macro merge would be very exciting.
 
-=== WESL <wesl-1>
+== WESL <wesl-1>
 
 Yep, still excited about WESL. Hoping this also lands in 0.18 but who knows what will happen.
