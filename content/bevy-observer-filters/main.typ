@@ -1,4 +1,4 @@
-#import "/lib.typ": template, highlight, note
+#import "/lib.typ": highlight, note, template
 
 #metadata((
   "title": "Bevy Observer Filters",
@@ -11,10 +11,12 @@
 
 #show: doc => template(
   "Bevy Observer Filters",
-  [#doc]
+  [#doc],
 )
 
-
+#note[
+  This is mostly historical since #link("https://github.com/bevyengine/bevy/pull/24013")[bevyengine/bevy/pull/24013]
+]
 
 Let's say you have a `HealthPointsPlugin` that provides an `Hp`
 component. This plugin automatically fires `Death` events for an entity

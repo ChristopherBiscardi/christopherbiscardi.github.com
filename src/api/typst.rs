@@ -15,8 +15,7 @@ use crate::api::markdown::ContentMetadata;
 pub mod slugify;
 
 #[cfg(feature = "ssr")]
-const NIGHT_OWL: &[u8; 27913] =
-    include_bytes!("../night_owl/night-owlish.tmtheme");
+const NIGHT_OWL: &[u8; 27913] = include_bytes!("../night_owl/night-owlish.tmtheme");
 
 #[cfg(feature = "ssr")]
 const HTML_WARNING: &str = "warning: html export is under active development and incomplete
@@ -25,9 +24,7 @@ const HTML_WARNING: &str = "warning: html export is under active development and
  = hint: see https://github.com/typst/typst/issues/5512 for more information";
 
 #[cfg(feature = "ssr")]
-pub fn compile(
-    input: &str,
-) -> Result<String, Box<dyn Error>> {
+pub fn compile(input: &str) -> Result<String, Box<dyn Error>> {
     use owo_colors::OwoColorize;
 
     let typst_io = cmd!(
@@ -50,45 +47,34 @@ pub fn compile(
     // experimental" warning
     match str::from_utf8(&typst_io.stderr) {
         Ok(stderr) => {
-            let trimmed_error = stderr
-                .trim_start_matches(HTML_WARNING)
-                .trim();
+            let trimmed_error = stderr.trim_start_matches(HTML_WARNING).trim();
             if !trimmed_error.is_empty() {
                 eprintln!("test {}", trimmed_error.red());
             }
         }
         Err(err) => {
-            eprintln!(
-                "typst file encountered an error {err:?}"
-            );
+            eprintln!("typst file encountered an error {err:?}");
         }
     };
 
-    let fragment = Html::parse_document(str::from_utf8(
-        typst_io.stdout.as_slice(),
-    )?);
+    let fragment = Html::parse_document(str::from_utf8(typst_io.stdout.as_slice())?);
 
     let selector = Selector::parse("body")?;
 
-    let body = fragment.select(&selector).next().ok_or(
-        "couldn't find a body; where'd you hide it?",
-    )?;
+    let body = fragment
+        .select(&selector)
+        .next()
+        .ok_or("couldn't find a body; where'd you hide it?")?;
     Ok(body.inner_html())
 }
 
 #[server(TypstCompileServer, "/api")]
-pub async fn typst_compile_server(
-    code: String,
-) -> Result<String, ServerFnError> {
-    compile(&code).map_err(|err| {
-        ServerFnError::ServerError(err.to_string())
-    })
+pub async fn typst_compile_server(code: String) -> Result<String, ServerFnError> {
+    compile(&code).map_err(|err| ServerFnError::ServerError(err.to_string()))
 }
 
 #[cfg(feature = "ssr")]
-pub fn parse_frontmatter(
-    input: &str,
-) -> Option<ContentMetadata> {
+pub fn parse_frontmatter(input: &str) -> Option<ContentMetadata> {
     use owo_colors::OwoColorize;
     let typst_io = cmd!(
         "typst",
@@ -115,17 +101,13 @@ pub fn parse_frontmatter(
     // experimental" warning
     match str::from_utf8(&typst_io.stderr) {
         Ok(stderr) => {
-            let trimmed_error = stderr
-                .trim_start_matches(HTML_WARNING)
-                .trim();
+            let trimmed_error = stderr.trim_start_matches(HTML_WARNING).trim();
             if !trimmed_error.is_empty() {
                 eprintln!("test {}", trimmed_error.red());
             }
         }
         Err(err) => {
-            eprintln!(
-                "typst file encountered an error {err:?}"
-            );
+            eprintln!("typst file encountered an error {err:?}");
         }
     };
 
@@ -136,8 +118,10 @@ pub fn parse_frontmatter(
     }
 
     let mut result: Vec<TypstObject<TypstFrontmatter>> =
-        serde_json::from_reader(typst_io.stdout.as_slice())
-            .unwrap();
+        serde_json::from_reader(typst_io.stdout.as_slice()).expect(&format!(
+            "couldn't process Typst Frontmatter for content:\n{}",
+            &input[..(if input.len() < 400 { input.len() } else { 400 })]
+        ));
     // dbg!(&result);
 
     let metadata = result.remove(0).value;
@@ -191,41 +175,31 @@ struct TypstFrontmatter {
     published: Option<String>,
 }
 
-#[derive(
-    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
-)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub struct HeadingBody {
     pub text: String,
 }
 
-#[derive(
-    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
-)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(tag = "func", rename_all = "lowercase")]
 pub enum BodyTypes {
     Text(HeadingBody),
     Sequence(BodyItems), // Sequence(serde_json::Value),
 }
 
-#[derive(
-    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
-)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 struct BodyItems {
     children: Vec<Item>,
 }
 
-#[derive(
-    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
-)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 #[serde(tag = "func", rename_all = "lowercase")]
 enum Item {
     Text { text: String },
     Space,
 }
 
-#[derive(
-    Debug, Serialize, Deserialize, PartialEq, Eq, Clone,
-)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub struct TypstHeadingEntry {
     pub level: u32,
     pub depth: u32,
@@ -248,9 +222,7 @@ impl TypstHeadingEntry {
 
         match &self.body {
             BodyTypes::Text(heading_body) => {
-                self.processed_label = Some(
-                    heading_body.text.replace(" ", "-"),
-                );
+                self.processed_label = Some(heading_body.text.replace(" ", "-"));
             }
             BodyTypes::Sequence(seq) => {
                 let mut label = seq
@@ -302,9 +274,7 @@ impl TypstHeadingEntry {
 // }
 
 #[cfg(feature = "ssr")]
-pub fn parse_outline(
-    input: &str,
-) -> Vec<TypstHeadingEntry> {
+pub fn parse_outline(input: &str) -> Vec<TypstHeadingEntry> {
     print!("parse_outline");
     use owo_colors::OwoColorize;
     let Ok(typst_io) = cmd!(
@@ -336,17 +306,13 @@ pub fn parse_outline(
     // experimental" warning
     match str::from_utf8(&typst_io.stderr) {
         Ok(stderr) => {
-            let trimmed_error = stderr
-                .trim_start_matches(HTML_WARNING)
-                .trim();
+            let trimmed_error = stderr.trim_start_matches(HTML_WARNING).trim();
             if !trimmed_error.is_empty() {
                 eprintln!("test {}", trimmed_error.red());
             }
         }
         Err(err) => {
-            eprintln!(
-                "typst file encountered an error {err:?}"
-            );
+            eprintln!("typst file encountered an error {err:?}");
         }
     };
 
@@ -360,8 +326,7 @@ pub fn parse_outline(
     }
 
     let result: Vec<TypstHeadingEntry> =
-        serde_json::from_reader(typst_io.stdout.as_slice())
-            .unwrap();
+        serde_json::from_reader(typst_io.stdout.as_slice()).unwrap();
     // dbg!(&result);
 
     result

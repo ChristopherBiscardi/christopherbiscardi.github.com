@@ -766,7 +766,7 @@
     show image: it => {
       if it.source.starts-with("/assets/") {
         [#html.img(
-          alt: it.alt,
+          // alt: it.alt,
           // We assume that the typst dir is the project
           // root, which means the prefix for images is `assets`
           // in the file path. remove this to get the "right"
@@ -775,7 +775,7 @@
         )]
       } else if it.source.starts-with("http") {
         [#html.img(
-          alt: it.alt,
+          // alt: it.alt,
           // We assume that the typst dir is the project
           // root, which also coincides with the url the assets
           // end up at. So just add the root "/" here for html output
