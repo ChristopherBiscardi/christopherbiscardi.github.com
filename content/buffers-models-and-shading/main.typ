@@ -327,6 +327,28 @@ I'm truly not sure how this is supposed to be used in practice, since it seems l
 That means I need to split samplers out from images which is fine.
 It's a bit more advanced and thus requires a bit more tracking, but means far fewer samplers overall.
 
+So with a bit more code that worked out.
+The hardest part at this point is actually accessing the bindless data in slang, which doesn't seem well documented anywhere.
+To be honest I'm still semi-unsure if using `DynamicResource` in this way is the intended approach or not, but it does seem to allow me to handle 2d and 3d images in the same binding.
+That will require a bit more research on my end.
+
+== Host Image Copy
+
+While using a separate transfer buffer for the images worked, it also made me look for extensions which may be able to make the process easier.
+That's where I found host_image_copy, which allows you to get rid of the intermediary transfer buffer by doing more work on the CPU.
+I'm not actually sure if this reduced the amount of code required for copying data to an image, but it *does* enable host-to-image, image-to-host, and image-to-image copying.
+This means I can potentially use it for a screenshot feature as well, which is something that is also possible without the extension but from what I've seen is more verbose.
+
+== Next up
+
+This session really opened up the number of next tasks I could work on.
+I need to clean up this openpbr code a bit, as well as the image handling, and then can start implementing:
+
+- lights! (and shadows!)
+- OpenPBR textures from Substance Painter
+- egui
+- hot-reloading
+- assets? ecs?
 
 
 == Validation Layers
@@ -334,11 +356,3 @@ It's a bit more advanced and thus requires a bit more tracking, but means far fe
 At this point I've worked through a bunch of code relating to loading, uploading, and sampling textures.
 The biggest comment I have in this whole process is: If you have not enabled the Vulkan validation layers, go enable the Vulkan validation layers.
 You can do this in the vulkan configurator and the number of problems I've fixed just by reading the validation issues is *extremely high*.
-
-== Next up
-
-- lights!
-- OpenPBR textures from Substance Painter
-- egui
-- hot-reloading
-- assets? ecs?
